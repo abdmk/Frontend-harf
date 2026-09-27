@@ -1,5 +1,7 @@
 'use client';
 
+import { Button } from '@/components/ui/button';
+
 /** لا تُعرض تفاصيل الخطأ للمستخدم — تُسجَّل على الخادم فقط */
 export default function ErrorPage({ reset }: { error: Error & { digest?: string }; reset: () => void }) {
   return (
@@ -7,13 +9,9 @@ export default function ErrorPage({ reset }: { error: Error & { digest?: string 
       <div className="flex flex-col items-center gap-4">
         <h1 className="text-2xl font-semibold">حدث خطأ غير متوقّع</h1>
         <p className="max-w-sm text-sm text-muted-foreground">لم نستطع عرض هذه الصفحة الآن. حاول مجدداً بعد لحظات.</p>
-        <button
-          type="button"
-          onClick={reset}
-          className="mt-2 h-11 rounded-sm bg-primary px-6 text-sm font-medium text-white hover:bg-harf-600"
-        >
+        <Button size="lg" className="mt-2" onClick={reset}>
           أعد المحاولة
-        </button>
+        </Button>
       </div>
     </main>
   );

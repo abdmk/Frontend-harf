@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { notFound, redirect } from 'next/navigation';
 
+import { Button } from '@/components/ui/button';
 import { CloudUploadIcon } from '@/components/ui/icons';
 import { paths } from '@/config/paths';
 import { AccountShell, SectionPlaceholder } from '@/features/account/components/account-shell';
@@ -27,13 +28,10 @@ export default async function AccountSectionPage({ params }: PageProps<'/account
     <AccountShell user={user} section={section}>
       {section === 'foundry' ? (
         <UploadDialog>
-          <button
-            type="button"
-            className="inline-flex h-12 items-center gap-2 rounded-sm bg-primary px-6 text-lead font-medium text-white transition-[background-color,transform] hover:bg-harf-600 active:scale-[.97]"
-          >
-            <CloudUploadIcon className="size-4.5" />
+          <Button size="lg">
+            <CloudUploadIcon />
             تحميل الملفات
-          </button>
+          </Button>
         </UploadDialog>
       ) : (
         <SectionPlaceholder />

@@ -1,6 +1,6 @@
 import { expect, test } from './fixtures';
 
-const PAGES = ['/', '/fonts/zaetoon', '/account/profile?as=studio'];
+const PAGES = ['/', '/fonts/zaetoon', '/account/profile?as=studio', '/design-system'];
 
 for (const path of PAGES) {
   for (const colorScheme of ['light', 'dark'] as const) {

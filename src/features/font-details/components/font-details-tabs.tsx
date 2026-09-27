@@ -1,35 +1,11 @@
-'use client';
-
-import { Tabs as TabsPrimitive } from 'radix-ui';
-import { useLayoutEffect, useRef, useState } from 'react';
-
 import { FileIcon, type FileKind } from '@/components/shared/file-icon';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { formatDateAr, weightsLabel } from '@/lib/format';
 import { CATEGORY_LABEL, LANG_LABEL } from '@/lib/labels';
 import type { Font } from '@/types/domain/font';
 
 /** «معلومات الخط» و«محتويات الحزمة» — المؤشّر الأحمر ينزلق بين التبويبين */
 export function FontDetailsTabs({ font }: { font: Font }) {
-  const [tab, setTab] = useState('info');
-  const list = useRef<HTMLDivElement>(null);
-  const ind = useRef<HTMLSpanElement>(null);
-
-  useLayoutEffect(() => {
-    const l = list.current;
-    const i = ind.current;
-    if (!l || !i) return;
-    const place = () => {
-      const on = l.querySelector<HTMLElement>('[data-state="active"]');
-      if (!on) return;
-      i.style.width = `${on.offsetWidth}px`;
-      i.style.transform = `translateX(${on.offsetLeft}px)`;
-    };
-    place();
-    const ro = new ResizeObserver(place);
-    ro.observe(l);
-    return () => ro.disconnect();
-  }, [tab]);
-
   const files: [string, FileKind, string][] = [
     [`${font.name.replace(/\s+/g, '')}-OTF.zip`, 'otf', `${weightsLabel(font.weights)} · OTF`],
     [`${font.name.replace(/\s+/g, '')}-TTF.zip`, 'ttf', `${weightsLabel(font.weights)} · TTF`],
@@ -38,28 +14,13 @@ export function FontDetailsTabs({ font }: { font: Font }) {
   ];
 
   return (
-    <TabsPrimitive.Root value={tab} onValueChange={setTab} className="mt-16">
-      <TabsPrimitive.List ref={list} aria-label="تفاصيل الخط" className="relative flex gap-10 border-b">
-        {[
-          ['info', 'معلومات الخط'],
-          ['files', 'محتويات الحزمة'],
-        ].map(([v, label]) => (
-          <TabsPrimitive.Trigger
-            key={v}
-            value={v!}
-            className="h-13 text-lead text-tertiary transition-colors duration-200 hover:text-foreground data-[state=active]:font-medium data-[state=active]:text-foreground"
-          >
-            {label}
-          </TabsPrimitive.Trigger>
-        ))}
-        <span
-          ref={ind}
-          aria-hidden
-          className="absolute -bottom-px left-0 h-0.5 rounded-full bg-primary transition-[transform,width] duration-300 ease-out-quint"
-        />
-      </TabsPrimitive.List>
+    <Tabs defaultValue="info" className="mt-16">
+      <TabsList aria-label="تفاصيل الخط">
+        <TabsTrigger value="info">معلومات الخط</TabsTrigger>
+        <TabsTrigger value="files">محتويات الحزمة</TabsTrigger>
+      </TabsList>
 
-      <TabsPrimitive.Content value="info" className="animate-fade-up py-8 outline-none">
+      <TabsContent value="info">
         <dl className="grid grid-cols-1 gap-x-8 gap-y-3 text-sm sm:grid-cols-[140px_minmax(0,1fr)]">
           <dt className="text-tertiary">تاريخ الإصدار</dt>
           <dd className="mb-3 font-medium sm:mb-0">{formatDateAr(font.releasedAt)}</dd>
@@ -83,9 +44,9 @@ export function FontDetailsTabs({ font }: { font: Font }) {
             </li>
           ))}
         </ul>
-      </TabsPrimitive.Content>
+      </TabsContent>
 
-      <TabsPrimitive.Content value="files" className="animate-fade-up py-8 outline-none">
+      <TabsContent value="files">
         <ul className="flex flex-col">
           {files.map(([name, kind, desc]) => (
             <li key={name} className="flex items-center gap-4 border-b border-subtle py-3 text-sm">
@@ -97,7 +58,7 @@ export function FontDetailsTabs({ font }: { font: Font }) {
             </li>
           ))}
         </ul>
-      </TabsPrimitive.Content>
-    </TabsPrimitive.Root>
+      </TabsContent>
+    </Tabs>
   );
 }

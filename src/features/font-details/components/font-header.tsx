@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 
-import { DesignerAvatars } from '@/components/shared/designer-avatars';
+import { Avatar } from '@/components/shared/avatar';
 import { DownloadButton } from '@/components/shared/download-button';
 import { CATEGORY_LABEL, USAGE_LABEL } from '@/lib/labels';
 import type { Font } from '@/types/domain/font';
@@ -24,7 +24,7 @@ export function FontHeader({ font, favorite }: { font: Font; favorite?: ReactNod
           <div className="mt-3 flex flex-wrap gap-x-6 gap-y-2">
             {font.designers.map((d) => (
               <span key={d.id} className="inline-flex items-center gap-2 text-sm text-muted-foreground">
-                <DesignerAvatars designers={[d]} max={1} className="[&_i]:size-5.5 [&_i]:text-3xs" />
+                <Avatar initials={d.initials} seed={d.id} size="sm" className="size-5.5" />
                 <span dir="ltr">{d.nameEn}</span>
               </span>
             ))}

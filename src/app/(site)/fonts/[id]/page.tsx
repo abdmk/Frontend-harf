@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation';
 
 import { Container } from '@/components/layout/container';
 import { CtaSection } from '@/components/layout/cta-section';
+import { Breadcrumb } from '@/components/shared/breadcrumb';
 import { FontCard } from '@/components/shared/font-card';
 import { FontGrid } from '@/components/shared/font-grid';
 import { ChevronLeftIcon } from '@/components/ui/icons';
@@ -33,25 +34,14 @@ export default async function FontPage({ params }: PageProps<'/fonts/[id]'>) {
 
   return (
     <Container as="main" id="main">
-      <nav aria-label="مسار التنقّل" className="mt-8 mb-5">
-        <ol className="flex flex-wrap items-center gap-2 text-meta text-muted-foreground">
-          <li className="flex items-center gap-2">
-            <Link href={paths.home.getHref()} className="hover:text-foreground">
-              الرئيسية
-            </Link>
-            <ChevronLeftIcon className="size-3.5" />
-          </li>
-          <li className="flex items-center gap-2">
-            <Link href={paths.home.getHref()} className="hover:text-foreground">
-              خطوط مجانية
-            </Link>
-            <ChevronLeftIcon className="size-3.5" />
-          </li>
-          <li aria-current="page" dir="ltr" className="font-medium text-foreground">
-            {font.name}
-          </li>
-        </ol>
-      </nav>
+      <Breadcrumb
+        className="mt-8 mb-5"
+        items={[
+          { label: 'الرئيسية', href: paths.home.getHref() },
+          { label: 'خطوط مجانية', href: paths.home.getHref() },
+          { label: font.name, ltr: true },
+        ]}
+      />
 
       <FontGallery fontName={font.name} />
       <FontHeader font={font} favorite={<FavoriteButton fontId={font.id} fontName={font.name} variant="square" />} />

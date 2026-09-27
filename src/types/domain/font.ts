@@ -13,7 +13,6 @@ export type Designer = {
   nameAr: string;
   nameEn: string;
   initials: string;
-  color: string;
 };
 
 export type Font = {

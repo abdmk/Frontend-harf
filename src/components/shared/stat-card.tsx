@@ -1,0 +1,50 @@
+import type { ReactNode } from 'react';
+
+import { ArrowDownIcon, ArrowUpIcon } from '@/components/ui/icons';
+import { cn } from '@/lib/cn';
+
+/** بطاقة رقم (لوحات الإحصاء والأرباح): عنوان، قيمة كبيرة، وتغيّر نسبي اختياري */
+export function StatCard({
+  label,
+  value,
+  delta,
+  hint,
+  icon,
+  className,
+}: {
+  label: string;
+  value: ReactNode;
+  /** نسبة التغيّر، مثل 12.4 أو -3 */
+  delta?: number;
+  hint?: ReactNode;
+  icon?: ReactNode;
+  className?: string;
+}) {
+  const up = (delta ?? 0) >= 0;
+  return (
+    <div className={cn('flex flex-col gap-3 rounded-lg border bg-card p-5', className)}>
+      <div className="flex items-center justify-between gap-3 text-meta text-muted-foreground">
+        <span>{label}</span>
+        {icon && <span className="text-tertiary [&_svg]:size-4.5">{icon}</span>}
+      </div>
+      <div className="flex items-end justify-between gap-3">
+        <span dir="ltr" className="text-2xl font-semibold tracking-tight">
+          {value}
+        </span>
+        {delta !== undefined && (
+          <span
+            dir="ltr"
+            className={cn(
+              'inline-flex h-6 items-center gap-0.5 rounded-full px-2 text-caption font-medium',
+              up ? 'bg-tint-ok text-ok-text' : 'bg-tint-dgr text-dgr-text',
+            )}
+          >
+            {up ? <ArrowUpIcon className="size-3" /> : <ArrowDownIcon className="size-3" />}
+            {Math.abs(delta)}%<span className="sr-only">{up ? ' ارتفاع' : ' انخفاض'}</span>
+          </span>
+        )}
+      </div>
+      {hint && <p className="text-caption text-tertiary">{hint}</p>}
+    </div>
+  );
+}

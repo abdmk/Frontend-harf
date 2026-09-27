@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { formatBytesAr, formatDateAr, weightsLabel } from '@/lib/format';
+import { formatBytesAr, formatDateAr, formatMoney, weightsLabel } from '@/lib/format';
 
 describe('format', () => {
   it('uses correct Arabic plural forms for weights', () => {
@@ -12,5 +12,13 @@ describe('format', () => {
   it('formats sizes', () => {
     expect(formatBytesAr(120 * 1024)).toBe('120 ك.ب');
     expect(formatBytesAr(5 * 1024 * 1024)).toBe('5.0 م.ب');
+  });
+});
+
+describe('formatMoney', () => {
+  it('يعرض الدولارات الصحيحة بلا كسور والكسور برقمين', () => {
+    expect(formatMoney({ cents: 4900, currency: 'USD' })).toBe('$49');
+    expect(formatMoney({ cents: 4950, currency: 'USD' })).toBe('$49.50');
+    expect(formatMoney({ cents: 123456, currency: 'USD' })).toBe('$1,234.56');
   });
 });

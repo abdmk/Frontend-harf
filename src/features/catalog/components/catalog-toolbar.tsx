@@ -1,8 +1,10 @@
 'use client';
 
-import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { type ReactNode, useState } from 'react';
 
-import { AppsIcon, FlameIcon, SearchIcon, SlidersIcon, TimePastIcon } from '@/components/ui/icons';
+import { SearchField } from '@/components/shared/search-field';
+import { AppsIcon, FlameIcon, SlidersIcon, TimePastIcon } from '@/components/ui/icons';
+import { SegmentedControl } from '@/components/ui/segmented-control';
 import type { Sort } from '@/features/catalog/types/catalog-query';
 import { activeFilterCount } from '@/features/catalog/utils/filter-fonts';
 import { cn } from '@/lib/cn';
@@ -11,6 +13,11 @@ import { CATEGORIES } from '@/types/domain/font';
 
 import { useCatalog } from './catalog-context';
 import { FilterSheet } from './filter-sheet';
+
+const SORT_OPTIONS = [
+  { value: 'popular', label: 'الأكثر شهرة', icon: <FlameIcon /> },
+  { value: 'newest', label: 'الأحدث', icon: <TimePastIcon /> },
+] as const satisfies readonly { value: Sort; label: string; icon: ReactNode }[];
 
 const CHIPS = [['all', 'الكل'] as const, ...CATEGORIES.map((c) => [c, CATEGORY_LABEL[c]] as const)];
 
@@ -67,7 +74,13 @@ export function CatalogToolbar() {
         })}
       </div>
 
-      <SearchBox value={query.q} onChange={(q) => setQuery({ q })} />
+      <SearchField
+        label="ابحث عن الخط أو مصمم"
+        placeholder="ابحث عن الخط أو مصمم ..."
+        value={query.q}
+        onChange={(q) => setQuery({ q })}
+        className="min-w-45 flex-1"
+      />
 
       <FilterSheet
         trigger={
@@ -92,95 +105,12 @@ export function CatalogToolbar() {
         }
       />
 
-      <SortSwitch value={query.sort} onChange={(sort) => setQuery({ sort })} />
-    </div>
-  );
-}
-
-function SearchBox({ value, onChange }: { value: string; onChange: (v: string) => void }) {
-  const [text, setText] = useState(value);
-  const last = useRef(value);
-  // يتبع الرابط إن تغيّر من خارج الحقل (مثل «مسح الكل»)
-  useEffect(() => {
-    if (value !== last.current) {
-      last.current = value;
-      setText(value);
-    }
-  }, [value]);
-  useEffect(() => {
-    const v = text.trim().slice(0, 80);
-    if (v === last.current) return;
-    const t = window.setTimeout(() => {
-      last.current = v;
-      onChange(v);
-    }, 300);
-    return () => window.clearTimeout(t);
-  }, [text, onChange]);
-
-  return (
-    <label className="relative flex h-11 min-w-45 flex-1 items-center rounded-full border bg-card transition-[box-shadow,border-color] focus-within:border-primary focus-within:shadow-[0_0_0_3px_rgb(236_59_60/.16)] dark:border-transparent dark:bg-sunken">
-      <span className="sr-only">ابحث عن الخط أو مصمم</span>
-      <SearchIcon className="pointer-events-none absolute start-4 size-4 text-muted-foreground" />
-      <input
-        type="search"
-        value={text}
-        maxLength={80}
-        autoComplete="off"
-        onChange={(e) => setText(e.target.value)}
-        placeholder="ابحث عن الخط أو مصمم ..."
-        className="size-full rounded-full bg-transparent ps-11 pe-4 text-control outline-none placeholder:text-muted-foreground [&::-webkit-search-cancel-button]:appearance-none"
+      <SegmentedControl
+        label="الترتيب"
+        value={query.sort}
+        onChange={(sort) => setQuery({ sort })}
+        options={SORT_OPTIONS}
       />
-    </label>
-  );
-}
-
-function SortSwitch({ value, onChange }: { value: Sort; onChange: (v: Sort) => void }) {
-  const box = useRef<HTMLDivElement>(null);
-  const pillRef = useRef<HTMLSpanElement>(null);
-  useLayoutEffect(() => {
-    const b = box.current;
-    const p = pillRef.current;
-    if (!b || !p) return;
-    const place = () => {
-      const on = b.querySelector<HTMLElement>('[aria-pressed="true"]');
-      if (!on) return;
-      p.style.width = `${on.offsetWidth}px`;
-      p.style.transform = `translateX(${on.offsetLeft}px)`;
-    };
-    place();
-    const ro = new ResizeObserver(place);
-    ro.observe(b);
-    return () => ro.disconnect();
-  }, [value]);
-
-  const opts: [Sort, string, typeof FlameIcon][] = [
-    ['popular', 'الأكثر شهرة', FlameIcon],
-    ['newest', 'الأحدث', TimePastIcon],
-  ];
-  return (
-    <div
-      ref={box}
-      role="group"
-      aria-label="الترتيب"
-      className="relative isolate flex h-11 shrink-0 rounded-full bg-sunken p-1 shadow-[0_0_0_4px_var(--sunken)] dark:shadow-none"
-    >
-      <span
-        ref={pillRef}
-        aria-hidden
-        className="absolute inset-y-1 left-0 -z-10 rounded-full bg-paper shadow-soft transition-[transform,width] duration-300 ease-out-quint"
-      />
-      {opts.map(([v, label, Icon]) => (
-        <button
-          key={v}
-          type="button"
-          aria-pressed={value === v}
-          onClick={() => onChange(v)}
-          className="flex items-center gap-1.5 rounded-full px-4 text-control leading-none whitespace-nowrap text-muted-foreground transition-colors duration-200 aria-pressed:font-medium aria-pressed:text-paper-foreground"
-        >
-          <Icon className="size-4" />
-          {label}
-        </button>
-      ))}
     </div>
   );
 }

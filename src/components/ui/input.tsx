@@ -1,16 +1,58 @@
-import * as React from 'react';
+import type * as React from 'react';
 
 import { cn } from '@/lib/cn';
 
-function Input({ className, type, ...props }: React.ComponentProps<'input'>) {
+/**
+ * الحقل (دليل التصميم 2.2): أرضية بيضاء بحدّ رفيع، والتركيز حدّ أحمر مع حلقة ناعمة.
+ * الخطأ: aria-invalid (يُربط بالرسالة عبر FieldError).
+ */
+const fieldBox = cn(
+  'flex h-11.5 w-full min-w-0 items-center gap-2 rounded-sm border border-border bg-card px-3 text-lead text-foreground',
+  'transition-[border-color,box-shadow] duration-(--dur-base) ease-out-quint',
+  'focus-within:border-primary focus-within:shadow-focus hover:border-strong focus-within:hover:border-primary',
+  'has-[:disabled]:cursor-not-allowed has-[:disabled]:bg-sunken has-[:disabled]:opacity-60',
+  'has-[[aria-invalid=true]]:border-dgr-500 has-[[aria-invalid=true]]:focus-within:shadow-none',
+);
+
+const bareInput =
+  'h-full w-full min-w-0 bg-transparent outline-none placeholder:text-tertiary disabled:cursor-not-allowed [font-variant-numeric:tabular-nums]';
+
+function Input({ className, ...props }: React.ComponentProps<'input'>) {
   return (
-    <input
-      type={type}
-      data-slot="input"
+    <span className={cn(fieldBox, className)}>
+      <input data-slot="input" className={bareInput} {...props} />
+    </span>
+  );
+}
+
+/** حقل بأيقونة/لاحقة: <InputGroup start={<MailIcon/>}><input…/></InputGroup> */
+function InputGroup({
+  start,
+  end,
+  className,
+  ...props
+}: React.ComponentProps<'input'> & { start?: React.ReactNode; end?: React.ReactNode }) {
+  return (
+    <span className={cn(fieldBox, 'group/input', className)}>
+      {start && (
+        <span className="flex shrink-0 text-tertiary transition-colors group-focus-within/input:text-primary [&_svg]:size-4.5">
+          {start}
+        </span>
+      )}
+      <input data-slot="input" className={bareInput} {...props} />
+      {end && <span className="flex shrink-0 text-tertiary">{end}</span>}
+    </span>
+  );
+}
+
+function Textarea({ className, ...props }: React.ComponentProps<'textarea'>) {
+  return (
+    <textarea
+      data-slot="textarea"
       className={cn(
-        'h-9 w-full min-w-0 rounded-md border border-input bg-transparent px-3 py-1 text-base shadow-xs transition-[color,box-shadow] outline-none selection:bg-primary selection:text-primary-foreground file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm dark:bg-input/30',
-        'focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50',
-        'aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40',
+        'min-h-25 w-full resize-y rounded-sm border border-border bg-card p-3 text-control leading-[1.8] text-foreground outline-none placeholder:text-tertiary',
+        'transition-[border-color,box-shadow] duration-(--dur-base) hover:border-strong focus:border-primary focus:shadow-focus',
+        'disabled:cursor-not-allowed disabled:bg-sunken disabled:opacity-60 aria-invalid:border-dgr-500',
         className,
       )}
       {...props}
@@ -18,4 +60,4 @@ function Input({ className, type, ...props }: React.ComponentProps<'input'>) {
   );
 }
 
-export { Input };
+export { Input, InputGroup, Textarea, fieldBox };

@@ -6,13 +6,13 @@ const DAY = 864e5;
 const ago = (d: number) => new Date(Date.now() - d * DAY).toISOString().slice(0, 10);
 
 const P = {
-  AJ: { id: 'aj', initials: 'AJ', nameAr: 'عبدالملك جاسم', nameEn: 'Abdulmlik Jassim', color: '#EC3B3C' },
-  KM: { id: 'harf-type', initials: 'KM', nameAr: 'Harf Type', nameEn: 'Harf Type', color: '#6233F5' },
-  MD: { id: 'md', initials: 'MD', nameAr: 'Mathieu Desjardins', nameEn: 'Mathieu Desjardins', color: '#EC3B3C' },
-  SN: { id: 'sn', initials: 'SN', nameAr: 'سارة نبيل', nameEn: 'Sara Nabil', color: '#008BFE' },
-  HR: { id: 'hr', initials: 'HR', nameAr: 'حسن رضا', nameEn: 'Hassan Reda', color: '#2CAE53' },
-  LY: { id: 'ly', initials: 'LY', nameAr: 'ليلى يوسف', nameEn: 'Layla Yousef', color: '#F5A524' },
-  OM: { id: 'om', initials: 'OM', nameAr: 'عمر مراد', nameEn: 'Omar Murad', color: '#434052' },
+  AJ: { id: 'aj', initials: 'AJ', nameAr: 'عبدالملك جاسم', nameEn: 'Abdulmlik Jassim' },
+  KM: { id: 'harf-type', initials: 'KM', nameAr: 'Harf Type', nameEn: 'Harf Type' },
+  MD: { id: 'md', initials: 'MD', nameAr: 'Mathieu Desjardins', nameEn: 'Mathieu Desjardins' },
+  SN: { id: 'sn', initials: 'SN', nameAr: 'سارة نبيل', nameEn: 'Sara Nabil' },
+  HR: { id: 'hr', initials: 'HR', nameAr: 'حسن رضا', nameEn: 'Hassan Reda' },
+  LY: { id: 'ly', initials: 'LY', nameAr: 'ليلى يوسف', nameEn: 'Layla Yousef' },
+  OM: { id: 'om', initials: 'OM', nameAr: 'عمر مراد', nameEn: 'Omar Murad' },
 } satisfies Record<string, Designer>;
 
 const ZAETOON_DESC = [

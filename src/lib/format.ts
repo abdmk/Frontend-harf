@@ -31,3 +31,13 @@ export function formatBytesAr(bytes: number): string {
   if (bytes >= 1024 * 1024) return `${(bytes / 1024 / 1024).toFixed(1)} م.ب`;
   return `${Math.max(1, Math.round(bytes / 1024))} ك.ب`;
 }
+
+/** سعر بأرقام لاتينية: $49 أو $49.50 — العملة ثابتة الآن (USD) */
+export function formatMoney({ cents, currency }: { cents: number; currency: 'USD' }): string {
+  const whole = cents % 100 === 0;
+  const n = (cents / 100).toLocaleString('en-US', {
+    minimumFractionDigits: whole ? 0 : 2,
+    maximumFractionDigits: 2,
+  });
+  return currency === 'USD' ? `$${n}` : `${n} ${currency}`;
+}

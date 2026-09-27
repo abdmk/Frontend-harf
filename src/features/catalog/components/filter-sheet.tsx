@@ -1,15 +1,14 @@
 'use client';
 
-import {
-  Collapsible as CollapsiblePrimitive,
-  RadioGroup as RadioGroupPrimitive,
-  Slider as SliderPrimitive,
-} from 'radix-ui';
+import { Collapsible as CollapsiblePrimitive } from 'radix-ui';
 import { type ReactElement, type ReactNode, useState } from 'react';
 
-import { CheckIcon, ChevronUpIcon, CrossIcon, FilterIcon } from '@/components/ui/icons';
+import { RangeField } from '@/components/shared/range-field';
+import { Button } from '@/components/ui/button';
+import { Chip, ChipGroup } from '@/components/ui/chip-group';
+import { ChevronUpIcon, CrossIcon, FilterIcon } from '@/components/ui/icons';
+import { RadioGroup, RadioOption } from '@/components/ui/radio-group';
 import { Sheet, SheetClose, SheetContent, SheetDescription, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
-import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import { below } from '@/design-system/tokens';
 import {
   type CatalogQuery,
@@ -86,52 +85,47 @@ export function FilterSheet({ trigger }: { trigger: ReactElement }) {
 
         <div className="flex flex-1 flex-col gap-3 overflow-y-auto overscroll-contain px-4 pb-4">
           <Section title="الرخصة">
-            <RadioGroupPrimitive.Root
+            <RadioGroup
               aria-label="الرخصة"
               value={draft.license}
               onValueChange={(v) => setDraft((d) => ({ ...d, license: v as LicenseFilter }))}
-              className="flex flex-col gap-3"
             >
               {LICENSE_FILTERS.map((v) => (
-                <label key={v} className="flex w-fit cursor-pointer items-center gap-3 text-lead">
-                  <RadioGroupPrimitive.Item
-                    value={v}
-                    className="size-5 rounded-full border-[1.5px] border-strong bg-card transition-[border-width,border-color] duration-200 ease-pop data-[state=checked]:border-[5px] data-[state=checked]:border-primary"
-                  />
-                  {LICENSE_FILTER_LABEL[v]}
-                </label>
+                <RadioOption key={v} value={v} label={LICENSE_FILTER_LABEL[v]} />
               ))}
-            </RadioGroupPrimitive.Root>
+            </RadioGroup>
           </Section>
 
           <Section title="اللغة">
-            <ToggleGroup
+            <ChipGroup
               type="multiple"
               aria-label="اللغة"
               value={draft.lang}
               onValueChange={(v) =>
                 setDraft((d) => ({ ...d, lang: v.filter((x): x is Lang => (LANGS as readonly string[]).includes(x)) }))
               }
-              className="flex w-auto flex-wrap gap-2 shadow-none"
             >
               {LANGS.map((l) => (
-                <ChipItem key={l} value={l} label={LANG_LABEL[l]} />
+                <Chip key={l} value={l}>
+                  {LANG_LABEL[l]}
+                </Chip>
               ))}
-            </ToggleGroup>
+            </ChipGroup>
           </Section>
 
           <Section title="تاريخ النشر">
-            <ToggleGroup
+            <ChipGroup
               type="single"
               aria-label="تاريخ النشر"
               value={draft.date}
               onValueChange={(v) => v && setDraft((d) => ({ ...d, date: v as DateRange }))}
-              className="flex w-auto flex-wrap gap-2 shadow-none"
             >
               {DATE_RANGES.map((v) => (
-                <ChipItem key={v} value={v} label={DATE_LABEL[v]} />
+                <Chip key={v} value={v}>
+                  {DATE_LABEL[v]}
+                </Chip>
               ))}
-            </ToggleGroup>
+            </ChipGroup>
           </Section>
 
           <Section title="نطاق السعر">
@@ -156,23 +150,23 @@ export function FilterSheet({ trigger }: { trigger: ReactElement }) {
         </div>
 
         <div className="grid grid-cols-2 gap-3 px-4 pt-4 pb-5">
-          <button
-            type="button"
+          <Button
+            size="xl"
             onClick={() => {
               setQuery(draft);
               setOpen(false);
             }}
-            className="h-14 rounded-md bg-primary text-lead font-medium text-white transition-[background-color,transform] hover:bg-harf-600 active:scale-[.98]"
           >
             تطبيق
-          </button>
-          <button
-            type="button"
+          </Button>
+          <Button
+            size="xl"
+            variant="secondary"
+            className="border-transparent text-muted-foreground"
             onClick={() => setDraft(pick(DEFAULT_QUERY))}
-            className="h-14 rounded-md bg-sunken text-lead font-medium text-muted-foreground transition-[background-color,transform] hover:bg-inset hover:text-foreground active:scale-[.98]"
           >
             مسح الكل
-          </button>
+          </Button>
         </div>
       </SheetContent>
     </Sheet>
@@ -195,90 +189,5 @@ function Section({ title, children }: { title: string; children: ReactNode }) {
         <div className="rounded-md bg-sheet-inset p-5">{children}</div>
       </CollapsiblePrimitive.Content>
     </CollapsiblePrimitive.Root>
-  );
-}
-
-/** شريحة اختيار: حدّ رفيع، وتمتلئ بالأحمر مع علامة ✓ حين تُختار */
-function ChipItem({ value, label }: { value: string; label: string }) {
-  return (
-    <ToggleGroupItem
-      value={value}
-      className={cn(
-        'group/chip h-8 flex-none gap-0 rounded-full border border-border bg-transparent px-4 text-meta font-normal text-muted-foreground shadow-none transition-[background-color,border-color,color,gap] duration-200',
-        'first:rounded-full last:rounded-full hover:border-strong hover:bg-transparent hover:text-foreground',
-        'data-[state=on]:gap-1.5 data-[state=on]:border-primary data-[state=on]:bg-primary data-[state=on]:text-white',
-      )}
-    >
-      <CheckIcon className="size-3.5 w-0 scale-50 opacity-0 transition-[width,transform,opacity] duration-300 ease-pop group-data-[state=on]/chip:w-3.5 group-data-[state=on]/chip:scale-100 group-data-[state=on]/chip:opacity-100" />
-      {label}
-    </ToggleGroupItem>
-  );
-}
-
-/** مدى بمقبضين على مسار عريض بنقاط لكل خطوة — القيمة null تعني «بلا فلتر» */
-function RangeField({
-  stops,
-  value,
-  onChange,
-  format,
-  labels,
-}: {
-  stops: readonly number[];
-  value: [number, number] | undefined;
-  onChange: (v: [number, number] | undefined) => void;
-  format: (v: number) => string;
-  labels: [string, string];
-}) {
-  const max = stops.length - 1;
-  const idx: [number, number] = value ? [stops.indexOf(value[0]), stops.indexOf(value[1])] : [0, max];
-  return (
-    <div dir="ltr">
-      <SliderPrimitive.Root
-        dir="ltr"
-        min={0}
-        max={max}
-        step={1}
-        minStepsBetweenThumbs={0}
-        value={idx}
-        onValueChange={([a = 0, b = max]) => onChange(a === 0 && b === max ? undefined : [stops[a]!, stops[b]!])}
-        className="relative flex h-5 w-full touch-none items-center select-none"
-      >
-        <SliderPrimitive.Track className="relative h-5 w-full overflow-hidden rounded-full bg-sunken">
-          <SliderPrimitive.Range className="absolute h-full rounded-full bg-primary" />
-          <span
-            aria-hidden
-            className="pointer-events-none absolute inset-0 flex items-center justify-between px-[7.5px]"
-          >
-            {stops.map((_, i) => (
-              <i
-                key={i}
-                className={cn('size-1.25 rounded-full', i >= idx[0] && i <= idx[1] ? 'bg-white/55' : 'bg-strong')}
-              />
-            ))}
-          </span>
-        </SliderPrimitive.Track>
-        {idx.map((v, i) => (
-          <SliderPrimitive.Thumb
-            key={i}
-            aria-label={labels[i]}
-            aria-valuetext={format(stops[v]!)}
-            className="grid size-5 cursor-grab place-items-center rounded-full outline-none active:cursor-grabbing"
-          >
-            <span className="size-2 rounded-full bg-white transition-transform duration-200 ease-pop in-focus-visible:scale-150 in-active:scale-150" />
-          </SliderPrimitive.Thumb>
-        ))}
-      </SliderPrimitive.Root>
-      <div className="mt-4 flex justify-between gap-3">
-        {idx.map((v, i) => (
-          <span
-            key={i}
-            className="inline-flex h-10 min-w-21 items-center justify-center rounded-full border px-5 text-sm text-muted-foreground"
-            dir="rtl"
-          >
-            {format(stops[v]!)}
-          </span>
-        ))}
-      </div>
-    </div>
   );
 }

@@ -38,6 +38,15 @@
   --tint-brand: #ffe4e4;
   --tint-ok: #e4faec;
   --tint-info: #e1f1ff;
+  --tint-warn: #fff6e5;
+  --tint-dgr: #fef0f0;
+  --tint-ai: #f0ebff;
+  /* نصوص الحالات فوق الأرضيات الملوّنة الخفيفة */
+  --ok-text: #1e8540;
+  --info-text: #0055a3;
+  --warn-text: #a66500;
+  --dgr-text: #c81e24;
+  --ai-text: #3c19a8;
   --lic: #1fa84f;
   --info-strong: #0a84ff;
   --heart-bg: rgb(160 156 160 / 0.55);
@@ -49,6 +58,12 @@
   --dur-base: 200ms;
   --dur-slow: 320ms;
   --dur-xslow: 560ms;
+
+  /* التدرّجات (دليل التصميم 1.7) — تُستعمل bg-(image:--grad-ai) */
+  --grad-aurora: linear-gradient(100deg, #ec3b3c 0%, #f56d70 20%, #c563e8 48%, #6233f5 72%, #4c8dff 100%);
+  --grad-ai: linear-gradient(135deg, #ec7bd8 0%, #6233f5 52%, #4c8dff 100%);
+  --grad-dawn: linear-gradient(135deg, #ffe3e3 0%, #fff2ee 44%, #eae2ff 100%);
+  --grad-ink: linear-gradient(160deg, #292734 0%, #1a1822 100%);
   --sheet: #ffffff; /* أرضية الأوراق الجانبية (التصفية…) */
   --sheet-inset: #ffffff; /* البطاقات داخل الورقة */
   --callout: #f6f6f8; /* أرضية أقسام الدعوة (CTA) */
@@ -89,6 +104,14 @@
   --tint-brand: #3a1b1d;
   --tint-ok: #0e3a21;
   --tint-info: rgb(0 139 254 / 0.18);
+  --tint-warn: rgb(240 160 32 / 0.16);
+  --tint-dgr: rgb(229 49 54 / 0.18);
+  --tint-ai: rgb(98 51 245 / 0.22);
+  --ok-text: #3dce68;
+  --info-text: #6cb8ff;
+  --warn-text: #f5b44a;
+  --dgr-text: #ff6b6f;
+  --ai-text: #a68bff;
   --lic: #3dce68;
   --info-strong: #6cb8ff;
   --heart-bg: rgb(255 255 255 / 0.12);
@@ -98,6 +121,15 @@
   --sheet-inset: #0d0c0c;
   --callout: #2b2a2a;
   --visa: #8fa3ff;
+  --grad-aurora: linear-gradient(100deg, #9e2427 0%, #b8353a 20%, #8a3c9e 48%, #553bb8 72%, #2b579c 100%);
+  --grad-ai: linear-gradient(135deg, #82468f 0%, #553bb8 52%, #2b579c 100%);
+  --grad-dawn: linear-gradient(
+    135deg,
+    rgb(236 59 60 / 0.17) 0%,
+    rgb(255 140 110 / 0.07) 44%,
+    rgb(98 51 245 / 0.2) 100%
+  );
+  --grad-ink: linear-gradient(160deg, #211f2a 0%, #141319 100%);
   --shadow-soft: 0 2px 4px rgb(0 0 0 / 0.45), 0 6px 14px rgb(0 0 0 / 0.4);
   --shadow-float: 0 4px 8px rgb(0 0 0 / 0.5), 0 14px 32px rgb(0 0 0 / 0.5);
   --shadow-overlay: 0 8px 16px rgb(0 0 0 / 0.55), 0 28px 64px rgb(0 0 0 / 0.6);
@@ -138,6 +170,14 @@
   --color-tint-brand: var(--tint-brand);
   --color-tint-ok: var(--tint-ok);
   --color-tint-info: var(--tint-info);
+  --color-tint-warn: var(--tint-warn);
+  --color-tint-dgr: var(--tint-dgr);
+  --color-tint-ai: var(--tint-ai);
+  --color-ok-text: var(--ok-text);
+  --color-info-text: var(--info-text);
+  --color-warn-text: var(--warn-text);
+  --color-dgr-text: var(--dgr-text);
+  --color-ai-text: var(--ai-text);
   --color-lic: var(--lic);
   --color-info-strong: var(--info-strong);
   --color-heart: var(--heart-bg);
@@ -159,6 +199,19 @@
   --color-harf-700: #ae1d20;
   --color-harf-800: #8c1a1c;
   --color-harf-900: #711819;
+  --color-n-0: #ffffff;
+  --color-n-25: #fcfcfd;
+  --color-n-50: #f6f6f8;
+  --color-n-100: #efeef2;
+  --color-n-200: #e1e0e7;
+  --color-n-300: #c9c7d2;
+  --color-n-400: #9f9cac;
+  --color-n-500: #79758a;
+  --color-n-600: #5a5769;
+  --color-n-700: #434052;
+  --color-n-800: #292734;
+  --color-n-900: #1a1822;
+  --color-n-950: #0d0c12;
   --color-ok-50: #eafbf0;
   --color-ok-100: #cbf4da;
   --color-ok-500: #3dce68;

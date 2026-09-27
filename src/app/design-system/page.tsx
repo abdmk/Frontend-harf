@@ -1,0 +1,294 @@
+import Link from 'next/link';
+
+import { FileIcon } from '@/components/shared/file-icon';
+import { FontCard } from '@/components/shared/font-card';
+import { FontGridSkeleton, LoadingState } from '@/components/shared/loading-state';
+import { PriceDisplay } from '@/components/shared/price-display';
+import { StatCard } from '@/components/shared/stat-card';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { ChartHistogramIcon, CheckIcon, ClockIcon, CrossIcon, DownloadIcon } from '@/components/ui/icons';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { AccountPanel } from '@/features/account/components/account-panel';
+import { FavoriteButton } from '@/features/favorites/components/favorite-button';
+import { WeightWaterfall } from '@/features/font-details/components/weight-waterfall';
+import { FontTester } from '@/features/font-tester/components/font-tester';
+import { NotificationsMenu } from '@/features/notifications/components/notifications-menu';
+import { UploadDialog } from '@/features/publishing/components/upload-dialog';
+import { CATEGORY_LABEL } from '@/lib/labels';
+import { MOCK_FONTS } from '@/mocks/fonts';
+import { MOCK_NOTIFICATIONS } from '@/mocks/notifications';
+import { MOCK_USERS } from '@/mocks/users';
+import { usd } from '@/types/domain/commerce';
+import { CATEGORIES } from '@/types/domain/font';
+
+import { ComponentsDemo } from './_components/components-demo';
+import { DsPanel, DsSection } from './_components/ds-section';
+import { Foundations } from './_components/foundations';
+import { DS_GROUPS } from './_components/nav-items';
+import { DataPatternsDemo, NavigationDemo } from './_components/patterns-demo';
+
+const STATUS_BADGE = {
+  published: ['success', CheckIcon, 'منشور'],
+  review: ['info', ClockIcon, 'قيد المراجعة'],
+  rejected: ['danger', CrossIcon, 'مرفوض'],
+} as const;
+
+/** دليل التصميم الحيّ — يعرض الرموز والمكوّنات الحقيقية المستعملة في الموقع، لا نسخاً منها */
+export default function DesignSystemPage() {
+  const cards = [
+    MOCK_FONTS.find((f) => f.type === 'free'),
+    MOCK_FONTS.find((f) => f.type === 'trial'),
+    MOCK_FONTS.find((f) => f.type === 'paid'),
+  ].filter((f) => f !== undefined);
+  // أرقام عرض فقط
+  const rows = MOCK_FONTS.slice(0, 4).map((f, i) => ({
+    font: f,
+    status: (['published', 'published', 'review', 'rejected'] as const)[i]!,
+    downloads: [38461, 12904, null, null][i] ?? null,
+  }));
+
+  return (
+    <div className="mx-auto grid max-w-360 grid-cols-[minmax(0,1fr)] gap-10 px-4 py-10 sm:px-8 lg:grid-cols-[220px_minmax(0,1fr)] lg:px-12">
+      <aside className="max-lg:hidden">
+        <nav
+          aria-label="فهرس الدليل"
+          className="sticky top-24 flex max-h-[calc(100dvh-7rem)] flex-col gap-5 overflow-y-auto pb-8"
+        >
+          {DS_GROUPS.map((g) => (
+            <div key={g.title}>
+              <p className="mb-2 text-caption font-medium text-tertiary">{g.title}</p>
+              <ul className="flex flex-col">
+                {g.items.map(([id, num, label]) => (
+                  <li key={id}>
+                    <a
+                      href={`#${id}`}
+                      className="flex h-8 items-center gap-2 rounded-xs px-2 text-control text-muted-foreground transition-colors hover:bg-sunken hover:text-foreground"
+                    >
+                      <span dir="ltr" className="w-7 font-mono text-micro text-tertiary">
+                        {num}
+                      </span>
+                      {label}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </nav>
+      </aside>
+
+      <main id="main" className="min-w-0">
+        <header className="mb-12">
+          <h1 className="text-display font-semibold">دليل تصميم حرف</h1>
+          <p className="mt-2 max-w-[60ch] text-control text-muted-foreground">
+            كل ما هنا هو المكوّن الحقيقي المستعمل في الموقع بحالاته. المصدر الوحيد للقيم:{' '}
+            <code dir="ltr" className="rounded-xs bg-sunken px-1.5 font-mono text-caption">
+              src/design-system/tokens.css
+            </code>
+            .
+          </p>
+        </header>
+
+        <Foundations />
+        <ComponentsDemo />
+
+        <DsSection
+          id="upload-field"
+          num="2.9"
+          title="الرفع"
+          en="Upload"
+          note="منطقة الإفلات تعمل بالنقر ولوحة المفاتيح. التحقّق من النوع والحجم هنا للتجربة فقط، ويتكرّر على الخادم."
+        >
+          <DsPanel>
+            <UploadDialog>
+              <Button>افتح نافذة «تحميل الملفات»</Button>
+            </UploadDialog>
+          </DsPanel>
+        </DsSection>
+
+        <DsSection
+          id="nav"
+          num="3.1"
+          title="ترويسة الموقع"
+          en="Website Header"
+          note="الترويسة أعلى هذه الصفحة هي المكوّن نفسه: مؤشّر أحمر ينزلق تحت القسم الحالي، وتنتقل الأقسام إلى سطر ثانٍ قابل للتمرير تحت 1024px."
+        />
+
+        <DsSection
+          id="notif"
+          num="3.2"
+          title="الإشعارات"
+          en="Notifications"
+          note="المكوّن الذي يفتحه الجرس: عدّاد، «تعليم الكل مقروءاً»، وتمييز غير المقروء."
+        >
+          <DsPanel className="flex justify-center">
+            <NotificationsMenu initial={MOCK_NOTIFICATIONS} />
+          </DsPanel>
+        </DsSection>
+
+        <NavigationDemo />
+
+        <DsSection
+          id="account-menu"
+          num="3.7"
+          title="قائمة الحساب"
+          en="Account Menu"
+          note="مكوّن واحد في مكانين: قائمة الصورة في الترويسة والعمود الجانبي لصفحة الحساب. المجاني يرى دعوة التحويل، والاستوديو يرى «لوحة المسبك»."
+        >
+          <div className="grid grid-cols-[minmax(0,1fr)] gap-4 lg:grid-cols-2">
+            <DsPanel label="حساب مجاني">
+              <AccountPanel user={MOCK_USERS.free} variant="menu" />
+            </DsPanel>
+            <DsPanel label="حساب استوديو">
+              <AccountPanel user={MOCK_USERS.studio} variant="menu" />
+            </DsPanel>
+          </div>
+        </DsSection>
+
+        <DsSection
+          id="cards"
+          num="4.1"
+          title="البطاقات"
+          en="Cards"
+          note="بطاقة الخط في 5.1. بطاقات الأرقام للوحات الإحصاء والأرباح."
+        >
+          <div className="grid gap-4 sm:grid-cols-3">
+            <StatCard label="التحميلات" value="38,461" delta={12.4} icon={<DownloadIcon />} hint="آخر 30 يوماً" />
+            <StatCard label="المشاهدات" value="3,689" delta={-3.1} icon={<ChartHistogramIcon />} hint="آخر 30 يوماً" />
+            <StatCard label="الخطوط المنشورة" value="9" />
+          </div>
+        </DsSection>
+
+        <DsSection
+          id="table"
+          num="4.2"
+          title="الجداول"
+          en="Tables"
+          note="على الشاشات الضيّقة يُمرَّر الجدول أفقياً داخل حاويته فقط."
+        >
+          <DsPanel className="p-2 sm:p-4">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>الخط</TableHead>
+                  <TableHead>المصمم</TableHead>
+                  <TableHead>الحالة</TableHead>
+                  <TableHead>التحميلات</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {rows.map(({ font, status, downloads }) => {
+                  const [tone, Icon, label] = STATUS_BADGE[status];
+                  return (
+                    <TableRow key={font.id}>
+                      <TableCell>
+                        <span className="font-medium">{font.name}</span>
+                      </TableCell>
+                      <TableCell className="text-muted-foreground">{font.designerLabel}</TableCell>
+                      <TableCell>
+                        <Badge tone={tone} icon={<Icon />}>
+                          {label}
+                        </Badge>
+                      </TableCell>
+                      <TableCell dir="ltr" className="text-end font-medium">
+                        {downloads?.toLocaleString('en-US') ?? '—'}
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
+              </TableBody>
+            </Table>
+          </DsPanel>
+        </DsSection>
+
+        <DataPatternsDemo />
+
+        <DsSection
+          id="loading"
+          num="4.6"
+          title="التحميل"
+          en="Loading"
+          note="هياكل بأبعاد المحتوى الحقيقي كي لا تقفز الصفحة، وإعلان لقارئ الشاشة."
+        >
+          <DsPanel>
+            <LoadingState lines={3} className="mb-8 max-w-md" />
+            <FontGridSkeleton count={3} />
+          </DsPanel>
+        </DsSection>
+
+        <DsSection
+          id="font-card"
+          num="5.1"
+          title="بطاقة الخط"
+          en="Font Card"
+          note="ثلاث حالات حسب نوع الخط: مجاني، تجريبي، مدفوع. المفضّلة والتحميل حيّان."
+        >
+          <ul className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            {cards.map((f) => (
+              <li key={f.id} className="flex [&>*]:w-full">
+                <FontCard font={f} favorite={<FavoriteButton fontId={f.id} fontName={f.name} />} />
+              </li>
+            ))}
+          </ul>
+        </DsSection>
+
+        <DsSection id="font-tester" num="5.2" title="مختبر الخط" en="Font Tester" note="من تصميم صفحة الخط.">
+          <FontTester />
+        </DsSection>
+
+        <DsSection id="weights" num="5.3" title="الأوزان" en="Weights">
+          <WeightWaterfall />
+        </DsSection>
+
+        <DsSection id="taxo" num="5.4" title="التصنيفات" en="Categories" status="reference">
+          <DsPanel className="flex flex-wrap gap-2">
+            {CATEGORIES.map((c) => (
+              <Link
+                key={c}
+                href={`/?cat=${c}`}
+                className="inline-flex h-10 items-center rounded-full border bg-card px-5 text-control text-muted-foreground transition-colors hover:border-strong hover:text-foreground"
+              >
+                {CATEGORY_LABEL[c]}
+              </Link>
+            ))}
+          </DsPanel>
+        </DsSection>
+
+        <DsSection
+          id="price"
+          num="5.5"
+          title="السعر"
+          en="Price Display"
+          note="الأسعار المعروضة هنا أمثلة تجريبية، ولا تمثّل قراراً تجارياً. السعر النهائي يُحسب على الخادم."
+        >
+          <DsPanel className="flex flex-wrap items-end gap-10">
+            <PriceDisplay price={usd(0)} />
+            <PriceDisplay price={usd(49)} size="lg" />
+            <PriceDisplay price={usd(39)} compareAt={usd(49)} />
+            <PriceDisplay price={usd(9.5)} suffix="/ شهرياً" size="sm" />
+          </DsPanel>
+        </DsSection>
+
+        <DsSection
+          id="files"
+          num="5.8"
+          title="أيقونات الملفات"
+          en="File Icons"
+          note="من تصميم نافذة الرفع. أي امتداد غير معروف يظهر بأيقونة عامة."
+        >
+          <DsPanel className="flex flex-wrap gap-8">
+            {(['pdf', 'otf', 'ttf', 'zip', 'file'] as const).map((k) => (
+              <span key={k} className="flex flex-col items-center gap-2">
+                <FileIcon kind={k} className="size-12" />
+                <span dir="ltr" className="font-mono text-caption text-tertiary">
+                  {k}
+                </span>
+              </span>
+            ))}
+          </DsPanel>
+        </DsSection>
+      </main>
+    </div>
+  );
+}

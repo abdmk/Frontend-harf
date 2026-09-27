@@ -16,7 +16,7 @@ const RULES: { re: RegExp; message: (m: RegExpExecArray) => string | null }[] = 
     message: (m) => `لون ثابت ${m[0]} — استعمل رمزاً من tokens.css`,
   },
   {
-    re: /\b(?:rgba?|hsla?|oklch)\(/g,
+    re: /(?<![a-zA-Z-])(?:rgba?|hsla?|oklch)\(/g,
     message: () => 'لون بدالة ثابتة — استعمل رمزاً من tokens.css',
   },
   {

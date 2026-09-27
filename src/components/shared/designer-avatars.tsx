@@ -1,6 +1,8 @@
 import { cn } from '@/lib/cn';
 import type { Designer } from '@/types/domain/font';
 
+import { Avatar } from './avatar';
+
 /** صور المصمّمين متراكبة، ومؤشّر «N+» حين يزيدون عن الحدّ */
 export function DesignerAvatars({
   designers,
@@ -16,17 +18,13 @@ export function DesignerAvatars({
   return (
     <span aria-hidden className={cn('flex shrink-0', className)}>
       {shown.map((d, i) => (
-        <i
+        <Avatar
           key={d.id}
-          dir="ltr"
-          className={cn(
-            'grid size-5 place-items-center rounded-full text-3xs font-semibold text-white not-italic ring-2 ring-card',
-            i > 0 && '-ms-1.5',
-          )}
-          style={{ background: d.color }}
-        >
-          {d.initials}
-        </i>
+          initials={d.initials}
+          seed={d.id}
+          size="xs"
+          className={cn('ring-2 ring-card', i > 0 && '-ms-1.5')}
+        />
       ))}
       {more > 0 && (
         <i

@@ -3,6 +3,7 @@
 import { type ReactNode, useId, useRef, useState } from 'react';
 
 import { FileIcon } from '@/components/shared/file-icon';
+import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogClose,
@@ -109,13 +110,9 @@ function Dropzone({ onFiles }: { onFiles: (f: FileList) => void }) {
       />
       <p className="text-base font-semibold">اختر ملفاً أو اسحبه وأفلته هنا.</p>
       <p className="text-sm text-muted-foreground">تنسيقات OTF وTTF وPDF وZIP، بحجم يصل إلى 250 ميجابايت.</p>
-      <button
-        type="button"
-        onClick={() => input.current?.click()}
-        className="mt-5 h-11 rounded-sm border px-6 text-sm text-muted-foreground transition-colors hover:border-strong hover:text-foreground"
-      >
+      <Button variant="outline" size="md" className="mt-5 text-muted-foreground" onClick={() => input.current?.click()}>
         استعراض الملفات
-      </button>
+      </Button>
       <input
         ref={input}
         type="file"
@@ -253,7 +250,7 @@ function UrlImport({ onSubmit }: { onSubmit: (url: string) => string | null }) {
       </div>
       <div
         className={cn(
-          'flex h-14 items-center gap-3 rounded-md border px-5 transition-[border-color,box-shadow] focus-within:border-primary focus-within:shadow-[0_0_0_3px_rgb(236_59_60/.16)]',
+          'flex h-14 items-center gap-3 rounded-md border px-5 transition-[border-color,box-shadow] focus-within:border-primary focus-within:shadow-focus',
           error && 'border-primary',
         )}
       >
