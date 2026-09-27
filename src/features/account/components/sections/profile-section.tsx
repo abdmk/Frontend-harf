@@ -49,14 +49,19 @@ export function ProfileSection({
       <SectionCard bodyClassName="p-0">
         <div className="flex flex-wrap items-center gap-5 p-6">
           <UserAvatar user={user} className="size-18 text-xl" />
-          <div className="min-w-0 flex-1">
-            <div className="flex flex-wrap items-center gap-3">
+          <div className="min-w-40 flex-1">
+            <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5">
               <p className="text-xl font-semibold">{user.name}</p>
               <PlanBadge plan={user.plan} />
             </div>
             {user.profession && <p className="mt-1 text-meta text-muted-foreground">{user.profession}</p>}
           </div>
-          <p dir="ltr" className="text-control text-muted-foreground">
+          {/* على الجوال ينزل البريد سطراً كاملاً تحت الاسم بدل أن يضغطه */}
+          <p
+            dir="ltr"
+            title={user.email}
+            className="w-full truncate text-right text-control text-muted-foreground sm:w-auto"
+          >
             {user.email}
           </p>
         </div>
