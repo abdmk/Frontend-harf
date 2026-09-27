@@ -46,3 +46,14 @@ export type Order = {
   last4?: string;
   createdAt: string;
 };
+
+/** ترخيص اشتراه المستخدم (من الطلبات المكتملة) */
+export type Purchase = {
+  licenseId: string;
+  orderId: string;
+  fontId: string;
+  fontName: string;
+  summary: string;
+  date: string;
+  amount: Money;
+};

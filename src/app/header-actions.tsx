@@ -1,3 +1,7 @@
+import Link from 'next/link';
+
+import { Button } from '@/components/ui/button';
+import { paths } from '@/config/paths';
 import { AccountMenu } from '@/features/account/components/account-menu';
 import { removeFromCart } from '@/features/cart/api/actions';
 import { CartMenu } from '@/features/cart/components/cart-menu';
@@ -12,8 +16,16 @@ export async function HeaderActions() {
   return (
     <>
       <CartMenu cart={cart} onRemove={removeFromCart} />
-      <NotificationsMenu initial={MOCK_NOTIFICATIONS} />
-      <AccountMenu user={user} />
+      {user ? (
+        <>
+          <NotificationsMenu initial={MOCK_NOTIFICATIONS} />
+          <AccountMenu user={user} />
+        </>
+      ) : (
+        <Button asChild size="sm" shape="pill" className="ms-1">
+          <Link href={paths.login.getHref()}>تسجيل الدخول</Link>
+        </Button>
+      )}
     </>
   );
 }

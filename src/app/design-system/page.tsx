@@ -10,6 +10,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { ChartHistogramIcon, CheckIcon, ClockIcon, CrossIcon, DownloadIcon } from '@/components/ui/icons';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { paths } from '@/config/paths';
 import { AccountPanel } from '@/features/account/components/account-panel';
 import { CartLine } from '@/features/cart/components/cart-line';
 import { PaymentResult } from '@/features/checkout/components/checkout-form';
@@ -18,6 +19,8 @@ import { FontTester } from '@/features/font-tester/components/font-tester';
 import { PurchaseActions } from '@/features/licensing/components/purchase-actions';
 import { NotificationsMenu } from '@/features/notifications/components/notifications-menu';
 import { UploadDialog } from '@/features/publishing/components/upload-dialog';
+import { getPlans } from '@/features/subscriptions/api/get-subscription';
+import { PlansDialog } from '@/features/subscriptions/components/plans-dialog';
 import { getPricing } from '@/lib/commerce/server';
 import { CATEGORY_LABEL } from '@/lib/labels';
 import { MOCK_FONTS } from '@/mocks/fonts';
@@ -27,7 +30,7 @@ import { type Cart, cents, usd } from '@/types/domain/commerce';
 import { CATEGORIES } from '@/types/domain/font';
 
 import { ComponentsDemo } from './_components/components-demo';
-import { demoSubmit } from './_components/demo-actions';
+import { demoPlan, demoSubmit } from './_components/demo-actions';
 import { DsPanel, DsSection } from './_components/ds-section';
 import { Foundations } from './_components/foundations';
 import { DS_GROUPS } from './_components/nav-items';
@@ -41,7 +44,11 @@ const STATUS_BADGE = {
 
 /** دليل التصميم الحيّ — يعرض الرموز والمكوّنات الحقيقية المستعملة في الموقع، لا نسخاً منها */
 export default async function DesignSystemPage() {
-  const [naskhPricing, trialPricing] = await Promise.all([getPricing('naskh'), getPricing('roobert')]);
+  const [naskhPricing, trialPricing, plans] = await Promise.all([
+    getPricing('naskh'),
+    getPricing('roobert'),
+    getPlans(),
+  ]);
   const demoCart: Cart = {
     items: [
       {
@@ -359,6 +366,51 @@ export default async function DesignSystemPage() {
             <PaymentResult kind="paid" total={cents(12500)} />
             <PaymentResult kind="declined" total={cents(12500)} message="رفض المصرف العملية، ولم يُخصم أي مبلغ." />
           </div>
+        </DsSection>
+
+        <DsSection
+          id="auth"
+          num="6.1"
+          title="الدخول وإنشاء الحساب"
+          en="Authentication"
+          note="التحقّق على الخادم، حدّ للمحاولات، رسائل لا تكشف إن كان البريد مسجّلاً، ولا توجيه بعد الدخول إلا إلى مسار داخلي."
+        >
+          <DsPanel className="flex flex-wrap gap-3">
+            <Button asChild variant="outline">
+              <Link href={paths.login.getHref()}>صفحة الدخول</Link>
+            </Button>
+            <Button asChild variant="outline">
+              <Link href={paths.register.getHref()}>صفحة حساب جديد</Link>
+            </Button>
+          </DsPanel>
+        </DsSection>
+
+        <DsSection
+          id="account"
+          num="6.2"
+          title="حساب المستخدم"
+          en="User Account"
+          note="على الجوال: ‎/account فهرس بالقائمة، وكل قسم صفحة بزرّ رجوع."
+        >
+          <DsPanel className="flex flex-wrap gap-3">
+            {(['profile', 'purchases', 'usage', 'preferences', 'security'] as const).map((s) => (
+              <Button key={s} asChild variant="outline" size="sm">
+                <Link href={paths.account.getHref(s)}>{s}</Link>
+              </Button>
+            ))}
+          </DsPanel>
+        </DsSection>
+
+        <DsSection
+          id="subs"
+          num="6.3"
+          title="الاشتراك"
+          en="Subscriptions"
+          note="الأسعار والمزايا منقولة من تصميم «اختر خطتك» كبيانات تجريبية، ولا تمثّل قراراً تجارياً."
+        >
+          <DsPanel>
+            <PlansDialog plans={plans} current="free" onChange={demoPlan} trigger={<Button>افتح نافذة الخطط</Button>} />
+          </DsPanel>
         </DsSection>
 
         <DsSection

@@ -6,13 +6,13 @@ import { OrderSummary } from '@/components/shared/order-summary';
 import { paths } from '@/config/paths';
 import { pay } from '@/features/checkout/api/pay';
 import { CheckoutForm } from '@/features/checkout/components/checkout-form';
-import { getCurrentUser } from '@/lib/auth';
+import { requireUser } from '@/lib/auth';
 import { buildCart } from '@/lib/commerce/server';
 
 export const metadata: Metadata = { title: 'الدفع', robots: { index: false } };
 
 export default async function CheckoutPage() {
-  const [user, cart] = await Promise.all([getCurrentUser(), buildCart()]);
+  const [user, cart] = await Promise.all([requireUser(paths.checkout.getHref()), buildCart()]);
 
   return (
     <Container as="main" id="main" className="py-10 sm:py-14">

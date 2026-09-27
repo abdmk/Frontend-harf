@@ -9,7 +9,7 @@ import { paths } from '@/config/paths';
 import { ACCOUNT_SECTIONS, type AccountSection, type User } from '@/features/account/types';
 
 import { AccountPanel } from './account-panel';
-import { PlanBadge } from './plan-badge';
+import { PLAN_BADGE_LABEL, PlanBadge } from './plan-badge';
 import { UserAvatar } from './user-avatar';
 
 /** شارة الخطة + صورة المستخدم في الترويسة؛ الصورة تفتح قائمة الحساب نفسها */
@@ -24,7 +24,7 @@ export function AccountMenu({ user }: { user: User }) {
       <Link
         href={paths.account.getHref('subscription')}
         className="mx-1 hidden transition-transform active:scale-95 sm:inline-flex"
-        aria-label={`خطّتك: ${user.plan === 'studio' ? 'الاستوديو' : 'مجانية'}`}
+        aria-label={`خطّتك: ${PLAN_BADGE_LABEL[user.plan]}`}
       >
         <PlanBadge plan={user.plan} />
       </Link>

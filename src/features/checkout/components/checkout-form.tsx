@@ -181,7 +181,7 @@ export function CheckoutForm({ user, total, empty, action }: Props) {
               id="holder"
               name="holder"
               start={<UserIcon />}
-              defaultValue={user.name}
+              defaultValue={(state.status === 'invalid' && state.holder) || user.name}
               maxLength={80}
               autoComplete="name"
               aria-invalid={!!errors.holder}

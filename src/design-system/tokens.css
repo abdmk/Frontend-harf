@@ -255,6 +255,10 @@
   --color-stripe: #635bff;
   --color-mastercard-red: #eb001b;
   --color-mastercard-orange: #f79e1b;
+  --color-google-blue: #4285f4;
+  --color-google-green: #34a853;
+  --color-google-yellow: #fbbc05;
+  --color-google-red: #ea4335;
 
   /* ── الطباعة ── سلّم الأحجام المستعمل في الصفحات (بالبكسل كما في التصاميم) */
   --text-3xs: 8px; /* أحرف الصور الرمزية الصغيرة */

@@ -12,7 +12,7 @@ export const paths = {
   },
   register: { getHref: () => '/register' },
   account: {
-    getHref: (section: string = 'profile') => `/account/${encodeURIComponent(section)}`,
+    getHref: (section: string = 'profile') => (section ? `/account/${encodeURIComponent(section)}` : '/account'),
   },
   studio: {
     getHref: (section?: string) => (section ? `/studio/${encodeURIComponent(section)}` : '/studio'),

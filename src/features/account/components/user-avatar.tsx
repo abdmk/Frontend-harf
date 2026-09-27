@@ -1,8 +1,16 @@
+import Image from 'next/image';
+
 import type { User } from '@/features/account/types';
 import { cn } from '@/lib/cn';
 
-/** صورة المستخدم: الحرفان الأوّلان داخل حلقة ذهبية (تُستبدل بالصورة حين تتوفّر) */
-export function UserAvatar({ user, className }: { user: Pick<User, 'initials' | 'name'>; className?: string }) {
+/** صورة المستخدم داخل حلقة ذهبية: الصورة الشخصية إن وُجدت، وإلا الحرفان الأوّلان */
+export function UserAvatar({
+  user,
+  className,
+}: {
+  user: Pick<User, 'initials' | 'name' | 'avatarUrl'>;
+  className?: string;
+}) {
   return (
     <span
       aria-hidden
@@ -11,12 +19,22 @@ export function UserAvatar({ user, className }: { user: Pick<User, 'initials' | 
         className,
       )}
     >
-      <span
-        className="grid size-full place-items-center rounded-full bg-harf-500 text-[0.72em] font-medium text-white"
-        dir="ltr"
-      >
-        {user.initials}
-      </span>
+      {user.avatarUrl ? (
+        <Image
+          src={user.avatarUrl}
+          alt=""
+          width={96}
+          height={96}
+          className="size-full rounded-full bg-tint-info object-cover"
+        />
+      ) : (
+        <span
+          className="grid size-full place-items-center rounded-full bg-harf-500 text-[0.72em] font-medium text-white"
+          dir="ltr"
+        >
+          {user.initials}
+        </span>
+      )}
     </span>
   );
 }

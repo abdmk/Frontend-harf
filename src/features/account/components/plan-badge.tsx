@@ -4,11 +4,12 @@ import { cn } from '@/lib/cn';
 
 const STYLE: Record<Plan, string> = {
   free: 'bg-tint-ok text-lic',
+  basic: 'bg-tint-warn text-warn-text',
   studio: 'bg-tint-info text-info-strong',
 };
-const LABEL: Record<Plan, string> = { free: 'مجانية', studio: 'الاستوديو' };
+export const PLAN_BADGE_LABEL: Record<Plan, string> = { free: 'مجانية', basic: 'أساسي', studio: 'الاستوديو' };
 
-/** شارة الخطة: خضراء للمجانية، زرقاء للاستوديو — كما في التصميم */
+/** شارة الخطة: خضراء للمجانية، برتقالية للأساسية، زرقاء للاستوديو — كما في التصميم */
 export function PlanBadge({ plan, className }: { plan: Plan; className?: string }) {
   return (
     <span
@@ -19,7 +20,7 @@ export function PlanBadge({ plan, className }: { plan: Plan; className?: string 
       )}
     >
       <CrownIcon className="size-3.5" />
-      {LABEL[plan]}
+      {PLAN_BADGE_LABEL[plan]}
     </span>
   );
 }

@@ -1,14 +1,13 @@
 import type { Metadata } from 'next';
 import { notFound, redirect } from 'next/navigation';
 
-import { Button } from '@/components/ui/button';
-import { CloudUploadIcon } from '@/components/ui/icons';
 import { paths } from '@/config/paths';
-import { AccountShell, SectionPlaceholder } from '@/features/account/components/account-shell';
+import { AccountShell } from '@/features/account/components/account-shell';
 import { SECTION_TITLE } from '@/features/account/config/nav';
 import { ACCOUNT_SECTIONS, type AccountSection } from '@/features/account/types';
-import { UploadDialog } from '@/features/publishing/components/upload-dialog';
-import { getCurrentUser } from '@/lib/auth';
+import { requireUser } from '@/lib/auth';
+
+import { SectionContent } from '../_components/section-content';
 
 const isSection = (s: string): s is AccountSection => (ACCOUNT_SECTIONS as readonly string[]).includes(s);
 
@@ -20,22 +19,13 @@ export async function generateMetadata({ params }: PageProps<'/account/[section]
 export default async function AccountSectionPage({ params }: PageProps<'/account/[section]'>) {
   const { section } = await params;
   if (!isSection(section)) notFound();
-  const user = await getCurrentUser();
+  const user = await requireUser(paths.account.getHref(section));
   // لوحة المسبك لحساب الاستوديو وحده — التحقّق على الخادم لا بإخفاء الرابط فقط
   if (section === 'foundry' && user.plan !== 'studio') redirect(paths.account.getHref('subscription'));
 
   return (
     <AccountShell user={user} section={section}>
-      {section === 'foundry' ? (
-        <UploadDialog>
-          <Button size="lg">
-            <CloudUploadIcon />
-            تحميل الملفات
-          </Button>
-        </UploadDialog>
-      ) : (
-        <SectionPlaceholder />
-      )}
+      <SectionContent user={user} section={section} />
     </AccountShell>
   );
 }

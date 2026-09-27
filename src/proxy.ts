@@ -6,7 +6,7 @@ const DEMO_ACCOUNT_COOKIE = 'harf_demo_as';
  * يعمل قبل كل صفحة:
  * 1) سياسة أمان محتوى (CSP) صارمة بـ nonce جديد لكل طلب.
  * 2) رؤوس أمان إضافية.
- * 3) (عرض فقط) ‎?as=free|studio يبدّل الحساب التجريبي عبر كوكي.
+ * 3) (عرض فقط) ‎?as=free|basic|studio يبدّل الحساب التجريبي عبر كوكي.
  */
 export function proxy(request: NextRequest) {
   const nonce = Buffer.from(crypto.randomUUID()).toString('base64');
@@ -29,7 +29,7 @@ export function proxy(request: NextRequest) {
 
   // التبديل التجريبي يجب أن يراه هذا الطلب نفسه، لا الطلب التالي فقط
   const as = request.nextUrl.searchParams.get('as');
-  const demoAs = as === 'free' || as === 'studio' ? as : null;
+  const demoAs = as === 'free' || as === 'basic' || as === 'studio' ? as : null;
   if (demoAs) request.cookies.set(DEMO_ACCOUNT_COOKIE, demoAs);
 
   const requestHeaders = new Headers(request.headers);

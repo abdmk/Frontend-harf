@@ -17,7 +17,7 @@ import type { Order } from '@/types/domain/commerce';
  */
 export type PayState =
   | { status: 'idle' }
-  | { status: 'invalid'; errors: Partial<Record<'holder' | 'country' | 'cart', string>> }
+  | { status: 'invalid'; errors: Partial<Record<'holder' | 'country' | 'cart', string>>; holder?: string }
   | { status: 'declined'; message: string }
   | { status: 'paid'; order: Order };
 
@@ -37,10 +37,14 @@ export async function pay(_prev: PayState, form: FormData): Promise<PayState> {
   });
   if (!parsed.success) {
     const f = parsed.error.flatten().fieldErrors;
-    return { status: 'invalid', errors: { holder: f.holder?.[0], country: f.country?.[0] } };
+    return {
+      status: 'invalid',
+      errors: { holder: f.holder?.[0], country: f.country?.[0] },
+      holder: String(form.get('holder') ?? '').slice(0, 80),
+    };
   }
 
-  await getCurrentUser(); // يُستبدل بالتحقّق من الجلسة الحقيقية
+  if (!(await getCurrentUser())) return { status: 'invalid', errors: { cart: 'سجّل الدخول لإتمام الدفع.' } };
   const cart = await buildCart();
   if (!cart.items.length) return { status: 'invalid', errors: { cart: 'السلة فارغة.' } };
 

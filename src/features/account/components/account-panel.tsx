@@ -79,7 +79,7 @@ export function AccountPanel({ user, active = null, variant = 'sidebar', onNavig
       </nav>
 
       <div className={cn('flex flex-col gap-5', variant === 'sidebar' && 'mt-auto pt-8')}>
-        {user.plan === 'free' && (
+        {user.plan !== 'studio' && (
           <div className="flex items-center gap-4 rounded-md border p-4">
             <LayersIcon className="size-5 text-foreground/80" />
             <div className="min-w-0 flex-1">

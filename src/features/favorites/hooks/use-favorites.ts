@@ -50,3 +50,9 @@ function safeParse(raw: string): string[] {
     return [];
   }
 }
+
+/** كل المفضّلة في هذا المتصفّح (لقسم «المفضلة» في الحساب) */
+export function useFavoriteIds(): string[] {
+  const raw = useSyncExternalStore(subscribe, read, () => '[]');
+  return safeParse(raw);
+}

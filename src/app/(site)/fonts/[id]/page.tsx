@@ -9,6 +9,7 @@ import { Breadcrumb } from '@/components/shared/breadcrumb';
 import { FontGrid } from '@/components/shared/font-grid';
 import { ChevronLeftIcon } from '@/components/ui/icons';
 import { paths } from '@/config/paths';
+import { getOwnedLicense } from '@/features/account/api/queries';
 import { addToCart } from '@/features/cart/api/actions';
 import { FavoriteButton } from '@/features/favorites/components/favorite-button';
 import { getFont, getRelatedFonts } from '@/features/font-details/api/get-font';
@@ -18,6 +19,7 @@ import { FontHeader } from '@/features/font-details/components/font-header';
 import { WeightWaterfall } from '@/features/font-details/components/weight-waterfall';
 import { FontTester } from '@/features/font-tester/components/font-tester';
 import { PurchaseActions } from '@/features/licensing/components/purchase-actions';
+import { getCurrentUser } from '@/lib/auth';
 import { getPricing } from '@/lib/commerce/server';
 
 export async function generateMetadata({ params }: PageProps<'/fonts/[id]'>): Promise<Metadata> {
@@ -33,7 +35,10 @@ export async function generateMetadata({ params }: PageProps<'/fonts/[id]'>): Pr
 export default async function FontPage({ params, searchParams }: PageProps<'/fonts/[id]'>) {
   const font = await getFont((await params).id);
   if (!font) notFound();
-  const pricing = await getPricing(font.id);
+  const [pricing, owned] = await Promise.all([
+    getPricing(font.id),
+    getCurrentUser().then((u) => getOwnedLicense(u, font.id)),
+  ]);
   const openLicense = (await searchParams).license === '1';
   const favorite = <FavoriteButton fontId={font.id} fontName={font.name} variant="square" />;
   const related = await getRelatedFonts(font);
@@ -60,6 +65,8 @@ export default async function FontPage({ params, searchParams }: PageProps<'/fon
               foundry={font.designerLabel ?? font.designers[0]?.nameAr ?? ''}
               pricing={pricing}
               favorite={favorite}
+              ownership={owned ? 'owned' : 'none'}
+              licenseId={owned?.licenseId}
               defaultOpen={openLicense}
               onSubmit={addToCart}
             />

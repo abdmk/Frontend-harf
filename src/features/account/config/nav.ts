@@ -21,7 +21,7 @@ export type NavItem = {
   badge?: string;
 };
 
-export const PLAN_LABEL = { free: 'المجانية', studio: 'الاستوديو' } as const;
+export const PLAN_LABEL = { free: 'المجانية', basic: 'الأساسية', studio: 'الاستوديو' } as const;
 
 /** مجموعات القائمة كما في التصميم — «لوحة المسبك» لحساب الاستوديو وحده */
 export function accountNavGroups(user: User): NavItem[][] {
