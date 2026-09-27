@@ -817,8 +817,7 @@ transition:opacity var(--dur-base) var(--ease-out)}
 cursor:pointer;display:none;place-items:center}
 .srchw.open .sx{display:grid}
 
-/* زرّ التصفية — لوحة واحدة تجمع كل الفلاتر */
-.filtw{position:relative}
+/* زرّ التصفية — يفتح لوحة التصفية */
 .fbtn{display:inline-flex;align-items:center;gap:7px;height:44px;padding:0 var(--sp-4);
 border-radius:var(--r-pill);border:1px solid var(--border-default);background:var(--bg-surface);
 color:var(--text-primary);font-family:inherit;font-size:var(--fs-sm);cursor:pointer;
@@ -828,24 +827,6 @@ transition:all var(--dur-fast) var(--ease-out)}
 .fbtn .fc{min-width:19px;height:19px;border-radius:var(--r-pill);background:var(--harf-500);color:#fff;
 font-size:10.5px;font-weight:var(--fw-medium);display:grid;place-items:center;padding:0 5px;
 font-variant-numeric:tabular-nums}
-.fbtn .ca2{transition:transform var(--dur-base) var(--ease-out)}
-.fbtn.open .ca2{transform:rotate(180deg)}
-.fpanel{position:absolute;z-index:8;inset-block-start:calc(100% + 10px);inset-inline-start:0;
-width:min(600px,calc(100vw - 96px));background:var(--bg-surface);border:1px solid var(--border-default);
-border-radius:var(--r-lg);box-shadow:var(--e4),var(--rim);padding:var(--sp-5);
-display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,140px),1fr));gap:var(--sp-5);
-opacity:0;transform:translateY(-8px) scale(.985);pointer-events:none;transform-origin:top;
-transition:opacity var(--dur-base) var(--ease-out),transform var(--dur-base) var(--ease-out)}
-.fpanel.open{opacity:1;transform:none;pointer-events:auto}
-.fgrp .fh{font-size:10.5px;letter-spacing:var(--ls-label);color:var(--text-tertiary);
-font-weight:var(--fw-medium);margin-bottom:var(--sp-2)}
-.fgrp label{display:flex;align-items:center;gap:var(--sp-2);padding:5px 0;font-size:var(--fs-sm);cursor:pointer}
-.fgrp .bx{width:17px;height:17px;border-radius:5px;border:1.5px solid var(--border-strong);flex:0 0 auto;
-display:grid;place-items:center;color:#fff;transition:all var(--dur-fast) var(--ease-out)}
-.fgrp label.on .bx{background:var(--harf-500);border-color:var(--harf-500)}
-.fgrp .cnt{margin-inline-start:auto;font-size:11px;color:var(--text-tertiary);font-variant-numeric:tabular-nums}
-.fpanel .ff{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;gap:var(--sp-3);
-padding-top:var(--sp-4);border-top:1px solid var(--border-subtle)}
 .sortr{display:flex;gap:3px;padding:3px;background:var(--bg-sunken);border-radius:var(--r-pill);
 border:1px solid var(--border-subtle);margin-inline-start:auto}
 .sortr button{height:36px;padding:0 var(--sp-3);border:0;border-radius:var(--r-pill);background:transparent;
@@ -2208,6 +2189,74 @@ font-size:var(--fs-body);color:var(--text-primary);font-variant-numeric:tabular-
 .coupon .fi2:focus-within{border-color:var(--harf-500);box-shadow:var(--ring)}
 .coupon input{flex:1;min-width:0;border:0;background:transparent;outline:none;font:inherit;font-size:var(--fs-sm);color:var(--text-primary)}
 .coupon input::placeholder{color:var(--text-tertiary)}
+
+/* ── لوحة التصفية (نفس تصميم index.html، بأسماء fp- داخل الدليل) ── */
+/* ══ لوحة التصفية ══ */
+.fp{position:relative;width:min(440px,100%);display:flex;flex-direction:column;background:var(--bg-surface);border:1px solid var(--border-default);border-radius:var(--r-xl);box-shadow:var(--e3),var(--rim)}
+.fp-h{display:flex;align-items:center;justify-content:space-between;padding:var(--sp-6) var(--sp-6) var(--sp-4)}
+.fp-h h2{display:flex;align-items:center;gap:var(--sp-2);font-size:var(--fs-h3);font-weight:var(--fw-medium)}
+.fp-b{flex:1;overflow-y:auto;overscroll-behavior:contain;padding:0 var(--sp-4) var(--sp-4);display:flex;flex-direction:column;gap:var(--sp-3)}
+.fp-sec{border-radius:var(--r-lg);background:var(--bg-sunken);padding:0 var(--sp-2) var(--sp-2)}
+.fp-sec>h3{margin:0}
+.fp-sec-t{width:100%;display:flex;align-items:center;justify-content:space-between;gap:var(--sp-3);padding:var(--sp-4) var(--sp-3);border:0;background:none;
+  font-size:var(--fs-body);font-weight:var(--fw-medium);color:var(--text-primary);text-align:start;border-radius:var(--r-md)}
+.fp-sec-t .fp-chev{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;background:var(--bg-surface);color:var(--text-secondary);
+  transition:transform var(--dur-slow) var(--ease-out)}
+.fp-sec-t[aria-expanded="false"] .fp-chev{transform:rotate(180deg)}
+/* الطيّ بارتفاع متحرّك */
+.fp-sec-c{display:grid;grid-template-rows:1fr;transition:grid-template-rows var(--dur-slow) var(--ease-out)}
+.fp-sec-c>div{overflow:hidden;min-height:0}
+.fp-sec-t[aria-expanded="false"]+.fp-sec-c{grid-template-rows:0fr}
+.fp-sec-in{padding:var(--sp-5);border-radius:var(--r-md);background:var(--bg-surface)}
+.fp-radios{display:flex;flex-direction:column;gap:var(--sp-3)}
+.fp-radio{display:flex;align-items:center;gap:var(--sp-3);cursor:pointer;font-size:var(--fs-body);width:fit-content}
+.fp-radio input{appearance:none;-webkit-appearance:none;margin:0;width:20px;height:20px;border-radius:50%;border:1.5px solid var(--border-strong);background:var(--bg-surface);
+  transition:border-width var(--dur-base) var(--ease-pop),border-color var(--dur-fast)}
+.fp-radio input:checked{border:5px solid var(--harf-500)}
+.fp-tags{display:flex;flex-wrap:wrap;gap:var(--sp-2)}
+.fp-tag{position:relative;cursor:pointer}
+.fp-tag input{position:absolute;opacity:0;pointer-events:none}
+.fp-tag span{display:inline-flex;align-items:center;gap:0;height:32px;padding-inline:var(--sp-4);border:1px solid var(--border-default);border-radius:var(--r-pill);
+  color:var(--text-secondary);font-size:var(--fs-xs);line-height:1;white-space:nowrap;
+  transition:background-color var(--dur-base) var(--ease-out),border-color var(--dur-base),color var(--dur-base),gap var(--dur-base) var(--ease-out)}
+.fp-tag span .ic{width:0;opacity:0;transform:scale(.4);transition:width var(--dur-base) var(--ease-out),opacity var(--dur-base),transform var(--dur-slow) var(--ease-pop)}
+.fp-tag:hover span{border-color:var(--border-strong);color:var(--text-primary)}
+.fp-tag input:checked+span{background:var(--harf-500);border-color:var(--harf-500);color:#fff;gap:6px}
+.fp-tag input:checked+span .ic{width:14px;opacity:1;transform:none}
+.fp-tag input:focus-visible+span{outline:2px solid var(--harf-500);outline-offset:2px}
+/* شريط المدى بمقبضين */
+.fp-range{--a:0%;--b:100%;position:relative;height:20px;direction:ltr}
+.fp-range .trk{position:absolute;inset:0;border-radius:var(--r-pill);background:var(--bg-sunken);overflow:hidden}
+.fp-range .trk{background:var(--bg-inset)}
+.fp-range .fill{position:absolute;inset-block:0;left:calc((100% - 20px)*var(--pa,0));right:calc((100% - 20px)*(1 - var(--pb,1)));border-radius:var(--r-pill);background:var(--harf-500);
+  transition:left var(--dur-fast) var(--ease-out),right var(--dur-fast) var(--ease-out)}
+.fp-range .ticks{position:absolute;inset:0;display:flex;justify-content:space-between;align-items:center;padding-inline:7.5px;pointer-events:none}
+.fp-range .ticks i{width:5px;height:5px;border-radius:50%;background:var(--border-strong)}
+.fp-range .ticks i.on{background:rgba(255,255,255,.55)}
+.fp-range input{position:absolute;inset:0;width:100%;height:100%;margin:0;background:none;pointer-events:none;-webkit-appearance:none;appearance:none}
+.fp-range input::-webkit-slider-thumb{-webkit-appearance:none;pointer-events:auto;width:20px;height:20px;border-radius:50%;background:transparent;border:0;cursor:grab;
+  box-shadow:inset 0 0 0 7px transparent}
+.fp-range input::-moz-range-thumb{pointer-events:auto;width:20px;height:20px;border-radius:50%;background:transparent;border:0;cursor:grab}
+.fp-range input::-webkit-slider-runnable-track{background:none}
+.fp-range .th{position:absolute;inset-block-start:50%;width:8px;height:8px;margin:-4px 0 0 -4px;border-radius:50%;background:#fff;pointer-events:none;
+  transition:left var(--dur-fast) var(--ease-out),transform var(--dur-base) var(--ease-pop)}
+.fp-range .th.a{left:calc(10px + (100% - 20px)*var(--pa,0))}
+.fp-range .th.b{left:calc(10px + (100% - 20px)*var(--pb,1))}
+.fp-range input:focus-visible~.th{transform:scale(1.5)}
+.fp-range:has(input:active) .th{transform:scale(1.5)}
+.fp-rvals{display:flex;justify-content:space-between;gap:var(--sp-3);margin-top:var(--sp-4);direction:ltr}
+.fp-rvals span{display:inline-flex;align-items:center;height:40px;padding-inline:var(--sp-5);border:1px solid var(--border-default);border-radius:var(--r-pill);
+  font-size:var(--fs-sm);color:var(--text-secondary);direction:rtl;min-width:84px;justify-content:center}
+.fp-f{display:grid;grid-template-columns:1fr 1fr;gap:var(--sp-3);padding:var(--sp-4) var(--sp-4) var(--sp-5)}
+.fp-f .btn{height:56px;border-radius:var(--r-md);font-size:var(--fs-body)}
+
+.fp .ic.rot-u{transform:rotate(180deg)}
+.fp-x{width:40px;height:40px;border:0;border-radius:50%;background:none;color:var(--text-secondary);display:grid;place-items:center;cursor:pointer;transition:background-color var(--dur-fast)}
+.fp-x:hover{background:var(--bg-sunken);color:var(--text-primary)}
+.fp-f .btn{width:100%}
+.fp-stage{display:flex;justify-content:center;padding:var(--sp-8) var(--sp-4)}
+.fp.flash{animation:fpFlash 700ms var(--ease-out)}
+@keyframes fpFlash{30%{box-shadow:var(--e3),0 0 0 4px var(--tint-brand)}}
 </style>
 </head><body><svg xmlns="http://www.w3.org/2000/svg" style="display:none" aria-hidden="true">
 <symbol id="i-envelope" viewBox="0 0 24 24" fill="currentColor"><path d="M19 0.999878H5C3.67441 1.00147 2.40356 1.52876 1.46622 2.4661C0.528882 3.40344 0.00158786 4.67428 0 5.99988L0 17.9999C0.00158786 19.3255 0.528882 20.5963 1.46622 21.5337C2.40356 22.471 3.67441 22.9983 5 22.9999H19C20.3256 22.9983 21.5964 22.471 22.5338 21.5337C23.4711 20.5963 23.9984 19.3255 24 17.9999V5.99988C23.9984 4.67428 23.4711 3.40344 22.5338 2.4661C21.5964 1.52876 20.3256 1.00147 19 0.999878ZM5 2.99988H19C19.5988 3.00106 20.1835 3.18139 20.679 3.51768C21.1744 3.85397 21.5579 4.33082 21.78 4.88688L14.122 12.5459C13.5584 13.1072 12.7954 13.4223 12 13.4223C11.2046 13.4223 10.4416 13.1072 9.878 12.5459L2.22 4.88688C2.44215 4.33082 2.82561 3.85397 3.32105 3.51768C3.81648 3.18139 4.40121 3.00106 5 2.99988ZM19 20.9999H5C4.20435 20.9999 3.44129 20.6838 2.87868 20.1212C2.31607 19.5586 2 18.7955 2 17.9999V7.49988L8.464 13.9599C9.40263 14.8961 10.6743 15.4219 12 15.4219C13.3257 15.4219 14.5974 14.8961 15.536 13.9599L22 7.49988V17.9999C22 18.7955 21.6839 19.5586 21.1213 20.1212C20.5587 20.6838 19.7956 20.9999 19 20.9999Z"></path></symbol><symbol id="i-marker" viewBox="0 0 24 24" fill="currentColor"><path d="M12.0001 6C11.209 6 10.4356 6.2346 9.77784 6.67412C9.12005 7.11365 8.60736 7.73836 8.30461 8.46927C8.00186 9.20017 7.92264 10.0044 8.07698 10.7804C8.23132 11.5563 8.61229 12.269 9.1717 12.8284C9.73111 13.3878 10.4438 13.7688 11.2198 13.9231C11.9957 14.0775 12.8 13.9983 13.5309 13.6955C14.2618 13.3928 14.8865 12.8801 15.326 12.2223C15.7655 11.5645 16.0001 10.7911 16.0001 10C16.0001 8.93913 15.5787 7.92172 14.8286 7.17157C14.0784 6.42143 13.061 6 12.0001 6ZM12.0001 12C11.6046 12 11.2179 11.8827 10.889 11.6629C10.5601 11.4432 10.3037 11.1308 10.1524 10.7654C10.001 10.3999 9.96138 9.99778 10.0386 9.60982C10.1157 9.22186 10.3062 8.86549 10.5859 8.58579C10.8656 8.30608 11.222 8.1156 11.6099 8.03843C11.9979 7.96126 12.4 8.00087 12.7655 8.15224C13.1309 8.30362 13.4433 8.55996 13.6631 8.88886C13.8828 9.21776 14.0001 9.60444 14.0001 10C14.0001 10.5304 13.7894 11.0391 13.4143 11.4142C13.0393 11.7893 12.5306 12 12.0001 12Z"></path><path d="M11.9999 24.0003C11.1579 24.0046 10.3271 23.8071 9.57701 23.4243C8.82697 23.0416 8.17954 22.4847 7.68895 21.8003C3.87795 16.5433 1.94495 12.5913 1.94495 10.0533C1.94495 7.38654 3.00431 4.82901 4.88999 2.94333C6.77567 1.05765 9.33319 -0.00170898 11.9999 -0.00170898C14.6667 -0.00170898 17.2242 1.05765 19.1099 2.94333C20.9956 4.82901 22.0549 7.38654 22.0549 10.0533C22.0549 12.5913 20.1219 16.5433 16.3109 21.8003C15.8204 22.4847 15.1729 23.0416 14.4229 23.4243C13.6728 23.8071 12.842 24.0046 11.9999 24.0003ZM11.9999 2.18129C9.91236 2.18367 7.91096 3.01402 6.43482 4.49016C4.95867 5.96631 4.12833 7.96771 4.12595 10.0553C4.12595 12.0653 6.01895 15.7823 9.45495 20.5213C9.74664 20.9231 10.1293 21.2501 10.5717 21.4756C11.014 21.701 11.5034 21.8186 11.9999 21.8186C12.4964 21.8186 12.9859 21.701 13.4282 21.4756C13.8706 21.2501 14.2533 20.9231 14.5449 20.5213C17.9809 15.7823 19.8739 12.0653 19.8739 10.0553C19.8716 7.96771 19.0412 5.96631 17.5651 4.49016C16.0889 3.01402 14.0875 2.18367 11.9999 2.18129Z"></path></symbol>
@@ -3003,21 +3052,7 @@ font-size:var(--fs-body);color:var(--text-primary);font-variant-numeric:tabular-
 <button class="sbtn" id="srchBtn" aria-label="بحث"><svg class="ic" width="19" height="19"><use href="#i-search"></use></svg></button>
 <input type="text" placeholder="ابحث باسم الخط أو المصمم أو المسبك…" aria-label="بحث">
 <button class="sx" id="srchClr" aria-label="مسح البحث"><svg class="ic" width="15" height="15"><use href="#i-cross-small"></use></svg></button>
-</div></div></div><p class="note"><b>Note</b>مطويّ افتراضاً ويتمدّد بالضغط.</p></section><section id="filters"><div class="shead"><span class="num">4.5</span><h2>الفلاتر والترتيب</h2><span class="en">Filters</span><span class="stag live">نموذج حيّ</span></div><div class="stage"><div class="tools"><div class="filtw">
-<button class="fbtn" id="filtBtn"><svg class="ic" width="16" height="16"><use href="#i-settings-sliders"></use></svg>تصفية<span class="ca2"><svg class="ic" width="15" height="15"><use href="#i-angle-small-down"></use></svg></span></button>
-<div class="fpanel" id="filtPanel">
-<div class="fgrp"><div class="fh">اللغة</div>
-<label class="on"><span class="bx"><svg class="ic" width="10" height="10"><use href="#i-check"></use></svg></span>عربي<span class="cnt">265</span></label><label class="on"><span class="bx"><svg class="ic" width="10" height="10"><use href="#i-check"></use></svg></span>كردي<span class="cnt">84</span></label><label class=""><span class="bx"><svg class="ic" width="10" height="10"><use href="#i-check"></use></svg></span>فارسي<span class="cnt">61</span></label><label class=""><span class="bx"><svg class="ic" width="10" height="10"><use href="#i-check"></use></svg></span>أردو<span class="cnt">39</span></label><label class=""><span class="bx"><svg class="ic" width="10" height="10"><use href="#i-check"></use></svg></span>لاتيني<span class="cnt">148</span></label></div>
-<div class="fgrp"><div class="fh">الأوزان</div>
-<label class=""><span class="bx"><svg class="ic" width="10" height="10"><use href="#i-check"></use></svg></span>وزن واحد<span class="cnt">47</span></label><label class=""><span class="bx"><svg class="ic" width="10" height="10"><use href="#i-check"></use></svg></span>2 – 3<span class="cnt">112</span></label><label class=""><span class="bx"><svg class="ic" width="10" height="10"><use href="#i-check"></use></svg></span>4 – 6<span class="cnt">93</span></label><label class=""><span class="bx"><svg class="ic" width="10" height="10"><use href="#i-check"></use></svg></span>7 فأكثر<span class="cnt">28</span></label></div>
-<div class="fgrp"><div class="fh">تاريخ النشر</div>
-<label class=""><span class="bx"><svg class="ic" width="10" height="10"><use href="#i-check"></use></svg></span>آخر 7 أيام<span class="cnt">19</span></label><label class=""><span class="bx"><svg class="ic" width="10" height="10"><use href="#i-check"></use></svg></span>آخر 30 يوماً<span class="cnt">58</span></label><label class=""><span class="bx"><svg class="ic" width="10" height="10"><use href="#i-check"></use></svg></span>آخر 6 أشهر<span class="cnt">147</span></label><label class=""><span class="bx"><svg class="ic" width="10" height="10"><use href="#i-check"></use></svg></span>هذه السنة<span class="cnt">231</span></label></div>
-<div class="fgrp"><div class="fh">الترخيص</div>
-<label class=""><span class="bx"><svg class="ic" width="10" height="10"><use href="#i-check"></use></svg></span>مجاني<span class="cnt">134</span></label><label class=""><span class="bx"><svg class="ic" width="10" height="10"><use href="#i-check"></use></svg></span>تجريبي<span class="cnt">62</span></label><label class=""><span class="bx"><svg class="ic" width="10" height="10"><use href="#i-check"></use></svg></span>مدفوع<span class="cnt">84</span></label><label class=""><span class="bx"><svg class="ic" width="10" height="10"><use href="#i-check"></use></svg></span>تجاري<span class="cnt">198</span></label></div>
-<div class="ff"><button class="cclr" id="filtClr">مسح الكل</button>
-<button class="btn btn-p btn-sm rp" id="filtApply">عرض 42 نتيجة</button></div>
-</div>
-</div><div class="sortr">
+</div></div></div><p class="note"><b>Note</b>مطويّ افتراضاً ويتمدّد بالضغط.</p></section><section id="filters"><div class="shead"><span class="num">4.5</span><h2>الفلاتر والترتيب</h2><span class="en">Filters</span><span class="stag live">نموذج حيّ</span></div><div class="sub-h">زرّ التصفية والترتيب</div><div class="stage"><div class="tools"><button class="fbtn" id="filtBtn" type="button" aria-controls="FP"><svg class="ic" width="16" height="16"><use href="#i-settings-sliders"></use></svg>تصفية</button><div class="sortr">
 <button class="on"><svg class="ic" width="14" height="14"><use href="#i-flame"></use></svg>الأكثر شهرة</button>
 <button><svg class="ic" width="14" height="14"><use href="#i-time-fast"></use></svg>الأحدث</button>
 <button><svg class="ic" width="14" height="14"><use href="#i-download"></use></svg>الأكثر تحميلاً</button>
@@ -3026,7 +3061,28 @@ font-size:var(--fs-body);color:var(--text-primary);font-variant-numeric:tabular-
 <span class="cact">عربي<button aria-label="إزالة"><svg class="ic" width="11" height="11"><use href="#i-cross-small"></use></svg></button></span>
 <span class="cact">كردي<button aria-label="إزالة"><svg class="ic" width="11" height="11"><use href="#i-cross-small"></use></svg></button></span>
 <button class="cclr">مسح الكل</button>
-</div></div><p class="note"><b>Note</b>زرّ تصفية واحد يفتح لوحة واحدة · كل خيار يعرض عدد نتائجه، وما يقود إلى صفر يُعطَّل.</p></section><div class="gband" id="g5"><span class="gk">5</span><div><h2>منتج حرف <span class="en">Harf Product</span></h2><p>ما يخصّ مكتبة الخطوط نفسها.</p></div></div><section id="font-card"><div class="shead"><span class="num">5.1</span><h2>بطاقة الخط</h2><span class="en">Font Card</span><span class="stag live">نموذج حيّ</span></div><div class="sub-h">بطاقة الخط — ثلاث حالات</div><div class="grid" style="grid-template-columns:repeat(auto-fill,minmax(min(100%,var(--col-min)),1fr))">
+</div></div><div class="sub-h">لوحة التصفية — درج جانبي على الشاشات الواسعة، وورقة سفلية على الجوال</div><div class="stage fp-stage"><aside class="fp" id="FP" aria-labelledby="FPT">
+<div class="fp-h"><h2 id="FPT"><svg class="ic" width="20" height="20" aria-hidden="true"><use href="#i-filter"/></svg>تصفية</h2><button class="fp-x" type="button" aria-label="إغلاق"><svg class="ic" width="18" height="18" aria-hidden="true"><use href="#i-cross"/></svg></button></div>
+<div class="fp-b">
+<div class="fp-sec"><h3><button class="fp-sec-t" type="button" aria-expanded="true" aria-controls="FPS1">الرخصة<span class="fp-chev"><svg class="ic rot-u" width="16" height="16" aria-hidden="true"><use href="#i-angle-small-down"/></svg></span></button></h3>
+<div class="fp-sec-c" id="FPS1"><div><div class="fp-sec-in"><div class="fp-radios" role="radiogroup" aria-label="الرخصة"><label class="fp-radio"><input type="radio" name="f-use" value="all" checked>الكل</label><label class="fp-radio"><input type="radio" name="f-use" value="personal">شخصي</label><label class="fp-radio"><input type="radio" name="f-use" value="commercial">تجاري</label><label class="fp-radio"><input type="radio" name="f-use" value="paid">مدفوع</label></div></div></div></div></div>
+<div class="fp-sec"><h3><button class="fp-sec-t" type="button" aria-expanded="true" aria-controls="FPS2">اللغة<span class="fp-chev"><svg class="ic rot-u" width="16" height="16" aria-hidden="true"><use href="#i-angle-small-down"/></svg></span></button></h3>
+<div class="fp-sec-c" id="FPS2"><div><div class="fp-sec-in"><div class="fp-tags" role="group" aria-label="اللغة"><label class="fp-tag"><input type="checkbox" name="f-lang" value="ar"><span><svg class="ic" width="14" height="14" aria-hidden="true"><use href="#i-check"/></svg>العربية</span></label><label class="fp-tag"><input type="checkbox" name="f-lang" value="ku"><span><svg class="ic" width="14" height="14" aria-hidden="true"><use href="#i-check"/></svg>الكردية</span></label><label class="fp-tag"><input type="checkbox" name="f-lang" value="fa"><span><svg class="ic" width="14" height="14" aria-hidden="true"><use href="#i-check"/></svg>الفارسية</span></label><label class="fp-tag"><input type="checkbox" name="f-lang" value="ur"><span><svg class="ic" width="14" height="14" aria-hidden="true"><use href="#i-check"/></svg>الأردية</span></label><label class="fp-tag"><input type="checkbox" name="f-lang" value="la"><span><svg class="ic" width="14" height="14" aria-hidden="true"><use href="#i-check"/></svg>اللاتينية</span></label></div></div></div></div></div>
+<div class="fp-sec"><h3><button class="fp-sec-t" type="button" aria-expanded="true" aria-controls="FPS3">تاريخ النشر<span class="fp-chev"><svg class="ic rot-u" width="16" height="16" aria-hidden="true"><use href="#i-angle-small-down"/></svg></span></button></h3>
+<div class="fp-sec-c" id="FPS3"><div><div class="fp-sec-in"><div class="fp-tags" role="radiogroup" aria-label="تاريخ النشر"><label class="fp-tag"><input type="radio" name="f-date" value="all" checked><span><svg class="ic" width="14" height="14" aria-hidden="true"><use href="#i-check"/></svg>الكل</span></label><label class="fp-tag"><input type="radio" name="f-date" value="7"><span><svg class="ic" width="14" height="14" aria-hidden="true"><use href="#i-check"/></svg>آخر 7 أيام</span></label><label class="fp-tag"><input type="radio" name="f-date" value="30"><span><svg class="ic" width="14" height="14" aria-hidden="true"><use href="#i-check"/></svg>آخر 30 يوماً</span></label><label class="fp-tag"><input type="radio" name="f-date" value="180"><span><svg class="ic" width="14" height="14" aria-hidden="true"><use href="#i-check"/></svg>آخر 6 أشهر</span></label><label class="fp-tag"><input type="radio" name="f-date" value="year"><span><svg class="ic" width="14" height="14" aria-hidden="true"><use href="#i-check"/></svg>هذه السنة</span></label></div></div></div></div></div>
+<div class="fp-sec"><h3><button class="fp-sec-t" type="button" aria-expanded="true" aria-controls="FPS4">نطاق السعر<span class="fp-chev"><svg class="ic rot-u" width="16" height="16" aria-hidden="true"><use href="#i-angle-small-down"/></svg></span></button></h3>
+<div class="fp-sec-c" id="FPS4"><div><div class="fp-sec-in"><div class="fp-range" data-range="price"><div class="trk"><div class="fill"></div><div class="ticks"></div></div>
+<input class="a" type="range" aria-label="أدنى سعر"><input class="b" type="range" aria-label="أعلى سعر"><span class="th a"></span><span class="th b"></span></div>
+<div class="fp-rvals"><span></span><span></span></div></div></div></div></div>
+<div class="fp-sec"><h3><button class="fp-sec-t" type="button" aria-expanded="true" aria-controls="FPS5">الأوزان<span class="fp-chev"><svg class="ic rot-u" width="16" height="16" aria-hidden="true"><use href="#i-angle-small-down"/></svg></span></button></h3>
+<div class="fp-sec-c" id="FPS5"><div><div class="fp-sec-in"><div class="fp-range" data-range="weights"><div class="trk"><div class="fill"></div><div class="ticks"></div></div>
+<input class="a" type="range" aria-label="أقلّ عدد أوزان"><input class="b" type="range" aria-label="أكثر عدد أوزان"><span class="th a"></span><span class="th b"></span></div>
+<div class="fp-rvals"><span></span><span></span></div></div></div></div></div>
+</div>
+<div class="fp-f"><button class="btn btn-p" type="button" data-apply>تطبيق</button><button class="btn btn-s" type="button" data-clear>مسح الكل</button></div>
+</aside>
+
+</div><p class="note"><b>Note</b>زرّ واحد يفتح لوحة واحدة بأقسام قابلة للطيّ: الرخصة وتاريخ النشر خيار واحد، واللغة متعدّد، والسعر والأوزان مدى بمقبضين · «تطبيق» يحدّث النتائج وشرائح الفلاتر النشطة، و«مسح الكل» يعيد القيم الافتراضية · النسخة الحيّة في <code>index.html</code>.</p></section><div class="gband" id="g5"><span class="gk">5</span><div><h2>منتج حرف <span class="en">Harf Product</span></h2><p>ما يخصّ مكتبة الخطوط نفسها.</p></div></div><section id="font-card"><div class="shead"><span class="num">5.1</span><h2>بطاقة الخط</h2><span class="en">Font Card</span><span class="stag live">نموذج حيّ</span></div><div class="sub-h">بطاقة الخط — ثلاث حالات</div><div class="grid" style="grid-template-columns:repeat(auto-fill,minmax(min(100%,var(--col-min)),1fr))">
 
 <article class="fcard" style="--ink:#131019;--gl:linear-gradient(120deg,#3B4CF0,#6233F5)">
 <div class="art">
@@ -3852,33 +3908,37 @@ font-size:var(--fs-body);color:var(--text-primary);font-variant-numeric:tabular-
     document.addEventListener('click',function(){ if(inp.value==='') w.classList.remove('open') });
   })();
 
-  /* ── لوحة التصفية ── */
+  /* ── لوحة التصفية (نفس مكوّن index.html) ── */
   (function(){
-    var btn=$('filtBtn'), pan=$('filtPanel'); if(!btn||!pan) return;
-    function count(){
-      var n=pan.querySelectorAll('label.on').length;
-      btn.classList.toggle('act',n>0);
-      var c=btn.querySelector('.fc');
-      if(n>0){
-        if(!c){ c=document.createElement('span'); c.className='fc'; btn.insertBefore(c,btn.querySelector('.ca2')) }
-        c.textContent=n;
-      } else if(c) c.remove();
-      var ap=$('filtApply'); if(ap) ap.textContent='عرض '+(n?42:280)+' نتيجة';
+    var fp=$('FP'); if(!fp) return;
+    fp.querySelectorAll('.fp-sec-t').forEach(function(t){
+      on(t,'click',function(){ var o=t.getAttribute('aria-expanded')!=='true'; t.setAttribute('aria-expanded',String(o)); $(t.getAttribute('aria-controls')).inert=!o });
+    });
+    function rng(box,stops,fmt){
+      var a=box.querySelector('input.a'), b=box.querySelector('input.b'), tk=box.querySelector('.ticks'), max=stops.length-1;
+      [a,b].forEach(function(x){ x.min=0; x.max=max; x.step=1 }); a.value=2; b.value=max-2;
+      for(var k=0;k<=max;k++) tk.appendChild(document.createElement('i'));
+      var outs=box.parentNode.querySelectorAll('.fp-rvals span');
+      function paint(){ var lo=+a.value, hi=+b.value;
+        if(lo>hi){ if(document.activeElement===a) a.value=lo=hi; else b.value=hi=lo }
+        box.style.setProperty('--pa',lo/max); box.style.setProperty('--pb',hi/max);
+        [].forEach.call(tk.children,function(t,k){ t.classList.toggle('on',k>=lo&&k<=hi) });
+        outs[0].textContent=fmt(stops[lo]); outs[1].textContent=fmt(stops[hi]) }
+      on(a,'input',paint); on(b,'input',paint); paint();
+      return function(){ a.value=0; b.value=max; paint() };
     }
-    btn.addEventListener('click',function(e){
-      e.stopPropagation();
-      var open=pan.classList.toggle('open');
-      btn.classList.toggle('open',open);
-    });
-    pan.addEventListener('click',function(e){
-      e.stopPropagation();
-      var l=e.target.closest('label');
-      if(l){ l.classList.toggle('on'); count(); return }
-      if(e.target.closest('#filtClr')){ pan.querySelectorAll('label.on').forEach(function(x){x.classList.remove('on')}); count(); return }
-      if(e.target.closest('#filtApply')){ pan.classList.remove('open'); btn.classList.remove('open') }
-    });
-    document.addEventListener('click',function(){ pan.classList.remove('open'); btn.classList.remove('open') });
-    count();
+    var r1=rng(fp.querySelector('[data-range="price"]'),[0,100,200,300,400,500,600,700,800,900,1000],function(v){ return '$'+v });
+    var r2=rng(fp.querySelector('[data-range="weights"]'),[1,2,3,4,5,6,7,8,9,10],function(v){ return v===1?'وزن واحد':v+' أوزان' });
+    /* كما في التصميم: «تجاري» مختار ولغتان */
+    fp.querySelector('input[name="f-use"][value="commercial"]').checked=true;
+    ['ar','la'].forEach(function(v){ fp.querySelector('input[name="f-lang"][value="'+v+'"]').checked=true });
+    on(fp.querySelector('[data-clear]'),'click',function(){
+      fp.querySelector('input[name="f-use"][value="all"]').checked=true;
+      fp.querySelector('input[name="f-date"][value="all"]').checked=true;
+      fp.querySelectorAll('input[name="f-lang"]').forEach(function(x){ x.checked=false }); r1(); r2() });
+    on(fp.querySelector('[data-apply]'),'click',function(){ fp.classList.remove('flash'); void fp.offsetWidth; fp.classList.add('flash') });
+    on(fp.querySelector('.fp-x'),'click',function(){ var b=$('filtBtn'); if(b) b.focus() });
+    on($('filtBtn'),'click',function(){ fp.scrollIntoView({behavior:'smooth',block:'center'}); fp.classList.remove('flash'); void fp.offsetWidth; fp.classList.add('flash') });
   })();
 
   document.querySelectorAll('.sortr').forEach(function(s){ pick(s,'button') });
