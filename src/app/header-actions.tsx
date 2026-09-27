@@ -5,10 +5,10 @@ import { paths } from '@/config/paths';
 import { AccountMenu } from '@/features/account/components/account-menu';
 import { removeFromCart } from '@/features/cart/api/actions';
 import { CartMenu } from '@/features/cart/components/cart-menu';
+import { getNotifications } from '@/features/notifications/api/get-notifications';
 import { NotificationsMenu } from '@/features/notifications/components/notifications-menu';
 import { getCurrentUser } from '@/lib/auth';
 import { buildCart } from '@/lib/commerce/server';
-import { MOCK_NOTIFICATIONS } from '@/mocks/notifications';
 
 /** يُركّب أزرار الترويسة من الـfeatures — الترويسة المشتركة نفسها لا تعرف الـfeatures */
 export async function HeaderActions() {
@@ -18,7 +18,7 @@ export async function HeaderActions() {
       <CartMenu cart={cart} onRemove={removeFromCart} />
       {user ? (
         <>
-          <NotificationsMenu initial={MOCK_NOTIFICATIONS} />
+          <NotificationsMenu initial={await getNotifications(user)} allHref={paths.notifications.getHref()} />
           <AccountMenu user={user} />
         </>
       ) : (

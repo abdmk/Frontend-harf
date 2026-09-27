@@ -22,6 +22,8 @@ export type Font = {
   /** عنوان المصمّمين كما يريده صاحب الخط (اختياري) */
   designerLabel?: string;
   weights: number;
+  /** ملف متغيّر (Variable) — يُظهر عنوان «خط متغيّر» فوق شلال الأوزان */
+  variable?: boolean;
   langs: Lang[];
   type: LicenseType;
   usage: Usage;

@@ -4,6 +4,7 @@ const PAGES = [
   '/',
   '/fonts/zaetoon',
   '/account/profile?as=studio',
+  '/notifications?as=studio',
   '/design-system',
   '/cart',
   '/checkout',

@@ -28,6 +28,7 @@ export const MOCK_FONTS: Font[] = [
     designers: [P.AJ, P.KM],
     designerLabel: 'Abdmk Jassim & Harf Type',
     weights: 10,
+    variable: true,
     langs: ['ar', 'ku', 'fa', 'la'],
     type: 'free',
     usage: 'commercial',

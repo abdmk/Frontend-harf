@@ -5,7 +5,7 @@ test.describe('الحساب', () => {
     await page.goto('/?as=free');
     const bell = page.locator('button[aria-label^="الإشعارات"]');
     await bell.click();
-    await page.getByRole('button', { name: 'تعليم الكل مقروءاً' }).click();
+    await page.getByRole('button', { name: 'تعليم الكل كمقروء' }).click();
     await expect(bell).toHaveAttribute('aria-label', 'الإشعارات');
     await page.keyboard.press('Escape');
 

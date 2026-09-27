@@ -75,11 +75,9 @@ const eslintConfig = defineConfig([
     'build/**',
     'next-env.d.ts',
     'src/components/ui/icons/icons.generated.ts',
-    // مراجع التصميم والنماذج القديمة — ليست جزءاً من الشيفرة
+    // مراجع التصميم ومصدر الأيقونات — ليست جزءاً من الشيفرة
     'reference/**',
-    'drafts/**',
     'tools/**',
-    '*.html',
   ]),
 ]);
 

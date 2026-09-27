@@ -14,6 +14,7 @@ export const paths = {
   account: {
     getHref: (section: string = 'profile') => (section ? `/account/${encodeURIComponent(section)}` : '/account'),
   },
+  notifications: { getHref: () => '/notifications' },
   studio: {
     getHref: (section?: string) => (section ? `/studio/${encodeURIComponent(section)}` : '/studio'),
   },

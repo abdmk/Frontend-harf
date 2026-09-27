@@ -74,7 +74,7 @@ export default async function FontPage({ params, searchParams }: PageProps<'/fon
         }
       />
       <FontTester />
-      <WeightWaterfall />
+      <WeightWaterfall variable={font.variable} />
       <FontDetailsTabs font={font} />
 
       <section aria-labelledby="related-title" className="mt-10">

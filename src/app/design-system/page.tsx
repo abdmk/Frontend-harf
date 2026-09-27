@@ -18,14 +18,15 @@ import { PaymentResult } from '@/features/checkout/components/checkout-form';
 import { WeightWaterfall } from '@/features/font-details/components/weight-waterfall';
 import { FontTester } from '@/features/font-tester/components/font-tester';
 import { PurchaseActions } from '@/features/licensing/components/purchase-actions';
+import { getNotifications } from '@/features/notifications/api/get-notifications';
 import { NotificationsMenu } from '@/features/notifications/components/notifications-menu';
+import { NotificationsPanel } from '@/features/notifications/components/notifications-panel';
 import { UploadDialog } from '@/features/publishing/components/upload-dialog';
 import { getPlans } from '@/features/subscriptions/api/get-subscription';
 import { PlansDialog } from '@/features/subscriptions/components/plans-dialog';
 import { getPricing } from '@/lib/commerce/server';
 import { CATEGORY_LABEL } from '@/lib/labels';
 import { MOCK_FONTS } from '@/mocks/fonts';
-import { MOCK_NOTIFICATIONS } from '@/mocks/notifications';
 import { MOCK_USERS } from '@/mocks/users';
 import { type Cart, cents, usd } from '@/types/domain/commerce';
 import { CATEGORIES } from '@/types/domain/font';
@@ -45,10 +46,11 @@ const STATUS_BADGE = {
 
 /** دليل التصميم الحيّ — يعرض الرموز والمكوّنات الحقيقية المستعملة في الموقع، لا نسخاً منها */
 export default async function DesignSystemPage() {
-  const [naskhPricing, trialPricing, plans] = await Promise.all([
+  const [naskhPricing, trialPricing, plans, notifications] = await Promise.all([
     getPricing('naskh'),
     getPricing('roobert'),
     getPlans(),
+    getNotifications(MOCK_USERS.studio),
   ]);
   const demoCart: Cart = {
     items: [
@@ -149,11 +151,14 @@ export default async function DesignSystemPage() {
           num="3.2"
           title="الإشعارات"
           en="Notifications"
-          note="المكوّن الذي يفتحه الجرس: عدّاد، «تعليم الكل مقروءاً»، وتمييز غير المقروء."
+          note="الجرس يفتح قائمة مجمّعة (اليوم، هذا الأسبوع، أقدم) بلون لكل نوع، وتمييز غير المقروء، و«عرض كل الإشعارات» إلى صفحتها."
         >
           <DsPanel className="flex justify-center">
-            <NotificationsMenu initial={MOCK_NOTIFICATIONS} />
+            <NotificationsMenu initial={notifications} allHref={paths.notifications.getHref()} />
           </DsPanel>
+          <div className="mt-4 max-w-xl">
+            <NotificationsPanel initial={notifications} />
+          </div>
         </DsSection>
 
         <NavigationDemo />
@@ -287,7 +292,7 @@ export default async function DesignSystemPage() {
         </DsSection>
 
         <DsSection id="weights" num="5.3" title="الأوزان" en="Weights">
-          <WeightWaterfall />
+          <WeightWaterfall variable />
         </DsSection>
 
         <DsSection id="taxo" num="5.4" title="التصنيفات" en="Categories" status="reference">

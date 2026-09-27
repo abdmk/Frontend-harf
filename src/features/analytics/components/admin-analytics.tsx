@@ -68,7 +68,7 @@ function RevenueCard({
   );
 }
 
-/** لوحة التحليلات للمشرف (dashboard.html + تصميم 21-09): فلتر المدى وتصدير CSV فوق كل شيء، ثم ثلاثة تبويبات */
+/** لوحة التحليلات للمشرف (تصميم 21-09 ولقطة harflibrary): فلتر المدى وتصدير CSV فوق كل شيء، ثم ثلاثة تبويبات */
 export function AdminAnalyticsView({ data: d, range }: { data: AdminAnalytics; range: Range }) {
   const k = d.kpis;
   const s = d.revenue.sales;

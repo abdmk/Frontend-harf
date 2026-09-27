@@ -14,17 +14,33 @@ const WEIGHTS = [
 ] as const;
 const SAMPLE = 'نص حكيم له سر قاطع وشأن عظيم، بثوب أخضر وجلد أزرق';
 
-/** شلال الأوزان: الرقم، العيّنة بالوزن نفسه، الاسم اللاتيني */
-export function WeightWaterfall() {
+/** شلال الأوزان: الرقم، العيّنة بالوزن نفسه، الاسم اللاتيني. الخط المتغيّر يحمل عنواناً بخطّه */
+export function WeightWaterfall({ variable = false }: { variable?: boolean }) {
   return (
-    <section aria-label="الأوزان" className="mt-12">
-      <ol className="flex flex-col">
+    <section
+      aria-label={variable ? undefined : 'الأوزان'}
+      aria-labelledby={variable ? 'weights-title' : undefined}
+      className="mt-12"
+    >
+      {variable && (
+        <h2
+          id="weights-title"
+          className="mb-10 flex flex-wrap items-baseline justify-center gap-x-4 text-center text-display leading-tight sm:mb-14"
+          style={weightStyle(900)}
+        >
+          <span>خط متغيّر</span>
+          <span dir="ltr" lang="en">
+            Variable
+          </span>
+        </h2>
+      )}
+      <ol className="flex flex-col border-t border-border">
         {WEIGHTS.map(([w, name], i) => (
           <Reveal
             as="li"
             key={w}
             index={i}
-            className="grid grid-cols-[32px_minmax(0,1fr)_72px] items-baseline gap-4 py-2 sm:grid-cols-[40px_minmax(0,1fr)_110px]"
+            className="grid grid-cols-[32px_minmax(0,1fr)_72px] items-baseline gap-4 border-b border-border py-2.5 sm:grid-cols-[40px_minmax(0,1fr)_110px]"
           >
             <span dir="ltr" className="text-right text-caption text-tertiary">
               {w}
