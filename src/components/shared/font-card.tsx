@@ -45,10 +45,13 @@ function Byline({ font }: { font: Font }) {
 export function FontCard({
   font,
   favorite,
+  action,
   className,
 }: {
   font: Font;
   /** زرّ المفضّلة — يأتي من طبقة التطبيق */ favorite?: ReactNode;
+  /** سطر الأفعال للخطوط المدفوعة/التجريبية — يأتي من طبقة التطبيق؛ بدونه: الرخصة + تحميل */
+  action?: ReactNode;
   className?: string;
 }) {
   const badge = BADGE[font.type];
@@ -87,10 +90,12 @@ export function FontCard({
           <DesignerAvatars designers={font.designers} />
           <Byline font={font} />
         </div>
-        <div className="mt-1 flex items-center justify-between gap-3">
-          <span className="text-sm font-medium text-lic">{USAGE_LABEL[font.usage]}</span>
-          <DownloadButton fontName={font.name} />
-        </div>
+        {action ?? (
+          <div className="mt-1 flex items-center justify-between gap-3">
+            <span className="text-sm font-medium text-lic">{USAGE_LABEL[font.usage]}</span>
+            <DownloadButton fontName={font.name} />
+          </div>
+        )}
       </div>
     </article>
   );

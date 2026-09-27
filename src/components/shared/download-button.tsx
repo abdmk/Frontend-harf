@@ -5,14 +5,21 @@ import { useEffect, useState } from 'react';
 import { CheckIcon, DownloadIcon } from '@/components/ui/icons';
 import { cn } from '@/lib/cn';
 
-type Props = { fontName: string; label?: string; size?: 'sm' | 'lg'; className?: string };
+type Props = {
+  fontName: string;
+  label?: string;
+  size?: 'sm' | 'lg';
+  /** secondary: للنسخة التجريبية بجانب زرّ الشراء */
+  variant?: 'primary' | 'secondary';
+  className?: string;
+};
 
 /**
  * التحميل — للعرض: يُظهر التقدّم ثم النجاح.
  * في المنتج: يطلب من الخادم رابطاً موقّتاً موقّعاً بعد التحقّق من ترخيص المستخدم،
  * ولا يُكشف أي مسار حقيقي للملف في الصفحة.
  */
-export function DownloadButton({ fontName, label = 'تحميل', size = 'sm', className }: Props) {
+export function DownloadButton({ fontName, label = 'تحميل', size = 'sm', variant = 'primary', className }: Props) {
   const [state, setState] = useState<'idle' | 'busy' | 'done'>('idle');
   useEffect(() => {
     if (state === 'busy') {
@@ -32,9 +39,13 @@ export function DownloadButton({ fontName, label = 'تحميل', size = 'sm', cl
       aria-live="polite"
       onClick={() => state === 'idle' && setState('busy')}
       className={cn(
-        'group/dl relative z-10 inline-flex items-center justify-center gap-2 font-medium whitespace-nowrap text-white transition-[background-color,transform] duration-200 active:scale-[.97]',
+        'group/dl relative z-10 inline-flex items-center justify-center gap-2 font-medium whitespace-nowrap transition-[background-color,transform] duration-200 active:scale-[.97]',
         size === 'sm' ? 'h-8 min-w-21 rounded-xs px-3 text-meta' : 'h-12 rounded-sm px-6 text-lead',
-        state === 'done' ? 'bg-ok-600' : 'bg-primary hover:bg-harf-600',
+        state === 'done'
+          ? 'bg-ok-600 text-white'
+          : variant === 'primary'
+            ? 'bg-primary text-primary-foreground hover:bg-harf-600'
+            : 'border bg-sunken text-foreground hover:bg-inset',
         className,
       )}
     >

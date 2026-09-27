@@ -1,20 +1,22 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useSearchParams } from 'next/navigation';
 import { Fragment, useLayoutEffect, useRef } from 'react';
 
 import { mainNav } from '@/config/site';
 import { cn } from '@/lib/cn';
 
-/** «خطوط مجانية» تشمل الرئيسية وصفحات الخطوط */
-function isActive(href: string, pathname: string) {
-  if (href === '/') return pathname === '/' || pathname.startsWith('/fonts');
+/** «خطوط مجانية» تشمل الرئيسية وصفحات الخطوط، و«خطوط مدفوعة» هي المكتبة بفلتر المدفوع */
+function isActive(href: string, pathname: string, paid: boolean) {
+  if (href === '/') return !paid && (pathname === '/' || pathname.startsWith('/fonts'));
+  if (href.startsWith('/?')) return paid && pathname === '/';
   return href !== '#' && pathname.startsWith(href);
 }
 
 export function HeaderNav({ className }: { className?: string }) {
   const pathname = usePathname();
+  const paid = useSearchParams().get('license') === 'paid';
   const navRef = useRef<HTMLElement>(null);
   const indRef = useRef<HTMLSpanElement>(null);
 
@@ -49,7 +51,7 @@ export function HeaderNav({ className }: { className?: string }) {
       nav.removeEventListener('mouseover', over);
       nav.removeEventListener('mouseleave', home);
     };
-  }, [pathname]);
+  }, [pathname, paid]);
 
   return (
     <nav
@@ -64,7 +66,7 @@ export function HeaderNav({ className }: { className?: string }) {
         <Fragment key={g}>
           {g > 0 && <span aria-hidden className="mx-3 h-5 w-px shrink-0 self-center bg-border" />}
           {group.map((item) => {
-            const active = isActive(item.href, pathname);
+            const active = isActive(item.href, pathname, paid);
             return (
               <Link
                 key={item.label}

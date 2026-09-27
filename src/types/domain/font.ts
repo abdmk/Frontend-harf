@@ -31,6 +31,8 @@ export type Font = {
   popularity: number;
   /** بالدولار — 0 للمجاني */
   price: number;
+  /** سعر قبل الخصم (للعرض) */
+  compareAtPrice?: number;
   style?: string;
   tags?: string[];
   description?: string[];

@@ -1,8 +1,9 @@
 import Link from 'next/link';
 
+import { CatalogCard } from '@/app/_components/catalog-card';
 import { FileIcon } from '@/components/shared/file-icon';
-import { FontCard } from '@/components/shared/font-card';
 import { FontGridSkeleton, LoadingState } from '@/components/shared/loading-state';
+import { OrderSummary } from '@/components/shared/order-summary';
 import { PriceDisplay } from '@/components/shared/price-display';
 import { StatCard } from '@/components/shared/stat-card';
 import { Badge } from '@/components/ui/badge';
@@ -10,19 +11,23 @@ import { Button } from '@/components/ui/button';
 import { ChartHistogramIcon, CheckIcon, ClockIcon, CrossIcon, DownloadIcon } from '@/components/ui/icons';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { AccountPanel } from '@/features/account/components/account-panel';
-import { FavoriteButton } from '@/features/favorites/components/favorite-button';
+import { CartLine } from '@/features/cart/components/cart-line';
+import { PaymentResult } from '@/features/checkout/components/checkout-form';
 import { WeightWaterfall } from '@/features/font-details/components/weight-waterfall';
 import { FontTester } from '@/features/font-tester/components/font-tester';
+import { PurchaseActions } from '@/features/licensing/components/purchase-actions';
 import { NotificationsMenu } from '@/features/notifications/components/notifications-menu';
 import { UploadDialog } from '@/features/publishing/components/upload-dialog';
+import { getPricing } from '@/lib/commerce/server';
 import { CATEGORY_LABEL } from '@/lib/labels';
 import { MOCK_FONTS } from '@/mocks/fonts';
 import { MOCK_NOTIFICATIONS } from '@/mocks/notifications';
 import { MOCK_USERS } from '@/mocks/users';
-import { usd } from '@/types/domain/commerce';
+import { type Cart, cents, usd } from '@/types/domain/commerce';
 import { CATEGORIES } from '@/types/domain/font';
 
 import { ComponentsDemo } from './_components/components-demo';
+import { demoSubmit } from './_components/demo-actions';
 import { DsPanel, DsSection } from './_components/ds-section';
 import { Foundations } from './_components/foundations';
 import { DS_GROUPS } from './_components/nav-items';
@@ -35,7 +40,23 @@ const STATUS_BADGE = {
 } as const;
 
 /** دليل التصميم الحيّ — يعرض الرموز والمكوّنات الحقيقية المستعملة في الموقع، لا نسخاً منها */
-export default function DesignSystemPage() {
+export default async function DesignSystemPage() {
+  const [naskhPricing, trialPricing] = await Promise.all([getPricing('naskh'), getPricing('roobert')]);
+  const demoCart: Cart = {
+    items: [
+      {
+        id: 'demo0001',
+        selection: { fontId: 'naskh', package: 'single', weightId: 'regular', uses: { web: 'w10k' } },
+        fontName: 'Naskh Hadith',
+        foundry: 'سارة نبيل',
+        summary: ['وزن عادي', 'موقع إلكتروني · حتى 10 آلاف زيارة/شهر'],
+        price: cents(1800),
+      },
+    ],
+    subtotal: cents(1800),
+    discount: cents(0),
+    total: cents(1800),
+  };
   const cards = [
     MOCK_FONTS.find((f) => f.type === 'free'),
     MOCK_FONTS.find((f) => f.type === 'trial'),
@@ -227,7 +248,7 @@ export default function DesignSystemPage() {
           <ul className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {cards.map((f) => (
               <li key={f.id} className="flex [&>*]:w-full">
-                <FontCard font={f} favorite={<FavoriteButton fontId={f.id} fontName={f.name} />} />
+                <CatalogCard font={f} />
               </li>
             ))}
           </ul>
@@ -268,6 +289,76 @@ export default function DesignSystemPage() {
             <PriceDisplay price={usd(39)} compareAt={usd(49)} />
             <PriceDisplay price={usd(9.5)} suffix="/ شهرياً" size="sm" />
           </DsPanel>
+        </DsSection>
+
+        <DsSection
+          id="licensing"
+          num="5.5"
+          title="صندوق السعر ولوحة الترخيص"
+          en="Price Box / License Sheet"
+          note="الأسعار والنطاقات بيانات تجريبية، والخادم يعيد الحساب عند الإضافة وعند الدفع. «ضمن خطة» حالة مدعومة في الأنواع ولا تُفعَّل حتى تُقرّر سياسة الاشتراك."
+        >
+          {naskhPricing && trialPricing && (
+            <div className="flex flex-col gap-4">
+              <DsPanel label="مدفوع — افتح «شراء الترخيص» لرؤية اللوحة">
+                <PurchaseActions
+                  font={{ id: 'naskh', name: 'Naskh Hadith', type: 'paid' }}
+                  foundry="سارة نبيل"
+                  pricing={naskhPricing}
+                  onSubmit={demoSubmit}
+                />
+              </DsPanel>
+              <DsPanel label="تجريبي">
+                <PurchaseActions
+                  font={{ id: 'roobert', name: 'Roobert Arabic TRIAL', type: 'trial' }}
+                  foundry="Mathieu Desjardins"
+                  pricing={trialPricing}
+                  onSubmit={demoSubmit}
+                />
+              </DsPanel>
+              <DsPanel label="مملوك">
+                <PurchaseActions
+                  font={{ id: 'naskh', name: 'Naskh Hadith', type: 'paid' }}
+                  foundry="سارة نبيل"
+                  pricing={naskhPricing}
+                  ownership="owned"
+                  licenseId="HRF-24918"
+                  onSubmit={demoSubmit}
+                />
+              </DsPanel>
+            </div>
+          )}
+        </DsSection>
+
+        <DsSection
+          id="cart"
+          num="5.6"
+          title="السلة"
+          en="Cart"
+          note="سلة واحدة بحالتها في الترويسة والصفحة والدفع. العنصر ترخيص كامل، والسعر محسوب على الخادم. كود الخصم التجريبي: HARF10."
+        >
+          <div className="grid grid-cols-[minmax(0,1fr)] gap-4 lg:grid-cols-2">
+            <DsPanel label="سطر في السلة المصغّرة" className="p-2">
+              {demoCart.items.map((i) => (
+                <CartLine key={i.id} item={i} />
+              ))}
+            </DsPanel>
+            <OrderSummary cart={demoCart} />
+          </div>
+        </DsSection>
+
+        <DsSection
+          id="checkout"
+          num="5.7"
+          title="الدفع"
+          en="Checkout (Stripe)"
+          note="حقول البطاقة في /checkout شكلية للعرض؛ في المنتج يحلّ محلّها Stripe Elements، والتسليم من webhook موقّع فقط."
+        >
+          <div className="grid grid-cols-[minmax(0,1fr)] gap-4 lg:grid-cols-3">
+            <PaymentResult kind="processing" total={cents(12500)} />
+            <PaymentResult kind="paid" total={cents(12500)} />
+            <PaymentResult kind="declined" total={cents(12500)} message="رفض المصرف العملية، ولم يُخصم أي مبلغ." />
+          </div>
         </DsSection>
 
         <DsSection

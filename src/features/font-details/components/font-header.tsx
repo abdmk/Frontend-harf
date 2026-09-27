@@ -6,7 +6,16 @@ import { CATEGORY_LABEL, USAGE_LABEL } from '@/lib/labels';
 import type { Font } from '@/types/domain/font';
 
 /** العنوان والمصمّمون والأفعال، ثم شريط المعلومات */
-export function FontHeader({ font, favorite }: { font: Font; favorite?: ReactNode }) {
+export function FontHeader({
+  font,
+  favorite,
+  actions,
+}: {
+  font: Font;
+  favorite?: ReactNode;
+  /** أفعال الشراء للخطوط المدفوعة/التجريبية — تأتي من طبقة التطبيق؛ بدونها: تحميل مجاني */
+  actions?: ReactNode;
+}) {
   const meta = [
     ['الأوزان', String(font.weights)],
     ['اللغات', String(font.langs.length)],
@@ -30,10 +39,12 @@ export function FontHeader({ font, favorite }: { font: Font; favorite?: ReactNod
             ))}
           </div>
         </div>
-        <div className="flex items-center gap-3">
-          {favorite}
-          <DownloadButton fontName={font.name} label="تحميل الخط" size="lg" />
-        </div>
+        {actions ?? (
+          <div className="flex items-center gap-3">
+            {favorite}
+            <DownloadButton fontName={font.name} label="تحميل الخط" size="lg" />
+          </div>
+        )}
       </div>
       <dl className="mt-8 grid grid-cols-2 rounded-md border bg-card sm:grid-cols-5">
         {meta.map(([k, v]) => (

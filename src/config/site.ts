@@ -9,7 +9,7 @@ export const siteConfig = {
 export const mainNav = [
   [
     { label: 'خطوط مجانية', href: '/' },
-    { label: 'خطوط مدفوعة', href: '#' },
+    { label: 'خطوط مدفوعة', href: '/?license=paid' },
     { label: 'مخطوطات', href: '#' },
   ],
   [

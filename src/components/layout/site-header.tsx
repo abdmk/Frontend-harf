@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { Suspense } from 'react';
 import type { ReactNode } from 'react';
 
 import { HarfLockup, HarfMark } from '@/components/shared/harf-logo';
@@ -7,6 +8,9 @@ import { paths } from '@/config/paths';
 import { cn } from '@/lib/cn';
 
 import { HeaderNav } from './header-nav';
+
+const NAV_CLASS =
+  'col-span-2 -mx-4 h-12 border-t border-subtle px-1 lg:mx-0 lg:h-full lg:flex-1 lg:justify-center lg:border-0 lg:px-0';
 
 type SiteHeaderProps = {
   /** أزرار الترويسة القادمة من الـfeatures (السلة، الإشعارات، الحساب) */
@@ -42,7 +46,10 @@ export function SiteHeader({ actions, wide }: SiteHeaderProps) {
           <ThemeToggle />
           {actions}
         </div>
-        <HeaderNav className="col-span-2 -mx-4 h-12 border-t border-subtle px-1 lg:mx-0 lg:h-full lg:flex-1 lg:justify-center lg:border-0 lg:px-0" />
+        {/* useSearchParams يحتاج حدّ Suspense في الصفحات الثابتة */}
+        <Suspense fallback={<div className={NAV_CLASS} />}>
+          <HeaderNav className={NAV_CLASS} />
+        </Suspense>
       </div>
     </header>
   );

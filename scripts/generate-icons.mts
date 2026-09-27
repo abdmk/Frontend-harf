@@ -117,6 +117,8 @@ const MAP: Record<string, string> = {
   'star-filled': 'fi-sr-star',
   diamond: 'fi-rr-diamond',
   'caret-down': 'fi-rr-caret-down',
+  computer: 'fi-rr-computer',
+  mobile: 'fi-rr-mobile',
 };
 
 const out: Record<string, { viewBox: string; nodes: IconNode[] }> = {};

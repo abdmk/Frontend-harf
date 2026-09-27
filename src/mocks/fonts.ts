@@ -76,7 +76,8 @@ export const MOCK_FONTS: Font[] = [
     category: 'classic',
     releasedAt: ago(90),
     popularity: 640,
-    price: 180,
+    price: 49,
+    compareAtPrice: 100,
   },
   {
     id: 'kufa',
