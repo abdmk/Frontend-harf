@@ -1,0 +1,275 @@
+@import 'tailwindcss';
+@import 'tw-animate-css';
+
+/* الوضع الداكن يُفعَّل بصنف .dark على <html> (يضعه سكربت الرأس قبل الرسم) */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ══ رموز حرف — منقولة من «design system .html» ثم مضبوطة على ألوان تصاميم الصفحات ══ */
+:root {
+  /* الأدوار كما يتوقّعها shadcn */
+  --background: #ffffff;
+  --foreground: #161616;
+  --card: #ffffff;
+  --card-foreground: #161616;
+  --popover: #ffffff;
+  --popover-foreground: #161616;
+  --primary: #ec3b3c;
+  --primary-foreground: #ffffff;
+  --secondary: #f6f6f8;
+  --secondary-foreground: #161616;
+  --muted: #f6f6f8;
+  --muted-foreground: #6b6b72;
+  --accent: #f6f6f8;
+  --accent-foreground: #161616;
+  --destructive: #e53136;
+  --border: #e6e6ea;
+  --input: #e6e6ea;
+  --ring: #ec3b3c;
+  --radius: 12px;
+
+  /* أدوار حرف الإضافية */
+  --sunken: #f6f6f8;
+  --inset: #ededf0;
+  --subtle: #f0f0f2;
+  --strong: #d3d3d9;
+  --tertiary: #9c9ca3;
+  --page-muted: #f8f8f8; /* أرضية منطقة المحتوى في صفحة الحساب */
+  --ink: #1b1b1b;
+  --ink-foreground: #ffffff;
+  --tint-brand: #ffe4e4;
+  --tint-ok: #e4faec;
+  --tint-info: #e1f1ff;
+  --lic: #1fa84f;
+  --info-strong: #0a84ff;
+  --heart-bg: rgb(160 156 160 / 0.55);
+  --nav-car: #ffffff;
+  --scrim: rgb(16 14 15 / 0.42);
+  --shadow-soft: 0 1px 2px rgb(22 22 22 / 0.04), 0 4px 10px rgb(22 22 22 / 0.05);
+  --shadow-float: 0 2px 6px rgb(22 22 22 / 0.05), 0 12px 28px rgb(22 22 22 / 0.08);
+  --shadow-overlay: 0 4px 10px rgb(22 22 22 / 0.06), 0 24px 56px rgb(22 22 22 / 0.14);
+}
+
+.dark {
+  --background: #100f0f;
+  --foreground: #f4f4f4;
+  --card: #151414;
+  --card-foreground: #f4f4f4;
+  --popover: #171616;
+  --popover-foreground: #f4f4f4;
+  --primary: #ec3b3c;
+  --primary-foreground: #ffffff;
+  --secondary: #1e1e1e;
+  --secondary-foreground: #f4f4f4;
+  --muted: #1e1e1e;
+  --muted-foreground: #a3a3a3;
+  --accent: #1e1e1e;
+  --accent-foreground: #f4f4f4;
+  --destructive: #ff5a5f;
+  --border: #2a2a2a;
+  --input: #2a2a2a;
+  --ring: #f56d70;
+
+  --sunken: #1e1e1e;
+  --inset: #2a2929;
+  --subtle: #1f1f1f;
+  --strong: #3a3a3a;
+  --tertiary: #6f6f6f;
+  --page-muted: #0b0a0a;
+  --ink: #d6d3d0;
+  --ink-foreground: #161616;
+  --tint-brand: #3a1b1d;
+  --tint-ok: #0e3a21;
+  --tint-info: rgb(0 139 254 / 0.18);
+  --lic: #3dce68;
+  --info-strong: #6cb8ff;
+  --heart-bg: rgb(255 255 255 / 0.12);
+  --nav-car: #353432;
+  --scrim: rgb(0 0 0 / 0.6);
+  --shadow-soft: 0 2px 4px rgb(0 0 0 / 0.45), 0 6px 14px rgb(0 0 0 / 0.4);
+  --shadow-float: 0 4px 8px rgb(0 0 0 / 0.5), 0 14px 32px rgb(0 0 0 / 0.5);
+  --shadow-overlay: 0 8px 16px rgb(0 0 0 / 0.55), 0 28px 64px rgb(0 0 0 / 0.6);
+  color-scheme: dark;
+}
+
+@theme inline {
+  --font-sans: var(--font-graphik), ui-sans-serif, system-ui, 'Segoe UI', sans-serif;
+  --font-mono: ui-monospace, 'SF Mono', Menlo, monospace;
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --color-sunken: var(--sunken);
+  --color-inset: var(--inset);
+  --color-subtle: var(--subtle);
+  --color-strong: var(--strong);
+  --color-tertiary: var(--tertiary);
+  --color-page-muted: var(--page-muted);
+  --color-ink: var(--ink);
+  --color-ink-foreground: var(--ink-foreground);
+  --color-tint-brand: var(--tint-brand);
+  --color-tint-ok: var(--tint-ok);
+  --color-tint-info: var(--tint-info);
+  --color-lic: var(--lic);
+  --color-info-strong: var(--info-strong);
+  --color-heart: var(--heart-bg);
+  --color-nav-car: var(--nav-car);
+  --color-scrim: var(--scrim);
+
+  /* لوحة حرف الثابتة */
+  --color-harf-50: #fff4f4;
+  --color-harf-100: #ffe3e3;
+  --color-harf-400: #f56d70;
+  --color-harf-500: #ec3b3c;
+  --color-harf-600: #d22528;
+  --color-harf-700: #ae1d20;
+  --color-ok-500: #3dce68;
+  --color-ok-600: #2cae53;
+  --color-trial-500: #008bfe;
+  --color-ai-500: #6233f5;
+  --color-gold-500: #f5a524;
+  --color-file-pdf: #ff4b55;
+  --color-file-otf: #7b3bf0;
+  --color-file-ttf: #0a8cff;
+  --color-file-zip: #ff9a2e;
+
+  --radius-xs: 8px;
+  --radius-sm: 12px;
+  --radius-md: 16px;
+  --radius-lg: 22px;
+  --radius-xl: 28px;
+
+  --shadow-soft: var(--shadow-soft);
+  --shadow-float: var(--shadow-float);
+  --shadow-overlay: var(--shadow-overlay);
+
+  --ease-out-quint: cubic-bezier(0.2, 0, 0, 1);
+  --ease-pop: cubic-bezier(0.34, 1.4, 0.64, 1);
+  --ease-in-out-strong: cubic-bezier(0.65, 0, 0.35, 1);
+
+  --animate-heart: heart 560ms var(--ease-pop);
+  --animate-ring: ring 800ms var(--ease-out-quint);
+  --animate-pop-in: pop-in 320ms var(--ease-pop);
+  --animate-fade-up: fade-up 320ms var(--ease-out-quint);
+
+  @keyframes heart {
+    25% {
+      transform: scale(0.7);
+    }
+    60% {
+      transform: scale(1.3);
+    }
+  }
+  @keyframes ring {
+    15% {
+      transform: rotate(14deg);
+    }
+    30% {
+      transform: rotate(-12deg);
+    }
+    45% {
+      transform: rotate(8deg);
+    }
+    60% {
+      transform: rotate(-5deg);
+    }
+    75% {
+      transform: rotate(2deg);
+    }
+  }
+  @keyframes pop-in {
+    from {
+      opacity: 0;
+      transform: scale(0.7);
+    }
+  }
+  @keyframes fade-up {
+    from {
+      opacity: 0;
+      transform: translateY(6px);
+    }
+  }
+}
+
+/* ══ الأساس ══ */
+@layer base {
+  * {
+    @apply border-border outline-ring/60;
+  }
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-feature-settings: normal;
+    font-variant-numeric: lining-nums tabular-nums;
+    font-synthesis: none;
+    line-height: 1.8;
+  }
+  h1,
+  h2,
+  h3,
+  h4 {
+    line-height: 1.3;
+    text-wrap: balance;
+  }
+  :focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
+  }
+}
+
+/* الظهور عند التمرير (يضبطه مكوّن Reveal) */
+[data-reveal='out'] {
+  opacity: 0;
+  transform: translateY(16px);
+}
+[data-reveal='in'] {
+  opacity: 1;
+  transform: none;
+  transition:
+    opacity 560ms var(--ease-out-quint) calc(var(--reveal-i, 0) * 60ms),
+    transform 560ms var(--ease-out-quint) calc(var(--reveal-i, 0) * 60ms);
+}
+
+/* تبديل الوضع: الألوان تنتقل بنعومة لحظة التبديل فقط */
+html.theme-anim *,
+html.theme-anim *::before,
+html.theme-anim *::after {
+  transition:
+    background-color 320ms var(--ease-out-quint),
+    border-color 320ms var(--ease-out-quint),
+    color 320ms var(--ease-out-quint),
+    fill 320ms var(--ease-out-quint) !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    transition-delay: 0s !important;
+    scroll-behavior: auto !important;
+  }
+  [data-reveal='out'] {
+    opacity: 1;
+    transform: none;
+  }
+}

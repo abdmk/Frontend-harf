@@ -1,0 +1,8 @@
+.next
+node_modules
+src/components/ui/icons/icons.generated.ts
+pnpm-lock.yaml
+reference
+drafts
+tools
+*.html
