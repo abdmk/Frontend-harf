@@ -1,4 +1,4 @@
-import Link from 'next/link';
+import { Link } from 'react-router';
 import type { ReactNode } from 'react';
 
 import { ChevronRightIcon } from '@/components/ui/icons';
@@ -37,7 +37,7 @@ export function AccountShell({
       <main id="main" className={cn('bg-page-muted px-4 py-8 sm:px-12 sm:py-10', !section && 'hidden lg:block')}>
         {section && (
           <Link
-            href={paths.account.getHref('')}
+            to={paths.account.getHref('')}
             className="mb-4 inline-flex items-center gap-1 text-meta text-muted-foreground hover:text-foreground lg:hidden"
           >
             <ChevronRightIcon className="size-4" />

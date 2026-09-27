@@ -2,7 +2,7 @@ export const siteConfig = {
   name: 'مكتبة حرف',
   nameEn: 'Harf Library',
   description: 'مكتبة حرف: خطوط عربية ومتعددة اللغات، مجانية ومدفوعة، بتراخيص واضحة.',
-  url: process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000',
+  url: import.meta.env.VITE_SITE_URL ?? 'http://localhost:3000',
 } as const;
 
 /** روابط الترويسة: مجموعتان يفصل بينهما خطّ، كما في التصميم */

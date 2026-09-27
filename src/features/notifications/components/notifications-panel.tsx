@@ -1,5 +1,3 @@
-'use client';
-
 import { MarkAllRead, NotificationList } from './notification-list';
 import { useNotifications } from '../hooks/use-notifications';
 import type { NotificationView } from '../utils/group';

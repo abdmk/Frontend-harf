@@ -1,6 +1,4 @@
-'use client';
-
-import Link from 'next/link';
+import { Link } from 'react-router';
 import { useActionState, useEffect } from 'react';
 
 import { UsageMeter } from '@/components/shared/usage-meter';
@@ -30,7 +28,7 @@ export function ProfileSection({
   action,
 }: {
   user: User;
-  action: (prev: FormState, form: FormData) => Promise<FormState>;
+  action: (prev: FormState, form: FormData) => FormState | Promise<FormState>;
 }) {
   const [state, formAction, pending] = useActionState(action, null);
   const f = state?.fields ?? {};
@@ -69,7 +67,7 @@ export function ProfileSection({
           {stats.map(([Icon, n, label, section]) => (
             <li key={section} className="border-s first:border-s-0">
               <Link
-                href={paths.account.getHref(section)}
+                to={paths.account.getHref(section)}
                 className="flex items-center justify-center gap-3 px-3 py-5 transition-colors hover:bg-sunken"
               >
                 <span className="grid size-10 place-items-center rounded-sm bg-sunken text-muted-foreground max-sm:hidden">
@@ -91,7 +89,7 @@ export function ProfileSection({
         title="الاستخدام الآن"
         description={`الحدود تتجدّد كل يوم · التجديد القادم خلال ${user.usage.resetsInHours} ساعات`}
         action={
-          <Link href={paths.account.getHref('usage')} className="inline-flex items-center gap-1 text-meta font-medium">
+          <Link to={paths.account.getHref('usage')} className="inline-flex items-center gap-1 text-meta font-medium">
             التفاصيل
             <ChevronLeftIcon className="size-3.5" />
           </Link>

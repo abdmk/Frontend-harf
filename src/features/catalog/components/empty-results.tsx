@@ -1,5 +1,3 @@
-'use client';
-
 import { EmptyState } from '@/components/shared/empty-state';
 import { Button } from '@/components/ui/button';
 import { SearchIcon } from '@/components/ui/icons';

@@ -1,4 +1,4 @@
-import Link from 'next/link';
+import { Link } from 'react-router';
 
 import { UsageMeter } from '@/components/shared/usage-meter';
 import { Alert } from '@/components/ui/alert';
@@ -26,7 +26,7 @@ export function UsageSection({ user }: { user: User }) {
           description="الخطة الأساسية ترفع حدّ التحميل والمطابقة. الحدود والأسعار الحالية أمثلة تجريبية."
           actions={
             <Button asChild size="sm" variant="ghost" className="text-info-text">
-              <Link href={paths.account.getHref('subscription')}>عرض الخطط</Link>
+              <Link to={paths.account.getHref('subscription')}>عرض الخطط</Link>
             </Button>
           }
         />

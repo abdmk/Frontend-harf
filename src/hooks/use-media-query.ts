@@ -1,5 +1,3 @@
-'use client';
-
 import { useSyncExternalStore } from 'react';
 
 /** يتابع استعلام وسائط CSS. على الخادم يعيد false. */

@@ -1,5 +1,3 @@
-'use client';
-
 import { useState } from 'react';
 
 import { ChartTooltip, DataTable } from './chart-frame';

@@ -1,6 +1,4 @@
-'use client';
-
-import Link from 'next/link';
+import { Link } from 'react-router';
 import { useState, useTransition } from 'react';
 
 import { PriceDisplay } from '@/components/shared/price-display';
@@ -14,7 +12,7 @@ import { CartLine } from './cart-line';
 import type { CartActionResult } from '../api/actions';
 
 /** السلة المصغّرة (دليل التصميم 5.6): تُفتح من أيقونة الترويسة، والعدّاد من الخادم */
-export function CartMenu({ cart, onRemove }: { cart: Cart; onRemove: (id: string) => Promise<CartActionResult> }) {
+export function CartMenu({ cart, onRemove }: { cart: Cart; onRemove: (id: string) => CartActionResult | Promise<CartActionResult> }) {
   const [open, setOpen] = useState(false);
   const [pending, start] = useTransition();
   const count = cart.items.length;
@@ -76,10 +74,10 @@ export function CartMenu({ cart, onRemove }: { cart: Cart; onRemove: (id: string
               </div>
               <div className="grid grid-cols-2 gap-2">
                 <Button asChild onClick={() => setOpen(false)}>
-                  <Link href={paths.checkout.getHref()}>إتمام الشراء</Link>
+                  <Link to={paths.checkout.getHref()}>إتمام الشراء</Link>
                 </Button>
                 <Button asChild variant="secondary" onClick={() => setOpen(false)}>
-                  <Link href={paths.cart.getHref()}>عرض السلة</Link>
+                  <Link to={paths.cart.getHref()}>عرض السلة</Link>
                 </Button>
               </div>
             </div>

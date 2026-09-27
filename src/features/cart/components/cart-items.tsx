@@ -1,5 +1,3 @@
-'use client';
-
 import { type ReactNode, useTransition } from 'react';
 
 import { PriceDisplay } from '@/components/shared/price-display';
@@ -16,7 +14,7 @@ export function CartItems({
   edits,
 }: {
   items: CartItem[];
-  onRemove: (id: string) => Promise<CartActionResult>;
+  onRemove: (id: string) => CartActionResult | Promise<CartActionResult>;
   /** زرّ «تعديل الترخيص» لكل عنصر (بمعرّفه) — يركّبه التطبيق من لوحة الترخيص */
   edits: Record<string, ReactNode>;
 }) {

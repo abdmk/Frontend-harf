@@ -1,4 +1,4 @@
-import Link from 'next/link';
+import { Link } from 'react-router';
 
 import { AreaChart } from '@/components/shared/charts/area-chart';
 import { BarList } from '@/components/shared/charts/bar-list';
@@ -55,10 +55,10 @@ export function StudioDashboard({
         </div>
         <div className="flex flex-wrap gap-2">
           <Button asChild variant="outline">
-            <Link href={paths.foundry.getHref(foundry.id)}>صفحتك العامة</Link>
+            <Link to={paths.foundry.getHref(foundry.id)}>صفحتك العامة</Link>
           </Button>
           <Button asChild>
-            <Link href={paths.studio.getHref('publish')}>
+            <Link to={paths.studio.getHref('publish')}>
               <PlusIcon />
               خط جديد
             </Link>
@@ -233,7 +233,7 @@ export function StudioDashboard({
                   <TableCell className="text-muted-foreground">{formatDateAr(f.updatedAt)}</TableCell>
                   <TableCell>
                     <Button asChild size="sm" variant="ghost">
-                      <Link href={paths.studio.getHref('publish')}>
+                      <Link to={paths.studio.getHref('publish')}>
                         {f.status === 'draft' || f.status === 'rejected' ? 'أكمل' : 'تعديل'}
                       </Link>
                     </Button>

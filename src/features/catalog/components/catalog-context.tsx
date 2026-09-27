@@ -1,6 +1,4 @@
-'use client';
-
-import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { useLocation, useNavigate, useSearchParams } from 'react-router';
 import { createContext, type ReactNode, use, useCallback, useMemo, useTransition } from 'react';
 
 import { type CatalogQuery, parseCatalogQuery, toSearchParams } from '@/features/catalog/types/catalog-query';
@@ -19,18 +17,18 @@ export function useCatalog() {
  * الرابط فيعيد الخادم حساب النتائج؛ أثناء ذلك تخفت الشبكة قليلاً.
  */
 export function CatalogProvider({ children }: { children: ReactNode }) {
-  const sp = useSearchParams();
-  const router = useRouter();
-  const pathname = usePathname();
+  const [sp] = useSearchParams();
+  const navigate = useNavigate();
+  const { pathname } = useLocation();
   const [pending, start] = useTransition();
   const query = useMemo(() => parseCatalogQuery(Object.fromEntries(sp.entries())), [sp]);
 
   const setQuery = useCallback(
     (patch: Partial<CatalogQuery>) => {
       const p = toSearchParams({ ...query, ...patch }).toString();
-      start(() => router.replace(p ? `${pathname}?${p}` : pathname, { scroll: false }));
+      start(() => navigate(p ? `${pathname}?${p}` : pathname, { replace: true }));
     },
-    [pathname, query, router],
+    [pathname, query, navigate],
   );
 
   const value = useMemo(() => ({ query, setQuery, pending }), [query, setQuery, pending]);

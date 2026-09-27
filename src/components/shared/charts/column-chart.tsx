@@ -1,5 +1,3 @@
-'use client';
-
 import { useState } from 'react';
 
 import { chartSeries } from '@/design-system/tokens';

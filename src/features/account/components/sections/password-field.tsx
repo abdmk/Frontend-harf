@@ -1,5 +1,3 @@
-'use client';
-
 import { LockIcon } from '@/components/ui/icons';
 import { InputGroup } from '@/components/ui/input';
 

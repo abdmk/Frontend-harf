@@ -1,5 +1,3 @@
-'use client';
-
 import { Slider as SliderPrimitive } from 'radix-ui';
 
 import { cn } from '@/lib/cn';

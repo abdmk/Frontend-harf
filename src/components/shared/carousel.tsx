@@ -1,5 +1,3 @@
-'use client';
-
 import { type ReactNode, useCallback, useEffect, useRef, useState } from 'react';
 
 import { ChevronLeftIcon, ChevronRightIcon } from '@/components/ui/icons';

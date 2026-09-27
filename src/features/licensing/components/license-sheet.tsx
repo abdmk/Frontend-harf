@@ -1,6 +1,4 @@
-'use client';
-
-import { useRouter } from 'next/navigation';
+import { useNavigate } from 'react-router';
 import { Collapsible as CollapsiblePrimitive, RadioGroup as RadioGroupPrimitive } from 'radix-ui';
 import { type ReactElement, useMemo, useState, useTransition } from 'react';
 
@@ -52,7 +50,7 @@ type Props = {
   initial?: LicenseSelection;
   defaultOpen?: boolean;
   /** إجراء الخادم الذي يضيف/يعدّل في السلة — يأتي من طبقة التطبيق */
-  onSubmit: (selection: LicenseSelection) => Promise<SubmitResult>;
+  onSubmit: (selection: LicenseSelection) => SubmitResult | Promise<SubmitResult>;
   submitLabel?: string;
 };
 
@@ -79,7 +77,7 @@ export function LicenseSheet({
   const [sel, setSel] = useState<LicenseSelection>(() => initial ?? defaultSelection(pricing));
   const [pending, startTransition] = useTransition();
   const [intent, setIntent] = useState<'cart' | 'buy' | null>(null);
-  const router = useRouter();
+  const navigate = useNavigate();
 
   const q = useMemo(() => quote(pricing, sel), [pricing, sel]);
   const setPackage = (pkg: LicensePackage) =>
@@ -102,13 +100,13 @@ export function LicenseSheet({
         return;
       }
       setOpen(false);
-      if (mode === 'buy') router.push(paths.checkout.getHref());
+      if (mode === 'buy') navigate(paths.checkout.getHref());
       else
         toast({
           tone: 'success',
           title: initial ? 'عُدِّل الترخيص' : 'أُضيف إلى السلة',
           description: `${fontName} — ${formatMoney(cents(q.cents))}`,
-          action: { label: 'عرض السلة', onClick: () => router.push(paths.cart.getHref()) },
+          action: { label: 'عرض السلة', onClick: () => navigate(paths.cart.getHref()) },
         });
     });
   }

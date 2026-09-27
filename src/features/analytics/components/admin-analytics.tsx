@@ -1,4 +1,4 @@
-import Link from 'next/link';
+import { Link } from 'react-router';
 
 import { AreaChart } from '@/components/shared/charts/area-chart';
 import { BarList } from '@/components/shared/charts/bar-list';
@@ -16,6 +16,7 @@ import { cn } from '@/lib/cn';
 import { formatMoney } from '@/lib/format';
 import type { AdminAnalytics, Range } from '@/types/domain/analytics';
 
+import { downloadAnalyticsCsv } from '../api/export-csv';
 import { TransactionsLog } from './transactions-log';
 import { UsersRegistry } from './users-registry';
 
@@ -86,7 +87,7 @@ export function AdminAnalyticsView({ data: d, range }: { data: AdminAnalytics; r
             {(['7', '30', '365'] as const).map((r) => (
               <Link
                 key={r}
-                href={`?range=${r}`}
+                to={`?range=${r}`}
                 aria-current={range === r ? 'true' : undefined}
                 className={cn(
                   'rounded-full px-4 py-2 text-control transition-colors',
@@ -99,11 +100,9 @@ export function AdminAnalyticsView({ data: d, range }: { data: AdminAnalytics; r
               </Link>
             ))}
           </nav>
-          <Button asChild variant="outline">
-            <a href={`/admin/analytics/export?range=${range}`} download>
-              <DownloadIcon />
-              تصدير CSV
-            </a>
+          <Button variant="outline" onClick={() => downloadAnalyticsCsv(range)}>
+            <DownloadIcon />
+            تصدير CSV
           </Button>
         </div>
       </div>

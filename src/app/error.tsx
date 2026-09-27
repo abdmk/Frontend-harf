@@ -1,5 +1,3 @@
-'use client';
-
 import { Button } from '@/components/ui/button';
 
 /** لا تُعرض تفاصيل الخطأ للمستخدم — تُسجَّل على الخادم فقط */

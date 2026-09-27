@@ -1,14 +1,10 @@
-'use server';
-
-import { redirect } from 'next/navigation';
-
 import { setDemoSession } from '@/lib/auth';
 
 /**
- * تسجيل الخروج — Server Action (طلب POST محميّ من CSRF بفحص المصدر في Next.js).
- * اليوم يضع الجلسة التجريبية على «خارج»؛ لاحقاً يُبطل الجلسة الحقيقية على الخادم.
+ * تسجيل الخروج.
+ * اليوم يضع الجلسة التجريبية على «خارج»؛ لاحقاً يُبطل الجلسة الحقيقية عبر الـAPI.
+ * المكوّن الذي يستدعيها يتولّى التوجيه عبر navigate('/').
  */
-export async function signOut() {
-  await setDemoSession('out');
-  redirect('/');
+export function signOut() {
+  setDemoSession('out');
 }

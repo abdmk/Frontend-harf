@@ -1,11 +1,9 @@
-'use client';
-
 import { useSyncExternalStore } from 'react';
 
 import { MoonIcon, SunIcon } from '@/components/ui/icons';
 import { cn } from '@/lib/cn';
 
-import { THEME_STORAGE_KEY } from './theme-script';
+const THEME_STORAGE_KEY = 'harf-theme';
 
 function subscribe(cb: () => void) {
   const obs = new MutationObserver(cb);

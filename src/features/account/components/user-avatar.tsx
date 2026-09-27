@@ -1,5 +1,3 @@
-import Image from 'next/image';
-
 import type { User } from '@/features/account/types';
 import { cn } from '@/lib/cn';
 
@@ -20,7 +18,7 @@ export function UserAvatar({
       )}
     >
       {user.avatarUrl ? (
-        <Image
+        <img
           src={user.avatarUrl}
           alt=""
           width={96}

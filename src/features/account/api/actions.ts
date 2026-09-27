@@ -1,16 +1,13 @@
-'use server';
-
 import { z } from 'zod';
 
 import { getCurrentUser } from '@/lib/auth';
 import { clientKey, hit } from '@/lib/rate-limit';
 
-/** إجراءات الحساب — ⚠️ عرض: يُتحقّق من المدخلات على الخادم ولا تُخزَّن بعد (لا قاعدة بيانات). */
+/** إجراءات الحساب — ⚠️ عرض: يُتحقّق من المدخلات ولا تُخزَّن بعد (لا قاعدة بيانات). */
 export type FormState = {
   ok?: boolean;
   message?: string;
   fields?: Record<string, string | undefined>;
-  /** المدخلات النصّية (لا كلمات المرور) لإعادة عرضها بعد الخطأ */
   values?: Record<string, string>;
 } | null;
 
@@ -27,8 +24,8 @@ const profileSchema = z.object({
   website: url,
 });
 
-export async function updateProfile(_prev: FormState, form: FormData): Promise<FormState> {
-  if (!(await getCurrentUser())) return { ok: false, message: 'سجّل الدخول أوّلاً.' };
+export function updateProfile(_prev: FormState, form: FormData): FormState {
+  if (!getCurrentUser()) return { ok: false, message: 'سجّل الدخول أوّلاً.' };
   const values = Object.fromEntries(
     ['name', 'profession', 'location', 'website'].map((k) => [k, String(form.get(k) ?? '').slice(0, 200)]),
   );
@@ -49,9 +46,9 @@ const passwordSchema = z
   .refine((v) => v.next === v.confirm, { path: ['confirm'], message: 'التأكيد لا يطابق كلمة المرور الجديدة.' })
   .refine((v) => v.next !== v.current, { path: ['next'], message: 'اختر كلمة مختلفة عن الحالية.' });
 
-export async function changePassword(_prev: FormState, form: FormData): Promise<FormState> {
-  if (!(await getCurrentUser())) return { ok: false, message: 'سجّل الدخول أوّلاً.' };
-  if (!hit(await clientKey('password'), 5, 15 * 60_000)) return { ok: false, message: 'محاولات كثيرة. حاول لاحقاً.' };
+export function changePassword(_prev: FormState, form: FormData): FormState {
+  if (!getCurrentUser()) return { ok: false, message: 'سجّل الدخول أوّلاً.' };
+  if (!hit(clientKey('password'), 5, 15 * 60_000)) return { ok: false, message: 'محاولات كثيرة. حاول لاحقاً.' };
   const parsed = passwordSchema.safeParse({
     current: form.get('current'),
     next: form.get('next'),

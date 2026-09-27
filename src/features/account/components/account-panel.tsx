@@ -1,4 +1,4 @@
-import Link from 'next/link';
+import { Link } from 'react-router';
 import { Fragment } from 'react';
 
 import { ChartHistogramIcon, LayersIcon, SignOutIcon } from '@/components/ui/icons';
@@ -46,7 +46,7 @@ export function AccountPanel({ user, active = null, variant = 'sidebar', onNavig
                 return (
                   <li key={section}>
                     <Link
-                      href={paths.account.getHref(section)}
+                      to={paths.account.getHref(section)}
                       onClick={onNavigate}
                       aria-current={on ? 'page' : undefined}
                       className={cn(
@@ -80,7 +80,7 @@ export function AccountPanel({ user, active = null, variant = 'sidebar', onNavig
           <>
             <hr className="my-4 border-border" />
             <Link
-              href={paths.admin.analytics.getHref()}
+              to={paths.admin.analytics.getHref()}
               onClick={onNavigate}
               className="flex h-11 items-center gap-4 rounded-sm px-4 text-lead transition-colors hover:bg-sunken"
             >
@@ -100,7 +100,7 @@ export function AccountPanel({ user, active = null, variant = 'sidebar', onNavig
               <p className="text-sm text-muted-foreground">حوّل حسابك إلى استوديو</p>
             </div>
             <Link
-              href={paths.account.getHref('subscription')}
+              to={paths.account.getHref('subscription')}
               onClick={onNavigate}
               className="rounded-full bg-sunken px-4 py-1.5 text-sm font-medium transition-colors hover:bg-inset"
             >

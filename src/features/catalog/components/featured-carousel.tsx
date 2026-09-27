@@ -1,5 +1,3 @@
-'use client';
-
 import { Carousel } from '@/components/shared/carousel';
 
 /** الشريحة المميّزة أعلى المكتبة — محتواها (صور/إعلانات) يأتي من لوحة الإدارة لاحقاً */

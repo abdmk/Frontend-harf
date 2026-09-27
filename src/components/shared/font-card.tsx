@@ -1,4 +1,4 @@
-import Link from 'next/link';
+import { Link } from 'react-router';
 import type { ReactNode } from 'react';
 
 import { CheckIcon, ClockIcon, CrownIcon } from '@/components/ui/icons';
@@ -78,7 +78,7 @@ export function FontCard({
       <div className="flex flex-col gap-3 p-5">
         <div className="flex items-baseline justify-between gap-3">
           <Link
-            href={paths.font.getHref(font.id)}
+            to={paths.font.getHref(font.id)}
             dir="ltr"
             className="truncate text-xl font-semibold tracking-tight after:absolute after:inset-0 after:content-[''] focus-visible:outline-none focus-visible:after:rounded-lg focus-visible:after:ring-2 focus-visible:after:ring-primary"
           >

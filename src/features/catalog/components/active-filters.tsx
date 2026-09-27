@@ -1,5 +1,3 @@
-'use client';
-
 import { CrossSmallIcon } from '@/components/ui/icons';
 import type { CatalogQuery } from '@/features/catalog/types/catalog-query';
 import { DEFAULT_QUERY } from '@/features/catalog/types/catalog-query';

@@ -1,7 +1,4 @@
-'use client';
-
-import Link from 'next/link';
-import { usePathname, useSearchParams } from 'next/navigation';
+import { Link, useLocation, useSearchParams } from 'react-router';
 import { Fragment, useLayoutEffect, useRef } from 'react';
 
 import { mainNav } from '@/config/site';
@@ -15,8 +12,9 @@ function isActive(href: string, pathname: string, paid: boolean) {
 }
 
 export function HeaderNav({ className }: { className?: string }) {
-  const pathname = usePathname();
-  const paid = useSearchParams().get('license') === 'paid';
+  const { pathname } = useLocation();
+  const [searchParams] = useSearchParams();
+  const paid = searchParams.get('license') === 'paid';
   const navRef = useRef<HTMLElement>(null);
   const indRef = useRef<HTMLSpanElement>(null);
 
@@ -70,7 +68,7 @@ export function HeaderNav({ className }: { className?: string }) {
             return (
               <Link
                 key={item.label}
-                href={item.href}
+                to={item.href}
                 aria-current={active ? 'page' : undefined}
                 className={cn(
                   'flex shrink-0 items-center px-3 text-sm whitespace-nowrap text-muted-foreground transition-colors duration-150 hover:text-foreground',

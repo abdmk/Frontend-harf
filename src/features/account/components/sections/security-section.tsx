@@ -1,5 +1,3 @@
-'use client';
-
 import { useActionState } from 'react';
 
 import { Alert } from '@/components/ui/alert';
@@ -29,7 +27,7 @@ export function SecuritySection({
   action,
 }: {
   user: User;
-  action: (prev: FormState, form: FormData) => Promise<FormState>;
+  action: (prev: FormState, form: FormData) => FormState | Promise<FormState>;
 }) {
   const [state, formAction, pending] = useActionState(action, null);
   const f = state?.fields ?? {};

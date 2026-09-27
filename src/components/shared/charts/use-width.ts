@@ -1,5 +1,3 @@
-'use client';
-
 import { useLayoutEffect, useRef, useState } from 'react';
 
 /** عرض الحاوية بالبكسل — كي ترسم الرسوم بمقاسها الحقيقي (خطوط وحواف لا تتمطّط) */

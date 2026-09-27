@@ -1,4 +1,4 @@
-import Link from 'next/link';
+import { Link } from 'react-router';
 
 import { Button } from '@/components/ui/button';
 import { paths } from '@/config/paths';
@@ -10,20 +10,20 @@ import { NotificationsMenu } from '@/features/notifications/components/notificat
 import { getCurrentUser } from '@/lib/auth';
 import { buildCart } from '@/lib/commerce/server';
 
-/** يُركّب أزرار الترويسة من الـfeatures — الترويسة المشتركة نفسها لا تعرف الـfeatures */
-export async function HeaderActions() {
-  const [user, cart] = await Promise.all([getCurrentUser(), buildCart()]);
+export function HeaderActions() {
+  const user = getCurrentUser();
+  const cart = buildCart();
   return (
     <>
       <CartMenu cart={cart} onRemove={removeFromCart} />
       {user ? (
         <>
-          <NotificationsMenu initial={await getNotifications(user)} allHref={paths.notifications.getHref()} />
+          <NotificationsMenu initial={getNotifications(user)} allHref={paths.notifications.getHref()} />
           <AccountMenu user={user} />
         </>
       ) : (
         <Button asChild size="sm" shape="pill" className="ms-1">
-          <Link href={paths.login.getHref()}>تسجيل الدخول</Link>
+          <Link to={paths.login.getHref()}>تسجيل الدخول</Link>
         </Button>
       )}
     </>

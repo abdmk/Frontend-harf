@@ -1,6 +1,3 @@
-'use server';
-
-import { revalidatePath } from 'next/cache';
 import { z } from 'zod';
 
 import { COUNTRY_CODES } from '@/config/countries';
@@ -10,10 +7,10 @@ import type { Order } from '@/types/domain/commerce';
 
 /**
  * الدفع — ⚠️ محاكاة للعرض. لا تُرسل بيانات البطاقة إلى هذا الإجراء أبداً.
- * عند الربط الحقيقي (Stripe):
- *  1) الخادم يحسب الإجمالي من السلة (buildCart) وينشئ PaymentIntent بمفتاح سرّي من متغيّرات البيئة.
+ * عند الربط الحقيقي بالـBackend (Stripe):
+ *  1) الخادم يحسب الإجمالي من السلة وينشئ PaymentIntent بمفتاح سرّي.
  *  2) المتصفّح يؤكّد الدفع عبر Stripe Elements (البطاقة لا تمرّ بخوادم حرف).
- *  3) التسليم (الترخيص والملفات) يتمّ فقط من webhook موقّع من Stripe، لا من ردّ المتصفّح.
+ *  3) التسليم يتمّ فقط من webhook موقّع من Stripe.
  */
 export type PayState =
   | { status: 'idle' }
@@ -44,8 +41,8 @@ export async function pay(_prev: PayState, form: FormData): Promise<PayState> {
     };
   }
 
-  if (!(await getCurrentUser())) return { status: 'invalid', errors: { cart: 'سجّل الدخول لإتمام الدفع.' } };
-  const cart = await buildCart();
+  if (!getCurrentUser()) return { status: 'invalid', errors: { cart: 'سجّل الدخول لإتمام الدفع.' } };
+  const cart = buildCart();
   if (!cart.items.length) return { status: 'invalid', errors: { cart: 'السلة فارغة.' } };
 
   // محاكاة زمن معالجة المصرف
@@ -63,7 +60,6 @@ export async function pay(_prev: PayState, form: FormData): Promise<PayState> {
     last4: parsed.data.method === 'card' ? '4242' : undefined,
     createdAt: new Date().toISOString(),
   };
-  await writeCartState({ items: [] });
-  revalidatePath('/', 'layout');
+  writeCartState({ items: [] });
   return { status: 'paid', order };
 }

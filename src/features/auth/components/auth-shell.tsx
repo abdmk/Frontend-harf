@@ -1,4 +1,4 @@
-import Link from 'next/link';
+import { Link } from 'react-router';
 import type { ReactNode } from 'react';
 
 import { HarfLockup } from '@/components/shared/harf-logo';
@@ -33,7 +33,7 @@ export function AuthShell({
         <aside className="relative isolate flex flex-col gap-6 overflow-hidden p-8 sm:p-10 lg:justify-between">
           <span aria-hidden className="absolute inset-0 -z-10 bg-(image:--grad-dawn) opacity-80" />
           <div className="flex flex-col items-start gap-6">
-            <Link href={paths.home.getHref()} aria-label="مكتبة حرف — الرئيسية">
+            <Link to={paths.home.getHref()} aria-label="مكتبة حرف — الرئيسية">
               <HarfLockup className="h-9" />
             </Link>
             <span className="rounded-full border border-harf-200 bg-card px-3 py-1 text-caption font-medium text-primary">
@@ -65,7 +65,7 @@ export function AuthShell({
             ).map(([m, label, href]) => (
               <Link
                 key={m}
-                href={href}
+                to={href}
                 aria-current={mode === m ? 'page' : undefined}
                 className={cn(
                   'grid h-10 place-items-center rounded-full text-control transition-colors',

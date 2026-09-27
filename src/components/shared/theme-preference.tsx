@@ -1,10 +1,8 @@
-'use client';
-
 import { useEffect, useState } from 'react';
 
 import { RadioGroup, RadioOption } from '@/components/ui/radio-group';
 
-import { THEME_STORAGE_KEY } from './theme-script';
+const THEME_STORAGE_KEY = 'harf-theme';
 
 type Mode = 'light' | 'dark' | 'system';
 

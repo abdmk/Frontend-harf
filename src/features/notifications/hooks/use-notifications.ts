@@ -1,5 +1,3 @@
-'use client';
-
 import { useState } from 'react';
 
 import type { NotificationView } from '../utils/group';

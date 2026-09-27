@@ -1,4 +1,4 @@
-import Link from 'next/link';
+import { Link } from 'react-router';
 import { Suspense } from 'react';
 import type { ReactNode } from 'react';
 
@@ -35,7 +35,7 @@ export function SiteHeader({ actions, wide }: SiteHeaderProps) {
         )}
       >
         <Link
-          href={paths.home.getHref()}
+          to={paths.home.getHref()}
           aria-label="مكتبة حرف — الرئيسية"
           className="flex h-16 items-center text-harf-500 dark:text-harf-400"
         >

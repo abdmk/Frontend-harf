@@ -1,5 +1,3 @@
-'use client';
-
 import { type ReactNode, useId, useRef, useState } from 'react';
 
 import { FileIcon } from '@/components/shared/file-icon';

@@ -1,4 +1,4 @@
-import Link from 'next/link';
+import { Link } from 'react-router';
 
 import { Reveal } from '@/components/shared/reveal';
 
@@ -17,7 +17,7 @@ export function CtaSection() {
         احجز جلسة سريعة مع فريقنا، نساعدك تختار الخط الأنسب لمشروعك أو نخصص لك خط يعكس هويتك بشكل أوضح وأميز.
       </p>
       <Link
-        href="#"
+        to="#"
         className="group mt-4 inline-flex h-12 items-center gap-2 rounded-full bg-ink ps-4 pe-6 text-sm font-medium text-ink-foreground transition-[opacity,transform] hover:opacity-90 active:scale-[.97]"
       >
         <span aria-hidden className="flex">

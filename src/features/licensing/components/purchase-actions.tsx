@@ -1,5 +1,3 @@
-'use client';
-
 import type { ReactNode } from 'react';
 
 import { DownloadButton } from '@/components/shared/download-button';
@@ -23,7 +21,7 @@ type Props = {
   licenseId?: string;
   favorite?: ReactNode;
   defaultOpen?: boolean;
-  onSubmit: (selection: LicenseSelection) => Promise<SubmitResult>;
+  onSubmit: (selection: LicenseSelection) => SubmitResult | Promise<SubmitResult>;
 };
 
 /**

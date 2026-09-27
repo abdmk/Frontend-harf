@@ -1,4 +1,4 @@
-import Link from 'next/link';
+import { Link } from 'react-router';
 
 import { ChevronLeftIcon } from '@/components/ui/icons';
 import { cn } from '@/lib/cn';
@@ -23,7 +23,7 @@ export function Breadcrumb({ items, className }: { items: Crumb[]; className?: s
                   {c.label}
                 </span>
               ) : (
-                <Link href={c.href} className="transition-colors hover:text-foreground">
+                <Link to={c.href} className="transition-colors hover:text-foreground">
                   {c.label}
                 </Link>
               )}

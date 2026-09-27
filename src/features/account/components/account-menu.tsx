@@ -1,8 +1,5 @@
-'use client';
-
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
 import { useState } from 'react';
+import { Link, useLocation } from 'react-router';
 
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { paths } from '@/config/paths';
@@ -15,14 +12,14 @@ import { UserAvatar } from './user-avatar';
 /** شارة الخطة + صورة المستخدم في الترويسة؛ الصورة تفتح قائمة الحساب نفسها */
 export function AccountMenu({ user }: { user: User }) {
   const [open, setOpen] = useState(false);
-  const pathname = usePathname();
+  const { pathname } = useLocation();
   const seg = pathname.startsWith('/account/') ? pathname.split('/')[2] : null;
   const active = (ACCOUNT_SECTIONS as readonly string[]).includes(seg ?? '') ? (seg as AccountSection) : null;
 
   return (
     <>
       <Link
-        href={paths.account.getHref('subscription')}
+        to={paths.account.getHref('subscription')}
         className="mx-1 hidden transition-transform active:scale-95 sm:inline-flex"
         aria-label={`خطّتك: ${PLAN_BADGE_LABEL[user.plan]}`}
       >

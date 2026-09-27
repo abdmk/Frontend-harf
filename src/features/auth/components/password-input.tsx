@@ -1,5 +1,3 @@
-'use client';
-
 import { type ComponentProps, useState } from 'react';
 
 import { EyeIcon, EyeOffIcon, LockIcon } from '@/components/ui/icons';

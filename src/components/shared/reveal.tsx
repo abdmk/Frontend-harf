@@ -1,5 +1,3 @@
-'use client';
-
 import { type ComponentPropsWithoutRef, type ElementType, useEffect, useRef } from 'react';
 
 type RevealProps<T extends ElementType> = {

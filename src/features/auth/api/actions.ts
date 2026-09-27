@@ -1,6 +1,3 @@
-'use server';
-
-import { redirect } from 'next/navigation';
 import { z } from 'zod';
 
 import { safeNext, setDemoSession } from '@/lib/auth';
@@ -8,16 +5,17 @@ import { clientKey, hit } from '@/lib/rate-limit';
 
 /**
  * الدخول وإنشاء الحساب — ⚠️ عرض: لا توجد قاعدة مستخدمين بعد.
- * ما هو حقيقي هنا: التحقّق على الخادم، حدّ المحاولات، منع إعادة التوجيه المفتوح،
+ * ما هو حقيقي هنا: التحقّق، حدّ المحاولات، منع إعادة التوجيه المفتوح،
  * ورسائل خطأ عامة لا تكشف إن كان البريد مسجّلاً.
- * عند الربط: تجزئة كلمات المرور (Argon2id/bcrypt)، جلسات موقّعة، تحقّق البريد، و2FA اختياري.
+ * عند الربط بالـBackend: تجزئة كلمات المرور (Argon2id/bcrypt)، جلسات موقّعة، تحقّق البريد، و2FA اختياري.
  */
 export type AuthState = {
   error?: string;
   fields?: Partial<Record<'name' | 'email' | 'password' | 'terms', string>>;
-  /** ما كتبه المستخدم (بلا كلمة المرور) كي لا يُمسح النموذج عند الخطأ */
   values?: { name?: string; email?: string };
   sent?: string;
+  /** رابط التوجيه بعد نجاح الدخول */
+  redirectTo?: string;
 } | null;
 
 const keep = (form: FormData) => ({
@@ -30,21 +28,18 @@ const password = z.string().min(8, 'كلمة المرور 8 أحرف على ال
 
 const loginSchema = z.object({ email, password: z.string().min(1, 'اكتب كلمة المرور.').max(128) });
 
-export async function signIn(_prev: AuthState, form: FormData): Promise<AuthState> {
+export function signIn(_prev: AuthState, form: FormData): AuthState {
   const parsed = loginSchema.safeParse({ email: form.get('email'), password: form.get('password') });
   if (!parsed.success) {
     const f = parsed.error.flatten().fieldErrors;
     return { fields: { email: f.email?.[0], password: f.password?.[0] }, values: keep(form) };
   }
-  // 5 محاولات لكل (عنوان + بريد) كل 10 دقائق، و20 لكل عنوان
   const allowed =
-    hit(await clientKey('login', parsed.data.email), 5, 10 * 60_000) &&
-    hit(await clientKey('login-ip'), 20, 10 * 60_000);
+    hit(clientKey('login', parsed.data.email), 5, 10 * 60_000) && hit(clientKey('login-ip'), 20, 10 * 60_000);
   if (!allowed) return { error: 'محاولات كثيرة. انتظر قليلاً ثم حاول مجدداً.', values: keep(form) };
 
-  // عرض: أي بيانات صالحة الشكل تُدخلك؛ بريد يحوي «studio» يفتح حساب الاستوديو التجريبي
-  await setDemoSession(parsed.data.email.includes('studio') ? 'studio' : 'free');
-  redirect(safeNext(form.get('next')));
+  setDemoSession(parsed.data.email.includes('studio') ? 'studio' : 'free');
+  return { redirectTo: safeNext(form.get('next')) };
 }
 
 const registerSchema = z.object({
@@ -54,7 +49,7 @@ const registerSchema = z.object({
   terms: z.literal('on', 'يجب الموافقة على الشروط.'),
 });
 
-export async function signUp(_prev: AuthState, form: FormData): Promise<AuthState> {
+export function signUp(_prev: AuthState, form: FormData): AuthState {
   const parsed = registerSchema.safeParse({
     name: form.get('name'),
     email: form.get('email'),
@@ -68,7 +63,6 @@ export async function signUp(_prev: AuthState, form: FormData): Promise<AuthStat
       values: keep(form),
     };
   }
-  if (!hit(await clientKey('register'), 5, 60 * 60_000)) return { error: 'محاولات كثيرة. حاول لاحقاً.' };
-  // الردّ نفسه سواء كان البريد مسجّلاً أم لا — كي لا يُستعمل النموذج لاكتشاف الحسابات
+  if (!hit(clientKey('register'), 5, 60 * 60_000)) return { error: 'محاولات كثيرة. حاول لاحقاً.' };
   return { sent: parsed.data.email };
 }

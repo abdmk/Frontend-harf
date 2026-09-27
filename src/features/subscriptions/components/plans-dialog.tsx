@@ -1,5 +1,3 @@
-'use client';
-
 import { type ReactElement, useState, useTransition } from 'react';
 
 import { Badge } from '@/components/ui/badge';
@@ -36,7 +34,7 @@ export function PlansDialog({
   plans: PlanOffer[];
   current: Plan;
   trigger: ReactElement;
-  onChange: (input: { plan: Plan; cycle: BillingCycle }) => Promise<ChangePlanResult>;
+  onChange: (input: { plan: Plan; cycle: BillingCycle }) => ChangePlanResult | Promise<ChangePlanResult>;
 }) {
   const [open, setOpen] = useState(false);
   const [cycle, setCycle] = useState<BillingCycle>('monthly');

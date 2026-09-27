@@ -1,4 +1,4 @@
-import Link from 'next/link';
+import { Link } from 'react-router';
 
 import { SOCIAL } from '@/components/shared/social-icons';
 import { footerNav } from '@/config/site';
@@ -70,7 +70,7 @@ export function SiteFooter() {
       <div className="mt-10 flex flex-col items-start justify-between gap-4 border-t pt-6 text-sm md:flex-row md:items-center">
         <nav aria-label="روابط حرف" className="flex flex-wrap gap-x-8 gap-y-2">
           {footerNav.map((l) => (
-            <Link key={l.label} href={l.href} className="transition-colors hover:text-primary">
+            <Link key={l.label} to={l.href} className="transition-colors hover:text-primary">
               {l.label}
             </Link>
           ))}

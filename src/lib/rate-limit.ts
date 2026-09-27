@@ -1,16 +1,9 @@
-import 'server-only';
-
-import { headers } from 'next/headers';
-
 export { hit } from './sliding-window';
 
 /**
- * حدّ محاولات بسيط في الذاكرة (نافذة منزلقة) — يكفي لخادم واحد وللتطوير.
- * ⚠️ في الإنتاج متعدّد النسخ يُستبدل بمخزن مشترك (Redis / Upstash) بالواجهة نفسها.
+ * حدّ محاولات بسيط في الذاكرة (نافذة منزلقة) — يكفي للعرض التجريبي.
+ * ⚠️ في الإنتاج: حدّ المحاولات يُنفَّذ على الخادم (Redis / Upstash)، لا على المتصفّح.
  */
-
-export async function clientKey(scope: string, extra = '') {
-  const h = await headers();
-  const ip = h.get('x-forwarded-for')?.split(',')[0]?.trim() || h.get('x-real-ip') || 'local';
-  return `${scope}:${ip}:${extra.toLowerCase()}`;
+export function clientKey(scope: string, extra = '') {
+  return `${scope}:client:${extra.toLowerCase()}`;
 }

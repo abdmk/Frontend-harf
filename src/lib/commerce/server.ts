@@ -1,7 +1,3 @@
-import 'server-only';
-
-import { cookies } from 'next/headers';
-
 import { MOCK_FONTS } from '@/mocks/fonts';
 import { mockPricing } from '@/mocks/pricing';
 import { type Cart, type CartItem, cents } from '@/types/domain/commerce';
@@ -11,46 +7,42 @@ import { quote } from './quote';
 import { type CartState, cartStateSchema } from './selection';
 
 /**
- * الوصول إلى التسعير والسلة على الخادم.
- * اليوم: بيانات تجريبية + السلة في كوكي httpOnly (اختيارات فقط، بلا أسعار).
- * لاحقاً: قاعدة البيانات — بالتواقيع نفسها، فلا تتغيّر المكوّنات.
+ * الوصول إلى التسعير والسلة.
+ * اليوم: بيانات تجريبية + السلة في localStorage (اختيارات فقط، بلا أسعار).
+ * لاحقاً: الخادم يحسب السعر ويُخزّن السلة — بالتواقيع نفسها.
  */
-const CART_COOKIE = 'harf_cart';
+const CART_STORAGE_KEY = 'harf_cart';
 
 /** كود خصم تجريبي للعرض فقط — ليس قراراً تجارياً */
 const DEMO_COUPONS: Record<string, number> = { HARF10: 10 };
 
-export async function getPricing(fontId: string): Promise<LicensePricing | null> {
+export function getPricing(fontId: string): LicensePricing | null {
   const font = MOCK_FONTS.find((f) => f.id === fontId);
   if (!font || font.type === 'free') return null;
   return mockPricing(font);
 }
 
-export async function readCartState(): Promise<CartState> {
-  const raw = (await cookies()).get(CART_COOKIE)?.value;
-  if (!raw) return { items: [] };
+export function readCartState(): CartState {
   try {
+    const raw = localStorage.getItem(CART_STORAGE_KEY);
+    if (!raw) return { items: [] };
     const parsed = cartStateSchema.safeParse(JSON.parse(raw));
-    // كوكي معدَّل أو قديم ← سلة فارغة بدل خطأ
     return parsed.success ? parsed.data : { items: [] };
   } catch {
     return { items: [] };
   }
 }
 
-export async function writeCartState(state: CartState) {
-  const jar = await cookies();
-  if (!state.items.length && !state.coupon) {
-    jar.delete(CART_COOKIE);
-    return;
+export function writeCartState(state: CartState) {
+  try {
+    if (!state.items.length && !state.coupon) {
+      localStorage.removeItem(CART_STORAGE_KEY);
+      return;
+    }
+    localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(state));
+  } catch {
+    // localStorage غير متاح
   }
-  jar.set(CART_COOKIE, JSON.stringify(state), {
-    httpOnly: true,
-    sameSite: 'lax',
-    secure: process.env.NODE_ENV === 'production',
-    path: '/',
-    maxAge: 60 * 60 * 24 * 14,
-  });
 }
 
 export function couponPercent(code: string | undefined) {
@@ -58,12 +50,12 @@ export function couponPercent(code: string | undefined) {
 }
 
 /** يبني السلة المعروضة: يعيد حساب كل سعر من الجدول ويُسقط العناصر التي لم تعد صالحة */
-export async function buildCart(state?: CartState): Promise<Cart> {
-  const s = state ?? (await readCartState());
+export function buildCart(state?: CartState): Cart {
+  const s = state ?? readCartState();
   const items: CartItem[] = [];
   for (const it of s.items) {
     const font = MOCK_FONTS.find((f) => f.id === it.selection.fontId);
-    const pricing = await getPricing(it.selection.fontId);
+    const pricing = getPricing(it.selection.fontId);
     const q = pricing && quote(pricing, it.selection);
     if (!font || !q) continue;
     items.push({

@@ -1,8 +1,8 @@
 import { readdirSync } from 'node:fs';
 
 import { defineConfig, globalIgnores } from 'eslint/config';
-import nextVitals from 'eslint-config-next/core-web-vitals';
-import nextTs from 'eslint-config-next/typescript';
+import importX from 'eslint-plugin-import-x';
+import tseslint from 'typescript-eslint';
 
 /** كل feature لا يستورد من feature آخر — التركيب يحدث في src/app فقط (Bulletproof React) */
 const FEATURES = readdirSync(new URL('./src/features', import.meta.url), { withFileTypes: true })
@@ -10,11 +10,15 @@ const FEATURES = readdirSync(new URL('./src/features', import.meta.url), { withF
   .map((d) => d.name);
 
 const eslintConfig = defineConfig([
-  ...nextVitals,
-  ...nextTs,
+  ...tseslint.configs.recommended,
+  importX.flatConfigs.recommended,
+  importX.flatConfigs.typescript,
   {
+    settings: {
+      'import-x/resolver': { typescript: true },
+    },
     rules: {
-      'import/no-restricted-paths': [
+      'import-x/no-restricted-paths': [
         'error',
         {
           zones: [
@@ -45,8 +49,8 @@ const eslintConfig = defineConfig([
           ],
         },
       ],
-      'import/no-cycle': 'error',
-      'import/order': [
+      'import-x/no-cycle': 'error',
+      'import-x/order': [
         'error',
         {
           groups: ['builtin', 'external', 'internal', ['parent', 'sibling', 'index']],
@@ -56,26 +60,15 @@ const eslintConfig = defineConfig([
         },
       ],
       '@typescript-eslint/consistent-type-imports': ['error', { fixStyle: 'inline-type-imports' }],
-      'react/no-danger': 'error',
     },
   },
   {
-    // السكربت الوحيد المضمَّن: نصّ ثابت لتطبيق الوضع قبل الرسم (بـnonce)
-    files: ['src/components/shared/theme-script.tsx'],
-    rules: { 'react/no-danger': 'off' },
-  },
-  {
-    // «use» في fixtures الخاصة بـPlaywright ليست React hook
     files: ['e2e/**'],
     rules: { 'react-hooks/rules-of-hooks': 'off' },
   },
   globalIgnores([
-    '.next/**',
-    'out/**',
-    'build/**',
-    'next-env.d.ts',
+    'dist/**',
     'src/components/ui/icons/icons.generated.ts',
-    // مراجع التصميم ومصدر الأيقونات — ليست جزءاً من الشيفرة
     'reference/**',
     'tools/**',
   ]),

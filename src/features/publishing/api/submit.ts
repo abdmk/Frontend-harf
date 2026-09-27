@@ -1,17 +1,15 @@
-'use server';
-
 import { getCurrentUser } from '@/lib/auth';
 
 import { draftSchema } from '../types/draft';
 
 /**
- * إرسال الخط للمراجعة. التحقّق كاملاً على الخادم؛ وضع «المشرف» لا يُقبل إلا من مشرف.
- * ⚠️ عرض: لا تخزين. في المنتج: تُربط الملفات المرفوعة (المفحوصة) بالمسودّة، وتدخل طابور المراجعة.
+ * إرسال الخط للمراجعة.
+ * ⚠️ عرض: لا تخزين. في المنتج: يُرسل إلى الـAPI ويدخل طابور المراجعة.
  */
 export type SubmitResult = { ok: true; reference: string } | { ok: false; errors: { path: string; message: string }[] };
 
-export async function submitForReview(input: unknown): Promise<SubmitResult> {
-  const user = await getCurrentUser();
+export function submitForReview(input: unknown): SubmitResult {
+  const user = getCurrentUser();
   if (!user || user.plan !== 'studio')
     return { ok: false, errors: [{ path: 'auth', message: 'النشر لحساب الاستوديو.' }] };
   const parsed = draftSchema.safeParse(input);

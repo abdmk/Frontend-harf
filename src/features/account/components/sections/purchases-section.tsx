@@ -1,4 +1,4 @@
-import Link from 'next/link';
+import { Link } from 'react-router';
 
 import { DownloadButton } from '@/components/shared/download-button';
 import { EmptyState } from '@/components/shared/empty-state';
@@ -21,7 +21,7 @@ export function PurchasesSection({ purchases }: { purchases: Purchase[] }) {
         description="تراخيص الخطوط التي تشتريها تظهر هنا مع ملفاتها وإيصالاتها."
         action={
           <Button asChild>
-            <Link href="/?license=paid">تصفّح الخطوط المدفوعة</Link>
+            <Link to="/?license=paid">تصفّح الخطوط المدفوعة</Link>
           </Button>
         }
       />
@@ -47,7 +47,7 @@ export function PurchasesSection({ purchases }: { purchases: Purchase[] }) {
                 {p.licenseId}
               </TableCell>
               <TableCell>
-                <Link href={paths.font.getHref(p.fontId)} dir="ltr" className="font-medium hover:underline">
+                <Link to={paths.font.getHref(p.fontId)} dir="ltr" className="font-medium hover:underline">
                   {p.fontName}
                 </Link>
                 <span className="block text-caption text-muted-foreground">{p.summary}</span>

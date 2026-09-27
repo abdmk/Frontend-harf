@@ -1,6 +1,4 @@
-'use client';
-
-import Link from 'next/link';
+import { Link } from 'react-router';
 import type { ReactNode } from 'react';
 
 import { EmptyState } from '@/components/shared/empty-state';
@@ -24,7 +22,7 @@ export function FavoritesGrid({ cards }: { cards: Record<string, ReactNode> }) {
         description="اضغط القلب على أي خط ليظهر هنا وتعود إليه بسهولة."
         action={
           <Button asChild>
-            <Link href={paths.home.getHref()}>تصفّح الخطوط المجانية</Link>
+            <Link to={paths.home.getHref()}>تصفّح الخطوط المجانية</Link>
           </Button>
         }
       />

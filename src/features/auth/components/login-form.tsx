@@ -1,5 +1,3 @@
-'use client';
-
 import { useActionState } from 'react';
 
 import { Alert } from '@/components/ui/alert';
@@ -18,7 +16,7 @@ export function LoginForm({
   action,
 }: {
   next?: string;
-  action: (prev: AuthState, form: FormData) => Promise<AuthState>;
+  action: (prev: AuthState, form: FormData) => AuthState | Promise<AuthState>;
 }) {
   const [state, formAction, pending] = useActionState(action, null);
   const f = state?.fields ?? {};

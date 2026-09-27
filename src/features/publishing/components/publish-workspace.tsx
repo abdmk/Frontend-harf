@@ -1,6 +1,4 @@
-'use client';
-
-import Link from 'next/link';
+import { Link } from 'react-router';
 import { useEffect, useMemo, useState, useTransition } from 'react';
 
 import { Badge } from '@/components/ui/badge';
@@ -34,7 +32,7 @@ export function PublishWorkspace({
   onSubmit,
 }: {
   isAdmin: boolean;
-  onSubmit: (d: unknown) => Promise<SubmitResult>;
+  onSubmit: (d: unknown) => SubmitResult | Promise<SubmitResult>;
 }) {
   const [draft, setDraft] = useState<WorkDraft>(EMPTY_DRAFT);
   const [images, setImages] = useState<{ url: string; name: string }[]>([]);
@@ -119,7 +117,7 @@ export function PublishWorkspace({
           . تصلك رسالة خلال 24 ساعة.
         </p>
         <Button asChild className="mt-2">
-          <Link href={paths.studio.getHref()}>العودة إلى لوحة المسبك</Link>
+          <Link to={paths.studio.getHref()}>العودة إلى لوحة المسبك</Link>
         </Button>
       </div>
     );
@@ -130,7 +128,7 @@ export function PublishWorkspace({
       <header className="flex flex-wrap items-center justify-between gap-3 border-b px-5 py-4 sm:px-6">
         <div className="flex items-center gap-3">
           <Link
-            href={paths.studio.getHref()}
+            to={paths.studio.getHref()}
             className="inline-flex items-center gap-1 text-meta text-muted-foreground hover:text-foreground"
           >
             <ChevronRightIcon className="size-4" />

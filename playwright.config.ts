@@ -2,10 +2,7 @@ import { defineConfig, devices } from '@playwright/test';
 
 const PORT = 3200;
 
-/**
- * اختبارات الرحلات على نسخة الإنتاج (next build && next start) — أي تحت CSP الصارمة نفسها.
- * التشغيل: pnpm e2e
- */
+/** اختبارات الرحلات على نسخة الإنتاج (vite build && vite preview). التشغيل: pnpm e2e */
 export default defineConfig({
   testDir: './e2e',
   fullyParallel: true,
@@ -26,7 +23,7 @@ export default defineConfig({
     { name: 'mobile', use: { ...devices['Pixel 7'] }, testMatch: /responsive\.spec\.ts/ },
   ],
   webServer: {
-    command: `pnpm start --port ${PORT}`,
+    command: `pnpm preview --port ${PORT}`,
     url: `http://localhost:${PORT}`,
     reuseExistingServer: !process.env.CI,
     timeout: 60_000,

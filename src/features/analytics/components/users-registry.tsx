@@ -1,5 +1,3 @@
-'use client';
-
 import { useMemo, useState } from 'react';
 
 import { Avatar } from '@/components/shared/avatar';

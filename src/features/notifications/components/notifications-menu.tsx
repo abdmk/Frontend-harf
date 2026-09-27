@@ -1,6 +1,4 @@
-'use client';
-
-import Link from 'next/link';
+import { Link } from 'react-router';
 import { useEffect, useState } from 'react';
 
 import { BellIcon } from '@/components/ui/icons';
@@ -58,7 +56,7 @@ export function NotificationsMenu({ initial, allHref }: { initial: NotificationV
           />
         </div>
         <Link
-          href={allHref}
+          to={allHref}
           onClick={() => setOpen(false)}
           className="border-t border-border px-5 py-3.5 text-center text-sm text-muted-foreground transition-colors hover:bg-sunken hover:text-foreground"
         >

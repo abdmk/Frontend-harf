@@ -1,6 +1,4 @@
-'use client';
-
-import Link from 'next/link';
+import { Link } from 'react-router';
 import { RadioGroup as RadioGroupPrimitive } from 'radix-ui';
 import { type ReactNode, useActionState, useState } from 'react';
 
@@ -54,7 +52,7 @@ type Props = {
   total: Money;
   /** السلة فارغة: يعرض دعوة للتصفّح — إلا بعد دفع ناجح (فالسلة تُفرَّغ عمداً) */
   empty?: boolean;
-  action: (prev: PayState, form: FormData) => Promise<PayState>;
+  action: (prev: PayState, form: FormData) => PayState | Promise<PayState>;
 };
 
 /**
@@ -89,13 +87,13 @@ export function CheckoutForm({ user, total, empty, action }: Props) {
         </dl>
         <div className="flex flex-col gap-2">
           <Button asChild size="lg" block>
-            <Link href={paths.account.getHref('purchases')}>
+            <Link to={paths.account.getHref('purchases')}>
               <DownloadIcon />
               حمّل الخطوط
             </Link>
           </Button>
           <Button asChild size="lg" variant="secondary" block>
-            <Link href={paths.account.getHref('purchases')}>
+            <Link to={paths.account.getHref('purchases')}>
               <DocumentIcon />
               عرض الإيصال
             </Link>
@@ -133,7 +131,7 @@ export function CheckoutForm({ user, total, empty, action }: Props) {
         description="أضف ترخيص خط إلى السلة أوّلاً."
         action={
           <Button asChild>
-            <Link href={paths.home.getHref()}>تصفّح الخطوط</Link>
+            <Link to={paths.home.getHref()}>تصفّح الخطوط</Link>
           </Button>
         }
       />
@@ -160,7 +158,7 @@ export function CheckoutForm({ user, total, empty, action }: Props) {
             </p>
           </div>
           <Link
-            href={paths.login.getHref(paths.checkout.getHref())}
+            to={paths.login.getHref(paths.checkout.getHref())}
             className="text-caption text-muted-foreground hover:text-foreground"
           >
             تغيير
