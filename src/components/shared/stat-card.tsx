@@ -3,6 +3,8 @@ import type { ReactNode } from 'react';
 import { ArrowDownIcon, ArrowUpIcon } from '@/components/ui/icons';
 import { cn } from '@/lib/cn';
 
+import { Sparkline } from './charts/sparkline';
+
 /** بطاقة رقم (لوحات الإحصاء والأرباح): عنوان، قيمة كبيرة، وتغيّر نسبي اختياري */
 export function StatCard({
   label,
@@ -10,6 +12,9 @@ export function StatCard({
   delta,
   hint,
   icon,
+  trend,
+  trendColor,
+  deltaSuffix = '%',
   className,
 }: {
   label: string;
@@ -18,6 +23,11 @@ export function StatCard({
   delta?: number;
   hint?: ReactNode;
   icon?: ReactNode;
+  /** خطّ اتجاه صغير (12 نقطة) */
+  trend?: number[];
+  trendColor?: string;
+  /** «%» للنسب، و«» للأعداد المطلقة (+312) */
+  deltaSuffix?: string;
   className?: string;
 }) {
   const up = (delta ?? 0) >= 0;
@@ -40,11 +50,14 @@ export function StatCard({
             )}
           >
             {up ? <ArrowUpIcon className="size-3" /> : <ArrowDownIcon className="size-3" />}
-            {Math.abs(delta)}%<span className="sr-only">{up ? ' ارتفاع' : ' انخفاض'}</span>
+            {Math.abs(delta).toLocaleString('en-US')}
+            {deltaSuffix}
+            <span className="sr-only">{up ? ' ارتفاع' : ' انخفاض'}</span>
           </span>
         )}
       </div>
       {hint && <p className="text-caption text-tertiary">{hint}</p>}
+      {trend && <Sparkline values={trend} color={trendColor} />}
     </div>
   );
 }

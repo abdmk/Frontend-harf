@@ -13,6 +13,8 @@ export type User = {
   /** صورة شخصية (مسار داخلي) — بدونها تُعرض الأحرف الأولى */
   avatarUrl?: string;
   plan: Plan;
+  /** admin: لوحة الإدارة والتحليلات */
+  role: 'user' | 'admin';
   profession?: string;
   location?: string;
   website?: string;

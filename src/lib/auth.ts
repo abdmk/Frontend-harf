@@ -1,7 +1,7 @@
 import 'server-only';
 
 import { cookies } from 'next/headers';
-import { redirect } from 'next/navigation';
+import { notFound, redirect } from 'next/navigation';
 
 import { MOCK_USERS } from '@/mocks/users';
 import type { User } from '@/types/domain/user';
@@ -42,4 +42,18 @@ export async function setDemoSession(account: DemoAccount) {
     path: '/',
     maxAge: 60 * 60 * 24 * 30,
   });
+}
+
+/** لوحة المسبك والنشر: حساب الاستوديو وحده (غيره ← صفحة الاشتراك) */
+export async function requireStudio(returnTo: string): Promise<User> {
+  const user = await requireUser(returnTo);
+  if (user.plan !== 'studio') redirect('/account/subscription');
+  return user;
+}
+
+/** لوحة الإدارة: غير المشرف يرى 404 — لا نكشف وجود المسار */
+export async function requireAdmin(returnTo: string): Promise<User> {
+  const user = await requireUser(returnTo);
+  if (user.role !== 'admin') notFound();
+  return user;
 }

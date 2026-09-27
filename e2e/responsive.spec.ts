@@ -14,6 +14,10 @@ const PAGES = [
   '/account/subscription?as=studio',
   '/account/purchases',
   '/account/security',
+  '/studio?as=studio',
+  '/studio/publish',
+  '/foundries/tajarib',
+  '/admin/analytics',
 ];
 
 for (const path of PAGES) {

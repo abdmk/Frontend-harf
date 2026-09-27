@@ -68,6 +68,12 @@
   --sheet-inset: #ffffff; /* البطاقات داخل الورقة */
   --callout: #f6f6f8; /* أرضية أقسام الدعوة (CTA) */
   --visa: #1a1f71;
+  /* ألوان الرسوم البيانية — بترتيب ثابت، مُتحقَّق منها لعمى الألوان (dataviz validator) */
+  --chart-1: #ec3b3c;
+  --chart-2: #008bfe;
+  --chart-3: #c27803;
+  --chart-4: #6233f5;
+  --chart-grid: #ededf0;
   --shadow-soft: 0 1px 2px rgb(22 22 22 / 0.04), 0 4px 10px rgb(22 22 22 / 0.05);
   --shadow-float: 0 2px 6px rgb(22 22 22 / 0.05), 0 12px 28px rgb(22 22 22 / 0.08);
   --shadow-overlay: 0 4px 10px rgb(22 22 22 / 0.06), 0 24px 56px rgb(22 22 22 / 0.14);
@@ -121,6 +127,11 @@
   --sheet-inset: #0d0c0c;
   --callout: #2b2a2a;
   --visa: #8fa3ff;
+  --chart-1: #ec3b3c;
+  --chart-2: #1d8fe6;
+  --chart-3: #c58512;
+  --chart-4: #8866f5;
+  --chart-grid: #262525;
   --grad-aurora: linear-gradient(100deg, #9e2427 0%, #b8353a 20%, #8a3c9e 48%, #553bb8 72%, #2b579c 100%);
   --grad-ai: linear-gradient(135deg, #82468f 0%, #553bb8 52%, #2b579c 100%);
   --grad-dawn: linear-gradient(
@@ -187,6 +198,11 @@
   --color-sheet-inset: var(--sheet-inset);
   --color-callout: var(--callout);
   --color-visa: var(--visa);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-grid: var(--chart-grid);
 
   /* ── لوحة حرف الأساسية (من دليل التصميم) — لا تُستعمل مباشرة إلا للألوان التي لا تتغيّر بين الوضعين ── */
   --color-harf-50: #fff4f4;

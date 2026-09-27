@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { Fragment } from 'react';
 
-import { LayersIcon, SignOutIcon } from '@/components/ui/icons';
+import { ChartHistogramIcon, LayersIcon, SignOutIcon } from '@/components/ui/icons';
 import { paths } from '@/config/paths';
 import { signOut } from '@/features/account/api/sign-out';
 import { accountNavGroups } from '@/features/account/config/nav';
@@ -76,6 +76,19 @@ export function AccountPanel({ user, active = null, variant = 'sidebar', onNavig
             </ul>
           </Fragment>
         ))}
+        {user.role === 'admin' && (
+          <>
+            <hr className="my-4 border-border" />
+            <Link
+              href={paths.admin.analytics.getHref()}
+              onClick={onNavigate}
+              className="flex h-11 items-center gap-4 rounded-sm px-4 text-lead transition-colors hover:bg-sunken"
+            >
+              <ChartHistogramIcon className="size-5 text-foreground/80" />
+              لوحة الإدارة
+            </Link>
+          </>
+        )}
       </nav>
 
       <div className={cn('flex flex-col gap-5', variant === 'sidebar' && 'mt-auto pt-8')}>

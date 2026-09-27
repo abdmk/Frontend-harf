@@ -1,6 +1,7 @@
 import Link from 'next/link';
 
 import { CatalogCard } from '@/app/_components/catalog-card';
+import { DesignerCard } from '@/components/shared/designer-card';
 import { FileIcon } from '@/components/shared/file-icon';
 import { FontGridSkeleton, LoadingState } from '@/components/shared/loading-state';
 import { OrderSummary } from '@/components/shared/order-summary';
@@ -185,6 +186,26 @@ export default async function DesignSystemPage() {
             <StatCard label="التحميلات" value="38,461" delta={12.4} icon={<DownloadIcon />} hint="آخر 30 يوماً" />
             <StatCard label="المشاهدات" value="3,689" delta={-3.1} icon={<ChartHistogramIcon />} hint="آخر 30 يوماً" />
             <StatCard label="الخطوط المنشورة" value="9" />
+          </div>
+          <div className="mt-4 grid grid-cols-[minmax(0,1fr)] gap-4 md:grid-cols-2">
+            <DesignerCard
+              id="sn"
+              name="سعد النهدي"
+              initials="SN"
+              subtitle="مسبك ابن ثابت · بغداد"
+              verified
+              stats={{ fonts: 9, downloads: '24.8K', followers: 612 }}
+              fonts={['طفولة', 'تجاريب', 'نقوش']}
+            />
+            <DesignerCard
+              id="ma"
+              name="ميس علي"
+              initials="MA"
+              subtitle="مصمّمة حروف مستقلّة · أربيل"
+              stats={{ fonts: 4, downloads: '8.3K', followers: 197 }}
+              fonts={['ميس', 'أثر', 'رواق']}
+              following
+            />
           </div>
         </DsSection>
 
@@ -410,6 +431,29 @@ export default async function DesignSystemPage() {
         >
           <DsPanel>
             <PlansDialog plans={plans} current="free" onChange={demoPlan} trigger={<Button>افتح نافذة الخطط</Button>} />
+          </DsPanel>
+        </DsSection>
+
+        <DsSection
+          id="studio"
+          num="6.4–6.6"
+          title="الاستوديو والنشر والتحليلات"
+          en="Studio · Publish · Dashboard"
+          note="صفحات كاملة محميّة بالدور على الخادم: الاستوديو لحساب الاستوديو، والتحليلات للمشرف وحده (غيره يرى 404)."
+        >
+          <DsPanel className="flex flex-wrap gap-3">
+            <Button asChild variant="outline">
+              <Link href={paths.studio.getHref()}>لوحة المسبك</Link>
+            </Button>
+            <Button asChild variant="outline">
+              <Link href={paths.studio.getHref('publish')}>مساحة النشر</Link>
+            </Button>
+            <Button asChild variant="outline">
+              <Link href={paths.foundry.getHref('tajarib')}>صفحة المسبك</Link>
+            </Button>
+            <Button asChild variant="outline">
+              <Link href={paths.admin.analytics.getHref()}>التحليلات</Link>
+            </Button>
           </DsPanel>
         </DsSection>
 

@@ -37,5 +37,8 @@ export const easing = {
   inOutStrong: 'cubic-bezier(0.65, 0, 0.35, 1)',
 } as const;
 
-/** ألوان ثابتة للرسوم البيانية — مرتبة حسب الأولوية */
-export const chartPalette = ['#ec3b3c', '#6233f5', '#008bfe', '#3dce68', '#f5a524'] as const;
+/**
+ * سلاسل الرسوم البيانية بترتيب ثابت (لا تُدوَّر): تُستعمل كمتغيّرات CSS كي تتبدّل مع الوضع.
+ * القيم في tokens.css، ومُتحقَّق منها لعمى الألوان في الفاتح والداكن.
+ */
+export const chartSeries = ['var(--chart-1)', 'var(--chart-2)', 'var(--chart-3)', 'var(--chart-4)'] as const;

@@ -118,6 +118,7 @@ const MAP: Record<string, string> = {
   diamond: 'fi-rr-diamond',
   'caret-down': 'fi-rr-caret-down',
   computer: 'fi-rr-computer',
+  'map-pin': 'fi-rr-map-marker',
   mobile: 'fi-rr-mobile',
 };
 
