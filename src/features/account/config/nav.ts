@@ -11,7 +11,6 @@ import {
   UsageIcon,
   UserIcon,
 } from '@/components/ui/icons';
-
 import type { AccountSection, User } from '@/features/account/types';
 
 export type NavItem = {

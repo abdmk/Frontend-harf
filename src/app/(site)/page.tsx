@@ -1,14 +1,15 @@
+import { Container } from '@/components/layout/container';
 import { CtaSection } from '@/components/layout/cta-section';
+import { FontCard } from '@/components/shared/font-card';
+import { FontGrid } from '@/components/shared/font-grid';
 import { getFonts } from '@/features/catalog/api/get-fonts';
 import { ActiveFilters } from '@/features/catalog/components/active-filters';
 import { CatalogProvider, CatalogResults } from '@/features/catalog/components/catalog-context';
 import { CatalogToolbar } from '@/features/catalog/components/catalog-toolbar';
-import { FeaturedCarousel } from '@/features/catalog/components/featured-carousel';
-import { FontCard } from '@/components/shared/font-card';
-import { FontGrid } from '@/components/shared/font-grid';
 import { EmptyResults } from '@/features/catalog/components/empty-results';
-import { FavoriteButton } from '@/features/favorites/components/favorite-button';
+import { FeaturedCarousel } from '@/features/catalog/components/featured-carousel';
 import { parseCatalogQuery } from '@/features/catalog/types/catalog-query';
+import { FavoriteButton } from '@/features/favorites/components/favorite-button';
 
 export default async function HomePage({ searchParams }: PageProps<'/'>) {
   // معاملات الرابط تُتحقّق على الخادم قبل أي استعمال
@@ -16,7 +17,7 @@ export default async function HomePage({ searchParams }: PageProps<'/'>) {
   const fonts = await getFonts(query);
 
   return (
-    <main id="main" className="mx-auto w-[min(100%-2rem,1120px)] pt-6 sm:w-[min(100%-3rem,1120px)] sm:pt-12">
+    <Container as="main" id="main" className="pt-6 sm:pt-12">
       <h1 className="sr-only">خطوط عربية مجانية</h1>
       <FeaturedCarousel />
       <CatalogProvider>
@@ -31,6 +32,6 @@ export default async function HomePage({ searchParams }: PageProps<'/'>) {
         </CatalogResults>
       </CatalogProvider>
       <CtaSection />
-    </main>
+    </Container>
   );
 }

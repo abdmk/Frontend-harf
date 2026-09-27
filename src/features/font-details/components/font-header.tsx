@@ -1,10 +1,9 @@
 import type { ReactNode } from 'react';
 
-import type { Font } from '@/types/domain/font';
-import { CATEGORY_LABEL, USAGE_LABEL } from '@/lib/labels';
-
 import { DesignerAvatars } from '@/components/shared/designer-avatars';
 import { DownloadButton } from '@/components/shared/download-button';
+import { CATEGORY_LABEL, USAGE_LABEL } from '@/lib/labels';
+import type { Font } from '@/types/domain/font';
 
 /** العنوان والمصمّمون والأفعال، ثم شريط المعلومات */
 export function FontHeader({ font, favorite }: { font: Font; favorite?: ReactNode }) {
@@ -19,13 +18,13 @@ export function FontHeader({ font, favorite }: { font: Font; favorite?: ReactNod
     <>
       <div className="mt-10 flex flex-wrap items-end justify-between gap-6">
         <div className="min-w-0">
-          <h1 dir="ltr" className="text-right text-[clamp(26px,3vw,36px)] font-semibold tracking-tight">
+          <h1 dir="ltr" className="text-right text-title font-semibold tracking-tight">
             {font.name}
           </h1>
           <div className="mt-3 flex flex-wrap gap-x-6 gap-y-2">
             {font.designers.map((d) => (
               <span key={d.id} className="inline-flex items-center gap-2 text-sm text-muted-foreground">
-                <DesignerAvatars designers={[d]} max={1} className="[&_i]:size-[22px] [&_i]:text-[8px]" />
+                <DesignerAvatars designers={[d]} max={1} className="[&_i]:size-5.5 [&_i]:text-3xs" />
                 <span dir="ltr">{d.nameEn}</span>
               </span>
             ))}
@@ -40,7 +39,7 @@ export function FontHeader({ font, favorite }: { font: Font; favorite?: ReactNod
         {meta.map(([k, v]) => (
           <div
             key={k}
-            className="flex items-center justify-between gap-3 border-border px-5 py-4 text-[12.5px] text-muted-foreground max-sm:border-t max-sm:first:border-t-0 sm:justify-center sm:border-s sm:first:border-s-0 max-sm:[&:nth-child(2)]:border-t-0"
+            className="flex items-center justify-between gap-3 border-border px-5 py-4 text-meta text-muted-foreground max-sm:border-t max-sm:first:border-t-0 sm:justify-center sm:border-s sm:first:border-s-0 max-sm:[&:nth-child(2)]:border-t-0"
           >
             <dt>{k}</dt>
             <dd className="text-sm font-semibold text-foreground">{v}</dd>

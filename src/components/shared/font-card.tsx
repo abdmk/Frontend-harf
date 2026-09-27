@@ -5,9 +5,8 @@ import { CheckIcon, ClockIcon, CrownIcon } from '@/components/ui/icons';
 import { paths } from '@/config/paths';
 import { cn } from '@/lib/cn';
 import { weightsLabel } from '@/lib/format';
-
-import type { Font } from '@/types/domain/font';
 import { TYPE_LABEL, USAGE_LABEL } from '@/lib/labels';
+import type { Font } from '@/types/domain/font';
 
 import { DesignerAvatars } from './designer-avatars';
 import { DownloadButton } from './download-button';
@@ -15,7 +14,7 @@ import { DownloadButton } from './download-button';
 const BADGE = {
   free: { cls: 'bg-ok-600 text-white', Icon: CheckIcon },
   trial: { cls: 'bg-trial-500 text-white', Icon: ClockIcon },
-  paid: { cls: 'bg-gold-500 text-[#3B2500]', Icon: CrownIcon },
+  paid: { cls: 'bg-gold-500 text-gold-foreground', Icon: CrownIcon },
 } as const;
 
 function Byline({ font }: { font: Font }) {
@@ -31,7 +30,7 @@ function Byline({ font }: { font: Font }) {
     return (
       <span className="truncate">
         {first.nameAr}{' '}
-        <small className="text-[12.5px] font-normal text-muted-foreground">و{font.designers.length - 1} آخرين</small>
+        <small className="text-meta font-normal text-muted-foreground">و{font.designers.length - 1} آخرين</small>
       </span>
     );
   const latin = /^[A-Za-z]/.test(first.nameEn) && font.designers.length === 1;
@@ -65,7 +64,7 @@ export function FontCard({
       </div>
       <span
         className={cn(
-          'absolute end-4 top-4 z-10 inline-flex h-6 items-center gap-1 rounded-full px-2 text-[11.5px] leading-none font-medium',
+          'absolute end-4 top-4 z-10 inline-flex h-6 items-center gap-1 rounded-full px-2 text-caption leading-none font-medium',
           badge.cls,
         )}
       >
@@ -82,7 +81,7 @@ export function FontCard({
           >
             {font.name}
           </Link>
-          <span className="shrink-0 text-[12.5px] text-muted-foreground">{weightsLabel(font.weights)}</span>
+          <span className="shrink-0 text-meta text-muted-foreground">{weightsLabel(font.weights)}</span>
         </div>
         <div className="flex min-w-0 items-center gap-2 text-sm font-medium">
           <DesignerAvatars designers={font.designers} />

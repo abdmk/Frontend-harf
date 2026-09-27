@@ -26,8 +26,8 @@ export function SiteHeader({ actions, wide }: SiteHeaderProps) {
       </a>
       <div
         className={cn(
-          'mx-auto grid grid-cols-[auto_1fr] items-center gap-x-6 lg:flex lg:h-[72px]',
-          wide ? 'px-4 sm:px-8 lg:px-12' : 'w-[min(100%-2rem,1120px)] sm:w-[min(100%-3rem,1120px)]',
+          'mx-auto grid grid-cols-[auto_1fr] items-center gap-x-6 lg:flex lg:h-18',
+          wide ? 'px-4 sm:px-8 lg:px-12' : 'container-page',
         )}
       >
         <Link
@@ -35,7 +35,7 @@ export function SiteHeader({ actions, wide }: SiteHeaderProps) {
           aria-label="مكتبة حرف — الرئيسية"
           className="flex h-16 items-center text-harf-500 dark:text-harf-400"
         >
-          <HarfLockup className="hidden h-[34px] sm:block" />
+          <HarfLockup className="hidden h-8.5 sm:block" />
           <HarfMark className="sm:hidden" />
         </Link>
         <div className="col-start-2 row-start-1 flex items-center justify-end gap-1 lg:order-3">

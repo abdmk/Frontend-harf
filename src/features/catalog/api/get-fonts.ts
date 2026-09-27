@@ -1,10 +1,9 @@
 import 'server-only';
 
-import { MOCK_FONTS } from '@/mocks/fonts';
-
-import type { Font } from '@/types/domain/font';
 import type { CatalogQuery } from '@/features/catalog/types/catalog-query';
 import { filterFonts } from '@/features/catalog/utils/filter-fonts';
+import { MOCK_FONTS } from '@/mocks/fonts';
+import type { Font } from '@/types/domain/font';
 
 /**
  * طبقة البيانات — تعمل على الخادم فقط.

@@ -6,7 +6,6 @@ import { useState } from 'react';
 
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { paths } from '@/config/paths';
-
 import { ACCOUNT_SECTIONS, type AccountSection, type User } from '@/features/account/types';
 
 import { AccountPanel } from './account-panel';
@@ -34,7 +33,7 @@ export function AccountMenu({ user }: { user: User }) {
           aria-label={`حساب ${user.name}`}
           className="ms-1 rounded-full transition-[box-shadow,transform] duration-150 hover:shadow-[0_0_0_4px_var(--sunken)] active:scale-95"
         >
-          <UserAvatar user={user} className="size-9 text-[13px]" />
+          <UserAvatar user={user} className="size-9 text-control" />
         </PopoverTrigger>
         <PopoverContent
           align="end"

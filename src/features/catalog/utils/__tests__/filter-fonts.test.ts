@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest';
 
-import type { Font } from '@/types/domain/font';
 import { parseCatalogQuery } from '@/features/catalog/types/catalog-query';
 import { activeFilterCount, filterFonts } from '@/features/catalog/utils/filter-fonts';
+import type { Font } from '@/types/domain/font';
 
 const d = { id: 'd', initials: 'D', nameAr: 'سارة', nameEn: 'Sara', color: '#000' };
 const now = new Date('2026-09-27T00:00:00Z');

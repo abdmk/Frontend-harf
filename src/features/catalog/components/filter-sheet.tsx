@@ -10,11 +10,7 @@ import { type ReactElement, type ReactNode, useState } from 'react';
 import { CheckIcon, ChevronUpIcon, CrossIcon, FilterIcon } from '@/components/ui/icons';
 import { Sheet, SheetClose, SheetContent, SheetDescription, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
-import { useMediaQuery } from '@/hooks/use-media-query';
-import { cn } from '@/lib/cn';
-import { weightsLabel } from '@/lib/format';
-
-import { LANGS, type Lang } from '@/types/domain/font';
+import { below } from '@/design-system/tokens';
 import {
   type CatalogQuery,
   DATE_RANGES,
@@ -25,8 +21,12 @@ import {
   PRICE_STOPS,
   WEIGHT_STOPS,
 } from '@/features/catalog/types/catalog-query';
-import { LANG_LABEL } from '@/lib/labels';
 import { DATE_LABEL, LICENSE_FILTER_LABEL } from '@/features/catalog/utils/labels';
+import { useMediaQuery } from '@/hooks/use-media-query';
+import { cn } from '@/lib/cn';
+import { weightsLabel } from '@/lib/format';
+import { LANG_LABEL } from '@/lib/labels';
+import { LANGS, type Lang } from '@/types/domain/font';
 
 import { useCatalog } from './catalog-context';
 
@@ -46,7 +46,7 @@ const pick = (q: CatalogQuery): Draft => ({
 export function FilterSheet({ trigger }: { trigger: ReactElement }) {
   const { query, setQuery } = useCatalog();
   const [open, setOpen] = useState(false);
-  const mobile = useMediaQuery('(max-width: 640px)');
+  const mobile = useMediaQuery(below('sm'));
   const [draft, setDraft] = useState<Draft>(() => pick(query));
 
   function handleOpen(v: boolean) {
@@ -62,7 +62,7 @@ export function FilterSheet({ trigger }: { trigger: ReactElement }) {
         side={mobile ? 'bottom' : 'left'}
         showCloseButton={false}
         className={cn(
-          'gap-0 border bg-background p-0 shadow-overlay data-[state=open]:duration-500 dark:bg-[#111010]',
+          'gap-0 border bg-sheet p-0 shadow-overlay data-[state=open]:duration-500',
           mobile
             ? 'max-h-[92dvh] rounded-t-xl'
             : 'inset-y-3 left-3 h-auto w-[min(440px,calc(100vw-24px))] rounded-xl sm:max-w-none',
@@ -80,7 +80,7 @@ export function FilterSheet({ trigger }: { trigger: ReactElement }) {
             aria-label="إغلاق"
             className="grid size-10 place-items-center rounded-full text-muted-foreground transition-colors hover:bg-sunken hover:text-foreground"
           >
-            <CrossIcon className="size-[18px]" />
+            <CrossIcon className="size-4.5" />
           </SheetClose>
         </div>
 
@@ -93,7 +93,7 @@ export function FilterSheet({ trigger }: { trigger: ReactElement }) {
               className="flex flex-col gap-3"
             >
               {LICENSE_FILTERS.map((v) => (
-                <label key={v} className="flex w-fit cursor-pointer items-center gap-3 text-[15px]">
+                <label key={v} className="flex w-fit cursor-pointer items-center gap-3 text-lead">
                   <RadioGroupPrimitive.Item
                     value={v}
                     className="size-5 rounded-full border-[1.5px] border-strong bg-card transition-[border-width,border-color] duration-200 ease-pop data-[state=checked]:border-[5px] data-[state=checked]:border-primary"
@@ -162,14 +162,14 @@ export function FilterSheet({ trigger }: { trigger: ReactElement }) {
               setQuery(draft);
               setOpen(false);
             }}
-            className="h-14 rounded-md bg-primary text-[15px] font-medium text-white transition-[background-color,transform] hover:bg-harf-600 active:scale-[.98]"
+            className="h-14 rounded-md bg-primary text-lead font-medium text-white transition-[background-color,transform] hover:bg-harf-600 active:scale-[.98]"
           >
             تطبيق
           </button>
           <button
             type="button"
             onClick={() => setDraft(pick(DEFAULT_QUERY))}
-            className="h-14 rounded-md bg-sunken text-[15px] font-medium text-muted-foreground transition-[background-color,transform] hover:bg-inset hover:text-foreground active:scale-[.98] dark:bg-[#1E1E1E]"
+            className="h-14 rounded-md bg-sunken text-lead font-medium text-muted-foreground transition-[background-color,transform] hover:bg-inset hover:text-foreground active:scale-[.98]"
           >
             مسح الكل
           </button>
@@ -182,17 +182,17 @@ export function FilterSheet({ trigger }: { trigger: ReactElement }) {
 /** قسم قابل للطيّ بارتفاع متحرّك */
 function Section({ title, children }: { title: string; children: ReactNode }) {
   return (
-    <CollapsiblePrimitive.Root defaultOpen className="rounded-lg bg-sunken px-2 pb-2 dark:bg-[#1E1E1E]">
+    <CollapsiblePrimitive.Root defaultOpen className="rounded-lg bg-sunken px-2 pb-2">
       <h3>
         <CollapsiblePrimitive.Trigger className="group/sec flex w-full items-center justify-between rounded-md px-3 py-4 text-start text-base font-medium">
           {title}
-          <span className="grid size-7 place-items-center rounded-full bg-card text-muted-foreground transition-transform duration-300 ease-out-quint group-data-[state=closed]/sec:rotate-180 dark:bg-[#2A2929]">
+          <span className="grid size-7 place-items-center rounded-full bg-card text-muted-foreground transition-transform duration-300 ease-out-quint group-data-[state=closed]/sec:rotate-180 dark:bg-inset">
             <ChevronUpIcon className="size-4" />
           </span>
         </CollapsiblePrimitive.Trigger>
       </h3>
       <CollapsiblePrimitive.Content className="overflow-hidden data-[state=closed]:animate-collapsible-up data-[state=open]:animate-collapsible-down">
-        <div className="rounded-md bg-card p-5 dark:bg-[#0D0C0C]">{children}</div>
+        <div className="rounded-md bg-sheet-inset p-5">{children}</div>
       </CollapsiblePrimitive.Content>
     </CollapsiblePrimitive.Root>
   );
@@ -204,7 +204,7 @@ function ChipItem({ value, label }: { value: string; label: string }) {
     <ToggleGroupItem
       value={value}
       className={cn(
-        'group/chip h-8 flex-none gap-0 rounded-full border border-border bg-transparent px-4 text-[12.5px] font-normal text-muted-foreground shadow-none transition-[background-color,border-color,color,gap] duration-200',
+        'group/chip h-8 flex-none gap-0 rounded-full border border-border bg-transparent px-4 text-meta font-normal text-muted-foreground shadow-none transition-[background-color,border-color,color,gap] duration-200',
         'first:rounded-full last:rounded-full hover:border-strong hover:bg-transparent hover:text-foreground',
         'data-[state=on]:gap-1.5 data-[state=on]:border-primary data-[state=on]:bg-primary data-[state=on]:text-white',
       )}
@@ -243,7 +243,7 @@ function RangeField({
         onValueChange={([a = 0, b = max]) => onChange(a === 0 && b === max ? undefined : [stops[a]!, stops[b]!])}
         className="relative flex h-5 w-full touch-none items-center select-none"
       >
-        <SliderPrimitive.Track className="relative h-5 w-full overflow-hidden rounded-full bg-sunken dark:bg-[#1E1E1E]">
+        <SliderPrimitive.Track className="relative h-5 w-full overflow-hidden rounded-full bg-sunken">
           <SliderPrimitive.Range className="absolute h-full rounded-full bg-primary" />
           <span
             aria-hidden
@@ -252,7 +252,7 @@ function RangeField({
             {stops.map((_, i) => (
               <i
                 key={i}
-                className={cn('size-[5px] rounded-full', i >= idx[0] && i <= idx[1] ? 'bg-white/55' : 'bg-strong')}
+                className={cn('size-1.25 rounded-full', i >= idx[0] && i <= idx[1] ? 'bg-white/55' : 'bg-strong')}
               />
             ))}
           </span>

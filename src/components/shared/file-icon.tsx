@@ -1,5 +1,4 @@
 import { cn } from '@/lib/cn';
-
 import type { FileKind } from '@/types/domain/file';
 
 export type { FileKind };
@@ -33,7 +32,7 @@ export function FileIcon({ kind, className }: { kind: FileKind; className?: stri
       </svg>
       <span
         className={cn(
-          'absolute start-[-10%] bottom-[22%] rounded-[5px] px-1.5 py-[3px] font-sans text-[10px] leading-none font-semibold tracking-wide text-white uppercase',
+          'absolute start-[-10%] bottom-[22%] rounded-[5px] px-1.5 py-0.75 font-sans text-micro leading-none font-semibold tracking-wide text-white uppercase',
           COLOR[kind],
         )}
         dir="ltr"

@@ -2,8 +2,8 @@ import 'server-only';
 
 import { cookies } from 'next/headers';
 
-import type { User } from '@/types/domain/user';
 import { MOCK_USERS } from '@/mocks/users';
+import type { User } from '@/types/domain/user';
 
 /** اسم كوكي الحساب التجريبي — يضبطه proxy.ts من ‎?as=free|studio */
 export const DEMO_ACCOUNT_COOKIE = 'harf_demo_as';

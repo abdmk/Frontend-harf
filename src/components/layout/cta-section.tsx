@@ -8,9 +8,9 @@ export function CtaSection() {
     <Reveal
       as="section"
       aria-labelledby="cta-title"
-      className="mt-30 flex flex-col items-center gap-4 rounded-xl bg-sunken px-6 py-[clamp(48px,7vw,96px)] text-center dark:bg-[#2B2A2A]"
+      className="mt-30 flex flex-col items-center gap-4 rounded-xl bg-callout px-6 py-[clamp(48px,7vw,96px)] text-center"
     >
-      <h2 id="cta-title" className="text-[clamp(28px,3.4vw,40px)] font-semibold tracking-tight">
+      <h2 id="cta-title" className="text-display font-semibold tracking-tight">
         تبحث عن خط خاص؟
       </h2>
       <p className="max-w-[44ch] text-sm leading-[1.8] text-muted-foreground">
@@ -22,13 +22,13 @@ export function CtaSection() {
       >
         <span aria-hidden className="flex">
           <i
-            className="grid size-6 place-items-center rounded-full bg-harf-500 text-[8.5px] font-semibold text-white not-italic ring-2 ring-ink"
+            className="grid size-6 place-items-center rounded-full bg-harf-500 text-3xs font-semibold text-white not-italic ring-2 ring-ink"
             dir="ltr"
           >
             AJ
           </i>
           <i
-            className="-ms-1.5 grid size-6 place-items-center rounded-full bg-ai-500 text-[8.5px] font-semibold text-white not-italic ring-2 ring-ink transition-[margin] duration-200 group-hover:-ms-0.5"
+            className="-ms-1.5 grid size-6 place-items-center rounded-full bg-ai-500 text-3xs font-semibold text-white not-italic ring-2 ring-ink transition-[margin] duration-200 group-hover:-ms-0.5"
             dir="ltr"
           >
             KM

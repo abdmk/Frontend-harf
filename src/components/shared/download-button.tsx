@@ -33,7 +33,7 @@ export function DownloadButton({ fontName, label = 'تحميل', size = 'sm', cl
       onClick={() => state === 'idle' && setState('busy')}
       className={cn(
         'group/dl relative z-10 inline-flex items-center justify-center gap-2 font-medium whitespace-nowrap text-white transition-[background-color,transform] duration-200 active:scale-[.97]',
-        size === 'sm' ? 'h-8 min-w-21 rounded-xs px-3 text-[12.5px]' : 'h-12 rounded-sm px-6 text-[15px]',
+        size === 'sm' ? 'h-8 min-w-21 rounded-xs px-3 text-meta' : 'h-12 rounded-sm px-6 text-lead',
         state === 'done' ? 'bg-ok-600' : 'bg-primary hover:bg-harf-600',
         className,
       )}

@@ -1,5 +1,4 @@
 import { Reveal } from '@/components/shared/reveal';
-
 import { weightStyle } from '@/lib/font-weight';
 
 const WEIGHTS = [
@@ -27,15 +26,11 @@ export function WeightWaterfall() {
             index={i}
             className="grid grid-cols-[32px_minmax(0,1fr)_72px] items-baseline gap-4 py-2 sm:grid-cols-[40px_minmax(0,1fr)_110px]"
           >
-            <span dir="ltr" className="text-right text-[11.5px] text-tertiary">
+            <span dir="ltr" className="text-right text-caption text-tertiary">
               {w}
             </span>
             <span
-              className={
-                i === 0
-                  ? 'truncate text-[clamp(16px,1.6vw,19px)] text-tertiary'
-                  : 'truncate text-[clamp(16px,1.6vw,19px)]'
-              }
+              className={i === 0 ? 'truncate text-specimen text-tertiary' : 'truncate text-specimen'}
               style={weightStyle(w)}
             >
               {SAMPLE}

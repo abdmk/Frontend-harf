@@ -23,18 +23,16 @@ const SOCIAL = [
 
 function PaymentMarks() {
   const mark =
-    'grid h-5 min-w-9 place-items-center rounded bg-sunken px-1 font-[system-ui] text-[10px] leading-none font-bold';
+    'grid h-5 min-w-9 place-items-center rounded bg-sunken px-1 font-[system-ui] text-micro leading-none font-bold';
   return (
     <div className="flex items-center gap-3" dir="ltr">
-      <span className="font-[system-ui] text-[22px] leading-none font-bold tracking-tighter text-[#635BFF]">
-        stripe
-      </span>
-      <span aria-hidden className="h-[18px] w-px bg-strong" />
-      <span className={`${mark} text-[#1A1F71] italic dark:text-[#8FA3FF]`}>VISA</span>
+      <span className="font-[system-ui] text-xl leading-none font-bold tracking-tighter text-stripe">stripe</span>
+      <span aria-hidden className="h-4.5 w-px bg-strong" />
+      <span className={`${mark} text-visa italic`}>VISA</span>
       <span className={mark}>
         <svg viewBox="0 0 24 15" className="h-3.5 w-auto" aria-label="Mastercard" role="img">
-          <circle cx="8" cy="7.5" r="6.5" fill="#EB001B" />
-          <circle cx="16" cy="7.5" r="6.5" fill="#F79E1B" fillOpacity=".9" />
+          <circle cx="8" cy="7.5" r="6.5" className="fill-mastercard-red" />
+          <circle cx="16" cy="7.5" r="6.5" className="fill-mastercard-orange" fillOpacity=".9" />
         </svg>
       </span>
       <span className={mark}>Apple Pay</span>
@@ -45,9 +43,9 @@ function PaymentMarks() {
 
 export function SiteFooter() {
   return (
-    <footer className="mx-auto mt-12 w-[min(100%-2rem,1120px)] pb-8 sm:w-[min(100%-3rem,1120px)]">
+    <footer className="container-page mt-12 pb-8">
       <div className="grid gap-x-16 gap-y-8 md:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)]">
-        <div className="flex flex-col gap-6 text-[12.5px] leading-[1.9] text-muted-foreground">
+        <div className="flex flex-col gap-6 text-meta leading-[1.9] text-muted-foreground">
           <p>
             حرف منصة متخصصة في عرض وبيع وترخيص الخطوط العربية ومتعددة اللغات، وتعمل كسوق يجمع مصممي الخطوط بالمصممين
             والعلامات التجارية.
@@ -63,9 +61,9 @@ export function SiteFooter() {
             الشروط والحقوق المعتمدة لكل خط.
           </p>
         </div>
-        <div className="flex flex-col gap-6 text-[12.5px] leading-[1.9] text-muted-foreground">
+        <div className="flex flex-col gap-6 text-meta leading-[1.9] text-muted-foreground">
           <div>
-            <p className="mb-1 text-left text-[12.5px] text-foreground" dir="ltr">
+            <p className="mb-1 text-left text-meta text-foreground" dir="ltr">
               Powered by
             </p>
             <PaymentMarks />
@@ -79,7 +77,7 @@ export function SiteFooter() {
                 aria-label={s.label}
                 className="grid size-6 place-items-center rounded-md text-muted-foreground transition-[color,transform] duration-200 ease-pop hover:-translate-y-0.5 hover:text-foreground"
               >
-                <svg viewBox="0 0 24 24" className="size-[18px]" fill="currentColor" aria-hidden>
+                <svg viewBox="0 0 24 24" className="size-4.5" fill="currentColor" aria-hidden>
                   <path fillRule="evenodd" d={s.d} />
                 </svg>
               </a>

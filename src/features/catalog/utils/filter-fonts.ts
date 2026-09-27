@@ -1,5 +1,5 @@
-import type { Font } from '@/types/domain/font';
 import type { CatalogQuery } from '@/features/catalog/types/catalog-query';
+import type { Font } from '@/types/domain/font';
 
 const DAY = 864e5;
 

@@ -17,7 +17,7 @@ export function AccountShell({
 }) {
   return (
     <div className="grid min-h-[calc(100dvh-72px)] grid-cols-[minmax(0,1fr)] lg:grid-cols-[440px_minmax(0,1fr)] xl:grid-cols-[480px_minmax(0,1fr)]">
-      <aside className="border-b bg-background px-6 py-8 sm:px-10 lg:sticky lg:top-[72px] lg:h-[calc(100dvh-72px)] lg:overflow-y-auto lg:border-e lg:border-b-0 lg:py-10">
+      <aside className="border-b bg-background px-6 py-8 sm:px-10 lg:sticky lg:top-18 lg:h-[calc(100dvh-72px)] lg:overflow-y-auto lg:border-e lg:border-b-0 lg:py-10">
         <AccountPanel user={user} active={section} />
       </aside>
       <main id="main" className="bg-page-muted px-6 py-10 sm:px-12">

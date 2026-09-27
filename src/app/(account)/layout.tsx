@@ -1,6 +1,5 @@
-import { SiteHeader } from '@/components/layout/site-header';
-
 import { HeaderActions } from '@/app/header-actions';
+import { SiteHeader } from '@/components/layout/site-header';
 
 export default function AccountLayout({ children }: LayoutProps<'/'>) {
   return (

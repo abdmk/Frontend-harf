@@ -47,9 +47,9 @@ export function ThemeToggle({ className }: { className?: string }) {
       )}
     >
       {dark ? (
-        <SunIcon className="size-[18px] animate-in fade-in spin-in-45" />
+        <SunIcon className="size-4.5 animate-in fade-in spin-in-45" />
       ) : (
-        <MoonIcon className="size-[18px] animate-in fade-in spin-in-45" />
+        <MoonIcon className="size-4.5 animate-in fade-in spin-in-45" />
       )}
     </button>
   );

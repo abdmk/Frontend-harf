@@ -12,9 +12,10 @@
     "test:watch": "vitest",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "check": "pnpm typecheck && pnpm lint && pnpm test",
+    "check": "pnpm typecheck && pnpm lint && pnpm lint:tokens && pnpm test",
     "icons": "node scripts/generate-icons.mts && prettier --write src/components/ui/icons/icons.generated.ts",
-    "e2e": "next build && playwright test"
+    "e2e": "next build && playwright test",
+    "lint:tokens": "node scripts/lint-tokens.mts"
   },
   "dependencies": {
     "class-variance-authority": "^0.7.1",

@@ -113,7 +113,7 @@ export function Carousel({
             onClick={() => go(current - 1)}
             className="absolute start-5 top-1/2 z-10 hidden size-10 -translate-y-1/2 place-items-center rounded-full bg-nav-car text-muted-foreground shadow-soft transition-[transform,color] duration-200 ease-pop hover:scale-105 hover:text-foreground active:scale-95 sm:grid md:start-8"
           >
-            <ChevronRightIcon className="size-[18px]" />
+            <ChevronRightIcon className="size-4.5" />
           </button>
           <button
             type="button"
@@ -121,7 +121,7 @@ export function Carousel({
             onClick={() => go(current + 1)}
             className="absolute end-5 top-1/2 z-10 hidden size-10 -translate-y-1/2 place-items-center rounded-full bg-nav-car text-muted-foreground shadow-soft transition-[transform,color] duration-200 ease-pop hover:scale-105 hover:text-foreground active:scale-95 sm:grid md:end-8"
           >
-            <ChevronLeftIcon className="size-[18px]" />
+            <ChevronLeftIcon className="size-4.5" />
           </button>
           <div className="absolute inset-x-0 bottom-5 z-10 flex justify-center gap-1.5">
             {slides.map((_, i) => (
@@ -138,7 +138,7 @@ export function Carousel({
               >
                 <span
                   className={cn(
-                    'block h-[3px] w-full rounded-full transition-colors duration-300',
+                    'block h-0.75 w-full rounded-full transition-colors duration-300',
                     i === current ? 'bg-muted-foreground' : 'bg-strong',
                   )}
                 />

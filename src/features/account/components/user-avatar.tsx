@@ -1,6 +1,5 @@
-import { cn } from '@/lib/cn';
-
 import type { User } from '@/features/account/types';
+import { cn } from '@/lib/cn';
 
 /** صورة المستخدم: الحرفان الأوّلان داخل حلقة ذهبية (تُستبدل بالصورة حين تتوفّر) */
 export function UserAvatar({ user, className }: { user: Pick<User, 'initials' | 'name'>; className?: string }) {
@@ -8,7 +7,7 @@ export function UserAvatar({ user, className }: { user: Pick<User, 'initials' | 
     <span
       aria-hidden
       className={cn(
-        'grid size-9 shrink-0 place-items-center rounded-full p-[3px] ring-2 ring-gold-500 ring-offset-0',
+        'grid size-9 shrink-0 place-items-center rounded-full p-0.75 ring-2 ring-gold-500 ring-offset-0',
         className,
       )}
     >

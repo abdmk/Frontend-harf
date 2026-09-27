@@ -3,12 +3,11 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 
 import { AppsIcon, FlameIcon, SearchIcon, SlidersIcon, TimePastIcon } from '@/components/ui/icons';
-import { cn } from '@/lib/cn';
-
-import { CATEGORIES } from '@/types/domain/font';
 import type { Sort } from '@/features/catalog/types/catalog-query';
 import { activeFilterCount } from '@/features/catalog/utils/filter-fonts';
+import { cn } from '@/lib/cn';
 import { CATEGORY_LABEL } from '@/lib/labels';
+import { CATEGORIES } from '@/types/domain/font';
 
 import { useCatalog } from './catalog-context';
 import { FilterSheet } from './filter-sheet';
@@ -16,7 +15,7 @@ import { FilterSheet } from './filter-sheet';
 const CHIPS = [['all', 'الكل'] as const, ...CATEGORIES.map((c) => [c, CATEGORY_LABEL[c]] as const)];
 
 const pill =
-  'inline-flex h-11 shrink-0 items-center gap-2 rounded-full border px-5 text-[13px] leading-none whitespace-nowrap transition-[background-color,color,border-color,transform] duration-150 active:scale-[.97]';
+  'inline-flex h-11 shrink-0 items-center gap-2 rounded-full border px-5 text-control leading-none whitespace-nowrap transition-[background-color,color,border-color,transform] duration-150 active:scale-[.97]';
 
 export function CatalogToolbar() {
   const { query, setQuery } = useCatalog();
@@ -44,7 +43,7 @@ export function CatalogToolbar() {
         inert={!catsOpen}
         className={cn(
           'order-last -m-1 flex w-full [scrollbar-width:none] gap-2 overflow-x-auto p-1 transition-[max-width,opacity] duration-500 ease-out-quint lg:order-none lg:w-auto',
-          catsOpen ? 'max-w-[1000px] opacity-100' : 'max-w-0 opacity-0 max-lg:hidden',
+          catsOpen ? 'max-w-250 opacity-100' : 'max-w-0 opacity-0 max-lg:hidden',
         )}
       >
         {CHIPS.map(([value, label]) => {
@@ -58,7 +57,7 @@ export function CatalogToolbar() {
               className={cn(
                 pill,
                 on
-                  ? 'border-primary bg-card font-medium text-primary dark:bg-white'
+                  ? 'border-primary bg-card font-medium text-primary dark:bg-paper'
                   : 'border-border bg-card text-muted-foreground hover:border-strong hover:text-foreground dark:border-transparent dark:bg-sunken',
               )}
             >
@@ -84,7 +83,7 @@ export function CatalogToolbar() {
             {count > 0 && (
               <span
                 dir="ltr"
-                className="grid h-[18px] min-w-[18px] animate-pop-in place-items-center rounded-full bg-primary px-1 text-[10px] text-white"
+                className="grid h-4.5 min-w-4.5 animate-pop-in place-items-center rounded-full bg-primary px-1 text-micro text-white"
               >
                 {count}
               </span>
@@ -119,7 +118,7 @@ function SearchBox({ value, onChange }: { value: string; onChange: (v: string) =
   }, [text, onChange]);
 
   return (
-    <label className="relative flex h-11 min-w-[180px] flex-1 items-center rounded-full border bg-card transition-[box-shadow,border-color] focus-within:border-primary focus-within:shadow-[0_0_0_3px_rgb(236_59_60/.16)] dark:border-transparent dark:bg-sunken">
+    <label className="relative flex h-11 min-w-45 flex-1 items-center rounded-full border bg-card transition-[box-shadow,border-color] focus-within:border-primary focus-within:shadow-[0_0_0_3px_rgb(236_59_60/.16)] dark:border-transparent dark:bg-sunken">
       <span className="sr-only">ابحث عن الخط أو مصمم</span>
       <SearchIcon className="pointer-events-none absolute start-4 size-4 text-muted-foreground" />
       <input
@@ -129,7 +128,7 @@ function SearchBox({ value, onChange }: { value: string; onChange: (v: string) =
         autoComplete="off"
         onChange={(e) => setText(e.target.value)}
         placeholder="ابحث عن الخط أو مصمم ..."
-        className="size-full rounded-full bg-transparent ps-11 pe-4 text-[13px] outline-none placeholder:text-muted-foreground [&::-webkit-search-cancel-button]:appearance-none"
+        className="size-full rounded-full bg-transparent ps-11 pe-4 text-control outline-none placeholder:text-muted-foreground [&::-webkit-search-cancel-button]:appearance-none"
       />
     </label>
   );
@@ -168,7 +167,7 @@ function SortSwitch({ value, onChange }: { value: Sort; onChange: (v: Sort) => v
       <span
         ref={pillRef}
         aria-hidden
-        className="absolute inset-y-1 left-0 -z-10 rounded-full bg-white shadow-soft transition-[transform,width] duration-300 ease-out-quint"
+        className="absolute inset-y-1 left-0 -z-10 rounded-full bg-paper shadow-soft transition-[transform,width] duration-300 ease-out-quint"
       />
       {opts.map(([v, label, Icon]) => (
         <button
@@ -176,7 +175,7 @@ function SortSwitch({ value, onChange }: { value: Sort; onChange: (v: Sort) => v
           type="button"
           aria-pressed={value === v}
           onClick={() => onChange(v)}
-          className="flex items-center gap-1.5 rounded-full px-4 text-[13px] leading-none whitespace-nowrap text-muted-foreground transition-colors duration-200 aria-pressed:font-medium aria-pressed:text-[#161616]"
+          className="flex items-center gap-1.5 rounded-full px-4 text-control leading-none whitespace-nowrap text-muted-foreground transition-colors duration-200 aria-pressed:font-medium aria-pressed:text-paper-foreground"
         >
           <Icon className="size-4" />
           {label}

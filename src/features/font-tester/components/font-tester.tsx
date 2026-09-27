@@ -14,7 +14,6 @@ import {
   TextIcon,
 } from '@/components/ui/icons';
 import { cn } from '@/lib/cn';
-
 import { weightStyle } from '@/lib/font-weight';
 
 const PARAGRAPH =
@@ -72,7 +71,7 @@ export function FontTester() {
     <section aria-labelledby="tester-title" className="mt-12 overflow-hidden rounded-lg border bg-card">
       <div className="flex flex-wrap items-center justify-between gap-4 border-b border-subtle px-5 py-4">
         <h2 id="tester-title" className="flex items-center gap-2 text-sm font-semibold">
-          <TextIcon className="size-[18px] text-muted-foreground" />
+          <TextIcon className="size-4.5 text-muted-foreground" />
           تجربة الخط
         </h2>
         <div role="group" aria-label="نصّ جاهز" className="flex flex-wrap gap-1.5">
@@ -82,7 +81,7 @@ export function FontTester() {
               type="button"
               aria-pressed={s.preset === p}
               onClick={() => preset(p)}
-              className="h-7 rounded-full border bg-sunken px-3 text-[11.5px] leading-none text-muted-foreground transition-colors hover:text-foreground aria-pressed:border-primary aria-pressed:bg-tint-brand aria-pressed:text-primary"
+              className="h-7 rounded-full border bg-sunken px-3 text-caption leading-none text-muted-foreground transition-colors hover:text-foreground aria-pressed:border-primary aria-pressed:bg-tint-brand aria-pressed:text-primary"
             >
               {PRESETS[p].label}
             </button>
@@ -173,7 +172,7 @@ export function FontTester() {
           </span>
         </div>
 
-        <label className="flex items-center gap-3 text-[11.5px] text-muted-foreground">
+        <label className="flex items-center gap-3 text-caption text-muted-foreground">
           الحجم
           <input
             type="range"
@@ -196,7 +195,7 @@ export function FontTester() {
               type="button"
               aria-pressed={s.weight === w}
               onClick={() => setS((x) => ({ ...x, weight: w }))}
-              className="h-[26px] rounded-full px-2.5 text-[11.5px] leading-none text-muted-foreground transition-colors hover:text-foreground aria-pressed:bg-tint-brand aria-pressed:text-primary"
+              className="h-6.5 rounded-full px-2.5 text-caption leading-none text-muted-foreground transition-colors hover:text-foreground aria-pressed:bg-tint-brand aria-pressed:text-primary"
             >
               {label}
             </button>

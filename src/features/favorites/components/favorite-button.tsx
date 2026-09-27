@@ -3,9 +3,8 @@
 import { useState } from 'react';
 
 import { HeartFilledIcon, HeartIcon } from '@/components/ui/icons';
-import { cn } from '@/lib/cn';
-
 import { useFavorite } from '@/features/favorites/hooks/use-favorites';
+import { cn } from '@/lib/cn';
 
 type Props = { fontId: string; fontName: string; variant?: 'card' | 'square'; className?: string };
 
@@ -32,7 +31,7 @@ export function FavoriteButton({ fontId, fontName, variant = 'card', className }
         className,
       )}
     >
-      <Icon key={pop} className={cn(variant === 'card' ? 'size-[15px]' : 'size-[18px]', pop > 0 && 'animate-heart')} />
+      <Icon key={pop} className={cn(variant === 'card' ? 'size-3.75' : 'size-4.5', pop > 0 && 'animate-heart')} />
     </button>
   );
 }

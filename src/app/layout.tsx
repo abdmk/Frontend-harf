@@ -4,6 +4,7 @@ import { headers } from 'next/headers';
 import { ThemeScript } from '@/components/shared/theme-script';
 import { graphik } from '@/config/fonts';
 import { siteConfig } from '@/config/site';
+import { surface } from '@/design-system/tokens';
 
 import { AppProviders } from './providers';
 import './globals.css';
@@ -17,8 +18,8 @@ export const metadata: Metadata = {
 
 export const viewport: Viewport = {
   themeColor: [
-    { media: '(prefers-color-scheme: light)', color: '#ffffff' },
-    { media: '(prefers-color-scheme: dark)', color: '#100f0f' },
+    { media: '(prefers-color-scheme: light)', color: surface.light },
+    { media: '(prefers-color-scheme: dark)', color: surface.dark },
   ],
 };
 

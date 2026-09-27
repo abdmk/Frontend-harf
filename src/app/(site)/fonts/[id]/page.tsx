@@ -2,18 +2,19 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 
+import { Container } from '@/components/layout/container';
 import { CtaSection } from '@/components/layout/cta-section';
+import { FontCard } from '@/components/shared/font-card';
+import { FontGrid } from '@/components/shared/font-grid';
 import { ChevronLeftIcon } from '@/components/ui/icons';
 import { paths } from '@/config/paths';
-import { getFont, getRelatedFonts } from '@/features/font-details/api/get-font';
 import { FavoriteButton } from '@/features/favorites/components/favorite-button';
-import { FontCard } from '@/components/shared/font-card';
+import { getFont, getRelatedFonts } from '@/features/font-details/api/get-font';
 import { FontDetailsTabs } from '@/features/font-details/components/font-details-tabs';
 import { FontGallery } from '@/features/font-details/components/font-gallery';
-import { FontGrid } from '@/components/shared/font-grid';
 import { FontHeader } from '@/features/font-details/components/font-header';
-import { FontTester } from '@/features/font-tester/components/font-tester';
 import { WeightWaterfall } from '@/features/font-details/components/weight-waterfall';
+import { FontTester } from '@/features/font-tester/components/font-tester';
 
 export async function generateMetadata({ params }: PageProps<'/fonts/[id]'>): Promise<Metadata> {
   const font = await getFont((await params).id);
@@ -31,9 +32,9 @@ export default async function FontPage({ params }: PageProps<'/fonts/[id]'>) {
   const related = await getRelatedFonts(font);
 
   return (
-    <main id="main" className="mx-auto w-[min(100%-2rem,1120px)] sm:w-[min(100%-3rem,1120px)]">
+    <Container as="main" id="main">
       <nav aria-label="مسار التنقّل" className="mt-8 mb-5">
-        <ol className="flex flex-wrap items-center gap-2 text-[12.5px] text-muted-foreground">
+        <ol className="flex flex-wrap items-center gap-2 text-meta text-muted-foreground">
           <li className="flex items-center gap-2">
             <Link href={paths.home.getHref()} className="hover:text-foreground">
               الرئيسية
@@ -63,7 +64,7 @@ export default async function FontPage({ params }: PageProps<'/fonts/[id]'>) {
           <h2 id="related-title" className="text-sm font-medium text-muted-foreground">
             خطوط مشابهة قد تعجبك
           </h2>
-          <Link href={paths.home.getHref()} className="group inline-flex items-center gap-1 text-[12.5px] text-primary">
+          <Link href={paths.home.getHref()} className="group inline-flex items-center gap-1 text-meta text-primary">
             عرض جميع الخطوط
             <ChevronLeftIcon className="size-3.5 transition-transform group-hover:-translate-x-0.5" />
           </Link>
@@ -74,6 +75,6 @@ export default async function FontPage({ params }: PageProps<'/fonts/[id]'>) {
         />
       </section>
       <CtaSection />
-    </main>
+    </Container>
   );
 }

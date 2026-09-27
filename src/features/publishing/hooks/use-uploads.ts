@@ -2,10 +2,9 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 
-import type { FileKind } from '@/types/domain/file';
-
-import type { UploadItem } from '@/types/domain/publishing';
 import { extOf, UPLOAD_LIMITS, validateFile, validateImportUrl } from '@/features/publishing/utils/validate';
+import type { FileKind } from '@/types/domain/file';
+import type { UploadItem } from '@/types/domain/publishing';
 
 const kindOf = (name: string): FileKind => {
   const e = extOf(name);

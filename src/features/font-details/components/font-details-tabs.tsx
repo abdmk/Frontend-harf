@@ -5,9 +5,8 @@ import { useLayoutEffect, useRef, useState } from 'react';
 
 import { FileIcon, type FileKind } from '@/components/shared/file-icon';
 import { formatDateAr, weightsLabel } from '@/lib/format';
-
-import type { Font } from '@/types/domain/font';
 import { CATEGORY_LABEL, LANG_LABEL } from '@/lib/labels';
+import type { Font } from '@/types/domain/font';
 
 /** «معلومات الخط» و«محتويات الحزمة» — المؤشّر الأحمر ينزلق بين التبويبين */
 export function FontDetailsTabs({ font }: { font: Font }) {
@@ -48,7 +47,7 @@ export function FontDetailsTabs({ font }: { font: Font }) {
           <TabsPrimitive.Trigger
             key={v}
             value={v!}
-            className="h-13 text-[15px] text-tertiary transition-colors duration-200 hover:text-foreground data-[state=active]:font-medium data-[state=active]:text-foreground"
+            className="h-13 text-lead text-tertiary transition-colors duration-200 hover:text-foreground data-[state=active]:font-medium data-[state=active]:text-foreground"
           >
             {label}
           </TabsPrimitive.Trigger>
@@ -78,7 +77,7 @@ export function FontDetailsTabs({ font }: { font: Font }) {
           {(font.tags ?? [CATEGORY_LABEL[font.category], 'عربي']).map((t) => (
             <li
               key={t}
-              className="inline-flex h-[30px] items-center rounded-full bg-sunken px-4 text-[11.5px] text-muted-foreground"
+              className="inline-flex h-7.5 items-center rounded-full bg-sunken px-4 text-caption text-muted-foreground"
             >
               {t}
             </li>
@@ -91,10 +90,10 @@ export function FontDetailsTabs({ font }: { font: Font }) {
           {files.map(([name, kind, desc]) => (
             <li key={name} className="flex items-center gap-4 border-b border-subtle py-3 text-sm">
               <FileIcon kind={kind} className="h-10 w-8" />
-              <span dir="ltr" className="flex-1 text-right font-mono text-[12.5px]">
+              <span dir="ltr" className="flex-1 text-right font-mono text-meta">
                 {name}
               </span>
-              <span className="text-[12.5px] text-tertiary">{desc}</span>
+              <span className="text-meta text-tertiary">{desc}</span>
             </li>
           ))}
         </ul>

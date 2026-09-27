@@ -11,7 +11,7 @@ export function CartMenu() {
         aria-label="السلة"
         className="grid size-9 place-items-center rounded-sm text-muted-foreground transition-colors hover:bg-sunken hover:text-foreground data-[state=open]:bg-sunken data-[state=open]:text-foreground"
       >
-        <CartIcon className="size-[18px]" />
+        <CartIcon className="size-4.5" />
       </PopoverTrigger>
       <PopoverContent
         align="end"

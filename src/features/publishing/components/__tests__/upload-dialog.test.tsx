@@ -3,7 +3,6 @@ import userEvent from '@testing-library/user-event';
 import { describe, expect, it } from 'vitest';
 
 import { TooltipProvider } from '@/components/ui/tooltip';
-
 import { UploadDialog } from '@/features/publishing/components/upload-dialog';
 
 function setup() {

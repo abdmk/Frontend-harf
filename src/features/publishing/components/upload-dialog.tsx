@@ -3,7 +3,6 @@
 import { type ReactNode, useId, useRef, useState } from 'react';
 
 import { FileIcon } from '@/components/shared/file-icon';
-import { CheckIcon, CloudUploadIcon, CrossIcon, InfoIcon, LinkIcon, TrashIcon } from '@/components/ui/icons';
 import {
   Dialog,
   DialogClose,
@@ -12,13 +11,13 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
+import { CheckIcon, CloudUploadIcon, CrossIcon, InfoIcon, LinkIcon, TrashIcon } from '@/components/ui/icons';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import { useUploads } from '@/features/publishing/hooks/use-uploads';
+import { UPLOAD_LIMITS } from '@/features/publishing/utils/validate';
 import { cn } from '@/lib/cn';
 import { formatBytesAr } from '@/lib/format';
-
-import { useUploads } from '@/features/publishing/hooks/use-uploads';
 import type { UploadItem } from '@/types/domain/publishing';
-import { UPLOAD_LIMITS } from '@/features/publishing/utils/validate';
 
 /** نافذة «تحميل الملفات»: منطقة إفلات، صفوف الملفات بحالاتها، والاستيراد من رابط */
 export function UploadDialog({ children }: { children: ReactNode }) {
@@ -27,7 +26,7 @@ export function UploadDialog({ children }: { children: ReactNode }) {
       <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent
         showCloseButton={false}
-        className="max-h-[calc(100dvh-2rem)] gap-0 overflow-y-auto rounded-xl border p-6 shadow-overlay sm:max-w-[560px] sm:p-8"
+        className="max-h-[calc(100dvh-2rem)] gap-0 overflow-y-auto rounded-xl border p-6 shadow-overlay sm:max-w-140 sm:p-8"
       >
         <UploadPanel />
       </DialogContent>
@@ -198,7 +197,7 @@ function FileRow({ item, onRemove }: { item: UploadItem; onRemove: () => void })
           aria-label={item.status === 'uploading' ? `إلغاء رفع ${item.name}` : `حذف ${item.name}`}
           className="grid size-9 shrink-0 place-items-center rounded-full text-muted-foreground transition-colors hover:bg-sunken hover:text-foreground"
         >
-          {item.status === 'uploading' ? <CrossIcon className="size-4" /> : <TrashIcon className="size-[18px]" />}
+          {item.status === 'uploading' ? <CrossIcon className="size-4" /> : <TrashIcon className="size-4.5" />}
         </button>
       </div>
       {item.status === 'uploading' && (
@@ -258,7 +257,7 @@ function UrlImport({ onSubmit }: { onSubmit: (url: string) => string | null }) {
           error && 'border-primary',
         )}
       >
-        <LinkIcon className="size-[18px] shrink-0 text-muted-foreground" />
+        <LinkIcon className="size-4.5 shrink-0 text-muted-foreground" />
         <input
           id={id}
           type="url"

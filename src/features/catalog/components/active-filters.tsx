@@ -1,12 +1,11 @@
 'use client';
 
 import { CrossSmallIcon } from '@/components/ui/icons';
-import { weightsLabel } from '@/lib/format';
-
 import type { CatalogQuery } from '@/features/catalog/types/catalog-query';
 import { DEFAULT_QUERY } from '@/features/catalog/types/catalog-query';
-import { CATEGORY_LABEL, LANG_SHORT } from '@/lib/labels';
 import { DATE_LABEL, LICENSE_FILTER_LABEL } from '@/features/catalog/utils/labels';
+import { weightsLabel } from '@/lib/format';
+import { CATEGORY_LABEL, LANG_SHORT } from '@/lib/labels';
 
 import { useCatalog } from './catalog-context';
 
@@ -36,7 +35,7 @@ export function ActiveFilters({ count }: { count: number }) {
   return (
     <div
       aria-live="polite"
-      className="mt-5 mb-6 flex min-h-7 flex-wrap items-center gap-2 text-[12.5px] text-muted-foreground"
+      className="mt-5 mb-6 flex min-h-7 flex-wrap items-center gap-2 text-meta text-muted-foreground"
     >
       <span className="font-medium text-foreground">{count} نتيجة</span>
       {chips.map((c) => (
@@ -45,7 +44,7 @@ export function ActiveFilters({ count }: { count: number }) {
           type="button"
           aria-label={`إزالة ${c.label}`}
           onClick={() => setQuery(c.clear)}
-          className="group/fc inline-flex h-6 animate-pop-in items-center gap-1 rounded-full bg-tint-brand ps-2 pe-1 text-[11.5px] leading-none text-primary"
+          className="group/fc inline-flex h-6 animate-pop-in items-center gap-1 rounded-full bg-tint-brand ps-2 pe-1 text-caption leading-none text-primary"
         >
           <span>{c.label}</span>
           <span className="grid size-4 place-items-center rounded-full bg-primary/15 transition-colors group-hover/fc:bg-primary group-hover/fc:text-white">
@@ -57,7 +56,7 @@ export function ActiveFilters({ count }: { count: number }) {
         <button
           type="button"
           onClick={() => setQuery(DEFAULT_QUERY)}
-          className="px-1 text-[11.5px] underline underline-offset-4 transition-colors hover:text-foreground"
+          className="px-1 text-caption underline underline-offset-4 transition-colors hover:text-foreground"
         >
           مسح الكل
         </button>
