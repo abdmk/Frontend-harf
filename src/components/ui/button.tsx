@@ -26,7 +26,7 @@ const buttonVariants = cva(
         ghost: 'text-muted-foreground hover:bg-sunken hover:text-foreground',
         danger: 'bg-tint-dgr text-dgr-text hover:bg-dgr-100 dark:hover:bg-tint-dgr/70',
         ink: 'bg-ink text-ink-foreground shadow-soft hover:opacity-90',
-        ai: 'bg-(image:--grad-ai) text-white shadow-soft hover:opacity-95',
+        ai: 'bg-ai-500 text-white shadow-soft hover:opacity-90',
         link: 'h-auto! border-0 px-0! text-primary underline-offset-4 hover:underline',
       },
       size: {

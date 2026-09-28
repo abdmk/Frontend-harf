@@ -67,9 +67,7 @@ export function FontCard({
         className,
       )}
     >
-      <div aria-hidden className="relative aspect-[7/5] overflow-hidden border-b bg-sunken">
-        <span className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/[.03] opacity-0 transition-opacity duration-300 group-hover/card:opacity-100" />
-      </div>
+      <div aria-hidden className="relative aspect-[7/5] overflow-hidden border-b bg-sunken"></div>
       <span
         className={cn(
           'absolute end-4 top-4 z-10 inline-flex h-6 items-center gap-1 rounded-full px-2 text-caption leading-none font-medium',

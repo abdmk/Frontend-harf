@@ -9,7 +9,7 @@ export function FontTile({ name, className }: { name: string; className?: string
       aria-hidden
       dir="ltr"
       className={cn(
-        'grid shrink-0 place-items-center rounded-sm bg-(image:--grad-ink) font-semibold text-white',
+        'grid shrink-0 place-items-center rounded-sm bg-ink font-semibold text-ink-foreground',
         className ?? 'size-11 text-control',
       )}
     >

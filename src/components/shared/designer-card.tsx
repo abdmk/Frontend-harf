@@ -31,7 +31,7 @@ export function DesignerCard({
 }) {
   return (
     <article className="relative overflow-hidden rounded-xl border bg-card transition-[border-color,box-shadow] duration-(--dur-base) has-[a:hover]:border-strong has-[a:hover]:shadow-soft">
-      <div aria-hidden className="h-21 bg-(image:--grad-aurora) opacity-80" />
+      <div aria-hidden className="h-18 bg-sunken" />
       <div className="px-5 pb-5">
         <div className="relative -mt-8 flex items-end justify-between gap-3">
           <Avatar initials={initials} seed={id} size="xl" className="ring-4 ring-card" />
@@ -72,7 +72,7 @@ export function DesignerCard({
             <li
               key={f}
               title={f}
-              className="grid h-11 min-w-0 place-items-center rounded-sm bg-(image:--grad-ink) px-2 text-control font-semibold text-white"
+              className="grid h-11 min-w-0 place-items-center rounded-sm bg-ink px-2 text-control font-semibold text-ink-foreground"
             >
               <span className="block max-w-full truncate">{f}</span>
             </li>

@@ -101,13 +101,6 @@ const SHADOWS: [string, string, string][] = [
   ['focus', 'shadow-focus', 'تركيز الحقول'],
 ];
 
-const GRADS: [string, string, string][] = [
-  ['aurora', 'bg-(image:--grad-aurora)', 'هالة خلف الأقسام البطلة'],
-  ['ai', 'bg-(image:--grad-ai)', 'أفعال الذكاء الاصطناعي'],
-  ['dawn', 'bg-(image:--grad-dawn)', 'خلف الحالات الفارغة'],
-  ['ink', 'bg-(image:--grad-ink)', 'الأسطح الداكنة المميّزة'],
-];
-
 export function Foundations() {
   const icons = Object.entries(Icons).filter(([n]) => n.endsWith('Icon')) as [string, Icons.IconComponent][];
   return (
@@ -270,22 +263,6 @@ export function Foundations() {
             ))}
           </div>
         </DsPanel>
-      </DsSection>
-
-      <DsSection id="grad" num="1.7" title="التدرّجات" en="Gradients" status="reference">
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-4">
-          {GRADS.map(([n, cls, use]) => (
-            <div key={n} className="overflow-hidden rounded-lg border bg-card">
-              <span className={cn('block h-24', cls)} />
-              <div className="p-4">
-                <p dir="ltr" className="font-mono text-caption">
-                  --grad-{n}
-                </p>
-                <p className="mt-1 text-caption text-tertiary">{use}</p>
-              </div>
-            </div>
-          ))}
-        </div>
       </DsSection>
 
       <DsSection

@@ -25,7 +25,6 @@ export function EmptyState({
     <div
       className={cn(
         'relative isolate flex flex-col items-center overflow-hidden rounded-xl border bg-card px-6 py-12 text-center',
-        'before:absolute before:inset-x-0 before:-top-27.5 before:-z-10 before:mx-auto before:h-55 before:w-85 before:bg-(image:--grad-dawn) before:opacity-85 before:blur-[58px]',
         className,
       )}
     >

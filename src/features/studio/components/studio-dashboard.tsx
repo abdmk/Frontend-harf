@@ -110,7 +110,7 @@ export function StudioDashboard({
           الأرباح والدفعات
         </h2>
         <div className="grid grid-cols-[minmax(0,1fr)] gap-4 lg:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)]">
-          <div className="flex flex-col justify-between gap-8 rounded-xl border bg-(image:--grad-dawn) p-6">
+          <div className="flex flex-col justify-between gap-8 rounded-xl border bg-card p-6">
             <div>
               <p className="flex items-center gap-2 text-control text-muted-foreground">
                 <DollarIcon className="size-4" />

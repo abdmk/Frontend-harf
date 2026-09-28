@@ -59,7 +59,8 @@ export function ProfileHeader({
 
   return (
     <section aria-labelledby={titleId} className="overflow-hidden rounded-xl border bg-card">
-      <div aria-hidden className="h-28 bg-(image:--grad-cover) sm:h-40" />
+      {/* غلاف مسطّح هادئ بلا تدرّج */}
+      <div aria-hidden className="h-24 bg-sunken sm:h-32" />
       <div className="grid gap-6 px-5 pb-6 sm:px-8 sm:pb-8 lg:grid-cols-[minmax(0,1fr)_300px] lg:gap-12">
         <div className="min-w-0">
           <div className="-mt-12 sm:-mt-14">{mark}</div>

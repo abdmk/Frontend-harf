@@ -178,7 +178,7 @@ function Preview({ draft, cover }: { draft: WorkDraft; cover?: string }) {
         : ({ tone: 'success', label: 'مجاني' } as const);
   return (
     <figure className="flex items-center gap-4 rounded-lg border bg-card p-3">
-      <div className="relative grid aspect-[4/3] w-28 shrink-0 place-items-center overflow-hidden rounded-md bg-(image:--grad-ink) text-lg font-semibold text-white sm:w-36">
+      <div className="relative grid aspect-[4/3] w-28 shrink-0 place-items-center overflow-hidden rounded-md bg-ink text-lg font-semibold text-ink-foreground sm:w-36">
         {cover ? (
           <img src={cover} alt="" className="absolute inset-0 size-full object-cover" />
         ) : (

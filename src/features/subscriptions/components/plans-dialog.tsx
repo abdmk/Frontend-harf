@@ -88,7 +88,7 @@ export function PlansDialog({
             : undefined
         }
       >
-        <header className="bg-(image:--grad-dawn) px-6 pt-8 pb-6 text-center">
+        <header className="border-b px-6 pt-8 pb-6 text-center">
           <DialogTitle className="text-2xl font-semibold">
             {step.kind === 'plans'
               ? 'اختر خطتك'
@@ -140,7 +140,7 @@ export function PlansDialog({
                       </h3>
                       <p className="mt-1 text-caption text-muted-foreground">{p.tagline}</p>
                     </div>
-                    <div className="rounded-md border bg-(image:--grad-dawn) p-4">
+                    <div className="rounded-md bg-sunken p-4">
                       <p className="flex items-baseline gap-1.5">
                         <span dir="ltr" className="text-4xl font-semibold tracking-tight">
                           {formatMoney(price)}
