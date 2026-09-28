@@ -1,7 +1,7 @@
-import { type ReactNode, useId, useRef, useState } from 'react';
+import { type ReactNode, useId, useState } from 'react';
 
+import { Dropzone } from '@/components/shared/dropzone';
 import { FileIcon } from '@/components/shared/file-icon';
-import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogClose,
@@ -55,7 +55,13 @@ function UploadPanel() {
         </DialogClose>
       </div>
 
-      <Dropzone onFiles={addFiles} />
+      <Dropzone
+        onFiles={addFiles}
+        multiple
+        accept={UPLOAD_LIMITS.exts.map((e) => `.${e}`).join(',')}
+        hint="تنسيقات OTF وTTF وPDF وZIP، بحجم يصل إلى 250 ميجابايت."
+        className="mt-8"
+      />
 
       {items.length > 0 && (
         <ul className="mt-4 flex flex-col gap-4" aria-label="الملفات">
@@ -73,56 +79,6 @@ function UploadPanel() {
 
       <UrlImport onSubmit={addUrl} />
     </>
-  );
-}
-
-function Dropzone({ onFiles }: { onFiles: (f: FileList) => void }) {
-  const input = useRef<HTMLInputElement>(null);
-  const [over, setOver] = useState(false);
-  return (
-    <div
-      onDragEnter={(e) => {
-        e.preventDefault();
-        setOver(true);
-      }}
-      onDragOver={(e) => {
-        e.preventDefault();
-        setOver(true);
-      }}
-      onDragLeave={() => setOver(false)}
-      onDrop={(e) => {
-        e.preventDefault();
-        setOver(false);
-        if (e.dataTransfer.files.length) onFiles(e.dataTransfer.files);
-      }}
-      className={cn(
-        'mt-8 flex flex-col items-center gap-2 rounded-md border-[1.5px] border-dashed border-strong px-6 py-12 text-center transition-[border-color,background-color,transform] duration-200',
-        over && 'scale-[1.01] border-primary bg-tint-brand',
-      )}
-    >
-      <CloudUploadIcon
-        className={cn(
-          'mb-3 size-7 transition-transform duration-300 ease-pop',
-          over && '-translate-y-1 scale-110 text-primary',
-        )}
-      />
-      <p className="text-base font-semibold">اختر ملفاً أو اسحبه وأفلته هنا.</p>
-      <p className="text-sm text-muted-foreground">تنسيقات OTF وTTF وPDF وZIP، بحجم يصل إلى 250 ميجابايت.</p>
-      <Button variant="outline" size="md" className="mt-5 text-muted-foreground" onClick={() => input.current?.click()}>
-        استعراض الملفات
-      </Button>
-      <input
-        ref={input}
-        type="file"
-        multiple
-        hidden
-        accept={UPLOAD_LIMITS.exts.map((e) => `.${e}`).join(',')}
-        onChange={(e) => {
-          if (e.target.files?.length) onFiles(e.target.files);
-          e.target.value = '';
-        }}
-      />
-    </div>
   );
 }
 

@@ -17,9 +17,9 @@ test('روابط التذييل تفتح صفحاتها، والشروط وال�
 
 test('صفحة «قريباً»: من الترويسة، و«نبّهني» يبقى بعد إعادة التحميل', async ({ page }) => {
   await page.goto('/');
-  await page.getByRole('navigation', { name: 'الأقسام' }).getByRole('link', { name: 'مطابقة الخطوط' }).click();
-  await expect(page).toHaveURL(/\/tools\/font-matching$/);
-  await expect(page.getByRole('heading', { level: 1, name: 'مطابقة الخطوط' })).toBeVisible();
+  await page.getByRole('navigation', { name: 'الأقسام' }).getByRole('link', { name: 'مختبر الخط' }).click();
+  await expect(page).toHaveURL(/\/tools\/font-lab$/);
+  await expect(page.getByRole('heading', { level: 1, name: 'مختبر الخط' })).toBeVisible();
   const notify = page.getByRole('button', { name: /نبّهني عند الإطلاق/ });
   await notify.click();
   await expect(page.getByRole('button', { name: 'سننبّهك عند الإطلاق' })).toHaveAttribute('aria-pressed', 'true');

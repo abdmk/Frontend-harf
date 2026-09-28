@@ -52,12 +52,21 @@ export function FontCard({
   font,
   favorite,
   action,
+  specimen,
+  meta,
+  extra,
   className,
 }: {
   font: Font;
   /** زرّ المفضّلة — يأتي من طبقة التطبيق */ favorite?: ReactNode;
   /** سطر الأفعال للخطوط المدفوعة/التجريبية — يأتي من طبقة التطبيق؛ بدونه: الرخصة + تحميل */
   action?: ReactNode;
+  /** عيّنة مخصّصة بدل اسم الخط (مثل نصّ المستخدم في «مطابقة الخطوط») */
+  specimen?: { text: string; weight: number };
+  /** بدل «N أوزان» بجانب الاسم */
+  meta?: ReactNode;
+  /** سطر إضافي فوق سطر الترخيص */
+  extra?: ReactNode;
   className?: string;
 }) {
   const badge = BADGE[font.type];
@@ -75,9 +84,9 @@ export function FontCard({
         {font.face && (
           <span
             className="line-clamp-2 text-center text-5xl leading-snug text-foreground transition-transform duration-500 ease-out-quint group-hover/card:scale-[1.04]"
-            style={faceStyle(font.face, 700)}
+            style={faceStyle(font.face, specimen?.weight ?? 700)}
           >
-            {font.face.nameAr}
+            {specimen?.text ?? font.face.nameAr}
           </span>
         )}
       </div>
@@ -100,12 +109,13 @@ export function FontCard({
           >
             {font.name}
           </Link>
-          <span className="shrink-0 text-meta text-muted-foreground">{weightsLabel(font.weights)}</span>
+          <span className="shrink-0 text-meta text-muted-foreground">{meta ?? weightsLabel(font.weights)}</span>
         </div>
         <div className="flex min-w-0 items-center gap-2 text-sm font-medium">
           <DesignerAvatars designers={font.designers} />
           <Byline font={font} />
         </div>
+        {extra}
         {action ?? (
           <div className="mt-1 flex items-center justify-between gap-3">
             <span className="text-sm font-medium text-lic">{USAGE_LABEL[font.usage]}</span>
