@@ -64,15 +64,19 @@ export function SiteFooter() {
             <PaymentMarks />
           </div>
           <p>تتم معالجة المدفوعات بأمان عبر Stripe، دون تخزين بيانات الدفع مباشرة على خوادم حرف.</p>
-          <div className="mt-auto flex justify-start gap-4" dir="ltr">
+          {/* المرور: دائرة ناعمة تتّسع من المركز خلف العلامة، والعلامة تكبر قليلاً وتغمق؛ الضغط ينكمش */}
+          <div className="-ms-2.5 mt-auto flex justify-start gap-1" dir="ltr">
             {SOCIAL.map((s) => (
               <a
                 key={s.label}
                 href="#"
                 aria-label={s.label}
-                className="grid size-6 place-items-center rounded-md text-muted-foreground transition-[color,transform] duration-200 ease-pop hover:-translate-y-0.5 hover:text-foreground"
+                className="group relative grid size-9 place-items-center rounded-full text-muted-foreground transition-[color,scale] duration-(--dur-base) ease-out-quint outline-none before:absolute before:inset-0 before:scale-50 before:rounded-full before:bg-sunken before:opacity-0 before:transition-[scale,opacity] before:duration-(--dur-slow) before:ease-pop hover:text-foreground hover:before:scale-100 hover:before:opacity-100 focus-visible:text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:before:scale-100 focus-visible:before:opacity-100 active:scale-90"
               >
-                <SocialIcon label={s.label} className="size-4.5" />
+                <SocialIcon
+                  label={s.label}
+                  className="relative size-4.5 transition-[scale] duration-(--dur-slow) ease-pop group-hover:scale-110"
+                />
               </a>
             ))}
           </div>
