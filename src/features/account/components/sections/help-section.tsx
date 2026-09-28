@@ -1,0 +1,45 @@
+import { Collapsible as CollapsiblePrimitive } from 'radix-ui';
+
+import { Button } from '@/components/ui/button';
+import { ChevronDownIcon, MailIcon } from '@/components/ui/icons';
+
+import { SectionCard } from './section-card';
+
+const FAQ = [
+  ['أين أجد ملفات الخطوط التي اشتريتها؟', 'في «المشتريات»: لكل ترخيص زرّ تحميل وإيصال وملف الترخيص.'],
+  ['كيف أعرف ما يسمح به ترخيص خط مجاني؟', 'تظهر رخصة كل خط في صفحته وعلى بطاقته، ويُرفق نصّها الكامل مع الملفات.'],
+  ['هل يمكنني ترقية ترخيص اشتريته؟', 'نعم، من صفحة الخط اختر «ترقية الترخيص». شروط الترقية تحدّدها سياسة حرف.'],
+  ['كيف أنشر خطوطي في حرف؟', 'حوّل حسابك إلى الاستوديو، ثم ارفع ملفاتك من «لوحة المسبك».'],
+] as const;
+
+export function HelpSection() {
+  return (
+    <div className="flex flex-col gap-5">
+      <SectionCard title="أسئلة شائعة" bodyClassName="p-2">
+        <ul className="flex flex-col divide-y">
+          {FAQ.map(([q, a]) => (
+            <li key={q}>
+              <CollapsiblePrimitive.Root>
+                <CollapsiblePrimitive.Trigger className="group flex w-full items-center justify-between gap-4 rounded-sm px-4 py-4 text-start text-control font-medium hover:bg-sunken">
+                  {q}
+                  <ChevronDownIcon className="size-4 shrink-0 transition-transform group-data-[state=open]:rotate-180" />
+                </CollapsiblePrimitive.Trigger>
+                <CollapsiblePrimitive.Content className="overflow-hidden data-[state=closed]:animate-collapsible-up data-[state=open]:animate-collapsible-down">
+                  <p className="px-4 pb-4 text-meta text-muted-foreground">{a}</p>
+                </CollapsiblePrimitive.Content>
+              </CollapsiblePrimitive.Root>
+            </li>
+          ))}
+        </ul>
+      </SectionCard>
+      <SectionCard title="تواصل معنا" description="نردّ عادةً خلال يوم عمل.">
+        <Button asChild variant="outline">
+          <a href="mailto:hello@harf.co">
+            <MailIcon />
+            hello@harf.co
+          </a>
+        </Button>
+      </SectionCard>
+    </div>
+  );
+}
