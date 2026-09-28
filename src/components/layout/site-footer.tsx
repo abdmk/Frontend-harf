@@ -1,24 +1,37 @@
 import { Link } from 'react-router';
 
-import { SOCIAL } from '@/components/shared/social-icons';
+import applePayDark from '@/assets/payments/apple-pay-dark.svg';
+import applePay from '@/assets/payments/apple-pay.svg';
+import googlePayDark from '@/assets/payments/google-pay-dark.svg';
+import googlePay from '@/assets/payments/google-pay.svg';
+import mastercard from '@/assets/payments/mastercard.svg';
+import stripe from '@/assets/payments/stripe.svg';
+import visa from '@/assets/payments/visa.svg';
+import { SOCIAL, SocialIcon } from '@/components/shared/social-icons';
 import { footerNav } from '@/config/site';
 
+/** شعارات وسائل الدفع كما وردت من ملف الهوية؛ Apple Pay وGoogle Pay لهما نسخة للوضع الداكن، وVisa تُقلب للأبيض */
 function PaymentMarks() {
-  const mark =
-    'grid h-5 min-w-9 place-items-center rounded bg-sunken px-1 font-[system-ui] text-micro leading-none font-bold';
   return (
-    <div className="flex items-center gap-3" dir="ltr">
-      <span className="font-[system-ui] text-xl leading-none font-bold tracking-tighter text-stripe">stripe</span>
+    <div className="flex flex-wrap items-center gap-x-4 gap-y-2" dir="ltr">
+      <img src={stripe} alt="Stripe" width={57} height={23} className="h-5.5 w-auto" />
       <span aria-hidden className="h-4.5 w-px bg-strong" />
-      <span className={`${mark} text-visa italic`}>VISA</span>
-      <span className={mark}>
-        <svg viewBox="0 0 24 15" className="h-3.5 w-auto" aria-label="Mastercard" role="img">
-          <circle cx="8" cy="7.5" r="6.5" className="fill-mastercard-red" />
-          <circle cx="16" cy="7.5" r="6.5" className="fill-mastercard-orange" fillOpacity=".9" />
-        </svg>
-      </span>
-      <span className={mark}>Apple Pay</span>
-      <span className={mark}>G Pay</span>
+      <ul aria-label="وسائل الدفع المقبولة" className="flex items-center gap-4">
+        <li>
+          <img src={visa} alt="Visa" width={29} height={9} className="h-2.5 w-auto dark:brightness-0 dark:invert" />
+        </li>
+        <li>
+          <img src={mastercard} alt="Mastercard" width={21} height={13} className="h-3.5 w-auto" />
+        </li>
+        <li>
+          <img src={applePay} alt="Apple Pay" width={33} height={14} className="h-3.5 w-auto dark:hidden" />
+          <img src={applePayDark} alt="Apple Pay" width={33} height={14} className="hidden h-3.5 w-auto dark:block" />
+        </li>
+        <li>
+          <img src={googlePay} alt="Google Pay" width={36} height={15} className="h-3.5 w-auto dark:hidden" />
+          <img src={googlePayDark} alt="Google Pay" width={36} height={15} className="hidden h-3.5 w-auto dark:block" />
+        </li>
+      </ul>
     </div>
   );
 }
@@ -51,7 +64,7 @@ export function SiteFooter() {
             <PaymentMarks />
           </div>
           <p>تتم معالجة المدفوعات بأمان عبر Stripe، دون تخزين بيانات الدفع مباشرة على خوادم حرف.</p>
-          <div className="mt-auto flex justify-end gap-4">
+          <div className="mt-auto flex justify-start gap-4" dir="ltr">
             {SOCIAL.map((s) => (
               <a
                 key={s.label}
@@ -59,9 +72,7 @@ export function SiteFooter() {
                 aria-label={s.label}
                 className="grid size-6 place-items-center rounded-md text-muted-foreground transition-[color,transform] duration-200 ease-pop hover:-translate-y-0.5 hover:text-foreground"
               >
-                <svg viewBox="0 0 24 24" className="size-4.5" fill="currentColor" aria-hidden>
-                  <path fillRule="evenodd" d={s.d} />
-                </svg>
+                <SocialIcon label={s.label} className="size-4.5" />
               </a>
             ))}
           </div>
