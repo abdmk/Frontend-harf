@@ -22,6 +22,7 @@ const PAGES = [
   '/tools/nasaq',
   '/tools/font-matching',
   '/tools/font-lab?font=cairo',
+  '/manuscripts',
 ];
 
 for (const path of PAGES) {

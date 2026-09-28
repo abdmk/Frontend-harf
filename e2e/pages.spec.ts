@@ -17,9 +17,9 @@ test('روابط التذييل تفتح صفحاتها، والشروط وال�
 
 test('صفحة «قريباً»: من الترويسة، و«نبّهني» يبقى بعد إعادة التحميل', async ({ page }) => {
   await page.goto('/');
-  await page.getByRole('navigation', { name: 'الأقسام' }).getByRole('link', { name: 'مخطوطات' }).click();
-  await expect(page).toHaveURL(/\/manuscripts$/);
-  await expect(page.getByRole('heading', { level: 1, name: 'مخطوطات' })).toBeVisible();
+  await page.locator('footer').getByRole('link', { name: 'المدونة' }).click();
+  await expect(page).toHaveURL(/\/blog$/);
+  await expect(page.getByRole('heading', { level: 1, name: 'المدونة' })).toBeVisible();
   const notify = page.getByRole('button', { name: /نبّهني عند الإطلاق/ });
   await notify.click();
   await expect(page.getByRole('button', { name: 'سننبّهك عند الإطلاق' })).toHaveAttribute('aria-pressed', 'true');

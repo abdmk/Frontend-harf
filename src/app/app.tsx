@@ -19,6 +19,7 @@ import { FontPage } from './pages/font';
 import { FoundryPage } from './pages/foundry';
 import { HomePage } from './pages/home';
 import { LoginPage } from './pages/login';
+import { ManuscriptsPage } from './pages/manuscripts';
 import { NotFoundPage } from './pages/not-found';
 import { NotificationsPage } from './pages/notifications';
 import { PublishPage } from './pages/publish';
@@ -48,6 +49,7 @@ export function App() {
           <Route path="notifications" element={<NotificationsPage />} />
           <Route path="foundries/:id" element={<FoundryPage />} />
           <Route path="designers/:id" element={<DesignerPage />} />
+          <Route path="manuscripts" element={<ManuscriptsPage />} />
           <Route path="tools/reverse-text" element={<ReverseTextPage />} />
           <Route
             path="tools/nasaq"

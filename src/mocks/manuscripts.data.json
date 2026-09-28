@@ -1,0 +1,510 @@
+[
+  {
+    "id": "bismillah",
+    "title": "بسم الله الرحمن الرحيم",
+    "category": "panels",
+    "width": 7745,
+    "height": 2572,
+    "bytes": 8339,
+    "fonts": [
+      {
+        "id": "amiri",
+        "name": "أميري"
+      }
+    ]
+  },
+  {
+    "id": "ramadan-kareem",
+    "title": "رمضان كريم",
+    "category": "ramadan",
+    "width": 3160,
+    "height": 3067,
+    "bytes": 5223,
+    "fonts": [
+      {
+        "id": "aref-ruqaa",
+        "name": "عارف رقعة"
+      }
+    ]
+  },
+  {
+    "id": "eid-mubarak",
+    "title": "عيد مبارك",
+    "category": "eid",
+    "width": 3904,
+    "height": 1240,
+    "bytes": 3578,
+    "fonts": [
+      {
+        "id": "lalezar",
+        "name": "لاله‌زار"
+      }
+    ]
+  },
+  {
+    "id": "mawlid",
+    "title": "المولد النبوي الشريف",
+    "category": "mawlid",
+    "width": 5027,
+    "height": 2779,
+    "bytes": 10694,
+    "fonts": [
+      {
+        "id": "aref-ruqaa",
+        "name": "عارف رقعة"
+      },
+      {
+        "id": "el-messiri",
+        "name": "المسيري"
+      }
+    ]
+  },
+  {
+    "id": "jumua",
+    "title": "جمعة مباركة",
+    "category": "jumua",
+    "width": 3553,
+    "height": 2971,
+    "bytes": 4224,
+    "fonts": [
+      {
+        "id": "reem-kufi",
+        "name": "ريم كوفي"
+      }
+    ]
+  },
+  {
+    "id": "hijri",
+    "title": "عام هجري سعيد",
+    "category": "hijri",
+    "width": 4620,
+    "height": 2786,
+    "bytes": 6587,
+    "fonts": [
+      {
+        "id": "marhey",
+        "name": "مرحي"
+      }
+    ]
+  },
+  {
+    "id": "mabrook",
+    "title": "ألف مبروك",
+    "category": "greetings",
+    "width": 4044,
+    "height": 1493,
+    "bytes": 3830,
+    "fonts": [
+      {
+        "id": "lalezar",
+        "name": "لاله‌زار"
+      }
+    ]
+  },
+  {
+    "id": "alhamdulillah",
+    "title": "الحمد لله",
+    "category": "panels",
+    "width": 2656,
+    "height": 1549,
+    "bytes": 3522,
+    "fonts": [
+      {
+        "id": "aref-ruqaa",
+        "name": "عارف رقعة"
+      }
+    ]
+  },
+  {
+    "id": "ramadan-mubarak",
+    "title": "رمضان مبارك",
+    "category": "ramadan",
+    "width": 6373,
+    "height": 1723,
+    "bytes": 3419,
+    "fonts": [
+      {
+        "id": "changa",
+        "name": "شنقا"
+      }
+    ]
+  },
+  {
+    "id": "taqabbal",
+    "title": "تقبّل الله منّا ومنكم",
+    "category": "eid",
+    "width": 3329,
+    "height": 3322,
+    "bytes": 7563,
+    "fonts": [
+      {
+        "id": "amiri",
+        "name": "أميري"
+      }
+    ]
+  },
+  {
+    "id": "muhammad",
+    "title": "محمد رسول الله",
+    "category": "mawlid",
+    "width": 2925,
+    "height": 3363,
+    "bytes": 5844,
+    "fonts": [
+      {
+        "id": "aref-ruqaa",
+        "name": "عارف رقعة"
+      }
+    ]
+  },
+  {
+    "id": "mashallah",
+    "title": "ما شاء الله",
+    "category": "panels",
+    "width": 4057,
+    "height": 1268,
+    "bytes": 3724,
+    "fonts": [
+      {
+        "id": "lalezar",
+        "name": "لاله‌زار"
+      }
+    ]
+  },
+  {
+    "id": "ahlan",
+    "title": "أهلاً وسهلاً",
+    "category": "greetings",
+    "width": 2923,
+    "height": 3437,
+    "bytes": 5188,
+    "fonts": [
+      {
+        "id": "marhey",
+        "name": "مرحي"
+      }
+    ]
+  },
+  {
+    "id": "kul-am",
+    "title": "كل عام وأنتم بخير",
+    "category": "eid",
+    "width": 3668,
+    "height": 2801,
+    "bytes": 5673,
+    "fonts": [
+      {
+        "id": "reem-kufi",
+        "name": "ريم كوفي"
+      }
+    ]
+  },
+  {
+    "id": "tawakkalt",
+    "title": "توكّلت على الله",
+    "category": "panels",
+    "width": 6284,
+    "height": 2152,
+    "bytes": 12166,
+    "fonts": [
+      {
+        "id": "scheherazade",
+        "name": "شهرزاد"
+      }
+    ]
+  },
+  {
+    "id": "ahlan-ramadan",
+    "title": "أهلاً رمضان",
+    "category": "ramadan",
+    "width": 4032,
+    "height": 2560,
+    "bytes": 3935,
+    "fonts": [
+      {
+        "id": "lalezar",
+        "name": "لاله‌زار"
+      }
+    ]
+  },
+  {
+    "id": "saat-istijaba",
+    "title": "ساعة استجابة",
+    "category": "jumua",
+    "width": 4246,
+    "height": 1551,
+    "bytes": 5794,
+    "fonts": [
+      {
+        "id": "aref-ruqaa",
+        "name": "عارف رقعة"
+      }
+    ]
+  },
+  {
+    "id": "shukran",
+    "title": "شكراً لكم",
+    "category": "greetings",
+    "width": 4082,
+    "height": 3534,
+    "bytes": 3105,
+    "fonts": [
+      {
+        "id": "changa",
+        "name": "شنقا"
+      }
+    ]
+  },
+  {
+    "id": "subhan",
+    "title": "سبحان الله وبحمده",
+    "category": "panels",
+    "width": 4560,
+    "height": 3099,
+    "bytes": 6537,
+    "fonts": [
+      {
+        "id": "amiri",
+        "name": "أميري"
+      }
+    ]
+  },
+  {
+    "id": "national-day",
+    "title": "يوم وطني سعيد",
+    "category": "occasions",
+    "width": 6040,
+    "height": 2833,
+    "bytes": 8577,
+    "fonts": [
+      {
+        "id": "el-messiri",
+        "name": "المسيري"
+      }
+    ]
+  },
+  {
+    "id": "eid-saeed",
+    "title": "عيدكم سعيد",
+    "category": "eid",
+    "width": 2167,
+    "height": 3049,
+    "bytes": 4924,
+    "fonts": [
+      {
+        "id": "aref-ruqaa",
+        "name": "عارف رقعة"
+      }
+    ]
+  },
+  {
+    "id": "ilm",
+    "title": "وقل ربّ زدني علماً",
+    "category": "panels",
+    "width": 4974,
+    "height": 3790,
+    "bytes": 13383,
+    "fonts": [
+      {
+        "id": "scheherazade",
+        "name": "شهرزاد"
+      }
+    ]
+  },
+  {
+    "id": "hayyakum",
+    "title": "حيّاكم الله",
+    "category": "greetings",
+    "width": 3894,
+    "height": 1522,
+    "bytes": 3920,
+    "fonts": [
+      {
+        "id": "lalezar",
+        "name": "لاله‌زار"
+      }
+    ]
+  },
+  {
+    "id": "usr-yusr",
+    "title": "إنّ مع العسر يسراً",
+    "category": "panels",
+    "width": 2927,
+    "height": 4536,
+    "bytes": 4709,
+    "fonts": [
+      {
+        "id": "reem-kufi",
+        "name": "ريم كوفي"
+      }
+    ]
+  },
+  {
+    "id": "teachers",
+    "title": "يوم المعلّم",
+    "category": "occasions",
+    "width": 4652,
+    "height": 3184,
+    "bytes": 5248,
+    "fonts": [
+      {
+        "id": "marhey",
+        "name": "مرحي"
+      }
+    ]
+  },
+  {
+    "id": "talaa-albadr",
+    "title": "طلع البدر علينا",
+    "category": "mawlid",
+    "width": 4106,
+    "height": 3180,
+    "bytes": 4829,
+    "fonts": [
+      {
+        "id": "amiri",
+        "name": "أميري"
+      }
+    ]
+  },
+  {
+    "id": "ramadan-yajmaona",
+    "title": "اللهم بلّغنا رمضان",
+    "category": "ramadan",
+    "width": 4390,
+    "height": 3749,
+    "bytes": 12628,
+    "fonts": [
+      {
+        "id": "scheherazade",
+        "name": "شهرزاد"
+      }
+    ]
+  },
+  {
+    "id": "najah",
+    "title": "نجاح مبارك",
+    "category": "greetings",
+    "width": 2762,
+    "height": 2760,
+    "bytes": 3946,
+    "fonts": [
+      {
+        "id": "lalezar",
+        "name": "لاله‌زار"
+      }
+    ]
+  },
+  {
+    "id": "jumua-2",
+    "title": "جمعة طيّبة",
+    "category": "jumua",
+    "width": 5141,
+    "height": 1534,
+    "bytes": 5609,
+    "fonts": [
+      {
+        "id": "marhey",
+        "name": "مرحي"
+      }
+    ]
+  },
+  {
+    "id": "hijri-1448",
+    "title": "سنة هجرية مباركة",
+    "category": "hijri",
+    "width": 3219,
+    "height": 3260,
+    "bytes": 8738,
+    "fonts": [
+      {
+        "id": "aref-ruqaa",
+        "name": "عارف رقعة"
+      }
+    ]
+  },
+  {
+    "id": "mothers",
+    "title": "يوم الأمّ",
+    "category": "occasions",
+    "width": 2940,
+    "height": 1548,
+    "bytes": 4857,
+    "fonts": [
+      {
+        "id": "aref-ruqaa",
+        "name": "عارف رقعة"
+      }
+    ]
+  },
+  {
+    "id": "la-ilaha",
+    "title": "لا إله إلا الله",
+    "category": "panels",
+    "width": 3954,
+    "height": 1444,
+    "bytes": 4447,
+    "fonts": [
+      {
+        "id": "reem-kufi",
+        "name": "ريم كوفي"
+      }
+    ]
+  },
+  {
+    "id": "eid-adha",
+    "title": "عيد أضحى مبارك",
+    "category": "eid",
+    "width": 5367,
+    "height": 3064,
+    "bytes": 4711,
+    "fonts": [
+      {
+        "id": "changa",
+        "name": "شنقا"
+      }
+    ]
+  },
+  {
+    "id": "salli",
+    "title": "اللهم صلّ على محمد",
+    "category": "mawlid",
+    "width": 5873,
+    "height": 3092,
+    "bytes": 9850,
+    "fonts": [
+      {
+        "id": "el-messiri",
+        "name": "المسيري"
+      }
+    ]
+  },
+  {
+    "id": "marhaba",
+    "title": "مرحباً بكم",
+    "category": "occasions",
+    "width": 2643,
+    "height": 2700,
+    "bytes": 3685,
+    "fonts": [
+      {
+        "id": "lalezar",
+        "name": "لاله‌زار"
+      }
+    ]
+  },
+  {
+    "id": "barakallah",
+    "title": "بارك الله فيك",
+    "category": "greetings",
+    "width": 3657,
+    "height": 3350,
+    "bytes": 6014,
+    "fonts": [
+      {
+        "id": "amiri",
+        "name": "أميري"
+      }
+    ]
+  }
+]
