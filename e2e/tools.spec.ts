@@ -9,10 +9,10 @@ test('عكس النص: من الترويسة، والنتيجة متّصلة و�
   await page.getByRole('textbox', { name: 'النص العربي' }).fill('سلام 2026');
   const out = page.getByRole('textbox', { name: 'النتيجة' });
   // «سلام» ← س(أول) لا(متّصلة) م(آخر)، ثم عكس مع إبقاء الرقم
-  await expect(out).toHaveValue('2026 ﻢﻼﺳ');
+  await expect(out).toHaveValue('2026 ﻡﻼﺳ');
 
-  await page.getByText('عكس الاتجاه').click();
-  await expect(out).toHaveValue('ﺳﻼﻢ 2026');
-  await page.getByText('وصل الحروف').click();
+  await page.getByRole('switch', { name: 'عكس الاتجاه' }).click();
+  await expect(out).toHaveValue('ﺳﻼﻡ 2026');
+  await page.getByRole('switch', { name: 'وصل الحروف' }).click();
   await expect(out).toHaveValue('سلام 2026');
 });
