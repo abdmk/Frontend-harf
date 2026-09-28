@@ -13,8 +13,8 @@ export function NasaqPage() {
       <header className="mb-8 max-w-[62ch]">
         <h1 className="text-2xl font-semibold sm:text-3xl">نسق</h1>
         <p className="mt-2 text-control leading-relaxed text-muted-foreground">
-          قل لنا ما تصمّمه، ونقترح عليك خطوطاً عربية تعمل معاً: عنواناً بشخصية، ومتناً مريحاً، وتناسقاً محسوباً بينهما —
-          معروضة بالخط الحقيقي لا بوصفه.
+          اختر ما تصمّمه، ونقترح عليك خطوطاً عربية تعمل معاً — معروضة بخطوطها الحقيقية، وكلها من مكتبة حرف: حمّل
+          المجانية مباشرة، واشترِ ترخيص المدفوعة من السلة.
         </p>
       </header>
       <NasaqTool />
