@@ -1,8 +1,8 @@
 import { z } from 'zod';
 
+import { couponPercent, getPricing, readCartState, writeCartState } from '@/lib/commerce/cart-store';
 import { quote } from '@/lib/commerce/quote';
 import { MAX_CART_ITEMS, selectionSchema } from '@/lib/commerce/selection';
-import { couponPercent, getPricing, readCartState, writeCartState } from '@/lib/commerce/server';
 
 /**
  * إجراءات السلة. كل مدخل يُتحقّق منه، ويُعاد حساب السعر من جدوله —

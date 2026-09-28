@@ -1,12 +1,18 @@
 import { MOCK_USERS } from '@/mocks/users';
 import type { User } from '@/types/domain/user';
 
+import { createLocalStoreSignal } from './local-store-signal';
+
 export { safeNext } from './safe-next';
 
 /** اسم مفتاح التخزين المحلي للحساب التجريبي */
 const DEMO_STORAGE_KEY = 'harf_demo_as';
 export const DEMO_ACCOUNTS = ['free', 'basic', 'studio', 'out'] as const;
 export type DemoAccount = (typeof DEMO_ACCOUNTS)[number];
+
+const sessionSignal = createLocalStoreSignal();
+/** يشترك عنصر دائم في التخطيط (كالترويسة) بتغيّر الجلسة التجريبية — استخدمه عبر useCurrentUser */
+export const subscribeSession = sessionSignal.subscribe;
 
 /**
  * ⚠️ مؤقّت للعرض: لا توجد مصادقة حقيقية بعد.
@@ -43,14 +49,11 @@ export function requireAdmin(): User | null {
 /** يضبط الجلسة التجريبية — يُستبدل بإنشاء/إبطال جلسة حقيقية عبر الـAPI */
 export function setDemoSession(account: DemoAccount) {
   try {
-    if (account === 'out') {
-      localStorage.removeItem(DEMO_STORAGE_KEY);
-    } else {
-      localStorage.setItem(DEMO_STORAGE_KEY, account);
-    }
+    localStorage.setItem(DEMO_STORAGE_KEY, account);
   } catch {
     // localStorage غير متاح
   }
+  sessionSignal.notify();
 }
 
 export function getDemoSession(): DemoAccount | null {

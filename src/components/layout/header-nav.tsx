@@ -1,5 +1,5 @@
-import { Link, useLocation, useSearchParams } from 'react-router';
 import { Fragment, useLayoutEffect, useRef } from 'react';
+import { Link, useLocation, useSearchParams } from 'react-router';
 
 import { mainNav } from '@/config/site';
 import { cn } from '@/lib/cn';

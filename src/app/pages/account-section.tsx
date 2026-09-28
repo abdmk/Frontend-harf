@@ -1,7 +1,9 @@
 import { Navigate, useParams } from 'react-router';
 
+import { PageMeta } from '@/components/shared/page-meta';
 import { paths } from '@/config/paths';
 import { AccountShell } from '@/features/account/components/account-shell';
+import { SECTION_TITLE } from '@/features/account/config/nav';
 import { ACCOUNT_SECTIONS, type AccountSection } from '@/features/account/types';
 import { requireUser } from '@/lib/auth';
 
@@ -19,6 +21,7 @@ export function AccountSectionPage() {
 
   return (
     <AccountShell user={user} section={section}>
+      <PageMeta title={SECTION_TITLE[section]} noindex />
       <SectionContent user={user} section={section} />
     </AccountShell>
   );

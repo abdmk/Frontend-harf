@@ -1,7 +1,7 @@
 import { toCsv } from '@/lib/csv';
+import type { Range } from '@/types/domain/analytics';
 
 import { getAdminAnalytics } from './get-analytics';
-import type { Range } from '@/types/domain/analytics';
 
 export function downloadAnalyticsCsv(range: Range) {
   const d = getAdminAnalytics(range);

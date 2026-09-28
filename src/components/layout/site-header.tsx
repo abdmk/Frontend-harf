@@ -1,6 +1,6 @@
-import { Link } from 'react-router';
 import { Suspense } from 'react';
 import type { ReactNode } from 'react';
+import { Link } from 'react-router';
 
 import { HarfLockup, HarfMark } from '@/components/shared/harf-logo';
 import { ThemeToggle } from '@/components/shared/theme-toggle';

@@ -2,6 +2,7 @@ import { readdirSync } from 'node:fs';
 
 import { defineConfig, globalIgnores } from 'eslint/config';
 import importX from 'eslint-plugin-import-x';
+import reactHooks from 'eslint-plugin-react-hooks';
 import tseslint from 'typescript-eslint';
 
 /** كل feature لا يستورد من feature آخر — التركيب يحدث في src/app فقط (Bulletproof React) */
@@ -13,6 +14,7 @@ const eslintConfig = defineConfig([
   ...tseslint.configs.recommended,
   importX.flatConfigs.recommended,
   importX.flatConfigs.typescript,
+  reactHooks.configs.flat.recommended,
   {
     settings: {
       'import-x/resolver': { typescript: true },
@@ -64,10 +66,14 @@ const eslintConfig = defineConfig([
   },
   {
     files: ['e2e/**'],
-    rules: { 'react-hooks/rules-of-hooks': 'off' },
+    rules: {
+      /* Playwright's fixture `use` هي معامل الاختبارات، لا React Hook */
+      'react-hooks/rules-of-hooks': 'off',
+    },
   },
   globalIgnores([
     'dist/**',
+    '.next/**',
     'src/components/ui/icons/icons.generated.ts',
     'reference/**',
     'tools/**',

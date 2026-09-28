@@ -3,6 +3,7 @@ import { Link } from 'react-router';
 import { Container } from '@/components/layout/container';
 import { EmptyState } from '@/components/shared/empty-state';
 import { OrderSummary } from '@/components/shared/order-summary';
+import { PageMeta } from '@/components/shared/page-meta';
 import { Button } from '@/components/ui/button';
 import { CartIcon } from '@/components/ui/icons';
 import { paths } from '@/config/paths';
@@ -10,10 +11,11 @@ import { applyCoupon, removeFromCart, updateCartItem } from '@/features/cart/api
 import { CartItems } from '@/features/cart/components/cart-items';
 import { CouponForm } from '@/features/cart/components/coupon-form';
 import { LicenseSheet } from '@/features/licensing/components/license-sheet';
-import { buildCart, getPricing } from '@/lib/commerce/server';
+import { useCart } from '@/hooks/use-cart';
+import { getPricing } from '@/lib/commerce/cart-store';
 
 export function CartPage() {
-  const cart = buildCart();
+  const cart = useCart();
   const pricings = cart.items.map((i) => getPricing(i.selection.fontId));
 
   const edits = Object.fromEntries(
@@ -43,6 +45,7 @@ export function CartPage() {
 
   return (
     <Container as="main" id="main" className="py-10 sm:py-14">
+      <PageMeta title="السلة" />
       <h1 className="mb-8 flex items-center gap-3 text-2xl font-semibold">
         <CartIcon className="size-6" />
         السلة

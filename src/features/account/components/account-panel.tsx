@@ -1,5 +1,5 @@
-import { Link } from 'react-router';
 import { Fragment } from 'react';
+import { Link, useNavigate } from 'react-router';
 
 import { ChartHistogramIcon, LayersIcon, SignOutIcon } from '@/components/ui/icons';
 import { paths } from '@/config/paths';
@@ -22,6 +22,11 @@ type AccountPanelProps = {
 /** بطاقة المستخدم + قائمة الحساب + (للمجانية) دعوة التحويل + الخروج — مكوّن واحد في مكانين */
 export function AccountPanel({ user, active = null, variant = 'sidebar', onNavigate }: AccountPanelProps) {
   const groups = accountNavGroups(user);
+  const navigate = useNavigate();
+  const handleSignOut = () => {
+    signOut();
+    navigate('/');
+  };
   return (
     <div className={cn('flex flex-col', variant === 'sidebar' ? 'min-h-full gap-5' : 'gap-3')}>
       <div className="flex items-center gap-4 rounded-lg bg-sunken p-5">
@@ -108,7 +113,7 @@ export function AccountPanel({ user, active = null, variant = 'sidebar', onNavig
             </Link>
           </div>
         )}
-        <form action={signOut}>
+        <form action={handleSignOut}>
           <button
             type="submit"
             className="group/out flex h-11 w-full items-center gap-4 rounded-sm px-4 text-lead text-primary transition-colors hover:bg-tint-brand"

@@ -1,6 +1,6 @@
-import { Link } from 'react-router';
 import { RadioGroup as RadioGroupPrimitive } from 'radix-ui';
 import { type ReactNode, useActionState, useState } from 'react';
+import { Link } from 'react-router';
 
 import { Avatar } from '@/components/shared/avatar';
 import { EmptyState } from '@/components/shared/empty-state';

@@ -1,3 +1,4 @@
+import { createLocalStoreSignal } from '@/lib/local-store-signal';
 import { MOCK_FONTS } from '@/mocks/fonts';
 import { mockPricing } from '@/mocks/pricing';
 import { type Cart, type CartItem, cents } from '@/types/domain/commerce';
@@ -5,6 +6,10 @@ import type { LicensePricing } from '@/types/domain/license';
 
 import { quote } from './quote';
 import { type CartState, cartStateSchema } from './selection';
+
+const cartSignal = createLocalStoreSignal();
+/** يشترك عنصر دائم في التخطيط (كالترويسة) بتغيّر السلة — استخدمه عبر useCart */
+export const subscribeCart = cartSignal.subscribe;
 
 /**
  * الوصول إلى التسعير والسلة.
@@ -42,6 +47,9 @@ export function writeCartState(state: CartState) {
     localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(state));
   } catch {
     // localStorage غير متاح
+  } finally {
+    cartSnapshot = null;
+    cartSignal.notify();
   }
 }
 
@@ -77,4 +85,11 @@ export function buildCart(state?: CartState): Cart {
     total: cents(subtotal - discount),
     coupon: pct ? s.coupon?.toUpperCase() : undefined,
   };
+}
+
+let cartSnapshot: Cart | null = null;
+/** نسخة مخبّأة من buildCart() بمرجع ثابت — ضرورية لـuseSyncExternalStore حتى لا تُعاد رسمة كل شيء بلا نهاية */
+export function getCartSnapshot(): Cart {
+  cartSnapshot ??= buildCart();
+  return cartSnapshot;
 }

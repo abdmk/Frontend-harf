@@ -5,6 +5,7 @@ import { DesignerCard } from '@/components/shared/designer-card';
 import { FileIcon } from '@/components/shared/file-icon';
 import { FontGridSkeleton, LoadingState } from '@/components/shared/loading-state';
 import { OrderSummary } from '@/components/shared/order-summary';
+import { PageMeta } from '@/components/shared/page-meta';
 import { PriceDisplay } from '@/components/shared/price-display';
 import { StatCard } from '@/components/shared/stat-card';
 import { Badge } from '@/components/ui/badge';
@@ -24,7 +25,7 @@ import { NotificationsPanel } from '@/features/notifications/components/notifica
 import { UploadDialog } from '@/features/publishing/components/upload-dialog';
 import { getPlans } from '@/features/subscriptions/api/get-subscription';
 import { PlansDialog } from '@/features/subscriptions/components/plans-dialog';
-import { getPricing } from '@/lib/commerce/server';
+import { getPricing } from '@/lib/commerce/cart-store';
 import { CATEGORY_LABEL } from '@/lib/labels';
 import { MOCK_FONTS } from '@/mocks/fonts';
 import { MOCK_USERS } from '@/mocks/users';
@@ -78,6 +79,7 @@ export function DesignSystemPage() {
 
   return (
     <div className="mx-auto grid max-w-360 grid-cols-[minmax(0,1fr)] gap-10 px-4 py-10 sm:px-8 lg:grid-cols-[220px_minmax(0,1fr)] lg:px-12">
+      <PageMeta title="دليل تصميم حرف" noindex />
       <aside className="max-lg:hidden">
         <nav
           aria-label="فهرس الدليل"

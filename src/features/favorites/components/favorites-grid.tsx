@@ -1,5 +1,5 @@
-import { Link } from 'react-router';
 import type { ReactNode } from 'react';
+import { Link } from 'react-router';
 
 import { EmptyState } from '@/components/shared/empty-state';
 import { Button } from '@/components/ui/button';

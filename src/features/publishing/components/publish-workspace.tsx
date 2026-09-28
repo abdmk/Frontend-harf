@@ -1,5 +1,5 @@
-import { Link } from 'react-router';
 import { useEffect, useMemo, useState, useTransition } from 'react';
+import { Link } from 'react-router';
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -269,7 +269,6 @@ export function PublishWorkspace({
           <div className="overflow-hidden rounded-lg border">
             <div className="relative grid aspect-[4/3] place-items-center overflow-hidden bg-(image:--grad-ink) text-3xl font-semibold text-white">
               {images[0] ? (
-                // eslint-disable-next-line @next/next/no-img-element -- معاينة محلية
                 <img src={images[0].url} alt="" className="absolute inset-0 size-full object-cover" />
               ) : (
                 draft.nameAr || 'خطّك'

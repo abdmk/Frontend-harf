@@ -2,11 +2,12 @@ import { Link, Navigate } from 'react-router';
 
 import { Container } from '@/components/layout/container';
 import { OrderSummary } from '@/components/shared/order-summary';
+import { PageMeta } from '@/components/shared/page-meta';
 import { paths } from '@/config/paths';
 import { pay } from '@/features/checkout/api/pay';
 import { CheckoutForm } from '@/features/checkout/components/checkout-form';
 import { requireUser } from '@/lib/auth';
-import { buildCart } from '@/lib/commerce/server';
+import { buildCart } from '@/lib/commerce/cart-store';
 
 export function CheckoutPage() {
   const user = requireUser();
@@ -15,6 +16,7 @@ export function CheckoutPage() {
 
   return (
     <Container as="main" id="main" className="py-10 sm:py-14">
+      <PageMeta title="الدفع" noindex />
       <h1 className="mb-8 text-2xl font-semibold">الدفع</h1>
       <div className="grid grid-cols-[minmax(0,1fr)] items-start gap-6 lg:grid-cols-[minmax(0,1fr)_360px]">
         <div className="order-2 lg:order-1">

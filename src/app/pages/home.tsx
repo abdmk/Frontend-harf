@@ -4,6 +4,7 @@ import { CatalogCard } from '@/app/_components/catalog-card';
 import { Container } from '@/components/layout/container';
 import { CtaSection } from '@/components/layout/cta-section';
 import { FontGrid } from '@/components/shared/font-grid';
+import { PageMeta } from '@/components/shared/page-meta';
 import { getFonts } from '@/features/catalog/api/get-fonts';
 import { ActiveFilters } from '@/features/catalog/components/active-filters';
 import { CatalogProvider, CatalogResults } from '@/features/catalog/components/catalog-context';
@@ -17,9 +18,11 @@ export function HomePage() {
   const query = parseCatalogQuery(Object.fromEntries(searchParams));
   const fonts = getFonts(query);
 
+  const heading = query.license === 'paid' ? 'خطوط عربية مدفوعة' : 'خطوط عربية مجانية';
   return (
     <Container as="main" id="main" className="pt-6 sm:pt-12">
-      <h1 className="sr-only">{query.license === 'paid' ? 'خطوط عربية مدفوعة' : 'خطوط عربية مجانية'}</h1>
+      <PageMeta title={heading} />
+      <h1 className="sr-only">{heading}</h1>
       <FeaturedCarousel />
       <CatalogProvider>
         <CatalogToolbar />

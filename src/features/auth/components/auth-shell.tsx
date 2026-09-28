@@ -1,5 +1,5 @@
-import { Link } from 'react-router';
 import type { ReactNode } from 'react';
+import { Link } from 'react-router';
 
 import { HarfLockup } from '@/components/shared/harf-logo';
 import { MagicWandIcon, RefreshIcon, ShieldCheckIcon } from '@/components/ui/icons';

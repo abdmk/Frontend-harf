@@ -1,5 +1,5 @@
-import { useLocation, useNavigate, useSearchParams } from 'react-router';
 import { createContext, type ReactNode, use, useCallback, useMemo, useTransition } from 'react';
+import { useLocation, useNavigate, useSearchParams } from 'react-router';
 
 import { type CatalogQuery, parseCatalogQuery, toSearchParams } from '@/features/catalog/types/catalog-query';
 

@@ -5,6 +5,7 @@ import { Container } from '@/components/layout/container';
 import { CtaSection } from '@/components/layout/cta-section';
 import { Breadcrumb } from '@/components/shared/breadcrumb';
 import { FontGrid } from '@/components/shared/font-grid';
+import { PageMeta } from '@/components/shared/page-meta';
 import { ChevronLeftIcon } from '@/components/ui/icons';
 import { paths } from '@/config/paths';
 import { getOwnedLicense } from '@/features/account/api/queries';
@@ -18,7 +19,7 @@ import { WeightWaterfall } from '@/features/font-details/components/weight-water
 import { FontTester } from '@/features/font-tester/components/font-tester';
 import { PurchaseActions } from '@/features/licensing/components/purchase-actions';
 import { getCurrentUser } from '@/lib/auth';
-import { getPricing } from '@/lib/commerce/server';
+import { getPricing } from '@/lib/commerce/cart-store';
 
 export function FontPage() {
   const { id } = useParams<{ id: string }>();
@@ -35,6 +36,7 @@ export function FontPage() {
 
   return (
     <Container as="main" id="main">
+      <PageMeta title={font.name} description={font.description?.[0]} />
       <Breadcrumb
         className="mt-8 mb-5"
         items={[

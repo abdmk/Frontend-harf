@@ -1,5 +1,5 @@
-import { Link } from 'react-router';
 import type { ReactNode } from 'react';
+import { Link } from 'react-router';
 
 import { CheckIcon, ClockIcon, CrownIcon } from '@/components/ui/icons';
 import { paths } from '@/config/paths';

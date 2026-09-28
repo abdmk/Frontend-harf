@@ -7,12 +7,12 @@ import { removeFromCart } from '@/features/cart/api/actions';
 import { CartMenu } from '@/features/cart/components/cart-menu';
 import { getNotifications } from '@/features/notifications/api/get-notifications';
 import { NotificationsMenu } from '@/features/notifications/components/notifications-menu';
-import { getCurrentUser } from '@/lib/auth';
-import { buildCart } from '@/lib/commerce/server';
+import { useCart } from '@/hooks/use-cart';
+import { useCurrentUser } from '@/hooks/use-current-user';
 
 export function HeaderActions() {
-  const user = getCurrentUser();
-  const cart = buildCart();
+  const user = useCurrentUser();
+  const cart = useCart();
   return (
     <>
       <CartMenu cart={cart} onRemove={removeFromCart} />

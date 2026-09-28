@@ -21,9 +21,8 @@ test.describe('الإشعارات', () => {
     await expect(page.getByRole('dialog')).toHaveCount(0);
   });
 
-  test('صفحة الإشعارات تتطلّب الدخول', async ({ page, baseURL }) => {
-    await page.context().addCookies([{ name: 'harf_demo_as', value: 'out', url: baseURL! }]);
-    await page.goto('/notifications');
+  test('صفحة الإشعارات تتطلّب الدخول', async ({ page }) => {
+    await page.goto('/notifications?as=out');
     await expect(page).toHaveURL(/\/login\?next=%2Fnotifications$/);
   });
 });

@@ -205,7 +205,6 @@ export function ImagesStep({
           {images.map((img, i) => (
             <li key={img.url} className="overflow-hidden rounded-md border bg-card">
               <div className="relative aspect-[4/3] bg-sunken">
-                {/* eslint-disable-next-line @next/next/no-img-element -- معاينة محلية من blob: قبل الرفع */}
                 <img src={img.url} alt={img.name} className="size-full object-cover" />
                 {i === 0 && (
                   <span className="absolute start-2 top-2 rounded-full bg-ink px-2 py-0.5 text-micro text-ink-foreground">

@@ -16,9 +16,9 @@ import { cn } from '@/lib/cn';
 import { formatMoney } from '@/lib/format';
 import type { AdminAnalytics, Range } from '@/types/domain/analytics';
 
-import { downloadAnalyticsCsv } from '../api/export-csv';
 import { TransactionsLog } from './transactions-log';
 import { UsersRegistry } from './users-registry';
+import { downloadAnalyticsCsv } from '../api/export-csv';
 
 const RANGE_LABEL: Record<Range, string> = { '7': '7 أيام', '30': '30 يوماً', '365': 'سنة' };
 

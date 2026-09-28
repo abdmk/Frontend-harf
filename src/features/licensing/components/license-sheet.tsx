@@ -1,6 +1,6 @@
-import { useNavigate } from 'react-router';
 import { Collapsible as CollapsiblePrimitive, RadioGroup as RadioGroupPrimitive } from 'radix-ui';
 import { type ReactElement, useMemo, useState, useTransition } from 'react';
+import { useNavigate } from 'react-router';
 
 import { PriceDisplay } from '@/components/shared/price-display';
 import { Button } from '@/components/ui/button';

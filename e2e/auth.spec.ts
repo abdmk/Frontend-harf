@@ -18,9 +18,7 @@ test.describe('الدخول والحساب', () => {
   });
 
   test('لا توجيه إلى موقع خارجي بعد الدخول', async ({ page }) => {
-    await page.goto('/?as=free');
-    await page.context().addCookies([{ name: 'harf_demo_as', value: 'out', url: 'http://localhost:3200' }]);
-    await page.goto('/login?next=//evil.example.com');
+    await page.goto('/login?as=out&next=//evil.example.com');
     await page.getByLabel('البريد الإلكتروني').fill('a@example.com');
     await page.getByLabel('كلمة المرور', { exact: true }).fill('secret-123');
     await page.getByRole('button', { name: 'تسجيل الدخول' }).click();
@@ -28,8 +26,7 @@ test.describe('الدخول والحساب', () => {
   });
 
   test('التحقّق على الخادم وحدّ المحاولات', async ({ page }) => {
-    await page.context().addCookies([{ name: 'harf_demo_as', value: 'out', url: 'http://localhost:3200' }]);
-    await page.goto('/login');
+    await page.goto('/login?as=out');
     await page.getByLabel('البريد الإلكتروني').fill('not-an-email');
     await page.getByRole('button', { name: 'تسجيل الدخول' }).click();
     await expect(page.getByText('اكتب بريداً إلكترونياً صحيحاً.')).toBeVisible();

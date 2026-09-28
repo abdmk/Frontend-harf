@@ -1,5 +1,5 @@
-import { Link } from 'react-router';
 import { useEffect, useState } from 'react';
+import { Link } from 'react-router';
 
 import { BellIcon } from '@/components/ui/icons';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
