@@ -17,6 +17,8 @@ type AccountPanelProps = {
   /** sidebar: عمود صفحة الحساب — menu: قائمة الصورة في الترويسة */
   variant?: 'sidebar' | 'menu';
   onNavigate?: () => void;
+  /** «إدارة الخطة» يفتح نافذة الخطط مباشرة؛ بدونه يذهب لصفحة الاشتراك */
+  onManagePlan?: () => void;
 };
 
 /** القائمة المنسدلة أصغر من عمود صفحة الحساب: صفوف أقصر ونص وأيقونات أصغر */
@@ -51,8 +53,17 @@ const SIZE = {
   },
 } as const;
 
+const MANAGE_PLAN =
+  'rounded-full border bg-card px-3 py-1 text-meta font-medium transition-colors hover:bg-background';
+
 /** بطاقة المستخدم + قائمة الحساب + (للمجانية) دعوة التحويل + الخروج — مكوّن واحد في مكانين */
-export function AccountPanel({ user, active = null, variant = 'sidebar', onNavigate }: AccountPanelProps) {
+export function AccountPanel({
+  user,
+  active = null,
+  variant = 'sidebar',
+  onNavigate,
+  onManagePlan,
+}: AccountPanelProps) {
   const groups = accountNavGroups(user);
   const navigate = useNavigate();
   const s = SIZE[variant];
@@ -78,13 +89,15 @@ export function AccountPanel({ user, active = null, variant = 'sidebar', onNavig
         <div className="flex items-center gap-2.5 rounded-md bg-sunken py-2 ps-3 pe-2">
           <CrownIcon className={cn('size-4.5', PLAN_TEXT[user.plan])} />
           <p className="flex-1 text-control">{PLAN_TITLE[user.plan]}</p>
-          <Link
-            to={paths.account.getHref('subscription')}
-            onClick={onNavigate}
-            className="rounded-full border bg-card px-3 py-1 text-meta font-medium transition-colors hover:bg-background"
-          >
-            إدارة الخطة
-          </Link>
+          {onManagePlan ? (
+            <button type="button" onClick={onManagePlan} className={MANAGE_PLAN}>
+              إدارة الخطة
+            </button>
+          ) : (
+            <Link to={paths.account.getHref('subscription')} onClick={onNavigate} className={MANAGE_PLAN}>
+              إدارة الخطة
+            </Link>
+          )}
         </div>
       )}
 

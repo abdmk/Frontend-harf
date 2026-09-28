@@ -1,4 +1,4 @@
-import { type ReactElement, useState, useTransition } from 'react';
+import { type ReactElement, type RefObject, useState, useTransition } from 'react';
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -30,13 +30,26 @@ export function PlansDialog({
   current,
   trigger,
   onChange,
+  open: openProp,
+  onOpenChange,
+  returnFocusTo,
 }: {
   plans: PlanOffer[];
   current: Plan;
-  trigger: ReactElement;
+  /** زرّ الفتح — اختياري حين تُفتح النافذة من الخارج عبر open/onOpenChange */
+  trigger?: ReactElement;
   onChange: (input: { plan: Plan; cycle: BillingCycle }) => ChangePlanResult | Promise<ChangePlanResult>;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
+  /** بلا trigger: أين يعود التركيز عند الإغلاق (وإلا يضيع إلى body) */
+  returnFocusTo?: RefObject<HTMLElement | null>;
 }) {
-  const [open, setOpen] = useState(false);
+  const [openState, setOpenState] = useState(false);
+  const open = openProp ?? openState;
+  const setOpen = (v: boolean) => {
+    setOpenState(v);
+    onOpenChange?.(v);
+  };
   const [cycle, setCycle] = useState<BillingCycle>('monthly');
   const [step, setStep] = useState<Step>({ kind: 'plans' });
   const [error, setError] = useState<string>();
@@ -58,8 +71,23 @@ export function PlansDialog({
         if (!v) setTimeout(() => setStep({ kind: 'plans' }), 300);
       }}
     >
-      <DialogTrigger asChild>{trigger}</DialogTrigger>
-      <DialogContent className="gap-0 overflow-hidden p-0 sm:max-w-280 sm:p-0">
+      {trigger && <DialogTrigger asChild>{trigger}</DialogTrigger>}
+      <DialogContent
+        className="gap-0 overflow-hidden p-0 sm:max-w-280 sm:p-0"
+        // نافذة عرض لا تأكيد: التركيز على النافذة نفسها بدل حلقة على «شهري»
+        onOpenAutoFocus={(e) => {
+          e.preventDefault();
+          (e.currentTarget as HTMLElement).focus();
+        }}
+        onCloseAutoFocus={
+          returnFocusTo
+            ? (e) => {
+                e.preventDefault();
+                returnFocusTo.current?.focus();
+              }
+            : undefined
+        }
+      >
         <header className="bg-(image:--grad-dawn) px-6 pt-8 pb-6 text-center">
           <DialogTitle className="text-2xl font-semibold">
             {step.kind === 'plans'

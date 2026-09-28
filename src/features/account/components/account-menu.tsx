@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { type Ref, useState } from 'react';
 import { Link, useLocation } from 'react-router';
 
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
@@ -10,7 +10,16 @@ import { PLAN_BADGE_LABEL, PlanBadge } from './plan-badge';
 import { UserAvatar } from './user-avatar';
 
 /** شارة الخطة + صورة المستخدم في الترويسة؛ الصورة تفتح قائمة الحساب نفسها */
-export function AccountMenu({ user }: { user: User }) {
+export function AccountMenu({
+  user,
+  onManagePlan,
+  triggerRef,
+}: {
+  user: User;
+  onManagePlan?: () => void;
+  /** زرّ الصورة — ليعود إليه التركيز من نوافذ تُفتح من القائمة */
+  triggerRef?: Ref<HTMLButtonElement>;
+}) {
   const [open, setOpen] = useState(false);
   const { pathname } = useLocation();
   const seg = pathname.startsWith('/account/') ? pathname.split('/')[2] : null;
@@ -27,6 +36,7 @@ export function AccountMenu({ user }: { user: User }) {
       </Link>
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger
+          ref={triggerRef}
           aria-label={`حساب ${user.name}`}
           className="ms-1 rounded-full transition-[box-shadow,transform] duration-150 hover:shadow-[0_0_0_4px_var(--sunken)] active:scale-95"
         >
@@ -37,7 +47,19 @@ export function AccountMenu({ user }: { user: User }) {
           sideOffset={10}
           className="max-h-[calc(100dvh-96px)] w-[min(300px,calc(100vw-24px))] overflow-y-auto rounded-xl p-2.5 shadow-overlay"
         >
-          <AccountPanel user={user} active={active} variant="menu" onNavigate={() => setOpen(false)} />
+          <AccountPanel
+            user={user}
+            active={active}
+            variant="menu"
+            onNavigate={() => setOpen(false)}
+            onManagePlan={
+              onManagePlan &&
+              (() => {
+                setOpen(false);
+                onManagePlan();
+              })
+            }
+          />
         </PopoverContent>
       </Popover>
     </>

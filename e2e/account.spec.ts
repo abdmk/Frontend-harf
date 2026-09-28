@@ -15,6 +15,21 @@ test.describe('الحساب', () => {
     await expect(page.locator('a[href="/account/foundry"]')).toHaveCount(0);
   });
 
+  test('«إدارة الخطة» في القائمة يفتح نافذة الخطط مباشرة', async ({ page }) => {
+    await page.goto('/?as=free');
+    await page.locator('button[aria-label^="حساب"]').click();
+    await page.getByRole('button', { name: 'إدارة الخطة' }).click();
+    const dialog = page.getByRole('dialog', { name: 'اختر خطتك' });
+    await expect(dialog).toBeVisible();
+    await expect(page.getByRole('navigation', { name: 'قائمة الحساب' })).toHaveCount(0);
+
+    await dialog.getByRole('button', { name: 'ابدأ الأساسية' }).click();
+    await page.getByRole('button', { name: 'اشترك الآن' }).click();
+    await expect(page.getByText('أنت الآن على خطة الأساسية')).toBeVisible({ timeout: 8000 });
+    await page.getByRole('button', { name: 'تمّ' }).click();
+    await expect(page.getByRole('link', { name: 'خطّتك: أساسي' })).toBeVisible();
+  });
+
   test('لوحة المسبك محميّة على الخادم للحساب المجاني', async ({ page }) => {
     await page.goto('/account/foundry?as=free');
     await expect(page).toHaveURL(/\/account\/subscription$/);
