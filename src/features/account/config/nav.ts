@@ -11,6 +11,7 @@ import {
   UsageIcon,
   UserIcon,
 } from '@/components/ui/icons';
+import { paths } from '@/config/paths';
 import type { AccountSection, User } from '@/features/account/types';
 
 export type NavItem = {
@@ -41,7 +42,9 @@ export function accountNavGroups(user: User): NavItem[][] {
     ],
   ];
   if (user.plan === 'studio')
-    groups.push([{ section: 'foundry', label: 'لوحة المسبك', Icon: AppsIcon, badge: 'جديد' }]);
+    groups.push([
+      { section: 'foundry', label: 'لوحة المسبك', Icon: AppsIcon, badge: 'جديد', href: paths.studio.getHref() },
+    ]);
   groups.push([
     { section: 'preferences', label: 'التفضيلات', Icon: SlidersIcon },
     { section: 'security', label: 'الحساب', Icon: LockIcon },

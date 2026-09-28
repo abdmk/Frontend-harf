@@ -42,13 +42,16 @@ test.describe('الحساب', () => {
     expect(res?.status()).toBe(404);
   });
 
-  test('الاستوديو: رفع ملف ثم تسجيل الخروج', async ({ page }) => {
+  test('الاستوديو: لوحة المسبك مباشرة، رفع ملف، ثم تسجيل الخروج', async ({ page }) => {
     await page.goto('/account/foundry?as=studio');
-    await page.getByRole('main').getByRole('button', { name: 'تحميل الملفات' }).click();
+    await expect(page).toHaveURL(/\/studio$/);
+
+    await page.goto('/design-system');
+    await page.getByRole('button', { name: 'افتح نافذة «تحميل الملفات»' }).click();
     await page.setInputFiles('input[type=file]', [
       { name: 'Zaetoon.zip', mimeType: 'application/zip', buffer: Buffer.alloc(4096) },
     ]);
-    await expect(page.getByText('مكتمل')).toBeVisible({ timeout: 8000 });
+    await expect(page.getByRole('dialog').getByText('مكتمل')).toBeVisible({ timeout: 8000 });
     await page.keyboard.press('Escape');
     // ننتظر إغلاق النافذة وعودة التركيز قبل فتح القائمة
     await expect(page.getByRole('dialog')).toHaveCount(0);

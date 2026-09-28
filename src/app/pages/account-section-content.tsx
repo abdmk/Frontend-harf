@@ -4,7 +4,7 @@ import { CatalogCard } from '@/app/_components/catalog-card';
 import { EmptyState } from '@/components/shared/empty-state';
 import { FontGrid } from '@/components/shared/font-grid';
 import { Button } from '@/components/ui/button';
-import { AppsIcon, CloudUploadIcon, FolderIcon } from '@/components/ui/icons';
+import { FolderIcon } from '@/components/ui/icons';
 import { paths } from '@/config/paths';
 import { changePassword, updateProfile } from '@/features/account/api/actions';
 import { getLibraryIds, getPurchases } from '@/features/account/api/queries';
@@ -18,7 +18,6 @@ import type { AccountSection, User } from '@/features/account/types';
 import { getFonts } from '@/features/catalog/api/get-fonts';
 import { DEFAULT_QUERY } from '@/features/catalog/types/catalog-query';
 import { FavoritesGrid } from '@/features/favorites/components/favorites-grid';
-import { UploadDialog } from '@/features/publishing/components/upload-dialog';
 import { changePlan } from '@/features/subscriptions/api/actions';
 import { getInvoices, getPlans, getSubscription } from '@/features/subscriptions/api/get-subscription';
 import { PlansDialog } from '@/features/subscriptions/components/plans-dialog';
@@ -93,21 +92,7 @@ export function SectionContent({ user, section }: { user: User; section: Account
       );
     }
     case 'foundry':
-      return (
-        <div className="flex flex-wrap gap-3">
-          <UploadDialog>
-            <Button size="lg">
-              <CloudUploadIcon />
-              تحميل الملفات
-            </Button>
-          </UploadDialog>
-          <Button asChild size="lg" variant="outline">
-            <Link to={paths.studio.getHref()}>
-              <AppsIcon />
-              فتح لوحة المسبك
-            </Link>
-          </Button>
-        </div>
-      );
+      // لا يُعرض: AccountSectionPage يوجّه هذا القسم إلى /studio
+      return null;
   }
 }
