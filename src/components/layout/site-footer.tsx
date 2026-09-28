@@ -8,7 +8,7 @@ import mastercard from '@/assets/payments/mastercard.svg';
 import stripe from '@/assets/payments/stripe.svg';
 import visa from '@/assets/payments/visa.svg';
 import { SOCIAL, SocialIcon } from '@/components/shared/social-icons';
-import { footerNav } from '@/config/site';
+import { footerNav, socialLinks } from '@/config/site';
 
 /** شعارات وسائل الدفع كما وردت من ملف الهوية؛ Apple Pay وGoogle Pay لهما نسخة للوضع الداكن، وVisa تُقلب للأبيض */
 function PaymentMarks() {
@@ -66,11 +66,13 @@ export function SiteFooter() {
           <p>تتم معالجة المدفوعات بأمان عبر Stripe، دون تخزين بيانات الدفع مباشرة على خوادم حرف.</p>
           {/* المرور: دائرة ناعمة تتّسع من المركز خلف العلامة، والعلامة تكبر قليلاً وتغمق؛ الضغط ينكمش */}
           <div className="-ms-2.5 mt-auto flex justify-start gap-1" dir="ltr">
-            {SOCIAL.map((s) => (
+            {SOCIAL.filter((s) => socialLinks[s.label]).map((s) => (
               <a
                 key={s.label}
-                href="#"
-                aria-label={s.label}
+                href={socialLinks[s.label]}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={`حرف على ${s.label}`}
                 className="group relative grid size-9 place-items-center rounded-full text-muted-foreground transition-[color,scale] duration-(--dur-base) ease-out-quint outline-none before:absolute before:inset-0 before:scale-50 before:rounded-full before:bg-sunken before:opacity-0 before:transition-[scale,opacity] before:duration-(--dur-slow) before:ease-pop hover:text-foreground hover:before:scale-100 hover:before:opacity-100 focus-visible:text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:before:scale-100 focus-visible:before:opacity-100 active:scale-90"
               >
                 <SocialIcon

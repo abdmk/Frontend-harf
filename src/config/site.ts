@@ -24,3 +24,10 @@ export const footerNav = [
   { label: 'سياسة الخصوصية', href: '/privacy' },
   { label: 'المساعدة', href: '/help' },
 ] as const;
+
+/** حسابات حرف — التذييل يعرض فقط ما له رابط هنا (تلغرام يظهر تلقائياً حين يُضاف رابطه) */
+export const socialLinks: Partial<Record<'LinkedIn' | 'Instagram' | 'Telegram' | 'X', string>> = {
+  X: 'https://x.com/harflibrary',
+  LinkedIn: 'https://www.linkedin.com/company/harflibrary',
+  Instagram: 'https://www.instagram.com/harflibrary/',
+};

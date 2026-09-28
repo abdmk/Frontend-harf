@@ -26,3 +26,19 @@ test('صفحة «قريباً»: من الترويسة، و«نبّهني» يب
   await page.reload();
   await expect(page.getByRole('button', { name: 'سننبّهك عند الإطلاق' })).toBeVisible();
 });
+
+test('حسابات التواصل في التذييل حقيقية، وتلغرام مخفي حتى يُضاف رابطه، ولا روابط ميتة', async ({ page }) => {
+  await page.goto('/');
+  const footer = page.locator('footer');
+  await expect(footer.getByRole('link', { name: 'حرف على X' })).toHaveAttribute('href', 'https://x.com/harflibrary');
+  await expect(footer.getByRole('link', { name: 'حرف على LinkedIn' })).toHaveAttribute(
+    'href',
+    'https://www.linkedin.com/company/harflibrary',
+  );
+  await expect(footer.getByRole('link', { name: 'حرف على Instagram' })).toHaveAttribute(
+    'href',
+    'https://www.instagram.com/harflibrary/',
+  );
+  await expect(footer.getByRole('link', { name: 'حرف على Telegram' })).toHaveCount(0);
+  await expect(page.locator('a[href="#"]')).toHaveCount(0);
+});
