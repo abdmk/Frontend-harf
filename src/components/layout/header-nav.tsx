@@ -1,4 +1,4 @@
-import { Fragment, useLayoutEffect, useRef } from 'react';
+import { useLayoutEffect, useRef } from 'react';
 import { Link, useLocation, useSearchParams } from 'react-router';
 
 import { mainNav } from '@/config/site';
@@ -60,27 +60,22 @@ export function HeaderNav({ className }: { className?: string }) {
         className,
       )}
     >
-      {mainNav.map((group, g) => (
-        <Fragment key={g}>
-          {g > 0 && <span aria-hidden className="mx-3 h-5 w-px shrink-0 self-center bg-border" />}
-          {group.map((item) => {
-            const active = isActive(item.href, pathname, paid);
-            return (
-              <Link
-                key={item.label}
-                to={item.href}
-                aria-current={active ? 'page' : undefined}
-                className={cn(
-                  'flex shrink-0 items-center px-3 text-sm whitespace-nowrap text-muted-foreground transition-colors duration-150 hover:text-foreground',
-                  active && 'font-medium text-primary hover:text-primary',
-                )}
-              >
-                {item.label}
-              </Link>
-            );
-          })}
-        </Fragment>
-      ))}
+      {mainNav.map((item) => {
+        const active = isActive(item.href, pathname, paid);
+        return (
+          <Link
+            key={item.label}
+            to={item.href}
+            aria-current={active ? 'page' : undefined}
+            className={cn(
+              'flex shrink-0 items-center px-3 text-sm whitespace-nowrap text-muted-foreground transition-colors duration-150 hover:text-foreground',
+              active && 'font-medium text-primary hover:text-primary',
+            )}
+          >
+            {item.label}
+          </Link>
+        );
+      })}
       <span
         ref={indRef}
         aria-hidden

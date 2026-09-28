@@ -7,17 +7,13 @@ export const siteConfig = {
 
 /** روابط الترويسة: مجموعتان يفصل بينهما خطّ، كما في التصميم */
 export const mainNav = [
-  [
-    { label: 'خطوط مجانية', href: '/' },
-    { label: 'خطوط مدفوعة', href: '/?license=paid' },
-    { label: 'مخطوطات', href: '#' },
-  ],
-  [
-    { label: 'مطابقة الخطوط', href: '#' },
-    { label: 'مختبر الخط', href: '#' },
-    { label: 'استوديو الخط', href: '#' },
-    { label: 'عكس النص', href: '#' },
-  ],
+  { label: 'خطوط مجانية', href: '/' },
+  { label: 'خطوط مدفوعة', href: '/?license=paid' },
+  { label: 'مخطوطات', href: '#' },
+  { label: 'مطابقة الخطوط', href: '#' },
+  { label: 'نسق', href: '#' },
+  { label: 'مختبر الخط', href: '#' },
+  { label: 'عكس النص', href: '#' },
 ] as const;
 
 export const footerNav = [
