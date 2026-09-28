@@ -15,6 +15,15 @@ export type Designer = {
   initials: string;
 };
 
+/** خط له ملفات معاينة في الموقع: يُعرض بخطه الحقيقي (بطاقة، معرض، مختبر، أوزان) */
+export type LiveFace = {
+  /** اسم العائلة في CSS — يطابق @font-face في assets/fonts/library */
+  family: string;
+  nameAr: string;
+  /** الأوزان الموجودة فعلاً — لا يُطلب غيرها */
+  weights: number[];
+};
+
 export type Font = {
   id: string;
   name: string;
@@ -38,4 +47,7 @@ export type Font = {
   style?: string;
   tags?: string[];
   description?: string[];
+  face?: LiveFace;
+  /** ملف التحميل الكامل — للخطوط المجانية فقط (المدفوعة تُحمَّل بعد الشراء من الخادم) */
+  download?: { url: string; bytes: number };
 };

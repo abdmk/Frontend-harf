@@ -3,12 +3,12 @@ import { expect, resultCount, test } from './fixtures';
 test.describe('المكتبة', () => {
   test('التصنيف والبحث ومسح الكل تحفظ الحالة في الرابط', async ({ page }) => {
     await page.goto('/');
-    expect(await resultCount(page)).toBe(12);
+    expect(await resultCount(page)).toBe(36);
 
     await page.locator('button[aria-controls="cat-chips"]').click();
     await page.locator('#cat-chips').getByRole('button', { name: 'حديثة' }).click();
     await page.waitForURL(/cat=modern/);
-    await expect.poll(() => resultCount(page)).toBe(3);
+    await expect.poll(() => resultCount(page)).toBe(8);
 
     await page.locator('#cat-chips').getByRole('button', { name: 'الكل' }).click();
     await page.getByRole('searchbox').fill('zaet');
@@ -17,7 +17,7 @@ test.describe('المكتبة', () => {
 
     await page.getByRole('button', { name: 'مسح الكل' }).first().click();
     await page.waitForURL((u) => !u.search);
-    await expect.poll(() => resultCount(page)).toBe(12);
+    await expect.poll(() => resultCount(page)).toBe(36);
   });
 
   test('شرائح التصنيف مطويّة افتراضياً وغير قابلة للتركيز، وتُفتح بالزرّ', async ({ page }) => {

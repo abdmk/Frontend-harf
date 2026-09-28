@@ -2,7 +2,8 @@ import { useState } from 'react';
 
 import { AlignCenterIcon, AlignJustifyIcon, AlignLeftIcon, AlignRightIcon, TextIcon } from '@/components/ui/icons';
 import { cn } from '@/lib/cn';
-import { weightStyle } from '@/lib/font-weight';
+import { faceStyle } from '@/lib/font-weight';
+import type { LiveFace } from '@/types/domain/font';
 
 import { OPENTYPE_FEATURES, type OpenTypeTag } from './opentype-features';
 
@@ -52,7 +53,9 @@ const initial = {
 };
 
 /** مختبر الخط: نصّ قابل للتحرير مع حجم ووزن ومحاذاة وميزات OpenType */
-export function FontTester() {
+export function FontTester({ face }: { face?: LiveFace } = {}) {
+  // خط حقيقي: أزرار أوزانه الموجودة فقط
+  const weights = face ? WEIGHTS.filter(([w]) => face.weights.some((x) => Math.abs(x - w) <= 50)) : WEIGHTS;
   const [s, setS] = useState(initial);
   const [swap, setSwap] = useState(0);
 
@@ -108,7 +111,7 @@ export function FontTester() {
           fontSize: s.size,
           textAlign: s.align,
           fontFeatureSettings: featureSettings(s.features),
-          ...weightStyle(s.weight),
+          ...faceStyle(face, s.weight),
         }}
       >
         {PRESETS[s.preset].text}
@@ -153,7 +156,7 @@ export function FontTester() {
         </label>
 
         <div role="group" aria-label="الوزن" className="flex flex-wrap gap-0.5">
-          {WEIGHTS.map(([w, label]) => (
+          {weights.map(([w, label]) => (
             <button
               key={w}
               type="button"

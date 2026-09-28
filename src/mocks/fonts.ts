@@ -2,6 +2,8 @@
    تُستبدل بقاعدة البيانات/الـAPI. الأسعار والتواريخ والأعداد أمثلة لا قواعد. */
 import type { Designer, Font } from '@/types/domain/font';
 
+import { LIBRARY_FONTS } from './library-fonts';
+
 const DAY = 864e5;
 const ago = (d: number) => new Date(Date.now() - d * DAY).toISOString().slice(0, 10);
 
@@ -21,7 +23,7 @@ const ZAETOON_DESC = [
   'يدعم خط زيتون اللغات العربية والكردية والفارسية واللاتينية، مما يجعله خياراً مناسباً لأنظمة التصميم والهويات البصرية متعددة اللغات.',
 ];
 
-export const MOCK_FONTS: Font[] = [
+const DEMO_FONTS: Font[] = [
   {
     id: 'zaetoon',
     name: 'Zaetoon Typeface',
@@ -185,3 +187,6 @@ export const MOCK_FONTS: Font[] = [
     price: 540,
   },
 ];
+
+/** المكتبة كاملة: الخطوط الحقيقية (بمعاينة حيّة) ثم خطوط العرض التجريبية */
+export const MOCK_FONTS: Font[] = [...LIBRARY_FONTS, ...DEMO_FONTS];

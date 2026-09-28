@@ -4,6 +4,7 @@ import { Link } from 'react-router';
 import { CheckIcon, ClockIcon, CrownIcon } from '@/components/ui/icons';
 import { paths } from '@/config/paths';
 import { cn } from '@/lib/cn';
+import { faceStyle } from '@/lib/font-weight';
 import { weightsLabel } from '@/lib/format';
 import { TYPE_LABEL, USAGE_LABEL } from '@/lib/labels';
 import type { Font } from '@/types/domain/font';
@@ -67,7 +68,19 @@ export function FontCard({
         className,
       )}
     >
-      <div aria-hidden className="relative aspect-[7/5] overflow-hidden border-b bg-sunken"></div>
+      <div
+        aria-hidden
+        className="relative grid aspect-[7/5] place-items-center overflow-hidden border-b bg-sunken px-6"
+      >
+        {font.face && (
+          <span
+            className="line-clamp-2 text-center text-5xl leading-snug text-foreground transition-transform duration-500 ease-out-quint group-hover/card:scale-[1.04]"
+            style={faceStyle(font.face, 700)}
+          >
+            {font.face.nameAr}
+          </span>
+        )}
+      </div>
       <span
         className={cn(
           'absolute end-4 top-4 z-10 inline-flex h-6 items-center gap-1 rounded-full px-2 text-caption leading-none font-medium',

@@ -46,7 +46,7 @@ export function FontPage() {
         ]}
       />
 
-      <FontGallery fontName={font.name} />
+      <FontGallery fontName={font.name} face={font.face} latin={font.langs.includes('la')} />
       <FontHeader
         font={font}
         favorite={favorite}
@@ -65,8 +65,8 @@ export function FontPage() {
           ) : undefined
         }
       />
-      <FontTester />
-      <WeightWaterfall variable={font.variable} />
+      <FontTester face={font.face} />
+      <WeightWaterfall variable={font.variable} face={font.face} />
       <FontDetailsTabs font={font} />
 
       <section aria-labelledby="related-title" className="mt-10">

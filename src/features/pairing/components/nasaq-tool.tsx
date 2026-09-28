@@ -1,5 +1,3 @@
-import '../fonts/fonts.css';
-
 import { useEffect, useMemo, useState } from 'react';
 
 import { EmptyState } from '@/components/shared/empty-state';
