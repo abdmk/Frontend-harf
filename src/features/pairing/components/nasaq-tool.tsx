@@ -1,13 +1,15 @@
 import { useEffect, useMemo, useState } from 'react';
 
 import { EmptyState } from '@/components/shared/empty-state';
+import { Reveal } from '@/components/shared/reveal';
 import { Button } from '@/components/ui/button';
 import { CrossSmallIcon, LayersIcon, LockIcon } from '@/components/ui/icons';
 import { toast } from '@/components/ui/toast';
 
-import { type Brief, NasaqToolbar, type View } from './nasaq-toolbar';
+import { NasaqToolbar } from './nasaq-toolbar';
 import { PairCard } from './pair-card';
 import { PairDetail } from './pair-detail';
+import { type Brief, DEFAULT_BRIEF, FONTS_LABEL, LANG_LABEL, TIER_LABEL, type View } from '../data/brief';
 import { byId, FAMILIES, LANG_SETS, TIERS, USE_CASES } from '../data/catalog';
 import { SPECIMENS } from '../data/specimens';
 import { useSavedPairs } from '../hooks/use-saved-pairs';
@@ -19,12 +21,22 @@ type Locked = Partial<Record<Role, string>>;
 const ROLE_LABEL = { heading: 'العناوين', body: 'النصوص' } as const;
 const BATCH = 9;
 
+type Chip = { key: string; label: string; clear: () => void; lock?: boolean };
+
+function countLabel(n: number) {
+  if (n === 0) return 'لا تركيبات';
+  if (n === 1) return 'تركيبة واحدة';
+  if (n === 2) return 'تركيبتان';
+  if (n <= 10) return `${n} تركيبات`;
+  return `${n} تركيبة`;
+}
+
 /**
  * «نسق»: شريط أدوات فوق شبكة تركيبات موحّدة (تسع في الدفعة) بخطوطها الحقيقية.
  * «تركيبات جديدة» (أو المسافة) يعيد التوليد، والقفل يثبّت خطاً لدوره ويغيّر الباقي.
  */
 export function NasaqTool() {
-  const [brief, setBrief] = useState<Brief>({ useCase: 'identity', lang: 'ar', tier: 'all', fonts: 2 });
+  const [brief, setBrief] = useState<Brief>(DEFAULT_BRIEF);
   const [seed, setSeed] = useState(1);
   const [locked, setLocked] = useState<Locked>({});
   const [heading, setHeading] = useState('');
@@ -104,9 +116,44 @@ export function NasaqTool() {
   }
 
   const lockEntries = (Object.keys(locked) as Role[]).filter((k) => locked[k]);
+  const chips: Chip[] = [
+    ...(brief.lang !== DEFAULT_BRIEF.lang
+      ? [
+          {
+            key: 'lang',
+            label: LANG_LABEL[brief.lang],
+            clear: () => changeBrief({ ...brief, lang: DEFAULT_BRIEF.lang }),
+          },
+        ]
+      : []),
+    ...(brief.tier !== DEFAULT_BRIEF.tier
+      ? [
+          {
+            key: 'tier',
+            label: TIER_LABEL[brief.tier],
+            clear: () => changeBrief({ ...brief, tier: DEFAULT_BRIEF.tier }),
+          },
+        ]
+      : []),
+    ...(brief.fonts !== DEFAULT_BRIEF.fonts
+      ? [
+          {
+            key: 'fonts',
+            label: FONTS_LABEL[brief.fonts],
+            clear: () => changeBrief({ ...brief, fonts: DEFAULT_BRIEF.fonts }),
+          },
+        ]
+      : []),
+    ...lockEntries.map((role) => ({
+      key: role,
+      lock: true,
+      label: `${byId(locked[role]!)?.nameAr} لـ${ROLE_LABEL[role]}`,
+      clear: () => toggleLock(role, locked[role]!),
+    })),
+  ];
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-5">
       <NasaqToolbar
         brief={brief}
         onBrief={changeBrief}
@@ -119,39 +166,52 @@ export function NasaqTool() {
         savedCount={saved.combos.length}
       />
 
-      {view === 'suggest' && lockEntries.length > 0 && (
-        <ul aria-label="الخطوط المثبّتة" className="-mt-2 flex flex-wrap gap-2">
-          {lockEntries.map((role) => (
-            <li
-              key={role}
-              className="inline-flex animate-pop-in items-center gap-1.5 rounded-full bg-tint-brand py-1 ps-3 pe-1 text-caption text-primary"
+      {/* سطر الحالة كسطر «N نتيجة» في المكتبة: العدد + شرائح ما تغيّر (تُزال بنقرة) + «مسح الكل» */}
+      <div
+        aria-live="polite"
+        className="-mt-1 flex min-h-7 flex-wrap items-center gap-2 text-meta text-muted-foreground"
+      >
+        <span className="font-medium text-foreground">{countLabel(shown.length)}</span>
+        {view === 'suggest' &&
+          chips.map((c) => (
+            <button
+              key={c.key}
+              type="button"
+              aria-label={`إزالة ${c.label}`}
+              onClick={c.clear}
+              className="group/fc inline-flex h-6 animate-pop-in items-center gap-1 rounded-full bg-tint-brand ps-2 pe-1 text-caption leading-none text-primary"
             >
-              <LockIcon className="size-3" />
-              {byId(locked[role]!)?.nameAr} مثبّت لـ{ROLE_LABEL[role]}
-              <button
-                type="button"
-                aria-label={`فكّ تثبيت ${byId(locked[role]!)?.nameAr}`}
-                onClick={() => toggleLock(role, locked[role]!)}
-                className="grid size-6 place-items-center rounded-full hover:bg-primary/10"
-              >
-                <CrossSmallIcon className="size-4" />
-              </button>
-            </li>
+              {c.lock && <LockIcon className="size-3" />}
+              <span>{c.label}</span>
+              <span className="grid size-4 place-items-center rounded-full bg-primary/15 transition-colors group-hover/fc:bg-primary group-hover/fc:text-white">
+                <CrossSmallIcon className="size-3" />
+              </span>
+            </button>
           ))}
-        </ul>
-      )}
+        {view === 'suggest' && chips.length > 0 && (
+          <button
+            type="button"
+            onClick={() => {
+              setLocked({});
+              changeBrief({ ...DEFAULT_BRIEF, useCase: brief.useCase });
+            }}
+            className="px-1 text-caption underline underline-offset-4 transition-colors hover:text-foreground"
+          >
+            مسح الكل
+          </button>
+        )}
+      </div>
 
       {shown.length ? (
         <ul
           key={view === 'saved' ? 'saved' : seed}
           aria-label={view === 'saved' ? 'التركيبات المحفوظة' : 'التركيبات المقترحة'}
-          className="grid grid-cols-[minmax(0,1fr)] gap-4 sm:grid-cols-2 lg:grid-cols-3"
+          className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3"
         >
           {shown.map((c, i) => (
-            <li key={c.key}>
+            <Reveal as="li" key={c.key} index={i} className="flex [&>*]:w-full">
               <PairCard
                 combo={c}
-                index={i}
                 text={text}
                 showLatin={showLatin}
                 locked={locked}
@@ -160,7 +220,7 @@ export function NasaqTool() {
                 onSave={() => save(c)}
                 onOpen={() => setOpen(c)}
               />
-            </li>
+            </Reveal>
           ))}
         </ul>
       ) : view === 'saved' ? (

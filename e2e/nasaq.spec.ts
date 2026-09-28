@@ -13,10 +13,19 @@ async function act(page: Page, card: Locator, name: 'تحميل' | 'شراء') {
   }
 }
 
-async function pick(page: Page, label: string, option: string) {
-  await page.getByRole('button', { name: new RegExp(`^${label}:`) }).click();
-  await page.getByRole('menuitemradio', { name: option, exact: true }).click();
-  await expect(page.getByRole('button', { name: `${label}: ${option}` })).toBeVisible();
+/** لوحة «الخيارات» (بنمط لوحة التصفية): يختار القيم ثم «عرض التركيبات» */
+async function options(page: Page, picks: Record<string, string>) {
+  await page.getByRole('button', { name: /^الخيارات/ }).click();
+  const sheet = page.getByRole('dialog', { name: 'الخيارات' });
+  for (const [group, option] of Object.entries(picks))
+    await sheet.getByRole('radiogroup', { name: group }).getByRole('radio', { name: option, exact: true }).click();
+  return sheet;
+}
+
+async function apply(page: Page, picks: Record<string, string>) {
+  const sheet = await options(page, picks);
+  await sheet.getByRole('button', { name: 'عرض التركيبات' }).click();
+  await expect(sheet).toBeHidden();
 }
 
 test.describe('نسق', () => {
@@ -34,11 +43,17 @@ test.describe('نسق', () => {
     await page.getByRole('button', { name: 'تركيبات جديدة' }).click();
     await expect.poll(() => cards.first().getAttribute('aria-label')).not.toBe(first);
 
-    await pick(page, 'الاستخدام', 'النصوص الطويلة');
+    // الاستخدام: شرائح كشرائح التصنيف
+    const longform = page.getByRole('group', { name: 'الاستخدام' }).getByRole('button', { name: 'النصوص الطويلة' });
+    await longform.click();
+    await expect(longform).toHaveAttribute('aria-pressed', 'true');
     await expect(cards).toHaveCount(9);
 
-    await page.getByRole('group', { name: 'عدد الخطوط' }).getByRole('button', { name: '٣ خطوط' }).click();
+    await apply(page, { 'عدد الخطوط': 'ثلاثة خطوط' });
     await expect(cards.first().getByText('الفرعي')).toBeVisible();
+    // سطر الحالة يعرض الخيار المغيّر ويزيله
+    await page.getByRole('button', { name: 'إزالة ثلاثة خطوط' }).click();
+    await expect(cards.first().getByText('الفرعي')).toHaveCount(0);
   });
 
   test('القفل يثبّت خط العنوان، ونص المعاينة يتغيّر في كل البطاقات، والحفظ يبقى', async ({ page }) => {
@@ -49,7 +64,7 @@ test.describe('نسق', () => {
     const lock = cards.first().getByRole('button', { name: /^ثبّت .* لـالعناوين$/ });
     const name = (await lock.getAttribute('aria-label'))!.replace(/^ثبّت (.*) لـالعناوين$/, '$1');
     await lock.click();
-    await expect(page.getByText(`${name} مثبّت لـالعناوين`)).toBeVisible();
+    await expect(page.getByRole('button', { name: `إزالة ${name} لـالعناوين` })).toBeVisible();
     for (const card of await cards.all())
       await expect(card).toHaveAttribute('aria-label', new RegExp(`^تركيبة ${name} و`));
 
@@ -69,7 +84,7 @@ test.describe('نسق', () => {
 
   test('تحميل خط مجاني من حرف مباشرة', async ({ page }) => {
     await page.goto('/tools/nasaq');
-    await pick(page, 'الترخيص', 'مجانية');
+    await apply(page, { الترخيص: 'مجانية' });
     const card = page.locator('article').first();
     await expect(card.getByRole('button', { name: 'شراء', exact: true })).toHaveCount(0);
     const [download] = await Promise.all([page.waitForEvent('download'), act(page, card, 'تحميل')]);
@@ -78,7 +93,7 @@ test.describe('نسق', () => {
 
   test('شراء خط مدفوع: لوحة الترخيص ثم سلة حرف', async ({ page }) => {
     await page.goto('/tools/nasaq');
-    await pick(page, 'الترخيص', 'مدفوعة');
+    await apply(page, { الترخيص: 'مدفوعة' });
     const card = page.locator('article').first();
     // لا ملفات للمدفوعة
     await expect(card.locator('a[download]')).toHaveCount(0);
@@ -101,12 +116,12 @@ test.describe('نسق', () => {
     await expect(dialog.getByRole('button', { name: 'نسخ CSS' })).toBeVisible();
   });
 
-  test('خيارات بلا تركيبات تُظهر حالة فارغة يمكن الخروج منها', async ({ page }) => {
+  test('لوحة الخيارات تمنع مسبقاً خيارات بلا تركيبات، و«مسح الكل» يعيدها', async ({ page }) => {
     await page.goto('/tools/nasaq');
-    await pick(page, 'الترخيص', 'مدفوعة');
-    await pick(page, 'اللغة', 'العربية والكردية');
-    await expect(page.getByRole('heading', { name: 'لا تركيبات لهذه الخيارات' })).toBeVisible();
-    await page.getByRole('button', { name: 'وسّع الخيارات' }).click();
+    const sheet = await options(page, { الترخيص: 'مدفوعة', اللغة: 'عربي + كردي' });
+    await expect(sheet.getByRole('button', { name: 'لا تركيبات لهذه الخيارات' })).toBeDisabled();
+    await sheet.getByRole('button', { name: 'مسح الكل' }).click();
+    await sheet.getByRole('button', { name: 'عرض التركيبات' }).click();
     await expect(page.locator('article')).toHaveCount(9);
   });
 });

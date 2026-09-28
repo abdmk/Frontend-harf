@@ -33,7 +33,7 @@ export function PairDetail({
   const slots = combo ? comboSlots(combo) : [];
   return (
     <Dialog open={!!combo} onOpenChange={onOpenChange}>
-      <DialogContent className="gap-0 p-0 sm:max-w-3xl sm:p-0">
+      <DialogContent className="gap-0 p-0 sm:max-w-dialog-lg sm:p-0">
         {combo && (
           <>
             <div className="border-b px-6 pt-6 pb-5 sm:px-8">

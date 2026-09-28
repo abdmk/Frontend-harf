@@ -1,72 +1,24 @@
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuRadioGroup,
-  DropdownMenuRadioItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { ChevronDownIcon, CrossSmallIcon, RefreshIcon, TextIcon } from '@/components/ui/icons';
+import { CrossSmallIcon, RefreshIcon, SlidersIcon, TextIcon } from '@/components/ui/icons';
 import { SegmentedControl } from '@/components/ui/segmented-control';
 import { cn } from '@/lib/cn';
 
-import { LANG_SETS, type LangSetKey, TIERS, type TierKey, USE_CASES, type UseCaseKey } from '../data/catalog';
+import { NasaqOptionsSheet } from './nasaq-options-sheet';
+import { type Brief, DEFAULT_BRIEF, type View } from '../data/brief';
+import { USE_CASES, type UseCaseKey } from '../data/catalog';
 
-export type Brief = { useCase: UseCaseKey; lang: LangSetKey; tier: TierKey; fonts: 2 | 3 };
-export type View = 'suggest' | 'saved';
-
-const LANG_LABEL: Record<LangSetKey, string> = {
-  ar: 'العربية',
-  'ar-en': 'العربية والإنجليزية',
-  'ar-ku': 'العربية والكردية',
-};
-const TIER_LABEL: Record<TierKey, string> = { all: 'مجانية ومدفوعة', free: 'مجانية', paid: 'مدفوعة' };
-
-// نفس حبوب شريط المكتبة — حتى تبدو الأداتان من عائلة واحدة
+// نفس حبوب شريط المكتبة حرفياً — «نسق» جزء من الموقع لا أداة بتصميم آخر
 const pill =
-  'inline-flex h-11 shrink-0 items-center gap-2 rounded-full border px-4 text-control leading-none whitespace-nowrap transition-[background-color,color,border-color,transform] duration-150 active:scale-[.97]';
+  'inline-flex h-11 shrink-0 items-center gap-2 rounded-full border px-5 text-control leading-none whitespace-nowrap transition-[background-color,color,border-color,transform] duration-150 active:scale-[.97]';
 
-/** قائمة منسدلة بشكل حبّة: اسم الخيار باهت، والقيمة الحالية واضحة */
-function PillSelect<K extends string>({
-  label,
-  value,
-  options,
-  onChange,
-}: {
-  label: string;
-  value: K;
-  options: readonly (readonly [K, string])[];
-  onChange: (v: K) => void;
-}) {
-  const current = options.find(([k]) => k === value)?.[1] ?? value;
-  return (
-    <DropdownMenu>
-      <DropdownMenuTrigger
-        aria-label={`${label}: ${current}`}
-        className={cn(
-          pill,
-          'group border-border bg-card outline-none hover:border-strong focus-visible:ring-2 focus-visible:ring-ring data-[state=open]:border-strong dark:border-transparent dark:bg-sunken',
-        )}
-      >
-        <span className="text-muted-foreground">{label}</span>
-        <span className="font-medium">{current}</span>
-        <ChevronDownIcon className="size-4 text-muted-foreground transition-transform duration-(--dur-base) group-data-[state=open]:rotate-180" />
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="start" className="min-w-52 p-1.5">
-        <DropdownMenuRadioGroup value={value} onValueChange={(v) => onChange(v as K)}>
-          {options.map(([k, text]) => (
-            <DropdownMenuRadioItem key={k} value={k} className="py-2 text-control">
-              {text}
-            </DropdownMenuRadioItem>
-          ))}
-        </DropdownMenuRadioGroup>
-      </DropdownMenuContent>
-    </DropdownMenu>
-  );
-}
+/** عدد الخيارات المغيّرة عن الافتراضي (عدا الاستخدام — له شرائحه) — يظهر على زرّ «الخيارات» */
+export const optionsCount = (b: Brief) =>
+  Number(b.lang !== DEFAULT_BRIEF.lang) +
+  Number(b.tier !== DEFAULT_BRIEF.tier) +
+  Number(b.fonts !== DEFAULT_BRIEF.fonts);
 
 /**
- * شريط «نسق»: السطر الأول يحدّد ما نقترحه (الاستخدام، اللغة، الترخيص، عدد الخطوط) ويولّد
- * دفعة جديدة؛ السطر الثاني يخصّ العرض (نص المعاينة، الاقتراحات أو المحفوظة).
+ * شريط «نسق» على نمط شريط المكتبة: زرّ أحمر للفعل الرئيسي، حقل بعرض المتاح، زرّ لوحة الخيارات،
+ * ومبدّل العرض — ثم شرائح الاستخدام تحته كما شرائح التصنيف.
  */
 export function NasaqToolbar({
   brief,
@@ -89,78 +41,30 @@ export function NasaqToolbar({
   onView: (v: View) => void;
   savedCount: number;
 }) {
-  const set =
-    <K extends keyof Brief>(k: K) =>
-    (v: Brief[K]) =>
-      onBrief({ ...brief, [k]: v });
-
+  const count = optionsCount(brief);
   return (
-    <div className="flex flex-col gap-3">
-      <div role="group" aria-label="خيارات الاقتراح" className="flex flex-wrap items-center gap-2">
-        <PillSelect
-          label="الاستخدام"
-          value={brief.useCase}
-          options={(Object.keys(USE_CASES) as UseCaseKey[]).map((k) => [k, USE_CASES[k].label] as const)}
-          onChange={set('useCase')}
-        />
-        <PillSelect
-          label="اللغة"
-          value={brief.lang}
-          options={(Object.keys(LANG_SETS) as LangSetKey[]).map((k) => [k, LANG_LABEL[k]] as const)}
-          onChange={set('lang')}
-        />
-        <PillSelect
-          label="الترخيص"
-          value={brief.tier}
-          options={(Object.keys(TIERS) as TierKey[]).map((k) => [k, TIER_LABEL[k]] as const)}
-          onChange={set('tier')}
-        />
-        <SegmentedControl
-          label="عدد الخطوط"
-          value={String(brief.fonts) as '2' | '3'}
-          onChange={(v) => onBrief({ ...brief, fonts: Number(v) as 2 | 3 })}
-          options={[
-            { value: '2', label: 'خطّان' },
-            { value: '3', label: '٣ خطوط' },
-          ]}
-        />
-        <div className="flex items-center gap-3 max-lg:w-full lg:ms-auto">
-          <span className="text-caption text-tertiary max-lg:hidden">
-            أو اضغط{' '}
-            <kbd className="rounded-xs border bg-sunken px-1.5 py-0.5 font-sans text-caption text-muted-foreground">
-              مسافة
-            </kbd>
-          </span>
-          <button
-            type="button"
-            onClick={onRegenerate}
-            className={cn(
-              pill,
-              'group/re border-transparent bg-primary px-5 font-medium text-primary-foreground hover:bg-harf-600 max-lg:flex-1 max-lg:justify-center',
-            )}
-          >
-            <RefreshIcon className="size-4 transition-transform duration-(--dur-slow) ease-out-quint group-active/re:-rotate-180" />
-            تركيبات جديدة
-          </button>
-        </div>
-      </div>
-
-      <div className="flex flex-wrap items-center gap-2">
-        <label
-          className={cn(
-            pill,
-            'min-w-0 flex-1 basis-64 cursor-text border-border bg-card pe-1.5 focus-within:border-strong focus-within:ring-2 focus-within:ring-ring/30 dark:border-transparent dark:bg-sunken',
-          )}
+    <div className="mt-8 flex flex-col gap-3">
+      <div role="group" aria-label="أدوات نسق" className="flex flex-wrap items-center gap-2 lg:flex-nowrap">
+        <button
+          type="button"
+          onClick={onRegenerate}
+          title="أو اضغط مسافة"
+          className={cn(pill, 'group/re border-transparent bg-primary ps-4 font-medium text-white hover:bg-harf-600')}
         >
-          <TextIcon className="size-4 shrink-0 text-muted-foreground" />
+          <RefreshIcon className="size-4 transition-transform duration-(--dur-slow) ease-out-quint group-active/re:-rotate-180" />
+          تركيبات جديدة
+        </button>
+
+        <label className="relative flex h-11 min-w-45 flex-1 items-center rounded-full border bg-card transition-[box-shadow,border-color] focus-within:border-primary focus-within:shadow-focus dark:border-transparent dark:bg-sunken">
+          <TextIcon className="pointer-events-none absolute start-4 size-4 text-muted-foreground" />
           <span className="sr-only">نص المعاينة</span>
           <input
             value={heading}
             onChange={(e) => onHeading(e.target.value.slice(0, 60))}
-            placeholder={`اكتب نصّك — ${placeholder}`}
+            placeholder={`اكتب نصّ المعاينة … ${placeholder}`}
             maxLength={60}
             spellCheck={false}
-            className="h-full min-w-0 flex-1 bg-transparent text-control outline-none placeholder:text-tertiary"
+            className="h-full w-full min-w-0 rounded-full bg-transparent ps-11 pe-11 text-control outline-none placeholder:text-muted-foreground"
           />
           {heading && (
             <button
@@ -168,12 +72,38 @@ export function NasaqToolbar({
               onClick={() => onHeading('')}
               aria-label="النص الافتراضي"
               title="النص الافتراضي"
-              className="grid size-8 shrink-0 animate-pop-in place-items-center rounded-full text-muted-foreground hover:bg-sunken hover:text-foreground"
+              className="absolute end-2 grid size-7 animate-pop-in place-items-center rounded-full text-muted-foreground hover:bg-sunken hover:text-foreground"
             >
               <CrossSmallIcon className="size-4" />
             </button>
           )}
         </label>
+
+        <NasaqOptionsSheet
+          brief={brief}
+          onApply={onBrief}
+          trigger={
+            <button
+              type="button"
+              className={cn(
+                pill,
+                'border-border bg-card font-medium hover:border-strong dark:border-transparent dark:bg-sunken',
+              )}
+            >
+              <SlidersIcon className="size-4" />
+              الخيارات
+              {count > 0 && (
+                <span
+                  dir="ltr"
+                  className="grid h-4.5 min-w-4.5 animate-pop-in place-items-center rounded-full bg-primary px-1 text-micro text-white"
+                >
+                  {count}
+                </span>
+              )}
+            </button>
+          }
+        />
+
         <SegmentedControl
           label="العرض"
           value={view}
@@ -183,6 +113,31 @@ export function NasaqToolbar({
             { value: 'saved', label: `المحفوظة${savedCount ? ` (${savedCount})` : ''}` },
           ]}
         />
+      </div>
+
+      {/* الاستخدام: شرائح كشرائح التصنيف في المكتبة */}
+      <div className="-m-1 [scrollbar-width:none] overflow-x-auto p-1 [&::-webkit-scrollbar]:hidden">
+        <div role="group" aria-label="الاستخدام" className="flex w-max gap-2">
+          {(Object.keys(USE_CASES) as UseCaseKey[]).map((k) => {
+            const on = brief.useCase === k;
+            return (
+              <button
+                key={k}
+                type="button"
+                aria-pressed={on}
+                onClick={() => onBrief({ ...brief, useCase: k })}
+                className={cn(
+                  pill,
+                  on
+                    ? 'border-primary bg-card font-medium text-primary dark:bg-paper'
+                    : 'border-border bg-card text-muted-foreground hover:border-strong hover:text-foreground dark:border-transparent dark:bg-sunken',
+                )}
+              >
+                {USE_CASES[k].label}
+              </button>
+            );
+          })}
+        </div>
       </div>
     </div>
   );
