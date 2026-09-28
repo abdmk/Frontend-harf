@@ -50,7 +50,7 @@ export function FontHeader({
         {actions ?? (
           <div className="flex items-center gap-3">
             {favorite}
-            <DownloadButton fontName={font.name} label="تحميل الخط" size="lg" />
+            <DownloadButton fontName={font.name} label="تحميل الخط" size="lg" file={font.download} />
           </div>
         )}
       </div>

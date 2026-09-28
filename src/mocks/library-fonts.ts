@@ -6,7 +6,7 @@ import type { Font } from '@/types/domain/font';
 const DAY = 864e5;
 const ago = (d: number) => new Date(Date.now() - d * DAY).toISOString().slice(0, 10);
 
-export const LIBRARY_FONTS: Font[] = [
+const ENTRIES: Font[] = [
   {
     id: 'cairo',
     name: 'Cairo',
@@ -422,3 +422,32 @@ export const LIBRARY_FONTS: Font[] = [
     face: { family: 'AM-ZAIN ORIGINAL', nameAr: 'زين', weights: [400] },
   },
 ];
+
+/* حِزم التحميل: ملفات TTF الكاملة من مستودع Google Fonts الرسمي مع نصّ OFL.txt (الترخيص يسمح بإعادة
+   التوزيع). بالبايت. المدفوعة لا ملفات لها في الموقع أبداً — تحميلها بعد الشراء برابط موقّع من الخادم. */
+const PACKAGE_BYTES: Record<string, number> = {
+  alexandria: 168310,
+  almarai: 271466,
+  amiri: 827306,
+  'aref-ruqaa': 146313,
+  cairo: 285789,
+  changa: 69617,
+  'el-messiri': 73733,
+  lalezar: 119595,
+  mada: 93571,
+  marhey: 96829,
+  markazi: 114181,
+  'noto-kufi': 216026,
+  'noto-naskh': 161173,
+  'plex-arabic': 740638,
+  rakkas: 74960,
+  readex: 154499,
+  'reem-kufi': 65171,
+  scheherazade: 750721,
+  tajawal: 202932,
+};
+
+export const LIBRARY_FONTS: Font[] = ENTRIES.map((f) => {
+  const bytes = f.type === 'free' ? PACKAGE_BYTES[f.id] : undefined;
+  return bytes ? { ...f, download: { url: `/downloads/fonts/${f.id}.zip`, bytes } } : f;
+});

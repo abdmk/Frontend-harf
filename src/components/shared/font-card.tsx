@@ -109,7 +109,7 @@ export function FontCard({
         {action ?? (
           <div className="mt-1 flex items-center justify-between gap-3">
             <span className="text-sm font-medium text-lic">{USAGE_LABEL[font.usage]}</span>
-            <DownloadButton fontName={font.name} />
+            <DownloadButton fontName={font.name} file={font.download} />
           </div>
         )}
       </div>

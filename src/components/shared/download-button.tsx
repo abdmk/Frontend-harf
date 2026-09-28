@@ -10,14 +10,23 @@ type Props = {
   /** secondary: للنسخة التجريبية بجانب زرّ الشراء */
   variant?: 'primary' | 'secondary';
   className?: string;
+  /** ملف حقيقي (خطوط OFL فقط) — يصير الزرّ رابط تحميل فعلياً */
+  file?: { url: string; bytes: number };
 };
 
 /**
- * التحميل — للعرض: يُظهر التقدّم ثم النجاح.
- * في المنتج: يطلب من الخادم رابطاً موقّتاً موقّعاً بعد التحقّق من ترخيص المستخدم،
- * ولا يُكشف أي مسار حقيقي للملف في الصفحة.
+ * التحميل. مع `file` (خطوط مجانية بترخيص OFL فقط، إعادة توزيعها مسموحة): رابط تحميل حقيقي.
+ * بدونه — للعرض: يُظهر التقدّم ثم النجاح. الخطوط المدفوعة لا تُعطى مساراً ثابتاً أبداً؛ في المنتج
+ * يطلب الزرّ من الخادم رابطاً موقّتاً موقّعاً بعد التحقّق من ترخيص المستخدم.
  */
-export function DownloadButton({ fontName, label = 'تحميل', size = 'sm', variant = 'primary', className }: Props) {
+export function DownloadButton({
+  fontName,
+  label = 'تحميل',
+  size = 'sm',
+  variant = 'primary',
+  className,
+  file,
+}: Props) {
   const [state, setState] = useState<'idle' | 'busy' | 'done'>('idle');
   useEffect(() => {
     if (state === 'busy') {
@@ -30,23 +39,18 @@ export function DownloadButton({ fontName, label = 'تحميل', size = 'sm', va
     }
   }, [state]);
 
-  return (
-    <button
-      type="button"
-      aria-label={`${label} ${fontName}`}
-      aria-live="polite"
-      onClick={() => state === 'idle' && setState('busy')}
-      className={cn(
-        'group/dl relative z-10 inline-flex items-center justify-center gap-2 font-medium whitespace-nowrap transition-[background-color,transform] duration-200 active:scale-[.97]',
-        size === 'sm' ? 'h-8 min-w-21 rounded-xs px-3 text-meta' : 'h-12 rounded-sm px-6 text-lead',
-        state === 'done'
-          ? 'bg-ok-600 text-white'
-          : variant === 'primary'
-            ? 'bg-primary text-primary-foreground hover:bg-harf-600'
-            : 'border bg-sunken text-foreground hover:bg-inset',
-        className,
-      )}
-    >
+  const classes = cn(
+    'group/dl relative z-10 inline-flex items-center justify-center gap-2 font-medium whitespace-nowrap transition-[background-color,transform] duration-200 active:scale-[.97]',
+    size === 'sm' ? 'h-8 min-w-21 rounded-xs px-3 text-meta' : 'h-12 rounded-sm px-6 text-lead',
+    state === 'done'
+      ? 'bg-ok-600 text-white'
+      : variant === 'primary'
+        ? 'bg-primary text-primary-foreground hover:bg-harf-600'
+        : 'border bg-sunken text-foreground hover:bg-inset',
+    className,
+  );
+  const content = (
+    <>
       {state === 'done' ? (
         <CheckIcon className="size-3.5 animate-pop-in" />
       ) : (
@@ -58,6 +62,36 @@ export function DownloadButton({ fontName, label = 'تحميل', size = 'sm', va
         />
       )}
       <span>{state === 'busy' ? 'جارٍ…' : state === 'done' ? 'تمّ' : label}</span>
+    </>
+  );
+
+  if (file)
+    return (
+      <a
+        href={file.url}
+        download
+        aria-label={`${label} ${fontName} (ZIP، ${formatBytes(file.bytes)})`}
+        title={`ZIP · ${formatBytes(file.bytes)}`}
+        onClick={() => state === 'idle' && setState('busy')}
+        className={classes}
+      >
+        {content}
+      </a>
+    );
+
+  return (
+    <button
+      type="button"
+      aria-label={`${label} ${fontName}`}
+      aria-live="polite"
+      onClick={() => state === 'idle' && setState('busy')}
+      className={classes}
+    >
+      {content}
     </button>
   );
+}
+
+export function formatBytes(n: number) {
+  return n >= 1e6 ? `${(n / 1e6).toFixed(1)} MB` : `${Math.max(1, Math.round(n / 1e3))} KB`;
 }
