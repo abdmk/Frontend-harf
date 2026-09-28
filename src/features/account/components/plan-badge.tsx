@@ -2,10 +2,16 @@ import { CrownIcon } from '@/components/ui/icons';
 import type { Plan } from '@/features/account/types';
 import { cn } from '@/lib/cn';
 
+/** لون نصّ/أيقونة الخطة — يُستعمل وحده حيث لا خلفية (سطر الخطة في القائمة) */
+export const PLAN_TEXT: Record<Plan, string> = {
+  free: 'text-lic',
+  basic: 'text-warn-text',
+  studio: 'text-info-strong',
+};
 const STYLE: Record<Plan, string> = {
-  free: 'bg-tint-ok text-lic',
-  basic: 'bg-tint-warn text-warn-text',
-  studio: 'bg-tint-info text-info-strong',
+  free: `bg-tint-ok ${PLAN_TEXT.free}`,
+  basic: `bg-tint-warn ${PLAN_TEXT.basic}`,
+  studio: `bg-tint-info ${PLAN_TEXT.studio}`,
 };
 export const PLAN_BADGE_LABEL: Record<Plan, string> = { free: 'مجانية', basic: 'أساسي', studio: 'الاستوديو' };
 

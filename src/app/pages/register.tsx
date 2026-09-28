@@ -7,7 +7,7 @@ export function RegisterPage() {
   return (
     <AuthShell
       mode="register"
-      title="ابدأ مع حرف مجاناً"
+      title="أنشئ حسابك في حرف"
       lead="احفظ خطوطك المفضّلة، حمّل المجاني، واشترِ التراخيص من مكان واحد."
     >
       <PageMeta title="إنشاء حساب" />

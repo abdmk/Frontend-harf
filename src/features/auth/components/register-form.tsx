@@ -8,8 +8,8 @@ import { CheckIcon, MailIcon, UserIcon } from '@/components/ui/icons';
 import { InputGroup } from '@/components/ui/input';
 import { cn } from '@/lib/cn';
 
+import { AuthDivider } from './auth-divider';
 import { GoogleButton } from './google-button';
-import { Divider } from './login-form';
 import { PasswordInput } from './password-input';
 import type { AuthState } from '../api/actions';
 
@@ -43,9 +43,8 @@ export function RegisterForm({ action }: { action: (prev: AuthState, form: FormD
 
   return (
     <form action={formAction} noValidate className="flex flex-col gap-5">
-      <h2 className="text-2xl font-semibold">أنشئ حسابك</h2>
       <GoogleButton />
-      <Divider />
+      <AuthDivider />
       {state?.error && <Alert tone="danger" title={state.error} />}
       <Field>
         <FieldLabel htmlFor="name">الاسم</FieldLabel>

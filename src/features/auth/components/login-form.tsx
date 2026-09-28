@@ -7,6 +7,7 @@ import { Field, FieldError, FieldLabel } from '@/components/ui/field';
 import { MailIcon, SignInIcon } from '@/components/ui/icons';
 import { InputGroup } from '@/components/ui/input';
 
+import { AuthDivider } from './auth-divider';
 import { GoogleButton } from './google-button';
 import { PasswordInput } from './password-input';
 import type { AuthState } from '../api/actions';
@@ -22,9 +23,8 @@ export function LoginForm({
   const f = state?.fields ?? {};
   return (
     <form action={formAction} noValidate className="flex flex-col gap-5">
-      <h2 className="text-2xl font-semibold">مرحباً بعودتك</h2>
       <GoogleButton />
-      <Divider />
+      <AuthDivider />
       {state?.error && <Alert tone="danger" title={state.error} />}
       <input type="hidden" name="next" value={next ?? ''} />
       <Field>
@@ -75,13 +75,5 @@ export function LoginForm({
         تسجيل الدخول
       </Button>
     </form>
-  );
-}
-
-export function Divider() {
-  return (
-    <p className="flex items-center gap-3 text-caption text-tertiary before:h-px before:flex-1 before:bg-border after:h-px after:flex-1 after:bg-border">
-      أو عبر البريد
-    </p>
   );
 }

@@ -1,21 +1,15 @@
 import type { ReactNode } from 'react';
 import { Link } from 'react-router';
 
-import { HarfLockup } from '@/components/shared/harf-logo';
-import { MagicWandIcon, RefreshIcon, ShieldCheckIcon } from '@/components/ui/icons';
+import { HarfMark } from '@/components/shared/harf-logo';
 import { paths } from '@/config/paths';
-import { cn } from '@/lib/cn';
 
-const POINTS = [
-  [ShieldCheckIcon, 'آلاف الخطوط العربية مرخّصة للاستخدام التجاري'],
-  [MagicWandIcon, 'مطابقة الخطوط ومختبر الخط داخل المتصفّح'],
-  [RefreshIcon, 'تحديثات مستمرّة تصل مكتبتك تلقائياً'],
-] as const;
+const SWITCH = {
+  login: ['ليس لديك حساب؟', 'أنشئ حساباً', paths.register.getHref()],
+  register: ['لديك حساب؟', 'سجّل الدخول', paths.login.getHref()],
+} as const;
 
-/**
- * صفحة الدخول (دليل التصميم 6.1 — النسخة أ): لوحة العلامة + النموذج في بطاقة واحدة.
- * على الجوال تُختصر لوحة العلامة إلى الشعار والعنوان فوق النموذج.
- */
+/** صفحة الدخول/التسجيل: عمود واحد متمركز — الرمز، العنوان، النموذج، ثم رابط التبديل */
 export function AuthShell({
   mode,
   title,
@@ -27,58 +21,43 @@ export function AuthShell({
   lead: string;
   children: ReactNode;
 }) {
+  const [question, action, href] = SWITCH[mode];
   return (
-    <main id="main" className="grid min-h-dvh place-items-center bg-sunken px-4 py-8 sm:px-6">
-      <div className="grid w-full max-w-240 overflow-hidden rounded-xl border bg-card shadow-float lg:grid-cols-2">
-        <aside className="relative isolate flex flex-col gap-6 overflow-hidden p-8 sm:p-10 lg:justify-between">
-          <span aria-hidden className="absolute inset-0 -z-10 bg-(image:--grad-dawn) opacity-80" />
-          <div className="flex flex-col items-start gap-6">
-            <Link to={paths.home.getHref()} aria-label="مكتبة حرف — الرئيسية">
-              <HarfLockup className="h-9" />
-            </Link>
-            <span className="rounded-full border border-harf-200 bg-card px-3 py-1 text-caption font-medium text-primary">
-              {mode === 'login' ? 'مرحباً في حرف' : 'انضمّ إلى حرف'}
-            </span>
-            <div>
-              <h1 className="text-display leading-tight font-semibold">{title}</h1>
-              <p className="mt-3 text-control text-muted-foreground">{lead}</p>
-            </div>
+    <main id="main" className="flex min-h-dvh flex-col items-center px-4 py-10 sm:justify-center sm:py-16">
+      <div className="flex w-full max-w-sm animate-fade-up flex-col gap-8">
+        <header className="flex flex-col items-center gap-5 text-center">
+          <Link
+            to={paths.home.getHref()}
+            aria-label="مكتبة حرف — الرئيسية"
+            className="rounded-full text-harf-500 transition-transform active:scale-95"
+          >
+            <HarfMark className="size-11" />
+          </Link>
+          <div className="flex flex-col gap-2">
+            <h1 className="text-2xl font-semibold">{title}</h1>
+            <p className="text-control text-muted-foreground">{lead}</p>
           </div>
-          <ul className="hidden flex-col gap-3 lg:flex">
-            {POINTS.map(([Icon, text]) => (
-              <li key={text} className="flex items-center gap-3 text-control text-muted-foreground">
-                <span className="grid size-8 place-items-center rounded-xs bg-card text-primary shadow-soft">
-                  <Icon className="size-4" />
-                </span>
-                {text}
-              </li>
-            ))}
-          </ul>
-        </aside>
-        <section className="flex flex-col gap-6 border-t p-8 sm:p-10 lg:border-s lg:border-t-0">
-          <nav aria-label="نوع الدخول" className="grid grid-cols-2 rounded-full bg-sunken p-1">
-            {(
-              [
-                ['login', 'تسجيل الدخول', paths.login.getHref()],
-                ['register', 'حساب جديد', paths.register.getHref()],
-              ] as const
-            ).map(([m, label, href]) => (
-              <Link
-                key={m}
-                to={href}
-                aria-current={mode === m ? 'page' : undefined}
-                className={cn(
-                  'grid h-10 place-items-center rounded-full text-control transition-colors',
-                  mode === m ? 'bg-card font-medium shadow-soft' : 'text-muted-foreground hover:text-foreground',
-                )}
-              >
-                {label}
-              </Link>
-            ))}
-          </nav>
-          {children}
-        </section>
+        </header>
+
+        {children}
+
+        <p className="text-center text-control text-muted-foreground">
+          {question}{' '}
+          <Link to={href} className="font-medium text-primary hover:underline">
+            {action}
+          </Link>
+        </p>
       </div>
+
+      <footer className="mt-10 flex gap-3 text-caption text-tertiary sm:mt-14">
+        <a href="#" className="hover:text-foreground">
+          الشروط والأحكام
+        </a>
+        <span aria-hidden>·</span>
+        <a href="#" className="hover:text-foreground">
+          سياسة الخصوصية
+        </a>
+      </footer>
     </main>
   );
 }

@@ -1,14 +1,14 @@
 import { Fragment } from 'react';
 import { Link, useNavigate } from 'react-router';
 
-import { ChartHistogramIcon, LayersIcon, SignOutIcon } from '@/components/ui/icons';
+import { ChartHistogramIcon, CrownIcon, LayersIcon, SignOutIcon } from '@/components/ui/icons';
 import { paths } from '@/config/paths';
 import { signOut } from '@/features/account/api/sign-out';
-import { accountNavGroups } from '@/features/account/config/nav';
+import { accountNavGroups, PLAN_TITLE } from '@/features/account/config/nav';
 import type { AccountSection, User } from '@/features/account/types';
 import { cn } from '@/lib/cn';
 
-import { PlanBadge } from './plan-badge';
+import { PLAN_TEXT, PlanBadge } from './plan-badge';
 import { UserAvatar } from './user-avatar';
 
 type AccountPanelProps = {
@@ -39,6 +39,20 @@ export function AccountPanel({ user, active = null, variant = 'sidebar', onNavig
         </div>
         <PlanBadge plan={user.plan} />
       </div>
+
+      {variant === 'menu' && (
+        <div className="flex items-center gap-3 rounded-lg bg-sunken py-3 ps-5 pe-3">
+          <CrownIcon className={cn('size-5', PLAN_TEXT[user.plan])} />
+          <p className="flex-1 text-lead">{PLAN_TITLE[user.plan]}</p>
+          <Link
+            to={paths.account.getHref('subscription')}
+            onClick={onNavigate}
+            className="rounded-full border bg-card px-4 py-1.5 text-sm font-medium transition-colors hover:bg-background"
+          >
+            إدارة الخطة
+          </Link>
+        </div>
+      )}
 
       <nav aria-label="قائمة الحساب" className="flex flex-col">
         {groups.map((group, g) => (

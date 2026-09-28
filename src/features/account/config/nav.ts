@@ -22,6 +22,7 @@ export type NavItem = {
 };
 
 export const PLAN_LABEL = { free: 'المجانية', basic: 'الأساسية', studio: 'الاستوديو' } as const;
+export const PLAN_TITLE = { free: 'الخطة المجانية', basic: 'الخطة الأساسية', studio: 'خطة الاستوديو' } as const;
 
 /** مجموعات القائمة كما في التصميم — «لوحة المسبك» لحساب الاستوديو وحده */
 export function accountNavGroups(user: User): NavItem[][] {
