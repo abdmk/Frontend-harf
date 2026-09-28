@@ -1,14 +1,24 @@
+import { RadioGroup as RadioGroupPrimitive } from 'radix-ui';
 import { useRef, useState } from 'react';
 
+import { FileIcon } from '@/components/shared/file-icon';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Chip, ChipGroup } from '@/components/ui/chip-group';
 import { Field, FieldError, FieldHint, FieldLabel } from '@/components/ui/field';
-import { ArrowDownIcon, ArrowUpIcon, CloudUploadIcon, PictureIcon, TrashIcon } from '@/components/ui/icons';
+import {
+  ArrowDownIcon,
+  ArrowUpIcon,
+  CheckIcon,
+  CloudUploadIcon,
+  DollarIcon,
+  GiftIcon,
+  PictureIcon,
+  TrashIcon,
+} from '@/components/ui/icons';
 import { Input, Textarea } from '@/components/ui/input';
 import { RadioGroup, RadioOption } from '@/components/ui/radio-group';
 import { Switch } from '@/components/ui/switch';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { cn } from '@/lib/cn';
 import { formatBytesAr } from '@/lib/format';
 import { CATEGORY_LABEL, LANG_LABEL } from '@/lib/labels';
@@ -16,6 +26,15 @@ import { CATEGORIES, LANGS } from '@/types/domain/font';
 
 import { type Draft, IMAGE_TYPES, type WorkDraft, MAX_DESCRIPTION, MAX_IMAGE_BYTES } from '../types/draft';
 import { inferFontMeta } from '../utils/infer-weight';
+
+/** صندوق شرح رمادي تحت الحقل (نمط مراجع Wayl): يشرح لماذا نطلب المعلومة وأين تظهر */
+export function Hint({ children, className }: { children: React.ReactNode; className?: string }) {
+  return (
+    <p className={cn('rounded-md bg-sunken px-4 py-3 text-meta leading-relaxed text-muted-foreground', className)}>
+      {children}
+    </p>
+  );
+}
 
 export type StepProps = {
   draft: WorkDraft;
@@ -105,57 +124,49 @@ export function FilesStep({ draft, set, errors }: StepProps) {
         </ul>
       )}
       <FieldError>{errors.files}</FieldError>
-      {draft.files.length > 0 && (
-        <section className="rounded-lg border bg-card p-2 sm:p-4">
-          <h3 className="flex items-center justify-between px-2 pb-2 text-control font-semibold">
-            الأوزان المقروءة{' '}
-            <span className="text-caption font-normal text-tertiary">({draft.files.length} ملفات)</span>
-          </h3>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>الملف</TableHead>
-                <TableHead>الوزن</TableHead>
-                <TableHead>الصيغة</TableHead>
-                <TableHead>الحجم</TableHead>
-                <TableHead>
-                  <span className="sr-only">إجراء</span>
-                </TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {draft.files.map((f, i) => (
-                <TableRow key={`${f.name}-${i}`}>
-                  <TableCell dir="ltr" className="text-right font-mono text-caption">
-                    {f.name}
-                  </TableCell>
-                  <TableCell dir="ltr" className="text-right font-medium">
-                    {f.weight} {f.style}
-                  </TableCell>
-                  <TableCell className="uppercase">{f.format}</TableCell>
-                  <TableCell className="text-muted-foreground">{formatBytesAr(f.size)}</TableCell>
-                  <TableCell>
-                    <button
-                      type="button"
-                      aria-label={`احذف ${f.name}`}
-                      onClick={() => set({ files: draft.files.filter((_, j) => j !== i) })}
-                      className="grid size-8 place-items-center rounded-xs text-tertiary hover:bg-sunken hover:text-foreground"
-                    >
-                      <TrashIcon className="size-4" />
-                    </button>
-                  </TableCell>
-                </TableRow>
+      {draft.files.length > 0 ? (
+        <section aria-labelledby="files-title">
+          <h2 id="files-title" className="mb-2.5 flex items-baseline justify-between text-control font-semibold">
+            الأوزان المقروءة
+            <span className="text-caption font-normal text-tertiary">{weightsCount(draft.files.length)}</span>
+          </h2>
+          <ul className="divide-y rounded-lg border bg-card">
+            {draft.files
+              .map((f, i) => ({ f, i }))
+              .sort((x, y) => x.f.weight - y.f.weight)
+              .map(({ f, i }) => (
+                <li key={`${f.name}-${i}`} className="flex items-center gap-3 px-3 py-2.5 sm:px-4">
+                  <FileIcon kind={f.format} className="h-9 w-7.5" />
+                  <div className="min-w-0 flex-1">
+                    <p dir="ltr" className="truncate text-right text-control font-medium">
+                      {f.weight} {f.style}
+                    </p>
+                    <p dir="ltr" className="truncate text-right font-mono text-caption text-tertiary">
+                      {f.name} · {formatBytesAr(f.size)}
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    aria-label={`احذف ${f.name}`}
+                    onClick={() => set({ files: draft.files.filter((_, j) => j !== i) })}
+                    className="grid size-9 shrink-0 place-items-center rounded-full text-tertiary transition-colors hover:bg-sunken hover:text-foreground"
+                  >
+                    <TrashIcon className="size-4" />
+                  </button>
+                </li>
               ))}
-            </TableBody>
-          </Table>
-          <p className="px-2 pt-2 text-caption text-tertiary">
-            في العرض يُستنتج الوزن من اسم الملف؛ في المنتج يقرأه الخادم من جداول الخط نفسها.
-          </p>
+          </ul>
         </section>
-      )}
+      ) : null}
+      <Hint>
+        نقرأ من كل ملف وزنه ونمطه وصيغته، فلا تكتبها بيدك. ارفع العائلة كاملة مرّة واحدة — يمكنك إضافة أوزان لاحقاً قبل
+        الإرسال.
+      </Hint>
     </div>
   );
 }
+
+const weightsCount = (n: number) => (n === 1 ? 'وزن واحد' : n === 2 ? 'وزنان' : n <= 10 ? `${n} أوزان` : `${n} وزناً`);
 
 export function ImagesStep({
   images,
@@ -249,12 +260,13 @@ export function ImagesStep({
           ))}
         </ul>
       )}
-      {!images.length && (
-        <p className="flex items-center gap-2 text-caption text-tertiary">
-          <PictureIcon className="size-4" />
-          الصورة الأولى غلاف البطاقة في المكتبة. رتّبها بالسهمين.
-        </p>
-      )}
+      <Hint className="flex items-start gap-2.5">
+        <PictureIcon className="mt-0.5 size-4 shrink-0" />
+        <span>
+          الصورة الأولى غلاف بطاقة الخط في المكتبة، والبقيّة تظهر في معرض صفحته. رتّبها بالسهمين؛ الصور الواضحة لحروف
+          الخط وأوزانه تبيع أكثر من الصور الزخرفية.
+        </span>
+      </Hint>
     </div>
   );
 }
@@ -295,11 +307,12 @@ export function InfoStep({ draft, set, errors }: StepProps) {
           id="d-des"
           value={draft.designers}
           maxLength={120}
-          placeholder="افصل بين الأسماء بفاصلة"
+          placeholder="مثال: عبدالملك جاسم، مي علي"
           onChange={(e) => set({ designers: e.target.value })}
           aria-invalid={!!errors.designers}
         />
         <FieldError>{errors.designers}</FieldError>
+        <Hint className="mt-1">افصل بين الأسماء بفاصلة. تظهر بالترتيب الذي تكتبه تحت اسم الخط في البطاقة والصفحة.</Hint>
       </Field>
       <Field className="sm:col-span-2">
         <FieldLabel htmlFor="d-desc">الوصف</FieldLabel>
@@ -404,67 +417,114 @@ export function PricingStep({ draft, set, errors }: StepProps) {
             <RadioOption value="ofl" label="SIL OFL" />
           </RadioGroup>
         </fieldset>
-        <p className="rounded-md bg-sunken p-4 text-meta text-muted-foreground">
-          الخط الخارجي لا يُباع في حرف — نعرضه ونرسل المشتري إلى المصدر.
-        </p>
+        <Hint>الخط الخارجي لا يُباع في حرف — نعرضه ونرسل المشتري إلى المصدر.</Hint>
       </div>
     );
 
+  const single = Math.round((draft.familyPrice * draft.singlePct) / 100);
   return (
     <div className="grid gap-6">
-      <fieldset>
-        <legend className="mb-3 text-meta font-medium text-muted-foreground">الإتاحة</legend>
-        <RadioGroup
-          aria-label="الإتاحة"
-          value={draft.availability}
-          onValueChange={(v) => set({ availability: v as Draft['availability'] })}
-          className="flex gap-6"
-        >
-          <RadioOption value="free" label="مجاني" />
-          <RadioOption value="paid" label="مدفوع" />
-        </RadioGroup>
-      </fieldset>
+      <RadioGroupPrimitive.Root
+        aria-label="الإتاحة"
+        value={draft.availability}
+        onValueChange={(v) => set({ availability: v as Draft['availability'] })}
+        className="grid gap-3 sm:grid-cols-2"
+      >
+        {(
+          [
+            ['free', 'مجاني', 'يحمّله الجميع بلا مقابل ضمن حدود خطّتهم.', <GiftIcon key="i" />],
+            ['paid', 'مدفوع', 'يُباع بتراخيص، وتصلك أرباحه في لوحة المسبك.', <DollarIcon key="i" />],
+          ] as const
+        ).map(([value, label, desc, icon]) => (
+          <RadioGroupPrimitive.Item
+            key={value}
+            value={value}
+            className="group/opt flex items-start gap-3 rounded-lg border bg-card p-4 text-start transition-[border-color,box-shadow] duration-(--dur-base) hover:border-strong data-[state=checked]:border-primary data-[state=checked]:shadow-[0_0_0_1px_var(--color-primary)]"
+          >
+            <span className="grid size-10 shrink-0 place-items-center rounded-full bg-sunken text-muted-foreground transition-colors group-data-[state=checked]/opt:bg-tint-brand group-data-[state=checked]/opt:text-primary [&_svg]:size-4.5">
+              {icon}
+            </span>
+            <span className="min-w-0 flex-1">
+              <span className="block text-control font-semibold">{label}</span>
+              <span className="mt-0.5 block text-caption leading-relaxed text-muted-foreground">{desc}</span>
+            </span>
+            <span className="mt-0.5 grid size-5 shrink-0 place-items-center rounded-full border-[1.5px] border-strong transition-colors group-data-[state=checked]/opt:border-primary group-data-[state=checked]/opt:bg-primary">
+              <CheckIcon className="size-3 text-primary-foreground opacity-0 transition-opacity group-data-[state=checked]/opt:opacity-100" />
+            </span>
+          </RadioGroupPrimitive.Item>
+        ))}
+      </RadioGroupPrimitive.Root>
+
       {draft.availability === 'paid' && (
-        <>
-          <label className="flex items-center justify-between gap-4 rounded-md border p-4 text-control">
-            أوفّر نسخة تجريبية مجانية للمعاينة (وزن واحد يكفي)
-            <Switch checked={draft.trial} onCheckedChange={(v) => set({ trial: v })} />
-          </label>
+        <div className="grid animate-fade-up gap-5">
           <div className="grid gap-5 sm:grid-cols-2">
             <Field>
-              <FieldLabel htmlFor="p-fam">سعر العائلة (دولار)</FieldLabel>
-              <Input
-                id="p-fam"
-                type="number"
-                dir="ltr"
-                min={0}
-                max={10000}
-                value={draft.familyPrice}
-                onChange={(e) => set({ familyPrice: Number(e.target.value) || 0 })}
-                aria-invalid={!!errors.familyPrice}
-              />
+              <FieldLabel htmlFor="p-fam">سعر العائلة كاملة</FieldLabel>
+              <div className="relative">
+                <span className="pointer-events-none absolute inset-y-0 left-4 grid place-items-center text-muted-foreground">
+                  $
+                </span>
+                <Input
+                  id="p-fam"
+                  type="number"
+                  dir="ltr"
+                  min={0}
+                  max={10000}
+                  className="pl-8"
+                  value={draft.familyPrice}
+                  onChange={(e) => set({ familyPrice: Number(e.target.value) || 0 })}
+                  aria-invalid={!!errors.familyPrice}
+                />
+              </div>
               <FieldError>{errors.familyPrice}</FieldError>
             </Field>
             <Field>
-              <FieldLabel htmlFor="p-single">سعر الوزن الواحد — نسبة من سعر العائلة (%)</FieldLabel>
-              <Input
-                id="p-single"
-                type="number"
-                dir="ltr"
-                min={5}
-                max={100}
-                value={draft.singlePct}
-                onChange={(e) => set({ singlePct: Number(e.target.value) || 0 })}
-              />
-              <FieldHint>
-                الوزن الواحد ≈ <span dir="ltr">${Math.round((draft.familyPrice * draft.singlePct) / 100)}</span>
-              </FieldHint>
+              <FieldLabel htmlFor="p-single">سعر الوزن الواحد (% من العائلة)</FieldLabel>
+              <div className="relative">
+                <span className="pointer-events-none absolute inset-y-0 left-4 grid place-items-center text-muted-foreground">
+                  %
+                </span>
+                <Input
+                  id="p-single"
+                  type="number"
+                  dir="ltr"
+                  min={5}
+                  max={100}
+                  className="pl-8"
+                  value={draft.singlePct}
+                  onChange={(e) => set({ singlePct: Number(e.target.value) || 0 })}
+                />
+              </div>
             </Field>
           </div>
-          <p className="text-caption text-tertiary">
-            نطاقات الاستخدام (سطح المكتب، الموقع، التطبيق) وعمولة المنصّة تحدّدها سياسة حرف — القيم الحالية تجريبية.
-          </p>
-        </>
+          <dl className="grid grid-cols-2 divide-x rounded-lg bg-sunken py-4 text-center">
+            <div>
+              <dt className="text-caption text-muted-foreground">العائلة كاملة</dt>
+              <dd dir="ltr" className="mt-0.5 text-lg font-semibold tabular-nums">
+                ${draft.familyPrice}
+              </dd>
+            </div>
+            <div>
+              <dt className="text-caption text-muted-foreground">الوزن الواحد</dt>
+              <dd dir="ltr" className="mt-0.5 text-lg font-semibold tabular-nums">
+                ${single}
+              </dd>
+            </div>
+          </dl>
+          <label className="flex cursor-pointer items-center justify-between gap-4 rounded-lg border bg-card p-4">
+            <span>
+              <span className="block text-control font-medium">نسخة تجريبية مجانية</span>
+              <span className="mt-0.5 block text-caption text-muted-foreground">
+                وزن واحد للمعاينة الشخصية — يزيد احتمال الشراء.
+              </span>
+            </span>
+            <Switch checked={draft.trial} onCheckedChange={(v) => set({ trial: v })} />
+          </label>
+          <Hint>
+            هذا سعر الترخيص الأساسي. نطاقات الاستخدام (سطح المكتب، الموقع، التطبيق) وعمولة المنصّة تحدّدها سياسة حرف —
+            القيم الحالية تجريبية.
+          </Hint>
+        </div>
       )}
     </div>
   );
@@ -473,7 +533,7 @@ export function PricingStep({ draft, set, errors }: StepProps) {
 export function ConsentField({ draft, set, errors }: StepProps) {
   return (
     <div>
-      <label className="flex items-start gap-3 rounded-md border p-4 text-control">
+      <label className="flex cursor-pointer items-start gap-3 rounded-lg border bg-card p-4 text-control leading-relaxed">
         <Checkbox
           checked={!!draft.consent}
           onCheckedChange={(v) => set({ consent: v === true })}

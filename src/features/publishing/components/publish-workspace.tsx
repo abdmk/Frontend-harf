@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState, useTransition } from 'react';
 import { Link } from 'react-router';
 
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { CheckIcon, ChevronLeftIcon, ChevronRightIcon, ExclamationIcon } from '@/components/ui/icons';
 import { SegmentedControl } from '@/components/ui/segmented-control';
@@ -9,23 +8,28 @@ import { toast } from '@/components/ui/toast';
 import { paths } from '@/config/paths';
 import { cn } from '@/lib/cn';
 
-import { ConsentField, FilesStep, ImagesStep, InfoStep, PricingStep } from './publish-steps';
+import { FilesStep, ImagesStep, InfoStep, PricingStep } from './publish-steps';
+import { ReviewStep } from './review-step';
 import type { SubmitResult } from '../api/submit';
 import { draftSchema, EMPTY_DRAFT, STEP_OF_FIELD, type WorkDraft } from '../types/draft';
 
 const STEPS = [
-  ['الملفات', 'ملفات الخط', 'ارفع كل أوزان العائلة. نقرأ من كل ملف اسمه ووزنه وصيغته، فلا تكتبها بيدك.'],
-  ['الصور', 'صور الخط', 'الصورة الأولى غلاف البطاقة في المكتبة.'],
-  ['المعلومات', 'معلومات الخط', 'ما يظهر في بطاقة الخط وصفحته.'],
-  ['الإتاحة والتسعير', 'الإتاحة والتسعير', 'التراخيص والأسعار التي تحدّدها هنا هي ما يراه المشتري في لوحة الترخيص.'],
-  ['المراجعة', 'المراجعة والإرسال', 'راجع كل قسم قبل الإرسال. يراجع المشرفون الخط قبل ظهوره في المكتبة.'],
+  ['الملفات', 'ارفع ملفات الخط', 'كل أوزان العائلة دفعة واحدة — OTF أو TTF أو WOFF2.'],
+  ['الصور', 'أضف صور الخط', 'صور تعرض حروف الخط وأوزانه، بنسبة 4:3.'],
+  ['المعلومات', 'عرّف بخطّك', 'ما يظهر في بطاقة الخط وصفحته ونتائج البحث.'],
+  ['الإتاحة', 'الإتاحة والتسعير', 'ما تحدّده هنا هو ما يراه المشتري في لوحة الترخيص.'],
+  ['المراجعة', 'راجع وأرسل', 'يراجع فريق حرف الخط قبل ظهوره في المكتبة، عادةً خلال يوم.'],
 ] as const;
+const LAST = STEPS.length - 1;
+const LABELS = STEPS.map(([l]) => l);
 
 const STORAGE = 'harf-publish-draft';
 
 /**
- * مساحة النشر (دليل التصميم 6.6): خطوات يمكن القفز بينها، مسودّة تُحفظ تلقائياً في المتصفّح،
- * ومراجعة تسمّي النواقص بدل زرّ معطّل صامت. وضع المشرف يبدّل خطوة التسعير بالمصدر.
+ * مساحة النشر (دليل التصميم 6.6، بترتيب مراجع Wayl): عمود واحد مركّز، «الخطوة 2 من 5» وشريط تقدّم
+ * يُنقر للقفز بين الخطوات، عنوان كبير لكل خطوة، وشريط سفلي ثابت فيه «رجوع» و«التالي: اسم الخطوة».
+ * «التالي» يُظهر نواقص الخطوة الحالية ولا يتقدّم حتى تكتمل؛ الشريط العلوي يسمح بالقفز الحرّ.
+ * المسودّة تُحفظ تلقائياً في المتصفّح، والمراجعة تعرض ما أُدخل وتسمّي النواقص.
  */
 export function PublishWorkspace({
   isAdmin,
@@ -37,8 +41,9 @@ export function PublishWorkspace({
   const [draft, setDraft] = useState<WorkDraft>(EMPTY_DRAFT);
   const [images, setImages] = useState<{ url: string; name: string }[]>([]);
   const [step, setStep] = useState(0);
-  const [saved, setSaved] = useState<'idle' | 'saved'>('idle');
-  const [showErrors, setShowErrors] = useState(false);
+  const [saved, setSaved] = useState<'idle' | 'saved'>('saved');
+  // الخطوات التي طُلب إظهار نواقصها (بعد «التالي» عليها، أو كلّها عند الإرسال)
+  const [checked, setChecked] = useState<ReadonlySet<number>>(new Set());
   const [done, setDone] = useState<string | null>(null);
   const [pending, start] = useTransition();
 
@@ -71,19 +76,29 @@ export function PublishWorkspace({
   const full = useMemo(() => ({ ...draft, images: images.length }), [draft, images.length]);
   const check = useMemo(() => draftSchema.safeParse(full), [full]);
   const issues = check.success ? [] : check.error.issues;
-  const errors: Record<string, string | undefined> = showErrors
-    ? Object.fromEntries(issues.map((i) => [String(i.path[0]), i.message]))
-    : {};
-  const stepDone = (i: number) => !issues.some((x) => STEP_OF_FIELD[String(x.path[0])] === i);
+  const stepIssues = issues.map((i) => ({ step: STEP_OF_FIELD[String(i.path[0])] ?? LAST, message: i.message }));
+  const errors: Record<string, string | undefined> = Object.fromEntries(
+    issues.filter((_, k) => checked.has(stepIssues[k]!.step)).map((i) => [String(i.path[0]), i.message]),
+  );
+  const stepDone = (i: number) => !stepIssues.some((x) => x.step === i);
+  const markChecked = (...steps: number[]) => setChecked((c) => new Set([...c, ...steps]));
+  const go = (i: number) => {
+    setStep(i);
+    window.scrollTo({ top: 0, behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+  };
+  const next = () => {
+    markChecked(step);
+    if (stepDone(step)) go(step + 1);
+  };
   const set = (patch: Partial<WorkDraft>) => {
     setSaved('idle');
     setDraft((d) => ({ ...d, ...patch }));
   };
 
   function submit() {
-    setShowErrors(true);
+    markChecked(0, 1, 2, 3, 4);
     if (!check.success) {
-      setStep(4);
+      if (step !== LAST) go(LAST);
       return;
     }
     start(async () => {
@@ -123,41 +138,77 @@ export function PublishWorkspace({
     );
 
   const [, title, lead] = STEPS[step]!;
+  const nextLabel = step < LAST ? STEPS[step + 1]![0] : null;
   return (
-    <div className="overflow-hidden rounded-xl border bg-card">
-      <header className="flex flex-wrap items-center justify-between gap-3 border-b px-5 py-4 sm:px-6">
-        <div className="flex items-center gap-3">
-          <Link
-            to={paths.studio.getHref()}
-            className="inline-flex items-center gap-1 text-meta text-muted-foreground hover:text-foreground"
-          >
-            <ChevronRightIcon className="size-4" />
-            الاستوديو
-          </Link>
-          <h1 className="text-lg font-semibold">{draft.nameAr || 'خط جديد'}</h1>
-          <span role="status" className="flex items-center gap-1.5 text-caption text-tertiary">
-            <span className={cn('size-1.5 rounded-full', saved === 'saved' ? 'bg-ok-500' : 'bg-strong')} />
-            {saved === 'saved' ? 'حُفظت المسودّة' : 'جارٍ الحفظ…'}
-          </span>
-        </div>
-        <div className="flex gap-2">
-          <Button
-            variant="secondary"
-            onClick={() => toast({ tone: 'success', title: 'حُفظت المسودّة في هذا المتصفّح' })}
-          >
-            حفظ كمسودّة
-          </Button>
-          <Button onClick={submit} loading={pending}>
-            إرسال للمراجعة
-          </Button>
-        </div>
+    <div className="mx-auto flex max-w-170 flex-col">
+      <div className="flex items-center justify-between gap-3">
+        <Link
+          to={paths.studio.getHref()}
+          className="inline-flex items-center gap-1 rounded-full py-1.5 ps-1 pe-3 text-meta text-muted-foreground transition-colors hover:bg-sunken hover:text-foreground"
+        >
+          <ChevronRightIcon className="size-4" />
+          لوحة المسبك
+        </Link>
+        <span role="status" className="flex items-center gap-1.5 text-caption text-tertiary">
+          <span
+            className={cn(
+              'size-1.5 rounded-full transition-colors',
+              saved === 'saved' ? 'bg-ok-500' : 'animate-pulse bg-strong',
+            )}
+          />
+          {saved === 'saved' ? 'المسودّة محفوظة' : 'جارٍ الحفظ…'}
+        </span>
+      </div>
+
+      <nav aria-label="خطوات النشر" className="mt-6">
+        <ol className="grid grid-cols-5 gap-1.5">
+          {STEPS.map(([label], i) => {
+            const flagged = checked.has(i) && !stepDone(i);
+            const complete = i !== step && stepDone(i) && (checked.has(i) || i < step);
+            return (
+              <li key={label}>
+                <button
+                  type="button"
+                  aria-current={step === i ? 'step' : undefined}
+                  aria-label={`${i + 1}. ${label}${complete ? ' — مكتملة' : flagged ? ' — ناقصة' : ''}`}
+                  onClick={() => go(i)}
+                  className="group/st flex w-full flex-col gap-2 pt-1 text-start"
+                >
+                  <span
+                    className={cn(
+                      'h-1 w-full rounded-full transition-colors duration-(--dur-slow)',
+                      step === i ? 'bg-primary' : flagged ? 'bg-warn-500' : complete ? 'bg-foreground/70' : 'bg-inset',
+                      'group-hover/st:opacity-80',
+                    )}
+                  />
+                  <span
+                    className={cn(
+                      'flex items-center gap-1 text-caption max-sm:sr-only',
+                      step === i ? 'font-medium text-foreground' : 'text-muted-foreground',
+                    )}
+                  >
+                    {complete && <CheckIcon className="size-3 text-ok-text" />}
+                    {flagged && <ExclamationIcon className="size-3 text-warn-text" />}
+                    {label}
+                  </span>
+                </button>
+              </li>
+            );
+          })}
+        </ol>
+      </nav>
+
+      <header key={`h${step}`} className="mt-10 animate-fade-up text-center">
+        <p className="text-caption text-tertiary">
+          الخطوة {step + 1} من {STEPS.length}
+        </p>
+        <h1 className="mt-2 text-2xl font-semibold sm:text-3xl">{title}</h1>
+        <p className="mx-auto mt-2 max-w-[46ch] text-control text-muted-foreground">{lead}</p>
       </header>
 
-      {isAdmin && (
-        <div className="flex flex-wrap items-center justify-between gap-3 border-b bg-sunken/60 px-5 py-3 sm:px-6">
-          <p className="text-caption text-muted-foreground">
-            من ينشر؟ — حساب الاستوديو ينشر خطوطه ويسعّرها، والمشرف ينشر خطوطاً خارجية بمصدرها.
-          </p>
+      {isAdmin && step === 3 && (
+        <div className="mt-8 flex flex-wrap items-center justify-between gap-3 rounded-lg border bg-card p-3 ps-4">
+          <p className="text-caption text-muted-foreground">من ينشر؟</p>
           <SegmentedControl
             label="وضع النشر"
             value={draft.mode}
@@ -170,134 +221,48 @@ export function PublishWorkspace({
         </div>
       )}
 
-      <div className="grid grid-cols-[minmax(0,1fr)] gap-6 p-5 sm:p-6 lg:grid-cols-[200px_minmax(0,1fr)_260px]">
-        <nav aria-label="خطوات النشر">
-          <p className="mb-2 text-caption text-tertiary">الخطوات</p>
-          <ol className="flex gap-1 overflow-x-auto lg:flex-col">
-            {STEPS.map(([label], i) => (
-              <li key={label} className="shrink-0">
-                <button
-                  type="button"
-                  aria-current={step === i ? 'step' : undefined}
-                  onClick={() => setStep(i)}
-                  className={cn(
-                    'flex w-full items-center gap-3 rounded-sm px-3 py-2.5 text-start text-control transition-colors',
-                    step === i ? 'bg-sunken font-medium' : 'text-muted-foreground hover:bg-sunken/60',
-                  )}
-                >
-                  <span
-                    dir="ltr"
-                    className={cn(
-                      'grid size-6 shrink-0 place-items-center rounded-full border text-caption',
-                      step === i && 'border-primary text-primary',
-                      showErrors && !stepDone(i) && 'border-dgr-500 text-dgr-text',
-                      showErrors && stepDone(i) && 'border-ok-500 bg-ok-500 text-white',
-                    )}
-                  >
-                    {showErrors && stepDone(i) ? <CheckIcon className="size-3" /> : i + 1}
-                  </span>
-                  {label}
-                </button>
-              </li>
-            ))}
-          </ol>
-        </nav>
+      <section aria-label={title} key={step} className="mt-8 min-w-0 animate-fade-up">
+        {step === 0 && <FilesStep draft={draft} set={set} errors={errors} />}
+        {step === 1 && <ImagesStep images={images} setImages={setImages} errors={errors} />}
+        {step === 2 && <InfoStep draft={draft} set={set} errors={errors} />}
+        {step === 3 && <PricingStep draft={draft} set={set} errors={errors} />}
+        {step === LAST && (
+          <ReviewStep
+            draft={draft}
+            set={set}
+            errors={errors}
+            images={images}
+            issues={stepIssues}
+            labels={LABELS}
+            onEdit={go}
+          />
+        )}
+      </section>
 
-        <section aria-labelledby="step-title" key={step} className="min-w-0 animate-fade-up">
-          <h2 id="step-title" className="text-xl font-semibold">
-            {title}
-          </h2>
-          <p className="mt-1 mb-6 text-meta text-muted-foreground">{lead}</p>
-          {step === 0 && <FilesStep draft={draft} set={set} errors={errors} />}
-          {step === 1 && <ImagesStep images={images} setImages={setImages} errors={errors} />}
-          {step === 2 && <InfoStep draft={draft} set={set} errors={errors} />}
-          {step === 3 && <PricingStep draft={draft} set={set} errors={errors} />}
-          {step === 4 && (
-            <div className="flex flex-col gap-5">
-              <ul className="flex flex-col gap-2">
-                {STEPS.slice(0, 4).map(([label], i) => {
-                  const missing = issues.filter((x) => STEP_OF_FIELD[String(x.path[0])] === i);
-                  return (
-                    <li key={label} className="flex items-start justify-between gap-4 rounded-md border p-4">
-                      <div>
-                        <p className="text-control font-medium">{label}</p>
-                        {missing.length > 0 && (
-                          <ul className="mt-1 flex flex-col gap-0.5 text-caption text-dgr-text">
-                            {missing.map((m) => (
-                              <li key={m.message}>{m.message}</li>
-                            ))}
-                          </ul>
-                        )}
-                      </div>
-                      {missing.length ? (
-                        <Button size="sm" variant="ghost" onClick={() => setStep(i)}>
-                          <ExclamationIcon />
-                          أكمل
-                        </Button>
-                      ) : (
-                        <Badge tone="success" icon={<CheckIcon />}>
-                          مكتمل
-                        </Badge>
-                      )}
-                    </li>
-                  );
-                })}
-              </ul>
-              <ConsentField draft={draft} set={set} errors={errors} />
-            </div>
-          )}
-          <div className="mt-8 flex justify-between gap-3">
-            <Button variant="outline" disabled={step === 0} onClick={() => setStep((s) => s - 1)}>
-              <ChevronRightIcon />
-              السابق
+      {/* شريط الإجراءات: يلتصق بأسفل الشاشة أثناء التمرير، ويستقرّ فوق التذييل في النهاية */}
+      <div className="sticky bottom-0 z-10 -mx-4 mt-10 border-t bg-background/90 px-4 py-4 backdrop-blur-md sm:mx-0 sm:rounded-t-xl sm:border-x sm:px-5">
+        <div className="flex gap-3">
+          <Button
+            variant="secondary"
+            size="lg"
+            className="border-transparent"
+            disabled={step === 0}
+            onClick={() => go(step - 1)}
+          >
+            <ChevronRightIcon />
+            رجوع
+          </Button>
+          {nextLabel ? (
+            <Button size="lg" className="flex-1" onClick={next}>
+              التالي: {nextLabel}
+              <ChevronLeftIcon />
             </Button>
-            {step < 4 ? (
-              <Button onClick={() => setStep((s) => s + 1)}>
-                التالي
-                <ChevronLeftIcon />
-              </Button>
-            ) : (
-              <Button onClick={submit} loading={pending}>
-                إرسال للمراجعة
-              </Button>
-            )}
-          </div>
-        </section>
-
-        <aside className="max-lg:hidden">
-          <p className="mb-2 text-caption text-tertiary">كما سيظهر في المكتبة</p>
-          <div className="overflow-hidden rounded-lg border">
-            <div className="relative grid aspect-[4/3] place-items-center overflow-hidden bg-(image:--grad-ink) text-3xl font-semibold text-white">
-              {images[0] ? (
-                <img src={images[0].url} alt="" className="absolute inset-0 size-full object-cover" />
-              ) : (
-                draft.nameAr || 'خطّك'
-              )}
-              <span className="absolute end-3 top-3">
-                <Badge
-                  appearance="solid"
-                  tone={draft.mode === 'admin' ? 'neutral' : draft.availability === 'paid' ? 'studio' : 'success'}
-                >
-                  {draft.mode === 'admin' ? 'خارجي' : draft.availability === 'paid' ? 'مدفوع' : 'مجاني'}
-                </Badge>
-              </span>
-            </div>
-            <div className="p-4">
-              <p className="font-semibold">{draft.nameAr || 'اسم الخط'}</p>
-              <p className="text-caption text-muted-foreground">
-                {draft.designers || 'المصمّم'} · {draft.files.length} أوزان
-              </p>
-            </div>
-          </div>
-          <ul className="mt-4 flex flex-col gap-1.5 text-caption">
-            {STEPS.slice(0, 4).map(([label], i) => (
-              <li key={label} className={cn('flex items-center gap-2', stepDone(i) ? 'text-ok-text' : 'text-tertiary')}>
-                {stepDone(i) ? <CheckIcon className="size-3.5" /> : <span className="h-px w-3.5 bg-current" />}
-                {label}
-              </li>
-            ))}
-          </ul>
-        </aside>
+          ) : (
+            <Button size="lg" className="flex-1" onClick={submit} loading={pending}>
+              إرسال للمراجعة
+            </Button>
+          )}
+        </div>
       </div>
     </div>
   );

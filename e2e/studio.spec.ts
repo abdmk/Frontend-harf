@@ -36,35 +36,43 @@ test.describe('الاستوديو والإدارة', () => {
     expect(download.suggestedFilename()).toMatch(/\.csv$/);
   });
 
-  test('مساحة النشر: النواقص مسمّاة ثم إرسال ناجح', async ({ page }) => {
+  test('مساحة النشر: «التالي» يسمّي النواقص، والمراجعة تعرض المُدخل ثم إرسال ناجح', async ({ page }) => {
     await page.goto('/studio/publish?as=studio');
-    await page.getByRole('button', { name: 'إرسال للمراجعة' }).first().click();
+    await expect(page.getByText('الخطوة 1 من 5')).toBeVisible();
+    // «التالي» بلا ملفات: يسمّي الناقص ولا يتقدّم
+    await page.getByRole('button', { name: 'التالي: الصور' }).click();
     await expect(page.getByText('ارفع ملف خط واحداً على الأقل.')).toBeVisible();
+    await expect(page.getByText('الخطوة 1 من 5')).toBeVisible();
 
-    await page.getByRole('button', { name: /الملفات/ }).click();
     await page.locator('input[type=file]').setInputFiles([
       { name: 'Tufula-Regular.otf', mimeType: 'font/otf', buffer: Buffer.alloc(2048) },
       { name: 'Tufula-Bold.otf', mimeType: 'font/otf', buffer: Buffer.alloc(2048) },
     ]);
-    await expect(page.getByRole('cell', { name: '700 Bold' })).toBeVisible();
+    await expect(page.getByText('700 Bold')).toBeVisible();
+    await page.getByRole('button', { name: 'التالي: الصور' }).click();
 
-    await page.getByRole('button', { name: /الصور/ }).click();
     const png = Buffer.from(
       'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==',
       'base64',
     );
     await page.locator('input[type=file]').setInputFiles([{ name: 'cover.png', mimeType: 'image/png', buffer: png }]);
     await expect(page.getByText('الغلاف')).toBeVisible();
+    await page.getByRole('button', { name: 'التالي: المعلومات' }).click();
 
-    await page.getByRole('button', { name: /المعلومات/ }).click();
     await page.getByLabel(/الاسم بالعربية/).fill('طفولة');
     await page.getByLabel(/المصمّمون/).fill('عبدالملك جاسم');
     await page.getByRole('group', { name: 'التصنيف' }).getByRole('button', { name: 'عناوين' }).click();
     await page.getByRole('group', { name: 'اللغات' }).getByRole('button', { name: 'العربية' }).click();
+    await page.getByRole('button', { name: 'التالي: الإتاحة' }).click();
+    await page.getByRole('button', { name: 'التالي: المراجعة' }).click();
 
-    await page.getByRole('button', { name: /المراجعة/ }).click();
+    // المراجعة تعرض ما أُدخل، والإرسال بلا إقرار يسمّيه
+    await expect(page.getByText('كل شيء جاهز')).toBeVisible();
+    await expect(page.getByRole('definition').filter({ hasText: 'عبدالملك جاسم' })).toBeVisible();
+    await page.getByRole('button', { name: 'إرسال للمراجعة' }).click();
+    await expect(page.getByText('أقرّ بملكية الحقوق قبل الإرسال.')).toBeVisible();
     await page.getByRole('checkbox').click();
-    await page.getByRole('button', { name: 'إرسال للمراجعة' }).last().click();
+    await page.getByRole('button', { name: 'إرسال للمراجعة' }).click();
     await expect(page.getByRole('heading', { name: 'أُرسل الخط للمراجعة' })).toBeVisible();
   });
 });
