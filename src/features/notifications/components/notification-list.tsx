@@ -25,27 +25,58 @@ function Emphasis({ text, strong }: { text: string; strong?: string }) {
   );
 }
 
+/** القائمة المنسدلة بمقاسات قائمة الحساب نفسها (صفوف مستديرة، نص 13px)؛ الصفحة أرحب */
+const SIZE = {
+  page: {
+    root: 'pb-2',
+    empty: 'px-5 py-10 text-sm',
+    heading: 'px-5 pt-4 pb-2 text-xs',
+    list: '',
+    row: 'gap-3 px-5 py-3',
+    badge: 'size-10',
+    icon: 'size-4.5',
+    text: 'text-sm',
+    time: 'text-xs',
+    dot: 'mt-2 size-6',
+  },
+  menu: {
+    root: '',
+    empty: 'px-3 py-8 text-control',
+    heading: 'px-2.5 pt-3 pb-1.5 text-caption',
+    list: 'flex flex-col gap-0.5',
+    row: 'gap-2.5 rounded-md px-2.5 py-2',
+    badge: 'size-8',
+    icon: 'size-4',
+    text: 'text-control',
+    time: 'text-caption',
+    dot: 'mt-1 size-5',
+  },
+} as const;
+
 export function NotificationList({
   items,
   onRead,
   titleLevel = 'h3',
   emptyText = 'لا إشعارات بعد.',
+  variant = 'page',
 }: {
   items: NotificationView[];
   onRead: (id: string) => void;
   titleLevel?: 'h2' | 'h3';
   emptyText?: string;
+  variant?: keyof typeof SIZE;
 }) {
-  if (!items.length) return <p className="px-5 py-10 text-center text-sm text-tertiary">{emptyText}</p>;
+  const s = SIZE[variant];
+  if (!items.length) return <p className={cn('text-center text-tertiary', s.empty)}>{emptyText}</p>;
   const Heading = titleLevel;
   return (
-    <div className="pb-2">
+    <div className={s.root}>
       {groupViews(items).map((g) => (
         <section key={g.key} aria-labelledby={`ntf-${g.key}`}>
-          <Heading id={`ntf-${g.key}`} className="px-5 pt-4 pb-2 text-xs font-medium text-muted-foreground">
+          <Heading id={`ntf-${g.key}`} className={cn('font-medium text-muted-foreground', s.heading)}>
             {g.label}
           </Heading>
-          <ul>
+          <ul className={s.list}>
             {g.items.map((n) => {
               const { Icon, tone } = KIND[n.kind];
               return (
@@ -55,25 +86,27 @@ export function NotificationList({
                     onClick={() => onRead(n.id)}
                     aria-label={n.unread ? `${n.text} — غير مقروء` : undefined}
                     className={cn(
-                      'flex w-full items-start gap-3 px-5 py-3 text-start transition-colors hover:bg-sunken focus-visible:bg-sunken focus-visible:outline-none',
+                      'flex w-full items-start text-start transition-colors hover:bg-sunken focus-visible:bg-sunken focus-visible:outline-none',
+                      s.row,
                       n.unread && 'bg-tint-brand/40 hover:bg-tint-brand/60',
                     )}
                   >
-                    <span className={cn('grid size-10 shrink-0 place-items-center rounded-full', tone)}>
-                      <Icon className="size-4.5" />
+                    <span className={cn('grid shrink-0 place-items-center rounded-full', s.badge, tone)}>
+                      <Icon className={s.icon} />
                     </span>
                     <span className="min-w-0 flex-1 pt-0.5">
-                      <span className="block text-sm leading-relaxed">
+                      <span className={cn('block leading-relaxed', s.text)}>
                         <Emphasis text={n.text} strong={n.strong} />
                       </span>
-                      <time dateTime={n.at} className="mt-0.5 block text-xs text-tertiary">
+                      <time dateTime={n.at} className={cn('mt-0.5 block text-tertiary', s.time)}>
                         {n.when}
                       </time>
                     </span>
                     <span
                       aria-hidden
                       className={cn(
-                        'mt-2 grid size-6 shrink-0 place-items-center rounded-full transition-opacity',
+                        'grid shrink-0 place-items-center rounded-full transition-opacity',
+                        s.dot,
                         n.unread ? 'bg-tint-brand' : 'opacity-0',
                       )}
                     >
@@ -90,13 +123,24 @@ export function NotificationList({
   );
 }
 
-export function MarkAllRead({ disabled, onClick }: { disabled: boolean; onClick: () => void }) {
+export function MarkAllRead({
+  disabled,
+  onClick,
+  className,
+}: {
+  disabled: boolean;
+  onClick: () => void;
+  className?: string;
+}) {
   return (
     <button
       type="button"
       disabled={disabled}
       onClick={onClick}
-      className="rounded-xs px-2 py-1 text-sm font-medium text-primary transition-colors hover:bg-tint-brand disabled:text-tertiary disabled:hover:bg-transparent"
+      className={cn(
+        'rounded-xs px-2 py-1 text-sm font-medium text-primary transition-colors hover:bg-tint-brand disabled:text-tertiary disabled:hover:bg-transparent',
+        className,
+      )}
     >
       تعليم الكل كمقروء
     </button>

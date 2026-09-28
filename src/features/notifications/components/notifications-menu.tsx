@@ -41,24 +41,27 @@ export function NotificationsMenu({ initial, allHref }: { initial: NotificationV
       <PopoverContent
         align="end"
         sideOffset={10}
-        className="flex max-h-[min(560px,calc(100dvh-96px))] w-[min(380px,calc(100vw-24px))] flex-col overflow-hidden rounded-lg p-0 shadow-float"
+        className="flex max-h-[min(520px,calc(100dvh-96px))] w-[min(300px,calc(100vw-24px))] flex-col overflow-hidden rounded-xl p-2.5 shadow-overlay"
       >
-        <div className="flex items-center justify-between border-b border-border px-5 py-4">
-          <p className="text-lg font-bold">الإشعارات</p>
-          <MarkAllRead disabled={!unread} onClick={markAllRead} />
+        <div className="flex items-center justify-between gap-2 px-2.5 pt-1 pb-2.5">
+          <p className="text-control font-semibold">الإشعارات</p>
+          <MarkAllRead disabled={!unread} onClick={markAllRead} className="-me-2 text-meta" />
         </div>
-        <div className="min-h-0 flex-1 overflow-y-auto">
+        <hr className="-mx-2.5 border-border" />
+        <div className="-mx-2.5 min-h-0 flex-1 overflow-y-auto px-2.5">
           {/* القائمة للحديث فقط (اليوم وهذا الأسبوع)؛ الأقدم في صفحة «كل الإشعارات» */}
           <NotificationList
+            variant="menu"
             items={items.filter((n) => n.group !== 'earlier')}
             onRead={markRead}
             emptyText="لا جديد هذا الأسبوع."
           />
         </div>
+        <hr className="-mx-2.5 mt-2.5 border-border" />
         <Link
           to={allHref}
           onClick={() => setOpen(false)}
-          className="border-t border-border px-5 py-3.5 text-center text-sm text-muted-foreground transition-colors hover:bg-sunken hover:text-foreground"
+          className="mt-2 grid h-9 place-items-center rounded-md text-control text-muted-foreground transition-colors hover:bg-sunken hover:text-foreground"
         >
           عرض كل الإشعارات
         </Link>
