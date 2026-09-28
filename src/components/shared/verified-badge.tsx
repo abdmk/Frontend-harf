@@ -17,7 +17,7 @@ export function VerifiedBadge({ className }: { className?: string }) {
           strokeLinejoin="round"
         />
       </svg>
-      <span className="sr-only">موثّق</span>
+      <span className="sr-only"> موثّق</span>
     </span>
   );
 }

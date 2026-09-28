@@ -18,7 +18,14 @@ export function CheckoutPage() {
     <Container as="main" id="main" className="py-10 sm:py-14">
       <PageMeta title="الدفع" noindex />
       <h1 className="mb-8 text-2xl font-semibold">الدفع</h1>
-      <div className="grid grid-cols-[minmax(0,1fr)] items-start gap-6 lg:grid-cols-[minmax(0,1fr)_360px]">
+      {/* بلا عناصر: الحالة الفارغة بعرض الصفحة بدل عمود بجانبه فراغ */}
+      <div
+        className={
+          cart.items.length
+            ? 'grid grid-cols-[minmax(0,1fr)] items-start gap-6 lg:grid-cols-[minmax(0,1fr)_360px]'
+            : undefined
+        }
+      >
         <div className="order-2 lg:order-1">
           <CheckoutForm user={user} total={cart.total} empty={!cart.items.length} action={pay} />
         </div>
