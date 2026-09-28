@@ -19,6 +19,8 @@ export type NavItem = {
   Icon: (p: IconProps) => React.JSX.Element;
   meta?: (u: User) => string | undefined;
   badge?: string;
+  /** وجهة خارج صفحة الحساب بدل /account/<section> */
+  href?: string;
 };
 
 export const PLAN_LABEL = { free: 'المجانية', basic: 'الأساسية', studio: 'الاستوديو' } as const;
