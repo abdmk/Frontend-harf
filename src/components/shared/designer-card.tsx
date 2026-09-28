@@ -1,5 +1,6 @@
 import { Avatar } from './avatar';
 import { FollowButton } from './follow-button';
+import { VerifiedBadge } from './verified-badge';
 
 /** بطاقة المصمّم المختصرة (دليل التصميم 4.1): غلاف، صورة، متابعة، أرقام، وأشهر خطوطه */
 export function DesignerCard({
@@ -31,24 +32,10 @@ export function DesignerCard({
         </div>
         <h3 className="mt-3 flex items-center gap-1.5 text-lg font-semibold">
           {name}
-          {verified && (
-            <span className="grid size-4 place-items-center rounded-full bg-trial-500 text-white" title="موثّق">
-              <svg viewBox="0 0 12 12" aria-hidden className="size-2.5">
-                <path
-                  d="M2.5 6.2 5 8.5l4.5-5"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="1.6"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
-              <span className="sr-only">موثّق</span>
-            </span>
-          )}
+          {verified && <VerifiedBadge />}
         </h3>
         <p className="text-caption text-muted-foreground">{subtitle}</p>
-        <dl className="mt-4 grid grid-cols-3 divide-x divide-border rounded-md bg-sunken py-3 text-center divide-x-reverse">
+        <dl className="mt-4 grid grid-cols-3 divide-x divide-border rounded-md bg-sunken py-3 text-center">
           {(
             [
               ['خطوط', stats.fonts],

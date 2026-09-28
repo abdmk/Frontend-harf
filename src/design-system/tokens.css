@@ -64,6 +64,8 @@
   --grad-ai: linear-gradient(135deg, #ec7bd8 0%, #6233f5 52%, #4c8dff 100%);
   --grad-dawn: linear-gradient(135deg, #ffe3e3 0%, #fff2ee 44%, #eae2ff 100%);
   --grad-ink: linear-gradient(160deg, #292734 0%, #1a1822 100%);
+  /* غلاف صفحة المسبك: حبر يميل إلى البرقوقي جهة الشعار (تصميم «مسبك تجاريب») */
+  --grad-cover: linear-gradient(90deg, #211f22 0%, #25211f 45%, #3f2532 78%, #412646 100%);
   --sheet: #ffffff; /* أرضية الأوراق الجانبية (التصفية…) */
   --sheet-inset: #ffffff; /* البطاقات داخل الورقة */
   --callout: #f6f6f8; /* أرضية أقسام الدعوة (CTA) */
@@ -141,6 +143,7 @@
     rgb(98 51 245 / 0.2) 100%
   );
   --grad-ink: linear-gradient(160deg, #211f2a 0%, #141319 100%);
+  --grad-cover: linear-gradient(90deg, #171518 0%, #1a1716 45%, #2f1b25 78%, #311c35 100%);
   --shadow-soft: 0 2px 4px rgb(0 0 0 / 0.45), 0 6px 14px rgb(0 0 0 / 0.4);
   --shadow-float: 0 4px 8px rgb(0 0 0 / 0.5), 0 14px 32px rgb(0 0 0 / 0.5);
   --shadow-overlay: 0 8px 16px rgb(0 0 0 / 0.55), 0 28px 64px rgb(0 0 0 / 0.6);
