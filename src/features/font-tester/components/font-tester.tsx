@@ -1,18 +1,10 @@
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 
-import {
-  AlignCenterIcon,
-  AlignJustifyIcon,
-  AlignLeftIcon,
-  AlignRightIcon,
-  CopyIcon,
-  InterliningIcon,
-  PaletteIcon,
-  RefreshIcon,
-  TextIcon,
-} from '@/components/ui/icons';
+import { AlignCenterIcon, AlignJustifyIcon, AlignLeftIcon, AlignRightIcon, TextIcon } from '@/components/ui/icons';
 import { cn } from '@/lib/cn';
 import { weightStyle } from '@/lib/font-weight';
+
+import { OPENTYPE_FEATURES, type OpenTypeTag } from './opentype-features';
 
 const PARAGRAPH =
   'لا إبداع حيث لا حرية، ولا فكرة حقيقية تولد في مكان يخشى السؤال. يبدأ الإبداع حين نمنح العقل مساحة للشك، وللتجربة، وللبحث، ولارتكاب الخطأ دون خوف من الحكم أو التراجع. فالأفكار الجديدة لا تأتي من الطرق الآمنة دائماً، بل غالباً ما تبدأ من تساؤل بسيط، أو محاولة غير مكتملة، أو خطوة لا تبدو مألوفة في بدايتها.\n\nكل عمل مختلف كان يوماً احتمالاً غريباً، وكل طريق جديد بدأ بخطوة لم يجرؤ أحد على اتخاذها من قبل. لذلك لا تكون الحرية مجرد جزء من العملية الإبداعية، بل البيئة التي ينمو فيها الإبداع أصلاً: مساحة تسمح للفكرة أن تتغير، وأن تختبر، وأن تفشل أحياناً، ثم تعود بصورة أقوى وأكثر وضوحاً.';
@@ -40,23 +32,29 @@ const ALIGNS = [
   ['center', 'وسط', AlignCenterIcon],
   ['left', 'يسار', AlignLeftIcon],
 ] as const;
-const LINE_HEIGHTS = [1.9, 1.5, 2.4];
+/** الربط القياسي والبدائل السياقية مفعّلان افتراضياً في المتصفّحات؛ البقيّة يختارها المستخدم */
+const FEATURES_DEFAULT: Record<OpenTypeTag, boolean> = {
+  liga: true,
+  calt: true,
+  dlig: false,
+  swsh: false,
+  salt: false,
+};
+const featureSettings = (f: Record<OpenTypeTag, boolean>) =>
+  OPENTYPE_FEATURES.map(({ tag }) => `"${tag}" ${f[tag] ? 1 : 0}`).join(', ');
 
 const initial = {
   preset: 'para' as Preset,
   size: 24,
   weight: 300,
   align: 'justify' as (typeof ALIGNS)[number][0],
-  lh: 0,
-  invert: false,
+  features: FEATURES_DEFAULT,
 };
 
-/** مختبر الخط: نصّ قابل للتحرير مع حجم ووزن ومحاذاة وتباعد وقلب ألوان */
+/** مختبر الخط: نصّ قابل للتحرير مع حجم ووزن ومحاذاة وميزات OpenType */
 export function FontTester() {
   const [s, setS] = useState(initial);
-  const [status, setStatus] = useState('');
   const [swap, setSwap] = useState(0);
-  const textRef = useRef<HTMLDivElement>(null);
 
   function preset(p: Preset) {
     setS((x) => ({ ...x, preset: p, size: PRESETS[p].size }));
@@ -89,7 +87,6 @@ export function FontTester() {
 
       <div
         key={swap}
-        ref={textRef}
         contentEditable
         suppressContentEditableWarning
         role="textbox"
@@ -104,70 +101,39 @@ export function FontTester() {
         }}
         className={cn(
           'min-h-56 p-5 [overflow-wrap:anywhere] whitespace-pre-wrap outline-none focus-visible:shadow-[inset_0_0_0_2px_var(--primary)] sm:p-8',
-          'transition-[font-size,line-height,color,background-color] duration-300 ease-out-quint',
+          'leading-[1.9] transition-[font-size] duration-300 ease-out-quint',
           swap > 0 && 'animate-fade-up',
-          s.invert && 'bg-foreground text-background',
         )}
-        style={{ fontSize: s.size, lineHeight: LINE_HEIGHTS[s.lh], textAlign: s.align, ...weightStyle(s.weight) }}
+        style={{
+          fontSize: s.size,
+          textAlign: s.align,
+          fontFeatureSettings: featureSettings(s.features),
+          ...weightStyle(s.weight),
+        }}
       >
         {PRESETS[s.preset].text}
       </div>
 
       <div className="flex flex-wrap items-center justify-between gap-x-6 gap-y-3 border-t border-subtle px-5 py-3">
-        <div role="group" aria-label="أدوات" className="flex items-center gap-1">
-          <button
-            type="button"
-            className={iconBtn}
-            aria-pressed={s.lh !== 0}
-            aria-label="تباعد الأسطر"
-            title="تباعد الأسطر"
-            onClick={() => setS((x) => ({ ...x, lh: (x.lh + 1) % LINE_HEIGHTS.length }))}
-          >
-            <InterliningIcon className="size-4" />
-          </button>
-          <button
-            type="button"
-            className={iconBtn}
-            aria-pressed={s.invert}
-            aria-label="قلب الألوان"
-            title="قلب الألوان"
-            onClick={() => setS((x) => ({ ...x, invert: !x.invert }))}
-          >
-            <PaletteIcon className="size-4" />
-          </button>
-          <button
-            type="button"
-            className={iconBtn}
-            aria-label="نسخ النص"
-            title="نسخ النص"
-            onClick={() => {
-              const t = textRef.current?.textContent ?? '';
-              navigator.clipboard?.writeText(t).then(
-                () => {
-                  setStatus('نُسخ النص');
-                  window.setTimeout(() => setStatus(''), 1600);
-                },
-                () => undefined,
-              );
-            }}
-          >
-            <CopyIcon className="size-4" />
-          </button>
-          <button
-            type="button"
-            className={iconBtn}
-            aria-label="إعادة الضبط"
-            title="إعادة الضبط"
-            onClick={() => {
-              setS(initial);
-              setSwap((n) => n + 1);
-            }}
-          >
-            <RefreshIcon className="size-4" />
-          </button>
-          <span className="sr-only" aria-live="polite">
-            {status}
-          </span>
+        {/* ميزات OpenType: كل زرّ يبدّل ميزة واحدة في النصّ — المفعّلة بإطار وحرف بلون الهوية */}
+        <div role="group" aria-label="ميزات OpenType" className="flex items-center gap-1.5">
+          {OPENTYPE_FEATURES.map((f) => (
+            <button
+              key={f.tag}
+              type="button"
+              aria-pressed={s.features[f.tag]}
+              aria-label={`${f.label} (${f.tag})`}
+              title={`${f.label} — ${f.tag}`}
+              onClick={() => setS((x) => ({ ...x, features: { ...x.features, [f.tag]: !x.features[f.tag] } }))}
+              className="grid size-8 place-items-center rounded-xs border bg-sunken text-muted-foreground transition-[color,background-color,border-color,scale] duration-(--dur-base) hover:border-strong hover:text-foreground active:scale-95 aria-pressed:border-primary aria-pressed:bg-tint-brand aria-pressed:text-primary"
+            >
+              <svg viewBox="2 2 20 20" aria-hidden className="size-6" fill="currentColor">
+                {f.paths.map((d) => (
+                  <path key={d} d={d} />
+                ))}
+              </svg>
+            </button>
+          ))}
         </div>
 
         <label className="flex items-center gap-3 text-caption text-muted-foreground">
