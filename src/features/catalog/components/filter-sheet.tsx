@@ -1,12 +1,12 @@
 import { ToggleGroup as ToggleGroupPrimitive } from 'radix-ui';
 import { type ReactElement, type ReactNode, useMemo, useState } from 'react';
 
+import { PanelSheetContent } from '@/components/shared/panel-sheet';
 import { RangeField } from '@/components/shared/range-field';
 import { Button } from '@/components/ui/button';
 import { Chip, ChipGroup } from '@/components/ui/chip-group';
 import { CrossIcon } from '@/components/ui/icons';
-import { Sheet, SheetClose, SheetContent, SheetDescription, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
-import { below } from '@/design-system/tokens';
+import { Sheet, SheetClose, SheetDescription, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { getFonts } from '@/features/catalog/api/get-fonts';
 import {
   type CatalogQuery,
@@ -20,8 +20,6 @@ import {
 } from '@/features/catalog/types/catalog-query';
 import { activeFilterCount } from '@/features/catalog/utils/filter-fonts';
 import { DATE_LABEL, LICENSE_FILTER_LABEL } from '@/features/catalog/utils/labels';
-import { useMediaQuery } from '@/hooks/use-media-query';
-import { cn } from '@/lib/cn';
 import { weightsLabel } from '@/lib/format';
 import { LANG_LABEL } from '@/lib/labels';
 import { LANGS, type Lang } from '@/types/domain/font';
@@ -56,7 +54,6 @@ function showLabel(n: number) {
 export function FilterSheet({ trigger }: { trigger: ReactElement }) {
   const { query, setQuery } = useCatalog();
   const [open, setOpen] = useState(false);
-  const mobile = useMediaQuery(below('sm'));
   const [draft, setDraft] = useState<Draft>(() => pick(query));
   // معاينة العدد على بيانات العرض؛ مع خادم حقيقي تصير طلب عدٍّ مؤجَّلاً (debounced)
   const total = useMemo(() => (open ? getFonts({ ...query, ...draft }).length : 0), [open, query, draft]);
@@ -72,18 +69,8 @@ export function FilterSheet({ trigger }: { trigger: ReactElement }) {
   return (
     <Sheet open={open} onOpenChange={handleOpen}>
       <SheetTrigger asChild>{trigger}</SheetTrigger>
-      <SheetContent
-        side={mobile ? 'bottom' : 'center'}
-        showCloseButton={false}
-        className={cn(
-          'gap-0 border bg-sheet p-0 shadow-overlay',
-          mobile
-            ? 'max-h-[92dvh] rounded-t-xl data-[state=open]:duration-500'
-            : 'max-h-[min(760px,calc(100dvh-2rem))] w-[min(520px,calc(100vw-2rem))]',
-        )}
-      >
-        {mobile && <span aria-hidden className="mx-auto mt-2.5 h-1 w-10 rounded-full bg-strong" />}
-        <div className="flex items-center gap-3 border-b px-6 py-4">
+      <PanelSheetContent>
+        <div className="flex items-center gap-3 border-b px-5 py-4">
           <SheetTitle className="flex-1 text-lg font-semibold">تصفية</SheetTitle>
           <SheetDescription className="sr-only">
             اختر الرخصة واللغة وتاريخ النشر ونطاق السعر وعدد الأوزان
@@ -104,7 +91,7 @@ export function FilterSheet({ trigger }: { trigger: ReactElement }) {
           </SheetClose>
         </div>
 
-        <div className="flex-1 divide-y overflow-y-auto overscroll-contain px-6">
+        <div className="flex-1 divide-y overflow-y-auto overscroll-contain px-5">
           <Section title="الرخصة" onReset={draft.license !== 'all' ? () => patch({ license: 'all' }) : undefined}>
             <ToggleGroupPrimitive.Root
               type="single"
@@ -182,9 +169,9 @@ export function FilterSheet({ trigger }: { trigger: ReactElement }) {
           </Section>
         </div>
 
-        <div className="border-t px-6 pt-4 pb-5">
+        <div className="border-t px-5 py-4">
           <Button
-            size="xl"
+            size="lg"
             className="w-full"
             disabled={total === 0}
             onClick={() => {
@@ -195,7 +182,7 @@ export function FilterSheet({ trigger }: { trigger: ReactElement }) {
             <span aria-live="polite">{showLabel(total)}</span>
           </Button>
         </div>
-      </SheetContent>
+      </PanelSheetContent>
     </Sheet>
   );
 }

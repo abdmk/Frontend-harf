@@ -42,7 +42,7 @@ export function CartMenu({
       <PopoverContent
         align="end"
         sideOffset={10}
-        className="w-[min(380px,calc(100vw-24px))] rounded-lg p-0 shadow-float"
+        className="w-[min(var(--container-menu),calc(100vw-24px))] rounded-xl p-0 shadow-overlay"
       >
         <div className="flex items-center justify-between px-5 pt-4 pb-2">
           <p className="text-sm font-semibold">السلة</p>

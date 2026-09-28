@@ -25,7 +25,7 @@ export function UploadDialog({ children }: { children: ReactNode }) {
       <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent
         showCloseButton={false}
-        className="max-h-[calc(100dvh-2rem)] gap-0 overflow-y-auto rounded-xl border p-6 shadow-overlay sm:max-w-140 sm:p-8"
+        className="max-h-[calc(100dvh-2rem)] gap-0 overflow-y-auto rounded-xl border p-6 shadow-overlay sm:max-w-dialog-md"
       >
         <UploadPanel />
       </DialogContent>

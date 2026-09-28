@@ -45,7 +45,7 @@ export function AccountMenu({
         <PopoverContent
           align="end"
           sideOffset={10}
-          className="max-h-[calc(100dvh-96px)] w-[min(300px,calc(100vw-24px))] overflow-y-auto rounded-xl p-2.5 shadow-overlay"
+          className="max-h-[calc(100dvh-96px)] w-[min(var(--container-menu),calc(100vw-24px))] overflow-y-auto rounded-xl p-2.5 shadow-overlay"
         >
           <AccountPanel
             user={user}

@@ -73,7 +73,7 @@ export function PlansDialog({
     >
       {trigger && <DialogTrigger asChild>{trigger}</DialogTrigger>}
       <DialogContent
-        className="gap-0 overflow-hidden p-0 sm:max-w-280 sm:p-0"
+        className="gap-0 overflow-hidden p-0 sm:max-w-page sm:p-0"
         // نافذة عرض لا تأكيد: التركيز على النافذة نفسها بدل حلقة على «شهري»
         onOpenAutoFocus={(e) => {
           e.preventDefault();

@@ -2,6 +2,7 @@ import { Collapsible as CollapsiblePrimitive, RadioGroup as RadioGroupPrimitive 
 import { type ReactElement, useMemo, useState, useTransition } from 'react';
 import { useNavigate } from 'react-router';
 
+import { PanelSheetContent } from '@/components/shared/panel-sheet';
 import { PriceDisplay } from '@/components/shared/price-display';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -15,11 +16,9 @@ import {
   GlobeIcon,
   MobileIcon,
 } from '@/components/ui/icons';
-import { Sheet, SheetClose, SheetContent, SheetDescription, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
+import { Sheet, SheetClose, SheetDescription, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { toast } from '@/components/ui/toast';
 import { paths } from '@/config/paths';
-import { below } from '@/design-system/tokens';
-import { useMediaQuery } from '@/hooks/use-media-query';
 import { cn } from '@/lib/cn';
 import { quote, USE_LABEL } from '@/lib/commerce/quote';
 import { weightStyle } from '@/lib/font-weight';
@@ -73,7 +72,6 @@ export function LicenseSheet({
   submitLabel,
 }: Props) {
   const [open, setOpen] = useState(!!defaultOpen);
-  const mobile = useMediaQuery(below('sm'));
   const [sel, setSel] = useState<LicenseSelection>(() => initial ?? defaultSelection(pricing));
   const [pending, startTransition] = useTransition();
   const [intent, setIntent] = useState<'cart' | 'buy' | null>(null);
@@ -114,20 +112,11 @@ export function LicenseSheet({
   return (
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>{trigger}</SheetTrigger>
-      <SheetContent
-        side={mobile ? 'bottom' : 'center'}
-        showCloseButton={false}
-        className={cn(
-          'gap-0 border bg-sheet p-0 shadow-overlay',
-          mobile
-            ? 'max-h-[92dvh] rounded-t-xl data-[state=open]:duration-500'
-            : 'max-h-[min(880px,calc(100dvh-2rem))] w-[min(560px,calc(100vw-2rem))]',
-        )}
-      >
-        <header className="flex items-center gap-4 border-b px-6 py-5">
+      <PanelSheetContent>
+        <header className="flex items-center gap-3 border-b px-5 py-4">
           <span
             aria-hidden
-            className="grid size-12 shrink-0 place-items-center rounded-sm bg-ink text-lg font-semibold text-ink-foreground"
+            className="grid size-10 shrink-0 place-items-center rounded-xs bg-ink text-control font-semibold text-ink-foreground"
           >
             {fontName.slice(0, 2)}
           </span>
@@ -139,13 +128,13 @@ export function LicenseSheet({
               {foundry} · {pricing.weights.length} أوزان · OTF / WOFF2
             </SheetDescription>
           </div>
-          <SheetClose className="grid size-9 place-items-center rounded-full text-muted-foreground transition-colors hover:bg-sunken hover:text-foreground">
+          <SheetClose className="-me-2 grid size-9 place-items-center rounded-full text-muted-foreground transition-colors hover:bg-sunken hover:text-foreground">
             <CrossIcon className="size-4" />
             <span className="sr-only">إغلاق</span>
           </SheetClose>
         </header>
 
-        <div className="flex flex-1 flex-col gap-8 overflow-y-auto overscroll-contain px-6 py-6">
+        <div className="flex flex-1 flex-col gap-6 overflow-y-auto overscroll-contain px-5 py-5">
           <section aria-labelledby="lic-q1">
             <Step n={1} id="lic-q1">
               ماذا تشتري؟
@@ -178,8 +167,8 @@ export function LicenseSheet({
             <Step n={2} id="lic-q2">
               أين ستستعمله؟
             </Step>
-            <p className="-mt-2 mb-4 text-meta text-muted-foreground">اختر كل ما ينطبق — ولكل استخدام نطاقه.</p>
-            <div className="flex flex-col gap-3">
+            <p className="-mt-1.5 mb-3 text-caption text-muted-foreground">اختر كل ما ينطبق — ولكل استخدام نطاقه.</p>
+            <div className="flex flex-col gap-2">
               {LICENSE_USES.map((use) => {
                 const tiers = pricing.uses[use];
                 const on = !!sel.uses[use];
@@ -189,7 +178,7 @@ export function LicenseSheet({
                   <div
                     key={use}
                     className={cn(
-                      'rounded-md border p-4 transition-colors duration-(--dur-base)',
+                      'rounded-md border p-3.5 transition-colors duration-(--dur-base)',
                       on ? 'border-primary bg-tint-brand/60' : 'bg-card hover:border-strong',
                     )}
                   >
@@ -229,7 +218,7 @@ export function LicenseSheet({
                   </div>
                 );
               })}
-              <p className="flex flex-wrap items-center justify-between gap-2 rounded-md border border-dashed px-4 py-3 text-meta text-muted-foreground">
+              <p className="flex flex-wrap items-center justify-between gap-2 rounded-md border border-dashed px-3.5 py-2.5 text-caption text-muted-foreground">
                 استخدام أوسع؟ علامة تجارية، بثّ، أو مؤسسة كبيرة
                 <a href="mailto:hello@harf.co" className="font-medium text-primary hover:underline">
                   تواصل معنا
@@ -239,12 +228,12 @@ export function LicenseSheet({
           </section>
 
           <CollapsiblePrimitive.Root className="rounded-md border">
-            <CollapsiblePrimitive.Trigger className="group flex w-full items-center justify-between px-4 py-3.5 text-control font-medium">
+            <CollapsiblePrimitive.Trigger className="group flex w-full items-center justify-between px-3.5 py-3 text-control font-medium">
               ماذا يشمل الترخيص؟
               <ChevronDownIcon className="size-4 transition-transform group-data-[state=open]:rotate-180" />
             </CollapsiblePrimitive.Trigger>
             <CollapsiblePrimitive.Content className="overflow-hidden data-[state=closed]:animate-collapsible-up data-[state=open]:animate-collapsible-down">
-              <ul className="flex flex-col gap-2 px-4 pb-4 text-meta text-muted-foreground">
+              <ul className="flex flex-col gap-1.5 px-3.5 pb-3.5 text-meta text-muted-foreground">
                 <li>ملفات الخط بالصيغ المتاحة للحزمة المختارة.</li>
                 <li>ملف ترخيص باسم صاحب الترخيص يصلك مع الإيصال.</li>
                 <li>نصّ شروط الترخيص الكامل يُعرض هنا كما تعتمده حرف.</li>
@@ -253,8 +242,8 @@ export function LicenseSheet({
           </CollapsiblePrimitive.Root>
         </div>
 
-        <footer className="border-t px-6 pt-4 pb-5">
-          <div className="mb-4 flex items-end justify-between gap-4">
+        <footer className="border-t px-5 py-4">
+          <div className="mb-3 flex items-end justify-between gap-4">
             <div className="min-w-0">
               <p className="text-caption text-tertiary">الإجمالي</p>
               <div aria-live="polite">
@@ -285,14 +274,14 @@ export function LicenseSheet({
             )}
           </div>
         </footer>
-      </SheetContent>
+      </PanelSheetContent>
     </Sheet>
   );
 }
 
 function Step({ n, id, children }: { n: number; id: string; children: string }) {
   return (
-    <h3 id={id} className="mb-4 flex items-center gap-2 text-base font-semibold">
+    <h3 id={id} className="mb-3 flex items-center gap-2 text-control font-semibold">
       <span
         dir="ltr"
         className="grid size-6 place-items-center rounded-full bg-sunken text-caption text-muted-foreground"
@@ -320,7 +309,7 @@ function PackageOption({
   return (
     <RadioGroupPrimitive.Item
       value={value}
-      className="group flex items-start gap-3 rounded-md border bg-card p-4 text-start transition-colors duration-(--dur-base) hover:border-strong data-[state=checked]:border-primary data-[state=checked]:bg-tint-brand/60"
+      className="group flex items-start gap-3 rounded-md border bg-card p-3.5 text-start transition-colors duration-(--dur-base) hover:border-strong data-[state=checked]:border-primary data-[state=checked]:bg-tint-brand/60"
     >
       <span className="mt-0.5 size-5 shrink-0 rounded-full border-[1.5px] border-strong bg-card transition-[border-width,border-color] duration-(--dur-base) ease-pop group-data-[state=checked]:border-[5px] group-data-[state=checked]:border-primary" />
       <span className="min-w-0 flex-1">
@@ -346,54 +335,61 @@ function WeightList({
   sel: LicenseSelection;
   onPick: (id: string) => void;
 }) {
-  const family = sel.package === 'family';
-  const rows = pricing.weights.map((w) => {
-    const on = family || sel.weightId === w.id;
-    const content = (
-      <>
-        <span
-          aria-hidden
-          className={cn(
-            'grid size-5 shrink-0 place-items-center rounded-full transition-colors',
-            on ? 'bg-tint-ok text-ok-text' : 'border border-strong',
-          )}
-        >
-          {on && <CheckIcon className="size-3" />}
-        </span>
-        <span className="min-w-0 flex-1 text-start">
-          <span className="block text-control">{w.nameAr}</span>
-          <span dir="ltr" className="block text-right text-caption text-tertiary">
-            {w.nameEn} · {w.value}
-          </span>
-        </span>
-        <span aria-hidden className="text-xl" style={weightStyle(w.value)}>
-          أبجد هوز
-        </span>
-      </>
+  // العائلة: الأوزان المشمولة شرائح مضغوطة (معلومة لا اختيار) — لا قائمة طويلة تدفع السؤال الثاني بعيداً
+  if (sel.package === 'family')
+    return (
+      <ul aria-label="الأوزان المشمولة" className="mt-3 flex flex-wrap gap-1.5">
+        {pricing.weights.map((w) => (
+          <li
+            key={w.id}
+            className="inline-flex items-center gap-1.5 rounded-full bg-sunken py-1 ps-2 pe-3 text-caption text-muted-foreground"
+          >
+            <CheckIcon className="size-3 text-ok-text" />
+            <span style={weightStyle(w.value)} className="text-foreground">
+              {w.nameAr}
+            </span>
+            <span dir="ltr" className="text-tertiary tabular-nums">
+              {w.value}
+            </span>
+          </li>
+        ))}
+      </ul>
     );
-    return family ? (
-      <li key={w.id} className="flex items-center gap-3 px-4 py-3">
-        {content}
-      </li>
-    ) : (
-      <li key={w.id}>
-        <button
-          type="button"
-          aria-pressed={on}
-          onClick={() => onPick(w.id)}
-          className="flex w-full items-center gap-3 px-4 py-3 transition-colors hover:bg-sunken aria-pressed:bg-tint-brand/50"
-        >
-          {content}
-        </button>
-      </li>
-    );
-  });
+
   return (
-    <ul
-      aria-label={family ? 'الأوزان المشمولة' : 'اختر الوزن'}
-      className="mt-3 max-h-72 divide-y overflow-y-auto rounded-md border bg-card"
-    >
-      {rows}
+    <ul aria-label="اختر الوزن" className="mt-3 max-h-56 divide-y overflow-y-auto rounded-md border bg-card">
+      {pricing.weights.map((w) => {
+        const on = sel.weightId === w.id;
+        return (
+          <li key={w.id}>
+            <button
+              type="button"
+              aria-pressed={on}
+              onClick={() => onPick(w.id)}
+              className="flex w-full items-center gap-3 px-3.5 py-2.5 transition-colors hover:bg-sunken aria-pressed:bg-tint-brand/50"
+            >
+              <span
+                aria-hidden
+                className={cn(
+                  'grid size-5 shrink-0 place-items-center rounded-full transition-colors',
+                  on ? 'bg-primary text-primary-foreground' : 'border border-strong',
+                )}
+              >
+                {on && <CheckIcon className="size-3" />}
+              </span>
+              <span className="min-w-0 flex-1 text-start">
+                <span className="block text-control">{w.nameAr}</span>
+                <span dir="ltr" className="block text-right text-caption text-tertiary">
+                  {w.nameEn} · {w.value}
+                </span>
+              </span>
+              <span aria-hidden className="text-lg" style={weightStyle(w.value)}>
+                أبجد هوز
+              </span>
+            </button>
+          </li>
+        );
+      })}
     </ul>
   );
 }

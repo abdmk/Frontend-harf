@@ -41,7 +41,7 @@ export function NotificationsMenu({ initial, allHref }: { initial: NotificationV
       <PopoverContent
         align="end"
         sideOffset={10}
-        className="flex max-h-[min(520px,calc(100dvh-96px))] w-[min(300px,calc(100vw-24px))] flex-col overflow-hidden rounded-xl p-2.5 shadow-overlay"
+        className="flex max-h-[min(520px,calc(100dvh-96px))] w-[min(var(--container-menu),calc(100vw-24px))] flex-col overflow-hidden rounded-xl p-2.5 shadow-overlay"
       >
         <div className="flex items-center justify-between gap-2 px-2.5 pt-1 pb-2.5">
           <p className="text-control font-semibold">الإشعارات</p>

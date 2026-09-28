@@ -12,7 +12,7 @@ const twMerge = extendTailwindMerge({
       shadow: ['soft', 'float', 'overlay', 'focus'],
       ease: ['out-quint', 'pop', 'in-out-strong'],
       breakpoint: ['xs'],
-      container: ['page'],
+      container: ['page', 'menu', 'dialog-sm', 'dialog-md', 'dialog-lg'],
     },
   },
 });
