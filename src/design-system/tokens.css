@@ -317,6 +317,7 @@
   --animate-ring: ring 800ms var(--ease-out-quint);
   --animate-pop-in: pop-in var(--dur-slow) var(--ease-pop);
   --animate-fade-up: fade-up var(--dur-slow) var(--ease-out-quint);
+  --animate-chip-in: chip-in var(--dur-slow) var(--ease-out-quint) both;
 
   @keyframes heart {
     25% {
@@ -353,6 +354,13 @@
     from {
       opacity: 0;
       transform: translateY(6px);
+    }
+  }
+  /* شرائح تخرج من جهة الزرّ (يمين الصفحة العربية) واحدةً تلو الأخرى */
+  @keyframes chip-in {
+    from {
+      opacity: 0;
+      transform: translateX(14px) scale(0.92);
     }
   }
 }
