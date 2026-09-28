@@ -18,6 +18,7 @@ import { NotFoundPage } from './pages/not-found';
 import { NotificationsPage } from './pages/notifications';
 import { PublishPage } from './pages/publish';
 import { RegisterPage } from './pages/register';
+import { ReverseTextPage } from './pages/reverse-text';
 import { StudioPage } from './pages/studio';
 import { AppProviders } from './providers';
 import { ScrollToTop } from './scroll-to-top';
@@ -36,6 +37,7 @@ export function App() {
           <Route path="notifications" element={<NotificationsPage />} />
           <Route path="foundries/:id" element={<FoundryPage />} />
           <Route path="designers/:id" element={<DesignerPage />} />
+          <Route path="tools/reverse-text" element={<ReverseTextPage />} />
         </Route>
 
         {/* المصادقة — بلا ترويسة */}

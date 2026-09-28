@@ -13,7 +13,7 @@ export const mainNav = [
   { label: 'مطابقة الخطوط', href: '#' },
   { label: 'نسق', href: '#' },
   { label: 'مختبر الخط', href: '#' },
-  { label: 'عكس النص', href: '#' },
+  { label: 'عكس النص', href: '/tools/reverse-text' },
 ] as const;
 
 export const footerNav = [

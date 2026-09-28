@@ -21,5 +21,6 @@ export const paths = {
   foundry: { getHref: (id: string) => `/foundries/${encodeURIComponent(id)}` },
   designer: { getHref: (id: string) => `/designers/${encodeURIComponent(id)}` },
   admin: { analytics: { getHref: () => '/admin/analytics' } },
+  tools: { reverseText: { getHref: () => '/tools/reverse-text' } },
   designSystem: { getHref: () => '/design-system' },
 } as const;
