@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Link } from 'react-router';
 
 import { CatalogCard } from '@/app/_components/catalog-card';
@@ -23,12 +24,29 @@ import { getInvoices, getPlans, getSubscription } from '@/features/subscriptions
 import { PlansDialog } from '@/features/subscriptions/components/plans-dialog';
 import { SubscriptionSection } from '@/features/subscriptions/components/subscription-section';
 
+/** «إدارة الخطة» و«ترقية الخطة» في حالة الاستخدام تفتحان نافذة الخطط نفسها */
+function UsageWithPlans({ user }: { user: User }) {
+  const [plansOpen, setPlansOpen] = useState(false);
+  return (
+    <>
+      <UsageSection user={user} onManagePlan={() => setPlansOpen(true)} />
+      <PlansDialog
+        plans={getPlans()}
+        current={user.plan}
+        onChange={changePlan}
+        open={plansOpen}
+        onOpenChange={setPlansOpen}
+      />
+    </>
+  );
+}
+
 export function SectionContent({ user, section }: { user: User; section: AccountSection }) {
   switch (section) {
     case 'profile':
       return <ProfileSection user={user} action={updateProfile} />;
     case 'usage':
-      return <UsageSection user={user} />;
+      return <UsageWithPlans user={user} />;
     case 'purchases':
       return <PurchasesSection purchases={getPurchases(user)} />;
     case 'preferences':

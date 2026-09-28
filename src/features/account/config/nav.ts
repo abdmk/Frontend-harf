@@ -58,7 +58,7 @@ export const SECTION_TITLE: Record<AccountSection, string> = {
   library: 'مكتبتي',
   favorites: 'المفضلة',
   purchases: 'المشتريات',
-  usage: 'الاستخدام',
+  usage: 'حالة الاستخدام',
   subscription: 'الاشتراك',
   foundry: 'لوحة المسبك',
   preferences: 'التفضيلات',

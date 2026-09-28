@@ -30,6 +30,17 @@ test.describe('الحساب', () => {
     await expect(page.getByRole('link', { name: 'خطّتك: أساسي' })).toBeVisible();
   });
 
+  test('حالة الاستخدام: الحدّ النافد يعرض الترقية ويفتح نافذة الخطط', async ({ page }) => {
+    await page.goto('/account/usage?as=free');
+    await expect(page.getByRole('heading', { level: 1, name: 'حالة الاستخدام' })).toBeVisible();
+    await expect(page.getByText('استُخدمت جميع التحميلات المتاحة')).toBeVisible();
+    await expect(page.getByText('المتبقّي: مطابقة واحدة')).toBeVisible();
+    await expect(page.getByRole('meter', { name: 'تحميل الخطوط' })).toHaveAttribute('aria-valuenow', '5');
+    await expect(page.getByRole('button', { name: 'ترقية الخطة' })).toHaveCount(1);
+    await page.getByRole('button', { name: 'ترقية الخطة' }).click();
+    await expect(page.getByRole('dialog', { name: 'اختر خطتك' })).toBeVisible();
+  });
+
   test('لوحة المسبك محميّة على الخادم للحساب المجاني', async ({ page }) => {
     await page.goto('/account/foundry?as=free');
     await expect(page).toHaveURL(/\/account\/subscription$/);

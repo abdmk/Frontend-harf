@@ -15,7 +15,7 @@ export const MOCK_USERS = {
     location: 'بغداد، العراق',
     memberSince: '2026-03-12',
     stats: { library: 12, favorites: 32, purchases: 4, usagePct: 65 },
-    usage: { downloads: { used: 4, limit: 5 }, matching: { used: 2, limit: 3 }, resetsInHours: 3 },
+    usage: { downloads: { used: 5, limit: 5 }, matching: { used: 2, limit: 3 }, resetsInHours: 3 },
   },
   basic: {
     id: 'u-saad',
