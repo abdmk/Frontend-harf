@@ -1,4 +1,5 @@
 import { useActionState, useState } from 'react';
+import { Link } from 'react-router';
 
 import { Alert } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
@@ -108,7 +109,21 @@ export function RegisterForm({
       </Field>
       <label className="flex items-start gap-2 text-meta text-muted-foreground">
         <Checkbox name="terms" value="on" className="mt-0.5" aria-invalid={!!f.terms} />
-        أوافق على الشروط والأحكام وسياسة الخصوصية.
+        <span>
+          أوافق على{' '}
+          <Link to="/terms" target="_blank" className="text-foreground underline underline-offset-4 hover:text-primary">
+            الشروط والأحكام
+          </Link>{' '}
+          و
+          <Link
+            to="/privacy"
+            target="_blank"
+            className="text-foreground underline underline-offset-4 hover:text-primary"
+          >
+            سياسة الخصوصية
+          </Link>
+          .
+        </span>
       </label>
       <FieldError>{f.terms}</FieldError>
       <Button type="submit" size="lg" block loading={pending}>

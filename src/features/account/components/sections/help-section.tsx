@@ -2,15 +2,9 @@ import { Collapsible as CollapsiblePrimitive } from 'radix-ui';
 
 import { Button } from '@/components/ui/button';
 import { ChevronDownIcon, MailIcon } from '@/components/ui/icons';
+import { CONTACT_EMAIL, FAQ } from '@/config/faq';
 
 import { SectionCard } from './section-card';
-
-const FAQ = [
-  ['أين أجد ملفات الخطوط التي اشتريتها؟', 'في «المشتريات»: لكل ترخيص زرّ تحميل وإيصال وملف الترخيص.'],
-  ['كيف أعرف ما يسمح به ترخيص خط مجاني؟', 'تظهر رخصة كل خط في صفحته وعلى بطاقته، ويُرفق نصّها الكامل مع الملفات.'],
-  ['هل يمكنني ترقية ترخيص اشتريته؟', 'نعم، من صفحة الخط اختر «ترقية الترخيص». شروط الترقية تحدّدها سياسة حرف.'],
-  ['كيف أنشر خطوطي في حرف؟', 'حوّل حسابك إلى الاستوديو، ثم ارفع ملفاتك من «لوحة المسبك».'],
-] as const;
 
 export function HelpSection() {
   return (
@@ -34,9 +28,9 @@ export function HelpSection() {
       </SectionCard>
       <SectionCard title="تواصل معنا" description="نردّ عادةً خلال يوم عمل.">
         <Button asChild variant="outline">
-          <a href="mailto:hello@harf.co">
+          <a href={`mailto:${CONTACT_EMAIL}`}>
             <MailIcon />
-            hello@harf.co
+            {CONTACT_EMAIL}
           </a>
         </Button>
       </SectionCard>

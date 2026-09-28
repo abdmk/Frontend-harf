@@ -50,13 +50,13 @@ export function AuthShell({
       </div>
 
       <footer className="mt-10 flex gap-3 text-caption text-tertiary sm:mt-14">
-        <a href="#" className="hover:text-foreground">
+        <Link to="/terms" className="hover:text-foreground">
           الشروط والأحكام
-        </a>
+        </Link>
         <span aria-hidden>·</span>
-        <a href="#" className="hover:text-foreground">
+        <Link to="/privacy" className="hover:text-foreground">
           سياسة الخصوصية
-        </a>
+        </Link>
       </footer>
     </main>
   );

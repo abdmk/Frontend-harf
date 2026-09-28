@@ -1,5 +1,7 @@
 import { Route, Routes } from 'react-router';
 
+import { COMING_SOON, type ComingSoonKey } from '@/config/coming-soon';
+
 import { ErrorBoundary } from './error';
 import { SiteLayout } from './layouts/site-layout';
 import { WideLayout } from './layouts/wide-layout';
@@ -8,6 +10,7 @@ import { AccountSectionPage } from './pages/account-section';
 import { AnalyticsPage } from './pages/analytics';
 import { CartPage } from './pages/cart';
 import { CheckoutPage } from './pages/checkout';
+import { ComingSoonPage } from './pages/coming-soon';
 import { DesignSystemPage } from './pages/design-system';
 import { DesignerPage } from './pages/designer';
 import { FontPage } from './pages/font';
@@ -19,6 +22,7 @@ import { NotificationsPage } from './pages/notifications';
 import { PublishPage } from './pages/publish';
 import { RegisterPage } from './pages/register';
 import { ReverseTextPage } from './pages/reverse-text';
+import { AboutPage, HelpPage, PrivacyPage, ServicesPage, TermsPage } from './pages/static-pages';
 import { StudioPage } from './pages/studio';
 import { AppProviders } from './providers';
 import { ScrollToTop } from './scroll-to-top';
@@ -38,6 +42,14 @@ export function App() {
           <Route path="foundries/:id" element={<FoundryPage />} />
           <Route path="designers/:id" element={<DesignerPage />} />
           <Route path="tools/reverse-text" element={<ReverseTextPage />} />
+          {(Object.keys(COMING_SOON) as ComingSoonKey[]).map((k) => (
+            <Route key={k} path={COMING_SOON[k].path.slice(1)} element={<ComingSoonPage page={k} />} />
+          ))}
+          <Route path="about" element={<AboutPage />} />
+          <Route path="services" element={<ServicesPage />} />
+          <Route path="help" element={<HelpPage />} />
+          <Route path="terms" element={<TermsPage />} />
+          <Route path="privacy" element={<PrivacyPage />} />
         </Route>
 
         {/* المصادقة — بلا ترويسة */}

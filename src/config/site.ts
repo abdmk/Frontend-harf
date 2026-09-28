@@ -9,18 +9,18 @@ export const siteConfig = {
 export const mainNav = [
   { label: 'خطوط مجانية', href: '/' },
   { label: 'خطوط مدفوعة', href: '/?license=paid' },
-  { label: 'مخطوطات', href: '#' },
-  { label: 'مطابقة الخطوط', href: '#' },
-  { label: 'نسق', href: '#' },
-  { label: 'مختبر الخط', href: '#' },
+  { label: 'مخطوطات', href: '/manuscripts' },
+  { label: 'مطابقة الخطوط', href: '/tools/font-matching' },
+  { label: 'نسق', href: '/tools/nasaq' },
+  { label: 'مختبر الخط', href: '/tools/font-lab' },
   { label: 'عكس النص', href: '/tools/reverse-text' },
 ] as const;
 
 export const footerNav = [
-  { label: 'حرف', href: '#' },
-  { label: 'الخدمات', href: '#' },
-  { label: 'المدونة', href: '#' },
-  { label: 'الشروط والأحكام', href: '#' },
-  { label: 'سياسة الخصوصية', href: '#' },
-  { label: 'المساعدة', href: '#' },
+  { label: 'حرف', href: '/about' },
+  { label: 'الخدمات', href: '/services' },
+  { label: 'المدونة', href: '/blog' },
+  { label: 'الشروط والأحكام', href: '/terms' },
+  { label: 'سياسة الخصوصية', href: '/privacy' },
+  { label: 'المساعدة', href: '/help' },
 ] as const;
