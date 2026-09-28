@@ -49,7 +49,8 @@ test.describe('المكتبة', () => {
     for (let i = 0; i < 4; i++) await page.keyboard.press('ArrowRight');
     await expect(thumb).toHaveAttribute('aria-valuetext', '5 أوزان');
 
-    await sheet.getByRole('button', { name: 'تطبيق' }).click();
+    await expect(sheet.getByRole('button', { name: 'عرض 5 نتائج' })).toBeVisible();
+    await sheet.getByRole('button', { name: 'عرض 5 نتائج' }).click();
     await page.waitForURL(/license=commercial/);
     await expect.poll(() => resultCount(page)).toBe(5);
     const params = new URL(page.url()).searchParams;
