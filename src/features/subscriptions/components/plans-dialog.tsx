@@ -54,6 +54,7 @@ export function PlansDialog({
   const [step, setStep] = useState<Step>({ kind: 'plans' });
   const [error, setError] = useState<string>();
   const [pending, start] = useTransition();
+  const wide = step.kind === 'plans';
 
   const confirm = (plan: PlanOffer) =>
     start(async () => {
@@ -73,7 +74,8 @@ export function PlansDialog({
     >
       {trigger && <DialogTrigger asChild>{trigger}</DialogTrigger>}
       <DialogContent
-        className="gap-0 overflow-hidden p-0 sm:max-w-page sm:p-0"
+        // المقاس على قدر المحتوى: الخطط الثلاث عريضة، والدفع والنجاح نافذتان صغيرتان
+        className={cn('gap-0 overflow-hidden p-0 sm:p-0', wide ? 'sm:max-w-page' : 'sm:max-w-dialog-sm')}
         // نافذة عرض لا تأكيد: التركيز على النافذة نفسها بدل حلقة على «شهري»
         onOpenAutoFocus={(e) => {
           e.preventDefault();
@@ -88,15 +90,15 @@ export function PlansDialog({
             : undefined
         }
       >
-        <header className="border-b px-6 pt-8 pb-6 text-center">
-          <DialogTitle className="text-2xl font-semibold">
+        <header className={cn('border-b text-center', wide ? 'px-6 pt-8 pb-6' : 'px-12 pt-6 pb-4')}>
+          <DialogTitle className={cn('font-semibold', wide ? 'text-2xl' : 'text-lg')}>
             {step.kind === 'plans'
               ? 'اختر خطتك'
               : step.kind === 'pay'
                 ? `الاشتراك في ${step.plan.name}`
                 : 'تمّ الاشتراك'}
           </DialogTitle>
-          <DialogDescription className="mt-2 text-control text-muted-foreground">
+          <DialogDescription className={cn('text-muted-foreground', wide ? 'mt-2 text-control' : 'mt-1 text-meta')}>
             {step.kind === 'plans'
               ? 'ابدأ مجاناً، وارتقِ متى احتجت. تقدر تغيّر أو تلغي في أي وقت.'
               : 'بيانات تجريبية — لا يُخصم أي مبلغ.'}
@@ -200,8 +202,8 @@ export function PlansDialog({
         )}
 
         {step.kind === 'pay' && (
-          <div className="mx-auto flex w-full max-w-md flex-col gap-4 px-6 pt-6 pb-8">
-            <dl className="flex flex-col gap-2 rounded-md border p-4 text-control">
+          <div className="flex flex-col gap-3 p-5">
+            <dl className="flex flex-col gap-2 rounded-md border px-4 py-3 text-control">
               <div className="flex justify-between">
                 <dt className="text-muted-foreground">الخطة</dt>
                 <dd className="font-medium">
@@ -215,8 +217,8 @@ export function PlansDialog({
                 </dd>
               </div>
             </dl>
-            <p className="flex items-center gap-1.5 rounded-md bg-sunken p-4 text-caption text-muted-foreground">
-              <LockIcon className="size-3.5 shrink-0" />
+            <p className="flex items-start gap-2 rounded-md bg-sunken px-4 py-3 text-caption leading-relaxed text-muted-foreground">
+              <LockIcon className="mt-0.5 size-3.5 shrink-0" />
               في المنتج تُفتح هنا خطوة الدفع الآمنة من Stripe، ويُفعَّل الاشتراك بعد تأكيدها.
             </p>
             {error && (
@@ -224,12 +226,12 @@ export function PlansDialog({
                 {error}
               </p>
             )}
-            <div className="grid grid-cols-[2fr_1fr] gap-3">
-              <Button size="lg" loading={pending} onClick={() => confirm(step.plan)}>
+            <div className="mt-1 grid grid-cols-[1fr_auto] gap-2">
+              <Button loading={pending} onClick={() => confirm(step.plan)}>
                 <LockIcon />
                 اشترك الآن
               </Button>
-              <Button size="lg" variant="secondary" onClick={() => setStep({ kind: 'plans' })}>
+              <Button variant="secondary" onClick={() => setStep({ kind: 'plans' })}>
                 رجوع
               </Button>
             </div>
@@ -237,13 +239,13 @@ export function PlansDialog({
         )}
 
         {step.kind === 'done' && (
-          <div role="status" className="flex animate-fade-up flex-col items-center gap-3 px-6 pt-6 pb-10 text-center">
-            <span className="grid size-14 place-items-center rounded-full bg-tint-ok text-ok-text">
-              <CheckIcon className="size-6 animate-pop-in" />
+          <div role="status" className="flex animate-fade-up flex-col items-center gap-2 p-5 pt-6 text-center">
+            <span className="grid size-12 place-items-center rounded-full bg-tint-ok text-ok-text">
+              <CheckIcon className="size-5 animate-pop-in" />
             </span>
-            <p className="text-lg font-semibold">أنت الآن على خطة {step.plan.name}</p>
+            <p className="mt-1 text-lead font-semibold">أنت الآن على خطة {step.plan.name}</p>
             <Badge tone="success">نشطة</Badge>
-            <Button className="mt-3" onClick={() => setOpen(false)}>
+            <Button block className="mt-3" onClick={() => setOpen(false)}>
               تمّ
             </Button>
           </div>
