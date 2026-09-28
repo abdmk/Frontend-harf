@@ -1,4 +1,4 @@
-import { type ComponentPropsWithoutRef, type ElementType, useEffect, useRef } from 'react';
+import { type ComponentPropsWithoutRef, type ElementType, useLayoutEffect, useRef } from 'react';
 
 type RevealProps<T extends ElementType> = {
   as?: T;
@@ -7,31 +7,18 @@ type RevealProps<T extends ElementType> = {
 } & ComponentPropsWithoutRef<T>;
 
 /**
- * يُظهر العنصر بانزلاق خفيف حين يدخل الشاشة. بلا حركة عند تفضيل تقليلها،
- * وبلا إخفاء أصلاً إن لم يعمل JavaScript (الحالة الأولى تُضاف بعد التحميل).
+ * دخول هادئ للعناصر الظاهرة عند فتح الصفحة فقط (تتابع قصير). ما تحت الشاشة لا يُخفى أبداً —
+ * فلا فراغات عند التمرير السريع أو البحث داخل الصفحة أو الطباعة. بلا حركة عند تفضيل تقليلها.
  */
 export function Reveal<T extends ElementType = 'div'>({ as, index = 0, style, ...props }: RevealProps<T>) {
   const ref = useRef<HTMLElement>(null);
   const Comp = (as ?? 'div') as ElementType;
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const el = ref.current;
-    if (!el) return;
-    if (matchMedia('(prefers-reduced-motion: reduce)').matches || !('IntersectionObserver' in window)) return;
+    if (!el || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     const box = el.getBoundingClientRect();
-    if (box.top < window.innerHeight && box.bottom > 0) return; // ظاهر أصلاً: لا نخفيه ثم نظهره
-    el.dataset.reveal = 'out';
-    const io = new IntersectionObserver(
-      ([entry]) => {
-        if (entry?.isIntersecting) {
-          el.dataset.reveal = 'in';
-          io.disconnect();
-        }
-      },
-      { rootMargin: '0px 0px -8% 0px' },
-    );
-    io.observe(el);
-    return () => io.disconnect();
+    if (box.top < window.innerHeight && box.bottom > 0) el.dataset.reveal = 'enter';
   }, []);
 
   return <Comp ref={ref} style={{ ...style, '--reveal-i': index % 6 }} {...props} />;

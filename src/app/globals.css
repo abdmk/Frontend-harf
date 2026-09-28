@@ -73,16 +73,15 @@
 }
 
 /* الظهور عند التمرير (يضبطه مكوّن Reveal) */
-[data-reveal='out'] {
-  opacity: 0;
-  transform: translateY(16px);
+[data-reveal='enter'] {
+  animation: reveal-enter var(--dur-xslow) var(--ease-out-quint) both;
+  animation-delay: calc(var(--reveal-i, 0) * 45ms);
 }
-[data-reveal='in'] {
-  opacity: 1;
-  transform: none;
-  transition:
-    opacity var(--dur-xslow) var(--ease-out-quint) calc(var(--reveal-i, 0) * 60ms),
-    transform var(--dur-xslow) var(--ease-out-quint) calc(var(--reveal-i, 0) * 60ms);
+@keyframes reveal-enter {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
 }
 
 /* تبديل الوضع: الألوان تنتقل بنعومة لحظة التبديل فقط */
@@ -105,9 +104,5 @@ html.theme-anim *::after {
     transition-duration: 0.01ms !important;
     transition-delay: 0s !important;
     scroll-behavior: auto !important;
-  }
-  [data-reveal='out'] {
-    opacity: 1;
-    transform: none;
   }
 }
