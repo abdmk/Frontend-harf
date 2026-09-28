@@ -5,6 +5,7 @@ test.describe('المكتبة', () => {
     await page.goto('/');
     expect(await resultCount(page)).toBe(12);
 
+    await page.locator('button[aria-controls="cat-chips"]').click();
     await page.locator('#cat-chips').getByRole('button', { name: 'حديثة' }).click();
     await page.waitForURL(/cat=modern/);
     await expect.poll(() => resultCount(page)).toBe(3);
@@ -19,10 +20,12 @@ test.describe('المكتبة', () => {
     await expect.poll(() => resultCount(page)).toBe(12);
   });
 
-  test('إخفاء شرائح التصنيف يجعلها غير قابلة للتركيز', async ({ page }) => {
+  test('شرائح التصنيف مطويّة افتراضياً وغير قابلة للتركيز، وتُفتح بالزرّ', async ({ page }) => {
     await page.goto('/');
+    const chips = page.locator('#cat-chips');
+    await expect.poll(() => chips.evaluate((e) => (e as HTMLElement).inert)).toBe(true);
     await page.locator('button[aria-controls="cat-chips"]').click();
-    await expect.poll(() => page.locator('#cat-chips').evaluate((e) => (e as HTMLElement).inert)).toBe(true);
+    await expect.poll(() => chips.evaluate((e) => (e as HTMLElement).inert)).toBe(false);
   });
 
   test('الترتيب', async ({ page }) => {

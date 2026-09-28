@@ -24,7 +24,8 @@ const pill =
 
 export function CatalogToolbar() {
   const { query, setQuery } = useCatalog();
-  const [catsOpen, setCatsOpen] = useState(true);
+  // مطويّ افتراضياً؛ يبقى مفتوحاً إن وصل المستخدم وتصنيف مختار في الرابط
+  const [catsOpen, setCatsOpen] = useState(query.cat !== 'all');
   const count = activeFilterCount(query);
 
   return (
@@ -39,6 +40,10 @@ export function CatalogToolbar() {
       >
         <AppsIcon className={cn('size-4 transition-transform duration-300 ease-pop', !catsOpen && 'rotate-90')} />
         التصنيف
+        {/* مطويّ وتصنيف مختار: يظهر اسمه على الزرّ حتى لا يُنسى الفلتر */}
+        {!catsOpen && query.cat !== 'all' && (
+          <span className="animate-pop-in font-normal opacity-85">· {CATEGORY_LABEL[query.cat]}</span>
+        )}
       </button>
 
       <div
