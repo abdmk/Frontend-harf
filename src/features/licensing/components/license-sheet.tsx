@@ -115,13 +115,13 @@ export function LicenseSheet({
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>{trigger}</SheetTrigger>
       <SheetContent
-        side={mobile ? 'bottom' : 'left'}
+        side={mobile ? 'bottom' : 'center'}
         showCloseButton={false}
         className={cn(
-          'gap-0 border bg-sheet p-0 shadow-overlay data-[state=open]:duration-500',
+          'gap-0 border bg-sheet p-0 shadow-overlay',
           mobile
-            ? 'max-h-[92dvh] rounded-t-xl'
-            : 'inset-y-3 left-3 h-auto w-[min(520px,calc(100vw-24px))] rounded-xl sm:max-w-none',
+            ? 'max-h-[92dvh] rounded-t-xl data-[state=open]:duration-500'
+            : 'max-h-[min(880px,calc(100dvh-2rem))] w-[min(560px,calc(100vw-2rem))]',
         )}
       >
         <header className="flex items-center gap-4 border-b px-6 py-5">

@@ -5,7 +5,6 @@ import { RangeField } from '@/components/shared/range-field';
 import { Button } from '@/components/ui/button';
 import { Chip, ChipGroup } from '@/components/ui/chip-group';
 import { ChevronUpIcon, CrossIcon, FilterIcon } from '@/components/ui/icons';
-import { RadioGroup, RadioOption } from '@/components/ui/radio-group';
 import { Sheet, SheetClose, SheetContent, SheetDescription, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { below } from '@/design-system/tokens';
 import {
@@ -37,7 +36,7 @@ const pick = (q: CatalogQuery): Draft => ({
 });
 
 /**
- * لوحة التصفية: درج جانبي على الشاشات الواسعة وورقة سفلية على الجوال.
+ * لوحة التصفية: نافذة في منتصف الشاشة على الشاشات الواسعة وورقة سفلية على الجوال.
  * التعديلات مسودّة محلية حتى «تطبيق» — فلا تتغيّر النتائج مع كل نقرة.
  */
 export function FilterSheet({ trigger }: { trigger: ReactElement }) {
@@ -56,13 +55,13 @@ export function FilterSheet({ trigger }: { trigger: ReactElement }) {
     <Sheet open={open} onOpenChange={handleOpen}>
       <SheetTrigger asChild>{trigger}</SheetTrigger>
       <SheetContent
-        side={mobile ? 'bottom' : 'left'}
+        side={mobile ? 'bottom' : 'center'}
         showCloseButton={false}
         className={cn(
-          'gap-0 border bg-sheet p-0 shadow-overlay data-[state=open]:duration-500',
+          'gap-0 border bg-sheet p-0 shadow-overlay',
           mobile
-            ? 'max-h-[92dvh] rounded-t-xl'
-            : 'inset-y-3 left-3 h-auto w-[min(440px,calc(100vw-24px))] rounded-xl sm:max-w-none',
+            ? 'max-h-[92dvh] rounded-t-xl data-[state=open]:duration-500'
+            : 'max-h-[min(820px,calc(100dvh-2rem))] w-[min(480px,calc(100vw-2rem))]',
         )}
       >
         <div className="flex items-center justify-between px-6 pt-6 pb-4">
@@ -83,15 +82,18 @@ export function FilterSheet({ trigger }: { trigger: ReactElement }) {
 
         <div className="flex flex-1 flex-col gap-3 overflow-y-auto overscroll-contain px-4 pb-4">
           <Section title="الرخصة">
-            <RadioGroup
+            <ChipGroup
+              type="single"
               aria-label="الرخصة"
               value={draft.license}
-              onValueChange={(v) => setDraft((d) => ({ ...d, license: v as LicenseFilter }))}
+              onValueChange={(v) => v && setDraft((d) => ({ ...d, license: v as LicenseFilter }))}
             >
               {LICENSE_FILTERS.map((v) => (
-                <RadioOption key={v} value={v} label={LICENSE_FILTER_LABEL[v]} />
+                <Chip key={v} value={v}>
+                  {LICENSE_FILTER_LABEL[v]}
+                </Chip>
               ))}
-            </RadioGroup>
+            </ChipGroup>
           </Section>
 
           <Section title="اللغة">
