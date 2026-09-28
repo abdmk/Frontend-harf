@@ -1,5 +1,7 @@
+import { lazy, Suspense } from 'react';
 import { Route, Routes } from 'react-router';
 
+import { LoadingState } from '@/components/shared/loading-state';
 import { COMING_SOON, type ComingSoonKey } from '@/config/coming-soon';
 
 import { ErrorBoundary } from './error';
@@ -27,6 +29,9 @@ import { StudioPage } from './pages/studio';
 import { AppProviders } from './providers';
 import { ScrollToTop } from './scroll-to-top';
 
+// «نسق» في حزمة منفصلة: الكتالوج والخطوط لا تُحمَّل إلا لمن يفتح الأداة
+const NasaqPage = lazy(() => import('./pages/nasaq').then((m) => ({ default: m.NasaqPage })));
+
 export function App() {
   return (
     <AppProviders>
@@ -42,6 +47,14 @@ export function App() {
           <Route path="foundries/:id" element={<FoundryPage />} />
           <Route path="designers/:id" element={<DesignerPage />} />
           <Route path="tools/reverse-text" element={<ReverseTextPage />} />
+          <Route
+            path="tools/nasaq"
+            element={
+              <Suspense fallback={<LoadingState className="container-page py-14" label="جارٍ تحميل «نسق»…" />}>
+                <NasaqPage />
+              </Suspense>
+            }
+          />
           {(Object.keys(COMING_SOON) as ComingSoonKey[]).map((k) => (
             <Route key={k} path={COMING_SOON[k].path.slice(1)} element={<ComingSoonPage page={k} />} />
           ))}
