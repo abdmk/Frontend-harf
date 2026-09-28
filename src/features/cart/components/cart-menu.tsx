@@ -12,7 +12,13 @@ import { CartLine } from './cart-line';
 import type { CartActionResult } from '../api/actions';
 
 /** السلة المصغّرة (دليل التصميم 5.6): تُفتح من أيقونة الترويسة، والعدّاد من الخادم */
-export function CartMenu({ cart, onRemove }: { cart: Cart; onRemove: (id: string) => CartActionResult | Promise<CartActionResult> }) {
+export function CartMenu({
+  cart,
+  onRemove,
+}: {
+  cart: Cart;
+  onRemove: (id: string) => CartActionResult | Promise<CartActionResult>;
+}) {
   const [open, setOpen] = useState(false);
   const [pending, start] = useTransition();
   const count = cart.items.length;

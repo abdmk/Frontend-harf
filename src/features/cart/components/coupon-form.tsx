@@ -7,7 +7,11 @@ import { cn } from '@/lib/cn';
 import type { CouponResult } from '../api/actions';
 
 /** كود الخصم — يُتحقّق منه على الخادم (الكود التجريبي: HARF10) */
-export function CouponForm({ action }: { action: (prev: CouponResult, form: FormData) => CouponResult | Promise<CouponResult> }) {
+export function CouponForm({
+  action,
+}: {
+  action: (prev: CouponResult, form: FormData) => CouponResult | Promise<CouponResult>;
+}) {
   const [state, formAction, pending] = useActionState(action, null);
   return (
     <form action={formAction} className="flex flex-col gap-1.5">

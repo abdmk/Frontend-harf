@@ -19,7 +19,11 @@ const RULES: [string, (p: string) => boolean][] = [
   ['رقم واحد على الأقل', (p) => /\d/.test(p)],
 ];
 
-export function RegisterForm({ action }: { action: (prev: AuthState, form: FormData) => AuthState | Promise<AuthState> }) {
+export function RegisterForm({
+  action,
+}: {
+  action: (prev: AuthState, form: FormData) => AuthState | Promise<AuthState>;
+}) {
   const [state, formAction, pending] = useActionState(action, null);
   const [pw, setPw] = useState('');
   const f = state?.fields ?? {};
