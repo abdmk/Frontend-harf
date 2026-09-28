@@ -5,7 +5,6 @@ import { Link } from 'react-router';
 import { HarfLockup, HarfMark } from '@/components/shared/harf-logo';
 import { ThemeToggle } from '@/components/shared/theme-toggle';
 import { paths } from '@/config/paths';
-import { cn } from '@/lib/cn';
 
 import { HeaderNav } from './header-nav';
 
@@ -15,11 +14,10 @@ const NAV_CLASS =
 type SiteHeaderProps = {
   /** أزرار الترويسة القادمة من الـfeatures (السلة، الإشعارات، الحساب) */
   actions?: ReactNode;
-  /** عرض كامل (صفحة الحساب) بدل عمود المحتوى */
-  wide?: boolean;
 };
 
-export function SiteHeader({ actions, wide }: SiteHeaderProps) {
+/** الترويسة بعرض عمود المحتوى نفسه في كل الصفحات */
+export function SiteHeader({ actions }: SiteHeaderProps) {
   return (
     <header className="sticky top-0 z-50 border-b border-subtle bg-background/90 backdrop-blur-lg backdrop-saturate-150">
       <a
@@ -28,12 +26,7 @@ export function SiteHeader({ actions, wide }: SiteHeaderProps) {
       >
         تخطَّ إلى المحتوى
       </a>
-      <div
-        className={cn(
-          'mx-auto grid grid-cols-[auto_1fr] items-center gap-x-6 lg:flex lg:h-18',
-          wide ? 'px-4 sm:px-8 lg:px-12' : 'container-page',
-        )}
-      >
+      <div className="container-page mx-auto grid grid-cols-[auto_1fr] items-center gap-x-6 lg:flex lg:h-18">
         <Link
           to={paths.home.getHref()}
           aria-label="مكتبة حرف — الرئيسية"

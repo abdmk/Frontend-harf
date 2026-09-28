@@ -7,7 +7,7 @@ import { HeaderActions } from '../header-actions';
 export function WideLayout() {
   return (
     <>
-      <SiteHeader wide actions={<HeaderActions />} />
+      <SiteHeader actions={<HeaderActions />} />
       <Outlet />
     </>
   );

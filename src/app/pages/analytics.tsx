@@ -16,7 +16,7 @@ export function AnalyticsPage() {
   const range = toRange(searchParams.get('range'));
   const data = getAdminAnalytics(range);
   return (
-    <main id="main" className="mx-auto max-w-360 px-4 py-8 sm:px-8 lg:px-12">
+    <main id="main" className="container-page py-8 sm:py-10">
       <PageMeta title="التحليلات" noindex />
       <AdminAnalyticsView data={data} range={range} />
     </main>

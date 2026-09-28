@@ -81,7 +81,8 @@ export function AccountPanel({
             {user.email}
           </p>
         </div>
-        {!menu && <PlanBadge plan={user.plan} />}
+        {/* في العمود الجانبي الضيّق (lg) تُخفى الشارة ليظهر البريد كاملاً؛ الخطة في بند «الاشتراك» */}
+        {!menu && <PlanBadge plan={user.plan} className="lg:hidden" />}
       </div>
 
       {menu && (

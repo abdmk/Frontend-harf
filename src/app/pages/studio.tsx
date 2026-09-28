@@ -12,7 +12,7 @@ export function StudioPage() {
   if (user.plan !== 'studio') return <Navigate to={paths.account.getHref('subscription')} replace />;
   const { foundry, fonts, analytics } = getStudio(user);
   return (
-    <main id="main" className="mx-auto max-w-360 px-4 py-8 sm:px-8 lg:px-12">
+    <main id="main" className="container-page py-8 sm:py-10">
       <PageMeta title="لوحة المسبك" noindex />
       <StudioDashboard foundry={foundry} fonts={fonts} analytics={analytics} />
     </main>

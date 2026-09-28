@@ -78,7 +78,7 @@ export function DesignSystemPage() {
   }));
 
   return (
-    <div className="mx-auto grid max-w-360 grid-cols-[minmax(0,1fr)] gap-10 px-4 py-10 sm:px-8 lg:grid-cols-[220px_minmax(0,1fr)] lg:px-12">
+    <div className="container-page grid grid-cols-[minmax(0,1fr)] gap-10 py-10 lg:grid-cols-[220px_minmax(0,1fr)]">
       <PageMeta title="دليل تصميم حرف" noindex />
       <aside className="max-lg:hidden">
         <nav

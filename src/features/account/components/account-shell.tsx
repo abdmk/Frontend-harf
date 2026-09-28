@@ -10,7 +10,7 @@ import { cn } from '@/lib/cn';
 import { AccountPanel } from './account-panel';
 
 /**
- * صفحة الحساب: العمود الجانبي (قائمة الحساب) + منطقة المحتوى.
+ * صفحة الحساب: القائمة + المحتوى داخل عمود الصفحة نفسه تحت الترويسة (حوافّ متطابقة).
  * على الجوال: ‎/account صفحة فهرس بالقائمة فقط، وكل قسم صفحة مستقلّة بزرّ رجوع.
  */
 export function AccountShell({
@@ -25,16 +25,16 @@ export function AccountShell({
 }) {
   const shown = section ?? 'profile';
   return (
-    <div className="grid min-h-[calc(100dvh-72px)] grid-cols-[minmax(0,1fr)] lg:grid-cols-[440px_minmax(0,1fr)] xl:grid-cols-[480px_minmax(0,1fr)]">
+    <div className="container-page grid grid-cols-[minmax(0,1fr)] gap-10 py-8 sm:py-10 lg:grid-cols-[320px_minmax(0,1fr)]">
       <aside
         className={cn(
-          'bg-background px-6 py-8 sm:px-10 lg:sticky lg:top-18 lg:block lg:h-[calc(100dvh-72px)] lg:overflow-y-auto lg:border-e lg:py-10',
+          'lg:sticky lg:top-26 lg:block lg:max-h-[calc(100dvh-8rem)] lg:self-start lg:overflow-y-auto',
           section && 'hidden',
         )}
       >
         <AccountPanel user={user} active={section} />
       </aside>
-      <main id="main" className={cn('bg-page-muted px-4 py-8 sm:px-12 sm:py-10', !section && 'hidden lg:block')}>
+      <main id="main" className={cn('min-w-0', !section && 'hidden lg:block')}>
         {section && (
           <Link
             to={paths.account.getHref('')}

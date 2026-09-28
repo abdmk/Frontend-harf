@@ -10,7 +10,7 @@ export function PublishPage() {
   const user = requireStudio();
   if (!user) return <Navigate to={paths.login.getHref(paths.studio.getHref('publish'))} replace />;
   return (
-    <main id="main" className="mx-auto max-w-360 px-4 py-8 sm:px-8 lg:px-12">
+    <main id="main" className="container-page py-8 sm:py-10">
       <PageMeta title="نشر خط جديد" noindex />
       <PublishWorkspace isAdmin={user.role === 'admin'} onSubmit={submitForReview} />
     </main>
