@@ -198,7 +198,7 @@ export function DesignSystemPage() {
               initials="SN"
               subtitle="مسبك ابن ثابت · بغداد"
               verified
-              stats={{ fonts: 9, downloads: '24.8K', followers: 612 }}
+              stats={{ fonts: 9, weights: 41, followers: 612 }}
               fonts={['طفولة', 'تجاريب', 'نقوش']}
             />
             <DesignerCard
@@ -206,7 +206,7 @@ export function DesignSystemPage() {
               name="ميس علي"
               initials="MA"
               subtitle="مصمّمة حروف مستقلّة · أربيل"
-              stats={{ fonts: 4, downloads: '8.3K', followers: 197 }}
+              stats={{ fonts: 4, weights: 17, followers: 197 }}
               fonts={['ميس', 'أثر', 'رواق']}
               following
             />

@@ -1,7 +1,9 @@
 import type { ReactNode } from 'react';
+import { Link } from 'react-router';
 
 import { Avatar } from '@/components/shared/avatar';
 import { DownloadButton } from '@/components/shared/download-button';
+import { paths } from '@/config/paths';
 import { CATEGORY_LABEL, USAGE_LABEL } from '@/lib/labels';
 import type { Font } from '@/types/domain/font';
 
@@ -32,10 +34,16 @@ export function FontHeader({
           </h1>
           <div className="mt-3 flex flex-wrap gap-x-6 gap-y-2">
             {font.designers.map((d) => (
-              <span key={d.id} className="inline-flex items-center gap-2 text-sm text-muted-foreground">
+              <Link
+                key={d.id}
+                to={paths.designer.getHref(d.id)}
+                className="group inline-flex items-center gap-2 rounded-full text-sm text-muted-foreground transition-colors hover:text-foreground"
+              >
                 <Avatar initials={d.initials} seed={d.id} size="sm" className="size-5.5" />
-                <span dir="ltr">{d.nameEn}</span>
-              </span>
+                <span dir="ltr" className="underline-offset-4 group-hover:underline">
+                  {d.nameEn}
+                </span>
+              </Link>
             ))}
           </div>
         </div>

@@ -19,6 +19,7 @@ export const paths = {
     getHref: (section?: string) => (section ? `/studio/${encodeURIComponent(section)}` : '/studio'),
   },
   foundry: { getHref: (id: string) => `/foundries/${encodeURIComponent(id)}` },
+  designer: { getHref: (id: string) => `/designers/${encodeURIComponent(id)}` },
   admin: { analytics: { getHref: () => '/admin/analytics' } },
   designSystem: { getHref: () => '/design-system' },
 } as const;

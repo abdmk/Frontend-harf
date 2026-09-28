@@ -75,4 +75,22 @@ test.describe('الاستوديو والإدارة', () => {
     await page.getByRole('button', { name: 'إرسال للمراجعة' }).click();
     await expect(page.getByRole('heading', { name: 'أُرسل الخط للمراجعة' })).toBeVisible();
   });
+
+  test('المصمّم والمسبك: من صفحة الخط إلى ملف المصمّم ثم مسبكه ومصمّميه', async ({ page }) => {
+    await page.goto('/fonts/zaetoon');
+    await page
+      .getByRole('link', { name: /Abdulmlik Jassim/ })
+      .first()
+      .click();
+    await expect(page).toHaveURL(/\/designers\/aj$/);
+    await expect(page.getByRole('heading', { level: 1, name: 'عبدالملك جاسم' })).toBeVisible();
+    // الصفحة الجديدة تبدأ من أعلاها
+    expect(await page.evaluate(() => window.scrollY)).toBe(0);
+    await expect(page.getByRole('heading', { name: /خطوط المصمّم/ })).toContainText('(4)');
+
+    await page.getByRole('link', { name: /ينشر مع/ }).click();
+    await expect(page.getByRole('heading', { level: 1, name: 'مسبك تجاريب' })).toBeVisible();
+    await page.getByRole('link', { name: 'سارة نبيل' }).click();
+    await expect(page).toHaveURL(/\/designers\/sn$/);
+  });
 });
