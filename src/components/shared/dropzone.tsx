@@ -47,14 +47,14 @@ export function Dropzone({
         if (e.dataTransfer.files.length) onFiles(e.dataTransfer.files);
       }}
       className={cn(
-        'flex flex-col items-center gap-2 rounded-md border-[1.5px] border-dashed border-strong px-6 py-12 text-center transition-[border-color,background-color,transform] duration-200',
+        'flex flex-col items-center gap-2 rounded-md border-[1.5px] border-dashed border-strong px-6 py-12 text-center transition-[border-color,background-color,transform] duration-(--dur-base)',
         over && 'scale-[1.01] border-primary bg-tint-brand',
         className,
       )}
     >
       <CloudUploadIcon
         className={cn(
-          'mb-3 size-7 transition-transform duration-300 ease-pop',
+          'mb-3 size-7 transition-transform duration-(--dur-slow) ease-pop',
           over && '-translate-y-1 scale-110 text-primary',
         )}
       />

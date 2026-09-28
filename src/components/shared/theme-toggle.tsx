@@ -40,7 +40,7 @@ export function ThemeToggle({ className }: { className?: string }) {
       aria-label={label}
       title={label}
       className={cn(
-        'grid size-9 place-items-center rounded-sm text-muted-foreground transition-[background-color,color,transform] duration-150 hover:bg-sunken hover:text-foreground active:scale-90',
+        'grid size-9 place-items-center rounded-sm text-muted-foreground transition-[background-color,color,transform] duration-(--dur-fast) hover:bg-sunken hover:text-foreground active:scale-90',
         className,
       )}
     >

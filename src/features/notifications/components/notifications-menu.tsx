@@ -31,7 +31,7 @@ export function NotificationsMenu({ initial, allHref }: { initial: NotificationV
         <BellIcon className={cn('size-4.5 origin-top', ring && 'animate-ring')} onAnimationEnd={() => setRing(false)} />
         {unread > 0 && (
           <span
-            className="absolute end-1 top-1 grid h-4 min-w-4 animate-pop-in place-items-center rounded-full bg-primary px-1 text-2xs leading-none font-medium text-white ring-2 ring-background"
+            className="absolute end-1 top-1 grid h-4 min-w-4 animate-pop-in place-items-center rounded-full bg-primary-fill px-1 text-2xs leading-none font-medium text-white ring-2 ring-background"
             dir="ltr"
           >
             {unread}

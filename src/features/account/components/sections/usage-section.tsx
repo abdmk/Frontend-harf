@@ -172,7 +172,7 @@ function LimitCard({
         <span
           className={cn(
             'block h-full rounded-full transition-[width] duration-(--dur-xslow) ease-out-quint',
-            unlimited ? 'bg-ok-500' : spent ? 'bg-warn-500' : 'bg-primary',
+            unlimited ? 'bg-ok-500' : spent ? 'bg-warn-500' : 'bg-primary-fill',
           )}
           style={{ width: `${pct}%` }}
         />

@@ -8,7 +8,7 @@ import { USE_CASES, type UseCaseKey } from '../data/catalog';
 
 // نفس حبوب شريط المكتبة حرفياً — «نسق» جزء من الموقع لا أداة بتصميم آخر
 const pill =
-  'inline-flex h-11 shrink-0 items-center gap-2 rounded-full border px-5 text-control leading-none whitespace-nowrap transition-[background-color,color,border-color,transform] duration-150 active:scale-[.97]';
+  'inline-flex h-11 shrink-0 items-center gap-2 rounded-full border px-5 text-control leading-none whitespace-nowrap transition-[background-color,color,border-color,transform] duration-(--dur-fast) active:scale-[.97]';
 
 /** عدد الخيارات المغيّرة عن الافتراضي (عدا الاستخدام — له شرائحه) — يظهر على زرّ «الخيارات» */
 export const optionsCount = (b: Brief) =>
@@ -49,7 +49,10 @@ export function NasaqToolbar({
           type="button"
           onClick={onRegenerate}
           title="أو اضغط مسافة"
-          className={cn(pill, 'group/re border-transparent bg-primary ps-4 font-medium text-white hover:bg-harf-600')}
+          className={cn(
+            pill,
+            'group/re border-transparent bg-primary-fill ps-4 font-medium text-white hover:bg-harf-700',
+          )}
         >
           <RefreshIcon className="size-4 transition-transform duration-(--dur-slow) ease-out-quint group-active/re:-rotate-180" />
           تركيبات جديدة
@@ -95,7 +98,7 @@ export function NasaqToolbar({
               {count > 0 && (
                 <span
                   dir="ltr"
-                  className="grid h-4.5 min-w-4.5 animate-pop-in place-items-center rounded-full bg-primary px-1 text-micro text-white"
+                  className="grid h-4.5 min-w-4.5 animate-pop-in place-items-center rounded-full bg-primary-fill px-1 text-micro text-white"
                 >
                   {count}
                 </span>
@@ -129,7 +132,7 @@ export function NasaqToolbar({
                 className={cn(
                   pill,
                   on
-                    ? 'border-primary bg-card font-medium text-primary dark:bg-paper'
+                    ? 'border-primary bg-card font-medium text-primary dark:bg-paper dark:text-harf-600'
                     : 'border-border bg-card text-muted-foreground hover:border-strong hover:text-foreground dark:border-transparent dark:bg-sunken',
                 )}
               >

@@ -45,7 +45,7 @@ export function ActiveFilters({ count }: { count: number }) {
           className="group/fc inline-flex h-6 animate-pop-in items-center gap-1 rounded-full bg-tint-brand ps-2 pe-1 text-caption leading-none text-primary"
         >
           <span>{c.label}</span>
-          <span className="grid size-4 place-items-center rounded-full bg-primary/15 transition-colors group-hover/fc:bg-primary group-hover/fc:text-white">
+          <span className="grid size-4 place-items-center rounded-full bg-primary/15 transition-colors group-hover/fc:bg-primary-fill group-hover/fc:text-white">
             <CrossSmallIcon className="size-3" />
           </span>
         </button>

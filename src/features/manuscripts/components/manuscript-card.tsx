@@ -28,7 +28,7 @@ export function ManuscriptCard({
   return (
     <article
       aria-label={m.title}
-      className="group/card relative flex flex-col overflow-hidden rounded-lg border bg-card transition-[transform,box-shadow,border-color] duration-300 ease-out-quint hover:-translate-y-1 hover:border-strong hover:shadow-float"
+      className="group/card relative flex flex-col overflow-hidden rounded-lg border bg-card transition-[transform,box-shadow,border-color] duration-(--dur-slow) ease-out-quint hover:-translate-y-1 hover:border-strong hover:shadow-float"
     >
       <div className="relative overflow-hidden border-b bg-sunken" style={{ padding: `${CARD_PAD * 50}%` }}>
         <img
@@ -38,7 +38,7 @@ export function ManuscriptCard({
           decoding="async"
           width={m.width}
           height={m.height}
-          className="h-auto w-full transition-transform duration-500 ease-out-quint group-hover/card:scale-[1.04] dark:invert"
+          className="h-auto w-full transition-transform duration-(--dur-xslow) ease-out-quint group-hover/card:scale-[1.04] dark:invert"
         />
       </div>
 
@@ -47,7 +47,7 @@ export function ManuscriptCard({
         aria-pressed={saved}
         aria-label={saved ? `إزالة ${m.title} من المحفوظة` : `حفظ ${m.title}`}
         onClick={onSave}
-        className="absolute start-3 top-3 z-10 grid size-8 place-items-center rounded-full bg-heart text-white opacity-100 backdrop-blur-sm transition-[transform,background-color,opacity] duration-200 ease-pop hover:scale-105 active:scale-95 aria-pressed:bg-primary sm:opacity-0 sm:group-hover/card:opacity-100 sm:focus-visible:opacity-100 sm:aria-pressed:opacity-100"
+        className="absolute start-3 top-3 z-10 grid size-8 place-items-center rounded-full bg-heart text-white opacity-100 backdrop-blur-sm transition-[transform,background-color,opacity] duration-(--dur-base) ease-pop hover:scale-105 active:scale-95 aria-pressed:bg-primary-fill sm:opacity-0 sm:group-hover/card:opacity-100 sm:focus-visible:opacity-100 sm:aria-pressed:opacity-100"
       >
         <BookmarkIcon className={cn('size-3.75', saved && '[&_path]:fill-current')} />
       </button>
@@ -70,7 +70,7 @@ export function ManuscriptCard({
           href={m.url}
           download={fileName(m)}
           aria-label={`تحميل ${m.title} (SVG)`}
-          className="relative z-10 grid size-9 shrink-0 place-items-center rounded-full border text-muted-foreground transition-colors hover:border-primary hover:bg-primary hover:text-primary-foreground"
+          className="relative z-10 grid size-9 shrink-0 place-items-center rounded-full border text-muted-foreground transition-colors hover:border-primary hover:bg-primary-fill hover:text-primary-foreground"
         >
           <DownloadIcon className="size-4" />
         </a>

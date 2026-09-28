@@ -93,7 +93,7 @@ export function ManuscriptViewer({
       >
         {current && (
           <>
-            <header className="flex items-center gap-3 border-b px-5 py-4 pe-16">
+            <header className="flex flex-wrap items-center gap-x-3 gap-y-2 border-b px-5 py-4 pe-14 sm:pe-16">
               <div className="min-w-0 flex-1">
                 <DialogTitle className="truncate text-lead">{current.title}</DialogTitle>
                 <DialogDescription className="text-caption">
@@ -103,7 +103,12 @@ export function ManuscriptViewer({
                   · {MANUSCRIPT_CATEGORY_LABEL[current.category]}
                 </DialogDescription>
               </div>
-              <div role="toolbar" aria-label="أدوات العرض" className="flex items-center gap-1">
+              {/* على الجوال تنزل الأدوات إلى سطر خاص كي لا تدفع زرّ الإغلاق خارج الشاشة */}
+              <div
+                role="toolbar"
+                aria-label="أدوات العرض"
+                className="flex items-center gap-1 max-sm:-ms-2 max-sm:basis-full"
+              >
                 <Button
                   variant="ghost"
                   size="icon-sm"
@@ -148,7 +153,7 @@ export function ManuscriptViewer({
             <div
               ref={stage}
               className={cn(
-                'relative grid h-[min(56vh,30rem)] touch-none place-items-center overflow-hidden bg-sunken select-none',
+                'relative grid h-[min(46dvh,30rem)] touch-none place-items-center overflow-hidden bg-sunken select-none sm:h-[min(56vh,30rem)]',
                 v.zoom > 1 ? 'cursor-grab active:cursor-grabbing' : '',
               )}
               onPointerDown={(e) => {

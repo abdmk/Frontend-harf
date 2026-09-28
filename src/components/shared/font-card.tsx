@@ -13,8 +13,8 @@ import { DesignerAvatars } from './designer-avatars';
 import { DownloadButton } from './download-button';
 
 const BADGE = {
-  free: { cls: 'bg-ok-600 text-white', Icon: CheckIcon },
-  trial: { cls: 'bg-trial-500 text-white', Icon: ClockIcon },
+  free: { cls: 'bg-ok-700 text-white', Icon: CheckIcon },
+  trial: { cls: 'bg-trial-600 text-white', Icon: ClockIcon },
   paid: { cls: 'bg-gold-500 text-gold-foreground', Icon: CrownIcon },
 } as const;
 
@@ -73,7 +73,7 @@ export function FontCard({
   return (
     <article
       className={cn(
-        'group/card relative flex flex-col overflow-hidden rounded-lg border bg-card transition-[transform,box-shadow,border-color] duration-300 ease-out-quint hover:-translate-y-1 hover:border-strong hover:shadow-float',
+        'group/card relative flex flex-col overflow-hidden rounded-lg border bg-card transition-[transform,box-shadow,border-color] duration-(--dur-slow) ease-out-quint hover:-translate-y-1 hover:border-strong hover:shadow-float',
         className,
       )}
     >
@@ -83,7 +83,7 @@ export function FontCard({
       >
         {font.face && (
           <span
-            className="line-clamp-2 text-center text-5xl leading-snug text-foreground transition-transform duration-500 ease-out-quint group-hover/card:scale-[1.04]"
+            className="line-clamp-2 text-center text-5xl leading-snug text-foreground transition-transform duration-(--dur-xslow) ease-out-quint group-hover/card:scale-[1.04]"
             style={faceStyle(font.face, specimen?.weight ?? 700)}
           >
             {specimen?.text ?? font.face.nameAr}

@@ -79,7 +79,9 @@ export function FontGallery({
         role={full ? 'dialog' : undefined}
         aria-modal={full || undefined}
         aria-label={full ? `صور ${fontName} — ملء الشاشة` : undefined}
-        className={cn(full ? 'fixed inset-0 z-[60] animate-in duration-300 fade-in zoom-in-[.98]' : 'relative')}
+        className={cn(
+          full ? 'fixed inset-0 z-[60] animate-in duration-(--dur-slow) fade-in zoom-in-[.98]' : 'relative',
+        )}
       >
         <Carousel
           label={`صور ${fontName}`}
@@ -109,7 +111,7 @@ export function FontGallery({
             aria-current={k === i}
             onClick={() => setI(k)}
             className={cn(
-              'grid aspect-[1120/580] place-items-center rounded-sm border-2 border-transparent bg-sunken transition-[border-color,transform] duration-200 hover:-translate-y-0.5 aria-current:border-primary',
+              'grid aspect-[1120/580] place-items-center rounded-sm border-2 border-transparent bg-sunken transition-[border-color,transform] duration-(--dur-base) hover:-translate-y-0.5 aria-current:border-primary',
               face && (k === 1 || k === 4) && 'bg-ink text-ink-foreground',
             )}
           >

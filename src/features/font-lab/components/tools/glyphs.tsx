@@ -230,7 +230,7 @@ function GlyphDetail({ font, picked }: { font: LabFont; picked: Picked }) {
       </div>
       <ul className="flex flex-wrap gap-x-4 gap-y-1 border-t px-5 py-3 text-caption text-tertiary">
         <li className="flex items-center gap-1.5">
-          <span aria-hidden className="h-0.5 w-4 bg-primary" /> خط الأساس
+          <span aria-hidden className="h-0.5 w-4 bg-primary-fill" /> خط الأساس
         </li>
         <li className="flex items-center gap-1.5">
           <span aria-hidden className="h-0.5 w-4 border-t border-dashed border-strong" /> الصاعد · الكبيرة · x · النازل

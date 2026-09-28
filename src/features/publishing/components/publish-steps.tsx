@@ -448,7 +448,7 @@ export function PricingStep({ draft, set, errors }: StepProps) {
               <span className="block text-control font-semibold">{label}</span>
               <span className="mt-0.5 block text-caption leading-relaxed text-muted-foreground">{desc}</span>
             </span>
-            <span className="mt-0.5 grid size-5 shrink-0 place-items-center rounded-full border-[1.5px] border-strong transition-colors group-data-[state=checked]/opt:border-primary group-data-[state=checked]/opt:bg-primary">
+            <span className="mt-0.5 grid size-5 shrink-0 place-items-center rounded-full border-[1.5px] border-strong transition-colors group-data-[state=checked]/opt:border-primary group-data-[state=checked]/opt:bg-primary-fill">
               <CheckIcon className="size-3 text-primary-foreground opacity-0 transition-opacity group-data-[state=checked]/opt:opacity-100" />
             </span>
           </RadioGroupPrimitive.Item>

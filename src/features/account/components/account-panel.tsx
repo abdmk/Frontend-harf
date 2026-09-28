@@ -116,16 +116,16 @@ export function AccountPanel({
                       onClick={onNavigate}
                       aria-current={on ? 'page' : undefined}
                       className={cn(
-                        'group/it relative flex items-center rounded-sm transition-colors duration-150',
+                        'group/it relative flex items-center rounded-sm transition-colors duration-(--dur-fast)',
                         s.row,
                         on
-                          ? 'bg-tint-brand text-primary before:absolute before:inset-y-1.5 before:start-0 before:w-0.75 before:animate-in before:rounded-full before:bg-primary before:zoom-in-50'
+                          ? 'bg-tint-brand text-primary before:absolute before:inset-y-1.5 before:start-0 before:w-0.75 before:animate-in before:rounded-full before:bg-primary-fill before:zoom-in-50'
                           : 'text-foreground hover:bg-sunken',
                       )}
                     >
                       <Icon
                         className={cn(
-                          'transition-transform duration-200 ease-pop group-hover/it:scale-110',
+                          'transition-transform duration-(--dur-base) ease-pop group-hover/it:scale-110',
                           s.icon,
                           on ? 'text-primary' : 'text-foreground/80',
                         )}
@@ -187,7 +187,9 @@ export function AccountPanel({
               s.row,
             )}
           >
-            <SignOutIcon className={cn('transition-transform duration-200 group-hover/out:-translate-x-0.5', s.icon)} />
+            <SignOutIcon
+              className={cn('transition-transform duration-(--dur-base) group-hover/out:-translate-x-0.5', s.icon)}
+            />
             تسجيل خروج
           </button>
         </form>

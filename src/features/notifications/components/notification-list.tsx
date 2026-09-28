@@ -110,7 +110,7 @@ export function NotificationList({
                         n.unread ? 'bg-tint-brand' : 'opacity-0',
                       )}
                     >
-                      <span className="size-2 rounded-full bg-primary" />
+                      <span className="size-2 rounded-full bg-primary-fill" />
                     </span>
                   </button>
                 </li>

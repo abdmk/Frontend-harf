@@ -125,7 +125,7 @@ export function ReviewStep({
                     <ExclamationIcon className="size-3" />
                   </span>
                 ) : (
-                  <span className="grid size-5 place-items-center rounded-full bg-ok-500 text-white">
+                  <span className="grid size-5 place-items-center rounded-full bg-ok-700 text-white">
                     <CheckIcon className="size-3" />
                   </span>
                 )}

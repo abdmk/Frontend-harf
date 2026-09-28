@@ -147,7 +147,7 @@ export function CompareView({ source, match }: { source: Mask; match: Match }) {
                 <span aria-hidden className="size-2.5 rounded-full bg-info-strong" /> في صورتك فقط
               </li>
               <li className="flex items-center gap-1.5">
-                <span aria-hidden className="size-2.5 rounded-full bg-primary" /> في الخط المقترح فقط
+                <span aria-hidden className="size-2.5 rounded-full bg-primary-fill" /> في الخط المقترح فقط
               </li>
             </ul>
           </>

@@ -16,7 +16,7 @@ import { countByCategory, DEFAULT_QUERY, getManuscripts, parseQuery } from '../a
 import { useSavedManuscripts } from '../hooks/use-saved';
 
 const pill =
-  'inline-flex h-11 shrink-0 items-center gap-2 rounded-full border px-5 text-control leading-none whitespace-nowrap transition-[background-color,color,border-color,transform] duration-150 active:scale-[.97]';
+  'inline-flex h-11 shrink-0 items-center gap-2 rounded-full border px-5 text-control leading-none whitespace-nowrap transition-[background-color,color,border-color,transform] duration-(--dur-fast) active:scale-[.97]';
 
 const ratio = (m: Manuscript) => (1 - CARD_PAD) * (m.height / m.width) + CARD_PAD;
 const plural = (n: number) =>
@@ -69,14 +69,14 @@ export function ManuscriptsBrowser({ action }: { action?: ReactNode }) {
           className={cn(
             pill,
             savedView
-              ? 'border-primary bg-card font-medium text-primary dark:bg-paper'
+              ? 'border-primary bg-card font-medium text-primary dark:bg-paper dark:text-harf-600'
               : 'border-border bg-card hover:border-strong dark:border-transparent dark:bg-sunken',
           )}
         >
           <BookmarkIcon className={cn('size-4', savedView && '[&_path]:fill-current')} />
           المحفوظة
           {saved.ids.length > 0 && (
-            <span dir="ltr" className="text-caption text-tertiary tabular-nums">
+            <span dir="ltr" className={cn('text-caption text-tertiary tabular-nums', savedView && 'dark:text-n-600')}>
               {saved.ids.length}
             </span>
           )}
@@ -106,12 +106,12 @@ export function ManuscriptsBrowser({ action }: { action?: ReactNode }) {
                 className={cn(
                   pill,
                   on
-                    ? 'border-primary bg-card font-medium text-primary dark:bg-paper'
+                    ? 'border-primary bg-card font-medium text-primary dark:bg-paper dark:text-harf-600'
                     : 'border-border bg-card text-muted-foreground hover:border-strong hover:text-foreground dark:border-transparent dark:bg-sunken',
                 )}
               >
                 {c === 'all' ? 'الكل' : MANUSCRIPT_CATEGORY_LABEL[c]}
-                <span dir="ltr" className="text-caption text-tertiary tabular-nums">
+                <span dir="ltr" className={cn('text-caption text-tertiary tabular-nums', on && 'dark:text-n-600')}>
                   {counts.get(c) ?? 0}
                 </span>
               </button>

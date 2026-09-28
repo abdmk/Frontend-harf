@@ -132,7 +132,7 @@ function FileRow({ item, onRemove }: { item: UploadItem; onRemove: () => void })
               )}
               {item.status === 'done' && (
                 <>
-                  <span className="grid size-4 animate-pop-in place-items-center rounded-full bg-ok-500 text-white">
+                  <span className="grid size-4 animate-pop-in place-items-center rounded-full bg-ok-700 text-white">
                     <CheckIcon className="size-2.5" />
                   </span>
                   <span className="text-foreground">مكتمل</span>
@@ -161,7 +161,7 @@ function FileRow({ item, onRemove }: { item: UploadItem; onRemove: () => void })
           className="mt-4 h-2 overflow-hidden rounded-full bg-sunken"
         >
           <div
-            className="h-full rounded-full bg-primary transition-[width] duration-200 ease-linear"
+            className="h-full rounded-full bg-primary-fill transition-[width] duration-(--dur-base) ease-linear"
             style={{ width: `${pct}%` }}
           />
         </div>

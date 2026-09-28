@@ -183,7 +183,7 @@ export function NasaqTool() {
             >
               {c.lock && <LockIcon className="size-3" />}
               <span>{c.label}</span>
-              <span className="grid size-4 place-items-center rounded-full bg-primary/15 transition-colors group-hover/fc:bg-primary group-hover/fc:text-white">
+              <span className="grid size-4 place-items-center rounded-full bg-primary/15 transition-colors group-hover/fc:bg-primary-fill group-hover/fc:text-white">
                 <CrossSmallIcon className="size-3" />
               </span>
             </button>

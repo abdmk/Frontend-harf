@@ -20,7 +20,7 @@ function TabsList({ className, children, ...props }: ComponentProps<typeof TabsP
       <span
         ref={ind}
         aria-hidden
-        className="absolute bottom-0 left-0 h-0.5 rounded-full bg-primary opacity-0 transition-[transform,width] duration-(--dur-slow) ease-out-quint"
+        className="absolute bottom-0 left-0 h-0.5 rounded-full bg-primary-fill opacity-0 transition-[transform,width] duration-(--dur-slow) ease-out-quint"
       />
     </TabsPrimitive.List>
   );

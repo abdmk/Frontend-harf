@@ -30,7 +30,7 @@ function Chip({
       className={cn(
         'group/chip inline-flex flex-none items-center justify-center gap-0 rounded-full border border-border bg-transparent font-normal whitespace-nowrap text-muted-foreground',
         'transition-[background-color,border-color,color,gap] duration-(--dur-base) hover:border-strong hover:text-foreground',
-        'data-[state=on]:gap-1.5 data-[state=on]:border-primary data-[state=on]:bg-primary data-[state=on]:text-primary-foreground',
+        'data-[state=on]:gap-1.5 data-[state=on]:border-primary data-[state=on]:bg-primary-fill data-[state=on]:text-primary-foreground',
         'disabled:pointer-events-none disabled:opacity-40',
         size === 'sm' ? 'h-8 px-4 text-meta' : 'h-10 px-5 text-control',
         className,

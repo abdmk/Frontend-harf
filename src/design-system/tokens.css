@@ -12,12 +12,15 @@
   --card-foreground: #161616;
   --popover: #ffffff;
   --popover-foreground: #161616;
-  --primary: #ec3b3c;
+  /* الأحمر: #EC3B3C هو لون العلامة (الشعار، الرسوم، حلقة التركيز). للنصوص والأزرار درجة أعمق
+     (harf-600) لتحقيق تباين WCAG AA ≥ 4.5 — فوق الأبيض ومع النص الأبيض */
+  --primary: #d22528;
+  --primary-fill: #d22528; /* الأرضيات المصمتة تحت نص أبيض */
   --primary-foreground: #ffffff;
   --secondary: #f6f6f8;
   --secondary-foreground: #161616;
   --muted: #f6f6f8;
-  --muted-foreground: #6b6b72;
+  --muted-foreground: #5c5c64;
   --accent: #f6f6f8;
   --accent-foreground: #161616;
   --destructive: #e53136;
@@ -31,23 +34,23 @@
   --inset: #ededf0;
   --subtle: #f0f0f2;
   --strong: #d3d3d9;
-  --tertiary: #9c9ca3;
+  --tertiary: #6c6c75; /* ≥ 4.5 فوق الأبيض و sunken */
   --page-muted: #f8f8f8; /* أرضية منطقة المحتوى في صفحة الحساب */
   --ink: #1b1b1b;
   --ink-foreground: #ffffff;
-  --tint-brand: #ffe4e4;
+  --tint-brand: #fff0f0;
   --tint-ok: #e4faec;
   --tint-info: #e1f1ff;
   --tint-warn: #fff6e5;
   --tint-dgr: #fef0f0;
   --tint-ai: #f0ebff;
   /* نصوص الحالات فوق الأرضيات الملوّنة الخفيفة */
-  --ok-text: #1e8540;
+  --ok-text: #1a7d3e;
   --info-text: #0055a3;
-  --warn-text: #a66500;
+  --warn-text: #8f5600;
   --dgr-text: #c81e24;
   --ai-text: #3c19a8;
-  --lic: #1fa84f;
+  --lic: #1a7d3e;
   --info-strong: #0a84ff;
   --heart-bg: rgb(160 156 160 / 0.55);
   --nav-car: #ffffff;
@@ -81,7 +84,9 @@
   --card-foreground: #f4f4f4;
   --popover: #171616;
   --popover-foreground: #f4f4f4;
-  --primary: #ec3b3c;
+  /* في الداكن: نصّ أفتح قليلاً ليُقرأ فوق الأرضيات الداكنة، والأرضية المصمتة أعمق ليُقرأ الأبيض فوقها */
+  --primary: #f25558;
+  --primary-fill: #d22528;
   --primary-foreground: #ffffff;
   --secondary: #1e1e1e;
   --secondary-foreground: #f4f4f4;
@@ -98,7 +103,7 @@
   --inset: #2a2929;
   --subtle: #1f1f1f;
   --strong: #3a3a3a;
-  --tertiary: #6f6f6f;
+  --tertiary: #8e8e8e;
   --page-muted: #0b0a0a;
   --ink: #d6d3d0;
   --ink-foreground: #161616;
@@ -144,6 +149,7 @@
   --color-popover: var(--popover);
   --color-popover-foreground: var(--popover-foreground);
   --color-primary: var(--primary);
+  --color-primary-fill: var(--primary-fill);
   --color-primary-foreground: var(--primary-foreground);
   --color-secondary: var(--secondary);
   --color-secondary-foreground: var(--secondary-foreground);
@@ -248,10 +254,10 @@
   --color-paper-foreground: #161616; /* النص فوق شارة «مدفوع» الذهبية */
 
   /* ألوان أنواع الملفات (FileIcon) */
-  --color-file-pdf: #ff4b55;
+  --color-file-pdf: #d42a37;
   --color-file-otf: #7b3bf0;
-  --color-file-ttf: #0a8cff;
-  --color-file-zip: #ff9a2e;
+  --color-file-ttf: #0070d4;
+  --color-file-zip: #b35900;
 
   /* علامات الدفع — ألوان العلامات الرسمية، لا تُستعمل لغير شعاراتها */
   --color-stripe: #635bff;

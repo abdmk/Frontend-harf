@@ -8,7 +8,12 @@ import { cn } from '@/lib/cn';
  */
 function Table({ className, ...props }: React.ComponentProps<'table'>) {
   return (
-    <div data-slot="table-container" className="relative w-full overflow-x-auto">
+    // قابلة للتركيز: من يستعمل لوحة المفاتيح يستطيع تمرير الجدول أفقياً على الشاشات الضيّقة
+    <div
+      data-slot="table-container"
+      tabIndex={0}
+      className="relative w-full overflow-x-auto rounded-xs focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
+    >
       <table data-slot="table" className={cn('w-full caption-bottom text-control', className)} {...props} />
     </div>
   );

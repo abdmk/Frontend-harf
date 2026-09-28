@@ -104,7 +104,7 @@ export function FontTester({ face }: { face?: LiveFace } = {}) {
         }}
         className={cn(
           'min-h-56 p-5 [overflow-wrap:anywhere] whitespace-pre-wrap outline-none focus-visible:shadow-[inset_0_0_0_2px_var(--primary)] sm:p-8',
-          'leading-[1.9] transition-[font-size] duration-300 ease-out-quint',
+          'leading-[1.9] transition-[font-size] duration-(--dur-slow) ease-out-quint',
           swap > 0 && 'animate-fade-up',
         )}
         style={{

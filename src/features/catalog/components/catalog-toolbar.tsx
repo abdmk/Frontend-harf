@@ -20,7 +20,7 @@ const SORT_OPTIONS = [
 const CHIPS = [['all', 'الكل'] as const, ...CATEGORIES.map((c) => [c, CATEGORY_LABEL[c]] as const)];
 
 const pill =
-  'inline-flex h-11 shrink-0 items-center gap-2 rounded-full border px-5 text-control leading-none whitespace-nowrap transition-[background-color,color,border-color,transform] duration-150 active:scale-[.97]';
+  'inline-flex h-11 shrink-0 items-center gap-2 rounded-full border px-5 text-control leading-none whitespace-nowrap transition-[background-color,color,border-color,transform] duration-(--dur-fast) active:scale-[.97]';
 
 export function CatalogToolbar() {
   const { query, setQuery } = useCatalog();
@@ -55,9 +55,11 @@ export function CatalogToolbar() {
         aria-expanded={catsOpen}
         aria-controls="cat-chips"
         onClick={toggleCats}
-        className={cn(pill, 'border-transparent bg-primary ps-4 font-medium text-white hover:bg-harf-600')}
+        className={cn(pill, 'border-transparent bg-primary-fill ps-4 font-medium text-white hover:bg-harf-700')}
       >
-        <AppsIcon className={cn('size-4 transition-transform duration-300 ease-pop', !catsOpen && 'rotate-90')} />
+        <AppsIcon
+          className={cn('size-4 transition-transform duration-(--dur-slow) ease-pop', !catsOpen && 'rotate-90')}
+        />
         التصنيف
         {/* مطويّ وتصنيف مختار: يظهر اسمه على الزرّ حتى لا يُنسى الفلتر */}
         {!catsOpen && query.cat !== 'all' && (
@@ -96,7 +98,7 @@ export function CatalogToolbar() {
                     pill,
                     catsOpen && 'animate-chip-in',
                     on
-                      ? 'border-primary bg-card font-medium text-primary dark:bg-paper'
+                      ? 'border-primary bg-card font-medium text-primary dark:bg-paper dark:text-harf-600'
                       : 'border-border bg-card text-muted-foreground hover:border-strong hover:text-foreground dark:border-transparent dark:bg-sunken',
                   )}
                 >
@@ -130,7 +132,7 @@ export function CatalogToolbar() {
             {count > 0 && (
               <span
                 dir="ltr"
-                className="grid h-4.5 min-w-4.5 animate-pop-in place-items-center rounded-full bg-primary px-1 text-micro text-white"
+                className="grid h-4.5 min-w-4.5 animate-pop-in place-items-center rounded-full bg-primary-fill px-1 text-micro text-white"
               >
                 {count}
               </span>

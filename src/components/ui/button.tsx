@@ -20,7 +20,7 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        primary: 'bg-primary text-primary-foreground hover:bg-harf-600',
+        primary: 'bg-primary-fill text-primary-foreground hover:bg-harf-700',
         secondary: 'border-border bg-sunken text-foreground hover:bg-inset',
         outline: 'border-border bg-card text-foreground hover:border-strong',
         ghost: 'text-muted-foreground hover:bg-sunken hover:text-foreground',
@@ -79,7 +79,8 @@ function Button({
       {loading && !asChild ? (
         <>
           <Spinner className="absolute" />
-          <span className="invisible inline-flex items-center gap-2">{children}</span>
+          {/* شفّاف لا مخفيّ: يبقى اسم الزرّ مقروءاً لقارئ الشاشة أثناء الانتظار */}
+          <span className="inline-flex items-center gap-2 opacity-0">{children}</span>
         </>
       ) : (
         children

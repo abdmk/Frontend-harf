@@ -22,13 +22,13 @@ export function CtaSection() {
       >
         <span aria-hidden className="flex">
           <i
-            className="grid size-6 place-items-center rounded-full bg-harf-500 text-3xs font-semibold text-white not-italic ring-2 ring-ink"
+            className="grid size-6 place-items-center rounded-full bg-harf-600 text-3xs font-semibold text-white not-italic ring-2 ring-ink"
             dir="ltr"
           >
             AJ
           </i>
           <i
-            className="-ms-1.5 grid size-6 place-items-center rounded-full bg-ai-500 text-3xs font-semibold text-white not-italic ring-2 ring-ink transition-[margin] duration-200 group-hover:-ms-0.5"
+            className="-ms-1.5 grid size-6 place-items-center rounded-full bg-ai-500 text-3xs font-semibold text-white not-italic ring-2 ring-ink transition-[margin] duration-(--dur-base) group-hover:-ms-0.5"
             dir="ltr"
           >
             KM

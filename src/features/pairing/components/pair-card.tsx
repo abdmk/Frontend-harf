@@ -51,7 +51,7 @@ export function PairCard({
   return (
     <article
       aria-label={title}
-      className="group/card relative flex h-full flex-col overflow-hidden rounded-lg border bg-card transition-[transform,box-shadow,border-color] duration-300 ease-out-quint hover:-translate-y-1 hover:border-strong hover:shadow-float"
+      className="group/card relative flex h-full flex-col overflow-hidden rounded-lg border bg-card transition-[transform,box-shadow,border-color] duration-(--dur-slow) ease-out-quint hover:-translate-y-1 hover:border-strong hover:shadow-float"
     >
       <div
         aria-hidden
@@ -65,7 +65,7 @@ export function PairCard({
         )}
         <div
           className={cn(
-            'flex flex-col transition-[opacity,transform] duration-500 ease-out-quint group-hover/card:scale-[1.03]',
+            'flex flex-col transition-[opacity,transform] duration-(--dur-xslow) ease-out-quint group-hover/card:scale-[1.03]',
             ready ? 'opacity-100' : 'absolute inset-x-6 opacity-0',
           )}
         >
@@ -95,7 +95,7 @@ export function PairCard({
       <span
         className={cn(
           'absolute end-4 top-4 z-10 inline-flex h-6 items-center gap-1 rounded-full px-2 text-caption leading-none font-medium',
-          paid.length ? 'bg-gold-500 text-gold-foreground' : 'bg-ok-600 text-white',
+          paid.length ? 'bg-gold-500 text-gold-foreground' : 'bg-ok-700 text-white',
         )}
       >
         {paid.length ? <CrownIcon className="size-3" /> : <CheckIcon className="size-3" />}
@@ -108,7 +108,7 @@ export function PairCard({
         aria-label={saved ? `إزالة ${title} من المحفوظة` : `حفظ ${title}`}
         title={saved ? 'محفوظة' : 'حفظ'}
         onClick={onSave}
-        className="absolute start-4 top-4 z-10 grid size-8 place-items-center rounded-full bg-heart text-white backdrop-blur-sm transition-[transform,background-color] duration-200 ease-pop hover:scale-105 active:scale-95 aria-pressed:bg-primary"
+        className="absolute start-4 top-4 z-10 grid size-8 place-items-center rounded-full bg-heart text-white backdrop-blur-sm transition-[transform,background-color] duration-(--dur-base) ease-pop hover:scale-105 active:scale-95 aria-pressed:bg-primary-fill"
       >
         <BookmarkIcon className={cn('size-3.75', saved && 'animate-pop-in [&_path]:fill-current')} />
       </button>

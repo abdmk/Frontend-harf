@@ -31,7 +31,7 @@ export function RangeField({
         className="relative flex h-5 w-full touch-none items-center select-none"
       >
         <SliderPrimitive.Track className="relative h-5 w-full overflow-hidden rounded-full bg-sunken">
-          <SliderPrimitive.Range className="absolute h-full rounded-full bg-primary" />
+          <SliderPrimitive.Range className="absolute h-full rounded-full bg-primary-fill" />
           <span
             aria-hidden
             className="pointer-events-none absolute inset-0 flex items-center justify-between px-[7.5px]"
@@ -51,7 +51,7 @@ export function RangeField({
             aria-valuetext={format(stops[v]!)}
             className="grid size-5 cursor-grab place-items-center rounded-full outline-none active:cursor-grabbing"
           >
-            <span className="size-2 rounded-full bg-white transition-transform duration-200 ease-pop in-focus-visible:scale-150 in-active:scale-150" />
+            <span className="size-2 rounded-full bg-white transition-transform duration-(--dur-base) ease-pop in-focus-visible:scale-150 in-active:scale-150" />
           </SliderPrimitive.Thumb>
         ))}
       </SliderPrimitive.Root>

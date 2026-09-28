@@ -18,7 +18,7 @@ export function PanelSheetContent({ className, children, ...props }: ComponentPr
       className={cn(
         'gap-0 border bg-sheet p-0 shadow-overlay',
         mobile
-          ? 'max-h-[88dvh] rounded-t-xl data-[state=open]:duration-500'
+          ? 'max-h-[88dvh] rounded-t-xl'
           : 'max-h-[min(680px,calc(100dvh-4rem))] w-[min(var(--container-dialog-md),calc(100vw-2rem))]',
         className,
       )}

@@ -83,7 +83,7 @@ export function Carousel({
       }}
     >
       <div
-        className="flex h-full transition-transform duration-[560ms] ease-in-out-strong will-change-transform"
+        className="flex h-full transition-transform duration-(--dur-xslow) ease-in-out-strong will-change-transform"
         style={{ transform: `translateX(${current * 100}%)` }}
       >
         {slides.map((s, i) => (
@@ -109,7 +109,7 @@ export function Carousel({
             type="button"
             aria-label="السابق"
             onClick={() => go(current - 1)}
-            className="absolute start-5 top-1/2 z-10 hidden size-10 -translate-y-1/2 place-items-center rounded-full bg-nav-car text-muted-foreground shadow-soft transition-[transform,color] duration-200 ease-pop hover:scale-105 hover:text-foreground active:scale-95 sm:grid md:start-8"
+            className="absolute start-5 top-1/2 z-10 hidden size-10 -translate-y-1/2 place-items-center rounded-full bg-nav-car text-muted-foreground shadow-soft transition-[transform,color] duration-(--dur-base) ease-pop hover:scale-105 hover:text-foreground active:scale-95 sm:grid md:start-8"
           >
             <ChevronRightIcon className="size-4.5" />
           </button>
@@ -117,7 +117,7 @@ export function Carousel({
             type="button"
             aria-label="التالي"
             onClick={() => go(current + 1)}
-            className="absolute end-5 top-1/2 z-10 hidden size-10 -translate-y-1/2 place-items-center rounded-full bg-nav-car text-muted-foreground shadow-soft transition-[transform,color] duration-200 ease-pop hover:scale-105 hover:text-foreground active:scale-95 sm:grid md:end-8"
+            className="absolute end-5 top-1/2 z-10 hidden size-10 -translate-y-1/2 place-items-center rounded-full bg-nav-car text-muted-foreground shadow-soft transition-[transform,color] duration-(--dur-base) ease-pop hover:scale-105 hover:text-foreground active:scale-95 sm:grid md:end-8"
           >
             <ChevronLeftIcon className="size-4.5" />
           </button>
@@ -130,13 +130,13 @@ export function Carousel({
                 aria-current={i === current}
                 onClick={() => go(i)}
                 className={cn(
-                  'grid h-3 place-items-center transition-[width] duration-300 ease-out-quint',
+                  'grid h-3 place-items-center transition-[width] duration-(--dur-slow) ease-out-quint',
                   i === current ? 'w-8' : 'w-2',
                 )}
               >
                 <span
                   className={cn(
-                    'block h-0.75 w-full rounded-full transition-colors duration-300',
+                    'block h-0.75 w-full rounded-full transition-colors duration-(--dur-slow)',
                     i === current ? 'bg-muted-foreground' : 'bg-strong',
                   )}
                 />

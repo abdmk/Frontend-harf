@@ -84,7 +84,7 @@ export function FontMatchingTool({ renderResult }: { renderResult: (p: ResultCar
                 <span
                   className={cn(
                     'h-1 rounded-full transition-colors duration-(--dur-slow)',
-                    stage === i ? 'bg-primary' : i < stage ? 'bg-foreground/70' : 'bg-inset',
+                    stage === i ? 'bg-primary-fill' : i < stage ? 'bg-foreground/70' : 'bg-inset',
                   )}
                 />
                 <span
@@ -298,7 +298,7 @@ function Progress({ done, progress, onCancel }: { done: StepKey[]; progress: num
       </div>
       <div className="h-1.5 overflow-hidden rounded-full bg-inset">
         <div
-          className="h-full rounded-full bg-primary transition-[width] duration-(--dur-base)"
+          className="h-full rounded-full bg-primary-fill transition-[width] duration-(--dur-base)"
           style={{ width: `${Math.round(progress * 100)}%` }}
         />
       </div>
@@ -316,7 +316,7 @@ function Progress({ done, progress, onCancel }: { done: StepKey[]; progress: num
               <span
                 className={cn(
                   'grid size-5 place-items-center rounded-full',
-                  isDone ? 'bg-ok-600 text-white' : k === current ? 'border-2 border-primary' : 'border',
+                  isDone ? 'bg-ok-700 text-white' : k === current ? 'border-2 border-primary' : 'border',
                 )}
               >
                 {isDone && <CheckIcon className="size-3" />}

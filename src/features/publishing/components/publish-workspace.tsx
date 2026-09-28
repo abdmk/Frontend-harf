@@ -177,7 +177,13 @@ export function PublishWorkspace({
                   <span
                     className={cn(
                       'h-1 w-full rounded-full transition-colors duration-(--dur-slow)',
-                      step === i ? 'bg-primary' : flagged ? 'bg-warn-500' : complete ? 'bg-foreground/70' : 'bg-inset',
+                      step === i
+                        ? 'bg-primary-fill'
+                        : flagged
+                          ? 'bg-warn-500'
+                          : complete
+                            ? 'bg-foreground/70'
+                            : 'bg-inset',
                       'group-hover/st:opacity-80',
                     )}
                   />

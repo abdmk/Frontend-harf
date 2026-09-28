@@ -12,7 +12,7 @@ function Checkbox({ className, ...props }: React.ComponentProps<typeof CheckboxP
       className={cn(
         'peer grid size-5 shrink-0 place-items-center rounded-[6px] border-[1.5px] border-strong bg-card text-primary-foreground',
         'transition-[background-color,border-color] duration-(--dur-fast) hover:border-muted-foreground',
-        'data-[state=checked]:border-primary data-[state=checked]:bg-primary',
+        'data-[state=checked]:border-primary data-[state=checked]:bg-primary-fill',
         'disabled:cursor-not-allowed disabled:opacity-40 aria-invalid:border-dgr-500',
         className,
       )}

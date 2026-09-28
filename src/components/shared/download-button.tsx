@@ -40,12 +40,12 @@ export function DownloadButton({
   }, [state]);
 
   const classes = cn(
-    'group/dl relative z-10 inline-flex items-center justify-center gap-2 font-medium whitespace-nowrap transition-[background-color,transform] duration-200 active:scale-[.97]',
+    'group/dl relative z-10 inline-flex items-center justify-center gap-2 font-medium whitespace-nowrap transition-[background-color,transform] duration-(--dur-base) active:scale-[.97]',
     size === 'sm' ? 'h-8 min-w-21 rounded-xs px-3 text-meta' : 'h-12 rounded-sm px-6 text-lead',
     state === 'done'
-      ? 'bg-ok-600 text-white'
+      ? 'bg-ok-700 text-white'
       : variant === 'primary'
-        ? 'bg-primary text-primary-foreground hover:bg-harf-600'
+        ? 'bg-primary-fill text-primary-foreground hover:bg-harf-700'
         : 'border bg-sunken text-foreground hover:bg-inset',
     className,
   );
@@ -56,7 +56,7 @@ export function DownloadButton({
       ) : (
         <DownloadIcon
           className={cn(
-            'size-3.5 transition-transform duration-200 group-hover/dl:translate-y-0.5',
+            'size-3.5 transition-transform duration-(--dur-base) group-hover/dl:translate-y-0.5',
             state === 'busy' && 'animate-bounce',
           )}
         />

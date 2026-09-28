@@ -38,7 +38,7 @@ export function AccountMenu({
         <PopoverTrigger
           ref={triggerRef}
           aria-label={`حساب ${user.name}`}
-          className="ms-1 rounded-full transition-[box-shadow,transform] duration-150 hover:shadow-[0_0_0_4px_var(--sunken)] active:scale-95"
+          className="ms-1 rounded-full transition-[box-shadow,transform] duration-(--dur-fast) hover:shadow-[0_0_0_4px_var(--sunken)] active:scale-95"
         >
           <UserAvatar user={user} className="size-9 text-control" />
         </PopoverTrigger>

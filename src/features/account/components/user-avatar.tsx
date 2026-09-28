@@ -27,7 +27,7 @@ export function UserAvatar({
         />
       ) : (
         <span
-          className="grid size-full place-items-center rounded-full bg-harf-500 text-[0.72em] font-medium text-white"
+          className="grid size-full place-items-center rounded-full bg-harf-600 text-[0.72em] font-medium text-white"
           dir="ltr"
         >
           {user.initials}

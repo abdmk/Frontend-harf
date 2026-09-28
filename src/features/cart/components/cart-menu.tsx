@@ -33,7 +33,7 @@ export function CartMenu({
           <span
             aria-hidden
             dir="ltr"
-            className="absolute end-1 top-1 grid h-4 min-w-4 animate-pop-in place-items-center rounded-full bg-primary px-1 text-2xs font-medium text-primary-foreground"
+            className="absolute end-1 top-1 grid h-4 min-w-4 animate-pop-in place-items-center rounded-full bg-primary-fill px-1 text-2xs font-medium text-primary-foreground"
           >
             {count}
           </span>

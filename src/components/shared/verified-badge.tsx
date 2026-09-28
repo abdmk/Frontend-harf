@@ -4,7 +4,7 @@ import { cn } from '@/lib/cn';
 export function VerifiedBadge({ className }: { className?: string }) {
   return (
     <span
-      className={cn('grid size-4 shrink-0 place-items-center rounded-full bg-trial-500 text-white', className)}
+      className={cn('grid size-4 shrink-0 place-items-center rounded-full bg-trial-600 text-white', className)}
       title="موثّق"
     >
       <svg viewBox="0 0 12 12" aria-hidden className="size-[62%]">

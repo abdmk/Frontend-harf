@@ -372,7 +372,7 @@ function WeightList({
                 aria-hidden
                 className={cn(
                   'grid size-5 shrink-0 place-items-center rounded-full transition-colors',
-                  on ? 'bg-primary text-primary-foreground' : 'border border-strong',
+                  on ? 'bg-primary-fill text-primary-foreground' : 'border border-strong',
                 )}
               >
                 {on && <CheckIcon className="size-3" />}

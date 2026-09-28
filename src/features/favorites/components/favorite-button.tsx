@@ -22,10 +22,10 @@ export function FavoriteButton({ fontId, fontName, variant = 'card', className }
         setPop((n) => n + 1);
       }}
       className={cn(
-        'grid place-items-center transition-[transform,background-color,color] duration-200 ease-pop hover:scale-105 active:scale-95',
+        'grid place-items-center transition-[transform,background-color,color] duration-(--dur-base) ease-pop hover:scale-105 active:scale-95',
         variant === 'card'
-          ? 'size-8 rounded-full bg-heart text-white backdrop-blur-sm aria-pressed:bg-primary'
-          : 'size-12 rounded-sm border border-gold-500/50 bg-gold-500/10 text-gold-500 aria-pressed:border-primary aria-pressed:bg-primary aria-pressed:text-white',
+          ? 'size-8 rounded-full bg-heart text-white backdrop-blur-sm aria-pressed:bg-primary-fill'
+          : 'size-12 rounded-sm border border-gold-500/50 bg-gold-500/10 text-gold-500 aria-pressed:border-primary aria-pressed:bg-primary-fill aria-pressed:text-white',
         className,
       )}
     >

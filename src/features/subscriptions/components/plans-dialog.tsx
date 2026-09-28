@@ -15,8 +15,8 @@ import type { ChangePlanResult } from '../api/actions';
 const PLAN_ICON = { free: UserIcon, basic: DiamondIcon, studio: CrownIcon } as const;
 const PLAN_RING: Record<Plan, string> = {
   free: '',
-  basic: 'border-gold-500 [--plan-badge:var(--color-gold-500)]',
-  studio: 'border-trial-500 [--plan-badge:var(--color-trial-500)]',
+  basic: 'border-gold-500 [--plan-badge:var(--color-gold-500)] [--plan-badge-fg:var(--color-gold-foreground)]',
+  studio: 'border-trial-500 [--plan-badge:var(--color-trial-600)] [--plan-badge-fg:var(--color-paper)]',
 };
 
 type Step = { kind: 'plans' } | { kind: 'pay'; plan: PlanOffer } | { kind: 'done'; plan: PlanOffer };
@@ -131,7 +131,7 @@ export function PlansDialog({
                     )}
                   >
                     {p.badge && (
-                      <span className="absolute start-5 -top-3 rounded-full bg-(--plan-badge) px-2.5 py-0.5 text-caption font-medium text-white">
+                      <span className="absolute start-5 -top-3 rounded-full bg-(--plan-badge) px-2.5 py-0.5 text-caption font-medium text-(--plan-badge-fg)">
                         {p.badge}
                       </span>
                     )}

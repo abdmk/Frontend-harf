@@ -115,7 +115,7 @@ function Empty() {
                 type="button"
                 disabled={busy}
                 onClick={() => void addFromLibrary(f.id, f.download!.url, f.name)}
-                className="group flex w-full flex-col items-start gap-1 rounded-lg border bg-card p-4 text-start transition-[border-color,transform,box-shadow] duration-200 hover:-translate-y-0.5 hover:border-strong hover:shadow-float disabled:opacity-60"
+                className="group flex w-full flex-col items-start gap-1 rounded-lg border bg-card p-4 text-start transition-[border-color,transform,box-shadow] duration-(--dur-base) hover:-translate-y-0.5 hover:border-strong hover:shadow-float disabled:opacity-60"
               >
                 <span className="text-2xl leading-snug" style={faceStyle(f.face, 700)}>
                   {f.face!.nameAr}
@@ -280,7 +280,7 @@ function ToolNav({ current, onGo }: { current: ToolKey; onGo: (k: ToolKey) => vo
                       <t.icon className="size-4 shrink-0" />
                       <span className="flex-1 text-start">{t.label}</span>
                       {count ? (
-                        <span dir="ltr" className="text-caption tabular-nums opacity-70">
+                        <span dir="ltr" className="text-caption text-tertiary tabular-nums">
                           {count}
                         </span>
                       ) : null}

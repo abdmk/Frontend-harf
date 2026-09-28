@@ -6,7 +6,7 @@ import { cn } from '@/lib/cn';
 export const PLAN_TEXT: Record<Plan, string> = {
   free: 'text-lic',
   basic: 'text-warn-text',
-  studio: 'text-info-strong',
+  studio: 'text-info-text',
 };
 const STYLE: Record<Plan, string> = {
   free: `bg-tint-ok ${PLAN_TEXT.free}`,

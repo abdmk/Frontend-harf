@@ -41,7 +41,7 @@ const ROLES: [string, string, string][] = [
   ['inset', 'bg-inset', 'عمق إضافي'],
   ['page-muted', 'bg-page-muted', 'منطقة المحتوى في الحساب'],
   ['ink', 'bg-ink', 'الأسطح الداكنة'],
-  ['primary', 'bg-primary', 'لون الفعل الوحيد'],
+  ['primary', 'bg-primary-fill', 'لون الفعل الوحيد'],
   ['tint-brand', 'bg-tint-brand', 'تلوين خفيف'],
   ['tint-ok', 'bg-tint-ok', 'نجاح'],
   ['tint-info', 'bg-tint-info', 'معلومة / تجريبي'],

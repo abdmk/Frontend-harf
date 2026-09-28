@@ -5,13 +5,14 @@ import { cn } from '@/lib/cn';
  * الشخص نفسه يحصل على اللون نفسه دائماً، دون تخزين لون في البيانات.
  */
 const TONES = [
-  'bg-harf-500',
-  'bg-trial-500',
-  'bg-ok-500',
-  'bg-ai-500',
+  // درجات 600/700 — تباين الحرفين الأبيضين ≥ 4.5 (WCAG AA)
+  'bg-harf-600',
+  'bg-trial-600',
   'bg-ok-700',
-  'bg-gold-500',
-  'bg-n-500',
+  'bg-ai-500',
+  'bg-trial-700',
+  'bg-warn-700',
+  'bg-n-600',
 ] as const;
 
 export function avatarTone(seed: string) {

@@ -39,7 +39,7 @@ export function UsageMeter({
         <span
           className={cn(
             'block h-full rounded-full transition-[width] duration-(--dur-xslow) ease-out-quint',
-            full ? 'bg-warn-500' : meter.limit === null ? 'bg-ok-500' : 'bg-primary',
+            full ? 'bg-warn-500' : meter.limit === null ? 'bg-ok-500' : 'bg-primary-fill',
           )}
           style={{ width: `${pct}%` }}
         />

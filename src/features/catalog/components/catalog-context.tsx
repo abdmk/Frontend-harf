@@ -39,7 +39,7 @@ export function CatalogProvider({ children }: { children: ReactNode }) {
 export function CatalogResults({ children }: { children: ReactNode }) {
   const { pending } = useCatalog();
   return (
-    <div aria-busy={pending} className="transition-opacity duration-200 aria-busy:opacity-50">
+    <div aria-busy={pending} className="transition-opacity duration-(--dur-base) aria-busy:opacity-50">
       {children}
     </div>
   );
