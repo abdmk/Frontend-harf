@@ -24,7 +24,7 @@ export function UsageMeter({
           {icon}
           {label}
         </span>
-        <span dir="ltr" className={cn('text-meta', full ? 'font-medium text-dgr-text' : 'text-muted-foreground')}>
+        <span dir="ltr" className={cn('text-meta', full ? 'font-medium text-warn-text' : 'text-muted-foreground')}>
           {meter.limit === null ? 'غير محدود' : `${meter.used} / ${meter.limit}`}
         </span>
       </div>
@@ -39,7 +39,7 @@ export function UsageMeter({
         <span
           className={cn(
             'block h-full rounded-full transition-[width] duration-(--dur-xslow) ease-out-quint',
-            full ? 'bg-dgr-500' : meter.limit === null ? 'bg-ok-500' : 'bg-ink',
+            full ? 'bg-warn-500' : meter.limit === null ? 'bg-ok-500' : 'bg-primary',
           )}
           style={{ width: `${pct}%` }}
         />
