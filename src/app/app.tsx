@@ -9,6 +9,7 @@ import { AnalyticsPage } from './pages/analytics';
 import { CartPage } from './pages/cart';
 import { CheckoutPage } from './pages/checkout';
 import { DesignSystemPage } from './pages/design-system';
+import { DesignerPage } from './pages/designer';
 import { FontPage } from './pages/font';
 import { FoundryPage } from './pages/foundry';
 import { HomePage } from './pages/home';
@@ -19,10 +20,12 @@ import { PublishPage } from './pages/publish';
 import { RegisterPage } from './pages/register';
 import { StudioPage } from './pages/studio';
 import { AppProviders } from './providers';
+import { ScrollToTop } from './scroll-to-top';
 
 export function App() {
   return (
     <AppProviders>
+      <ScrollToTop />
       <Routes>
         {/* صفحات الموقع العامة — ترويسة عادية + تذييل */}
         <Route errorElement={<ErrorBoundary />} element={<SiteLayout />}>
@@ -32,6 +35,7 @@ export function App() {
           <Route path="checkout" element={<CheckoutPage />} />
           <Route path="notifications" element={<NotificationsPage />} />
           <Route path="foundries/:id" element={<FoundryPage />} />
+          <Route path="designers/:id" element={<DesignerPage />} />
         </Route>
 
         {/* المصادقة — بلا ترويسة */}
