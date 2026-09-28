@@ -29,7 +29,7 @@ export function AuthShell({
           <Link
             to={paths.home.getHref()}
             aria-label="مكتبة حرف — الرئيسية"
-            className="rounded-full text-harf-500 transition-transform active:scale-95"
+            className="rounded-full text-primary transition-transform active:scale-95"
           >
             <HarfMark className="size-11" />
           </Link>

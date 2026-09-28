@@ -17,27 +17,32 @@ const BADGE = {
   paid: { cls: 'bg-gold-500 text-gold-foreground', Icon: CrownIcon },
 } as const;
 
+/** اسم المصمّم تحت اسم الخط — رابط لصفحته، فوق رابط البطاقة الممتدّ (z-10) */
 function Byline({ font }: { font: Font }) {
   const first = font.designers[0];
+  if (!first) return font.designerLabel ? <span className="truncate">{font.designerLabel}</span> : null;
+  const link = 'relative z-10 truncate underline-offset-4 transition-colors hover:text-primary hover:underline';
+  const to = paths.designer.getHref(first.id);
   if (font.designerLabel)
     return (
-      <span className="truncate" dir="ltr">
+      <Link to={to} dir="ltr" className={link}>
         {font.designerLabel}
-      </span>
+      </Link>
     );
-  if (!first) return null;
   if (font.designers.length > 2)
     return (
       <span className="truncate">
-        {first.nameAr}{' '}
+        <Link to={to} className={link}>
+          {first.nameAr}
+        </Link>{' '}
         <small className="text-meta font-normal text-muted-foreground">و{font.designers.length - 1} آخرين</small>
       </span>
     );
   const latin = /^[A-Za-z]/.test(first.nameEn) && font.designers.length === 1;
   return (
-    <span className="truncate" dir={latin ? 'ltr' : undefined}>
+    <Link to={to} dir={latin ? 'ltr' : undefined} className={link}>
       {latin ? first.nameEn : first.nameAr}
-    </span>
+    </Link>
   );
 }
 

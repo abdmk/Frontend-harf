@@ -30,7 +30,7 @@ export function SiteHeader({ actions }: SiteHeaderProps) {
         <Link
           to={paths.home.getHref()}
           aria-label="مكتبة حرف — الرئيسية"
-          className="flex h-16 items-center text-harf-500 dark:text-harf-400"
+          className="flex h-16 items-center text-primary"
         >
           <HarfLockup className="hidden h-8.5 sm:block" />
           <HarfMark className="sm:hidden" />
