@@ -53,8 +53,7 @@ const SIZE = {
   },
 } as const;
 
-const MANAGE_PLAN =
-  'rounded-full border bg-card px-3 py-1 text-meta font-medium transition-colors hover:bg-background';
+const MANAGE_PLAN = 'rounded-full border bg-card px-3 py-1 text-meta font-medium transition-colors hover:bg-background';
 
 /** بطاقة المستخدم + قائمة الحساب + (للمجانية) دعوة التحويل + الخروج — مكوّن واحد في مكانين */
 export function AccountPanel({
