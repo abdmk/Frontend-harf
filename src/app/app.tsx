@@ -31,6 +31,7 @@ import { ScrollToTop } from './scroll-to-top';
 
 // «نسق» في حزمة منفصلة: الكتالوج والخطوط لا تُحمَّل إلا لمن يفتح الأداة
 const NasaqPage = lazy(() => import('./pages/nasaq').then((m) => ({ default: m.NasaqPage })));
+const FontLabPage = lazy(() => import('./pages/font-lab').then((m) => ({ default: m.FontLabPage })));
 const FontMatchingPage = lazy(() => import('./pages/font-matching').then((m) => ({ default: m.FontMatchingPage })));
 
 export function App() {
@@ -53,6 +54,14 @@ export function App() {
             element={
               <Suspense fallback={<LoadingState className="container-page py-14" label="جارٍ تحميل «نسق»…" />}>
                 <NasaqPage />
+              </Suspense>
+            }
+          />
+          <Route
+            path="tools/font-lab"
+            element={
+              <Suspense fallback={<LoadingState className="container-page py-14" label="جارٍ تحميل «مختبر الخط»…" />}>
+                <FontLabPage />
               </Suspense>
             }
           />

@@ -19,6 +19,9 @@ const PAGES = [
   '/studio/publish',
   '/foundries/tajarib',
   '/admin/analytics',
+  '/tools/nasaq',
+  '/tools/font-matching',
+  '/tools/font-lab?font=cairo',
 ];
 
 for (const path of PAGES) {
