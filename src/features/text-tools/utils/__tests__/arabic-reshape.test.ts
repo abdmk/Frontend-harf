@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { prepareArabic, reverseVisual, shapeArabic } from '../arabic-reshape';
+import { prepareArabic, reverseVisual, shapeArabic, simulateBroken, stripMarks } from '../arabic-reshape';
 
 const cp = (s: string) => Array.from(s).map((c) => c.codePointAt(0)!.toString(16));
 
@@ -51,5 +51,29 @@ describe('prepareArabic', () => {
   it('يطبّق الخطوتين معاً أو كلّاً وحدها', () => {
     expect(prepareArabic('لا', { shape: false, reverse: false })).toBe('لا');
     expect(prepareArabic('لا', { shape: true, reverse: true })).toBe('ﻻ');
+  });
+});
+
+describe('stripMarks', () => {
+  it('يحذف الحركات ويُبقي الحروف واللاتيني', () => {
+    expect(stripMarks('مُحَمَّدٌ Harf')).toBe('محمد Harf');
+  });
+
+  it('prepareArabic يحذف التشكيل قبل الوصل فلا ينقطع الاتصال', () => {
+    expect(prepareArabic('بَت', { shape: true, reverse: false, strip: true })).toBe(shapeArabic('بت'));
+  });
+});
+
+describe('simulateBroken', () => {
+  it('يفصل كل حرف عربي بـZWNJ ويترك الترتيب واللاتيني', () => {
+    expect(simulateBroken('بت A')).toBe('ب\u200cت\u200c A');
+  });
+
+  it('لا يفصل الحرف عن حركته', () => {
+    expect(simulateBroken('بَ')).toBe('بَ\u200c');
+  });
+
+  it('يحافظ على الأسطر', () => {
+    expect(simulateBroken('ب\nت').split('\n')).toHaveLength(2);
   });
 });

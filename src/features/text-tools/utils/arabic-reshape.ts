@@ -158,8 +158,33 @@ export function reverseVisual(text: string): string {
   return text.split('\n').map(reverseLine).join('\n');
 }
 
-export function prepareArabic(text: string, opts: { shape: boolean; reverse: boolean }): string {
+/** يحذف الحركات وعلامات المصحف — كثير من البرامج تضعها في غير موضعها */
+export function stripMarks(text: string): string {
+  return Array.from(text)
+    .filter((c) => !isMark(c))
+    .join('');
+}
+
+const ZWNJ = '\u200c';
+
+/**
+ * محاكاة ما يعرضه برنامج لا يدعم العربية: كل حرف منفصل عن جاره (فاصل ZWNJ يمنع الوصل).
+ * الترتيب المنطقي يبقى — يُعرض داخل bidi-override من اليسار لليمين فيظهر مقلوباً كما في البرنامج.
+ */
+export function simulateBroken(text: string): string {
+  return text
+    .split('\n')
+    .map((line) =>
+      Array.from(line)
+        .map((c, i, all) => (/[\u0600-\u06ff]/.test(c) && !isMark(all[i + 1] ?? '') ? c + ZWNJ : c))
+        .join(''),
+    )
+    .join('\n');
+}
+
+export function prepareArabic(text: string, opts: { shape: boolean; reverse: boolean; strip?: boolean }): string {
   let out = text;
+  if (opts.strip) out = stripMarks(out);
   if (opts.shape) out = shapeArabic(out);
   if (opts.reverse) out = reverseVisual(out);
   return out;

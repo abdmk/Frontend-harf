@@ -19,6 +19,7 @@ const PAGES = [
   '/studio/publish',
   '/foundries/tajarib',
   '/admin/analytics',
+  '/tools/reverse-text',
   '/tools/nasaq',
   '/tools/font-matching',
   '/tools/font-lab?font=cairo',
