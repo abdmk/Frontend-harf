@@ -4,21 +4,21 @@ import { cn } from '@/lib/cn';
 
 import { NasaqOptionsSheet } from './nasaq-options-sheet';
 import { type Brief, DEFAULT_BRIEF, type View } from '../data/brief';
-import { USE_CASES, type UseCaseKey } from '../data/catalog';
 
 // نفس حبوب شريط المكتبة حرفياً — «نسق» جزء من الموقع لا أداة بتصميم آخر
 const pill =
   'inline-flex h-11 shrink-0 items-center gap-2 rounded-full border px-5 text-control leading-none whitespace-nowrap transition-[background-color,color,border-color,transform] duration-(--dur-fast) active:scale-[.97]';
 
-/** عدد الخيارات المغيّرة عن الافتراضي (عدا الاستخدام — له شرائحه) — يظهر على زرّ «الخيارات» */
+/** عدد الخيارات المغيّرة عن الافتراضي — يظهر على زرّ «الخيارات» */
 export const optionsCount = (b: Brief) =>
+  Number(b.useCase !== DEFAULT_BRIEF.useCase) +
   Number(b.lang !== DEFAULT_BRIEF.lang) +
   Number(b.tier !== DEFAULT_BRIEF.tier) +
   Number(b.fonts !== DEFAULT_BRIEF.fonts);
 
 /**
  * شريط «نسق» على نمط شريط المكتبة: زرّ أحمر للفعل الرئيسي، حقل بعرض المتاح، زرّ لوحة الخيارات،
- * ومبدّل العرض — ثم شرائح الاستخدام تحته كما شرائح التصنيف.
+ * ومبدّل العرض. الاستخدام واللغة والترخيص وعدد الخطوط كلها داخل «الخيارات».
  */
 export function NasaqToolbar({
   brief,
@@ -116,31 +116,6 @@ export function NasaqToolbar({
             { value: 'saved', label: `المحفوظة${savedCount ? ` (${savedCount})` : ''}` },
           ]}
         />
-      </div>
-
-      {/* الاستخدام: شرائح كشرائح التصنيف في المكتبة */}
-      <div className="-m-1 [scrollbar-width:none] overflow-x-auto p-1 [&::-webkit-scrollbar]:hidden">
-        <div role="group" aria-label="الاستخدام" className="flex w-max gap-2">
-          {(Object.keys(USE_CASES) as UseCaseKey[]).map((k) => {
-            const on = brief.useCase === k;
-            return (
-              <button
-                key={k}
-                type="button"
-                aria-pressed={on}
-                onClick={() => onBrief({ ...brief, useCase: k })}
-                className={cn(
-                  pill,
-                  on
-                    ? 'border-primary bg-card font-medium text-primary dark:bg-paper dark:text-harf-600'
-                    : 'border-border bg-card text-muted-foreground hover:border-strong hover:text-foreground dark:border-transparent dark:bg-sunken',
-                )}
-              >
-                {USE_CASES[k].label}
-              </button>
-            );
-          })}
-        </div>
       </div>
     </div>
   );

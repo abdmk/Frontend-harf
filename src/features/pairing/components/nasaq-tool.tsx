@@ -117,6 +117,15 @@ export function NasaqTool() {
 
   const lockEntries = (Object.keys(locked) as Role[]).filter((k) => locked[k]);
   const chips: Chip[] = [
+    ...(brief.useCase !== DEFAULT_BRIEF.useCase
+      ? [
+          {
+            key: 'useCase',
+            label: USE_CASES[brief.useCase].label,
+            clear: () => changeBrief({ ...brief, useCase: DEFAULT_BRIEF.useCase }),
+          },
+        ]
+      : []),
     ...(brief.lang !== DEFAULT_BRIEF.lang
       ? [
           {
@@ -193,7 +202,7 @@ export function NasaqTool() {
             type="button"
             onClick={() => {
               setLocked({});
-              changeBrief({ ...DEFAULT_BRIEF, useCase: brief.useCase });
+              changeBrief(DEFAULT_BRIEF);
             }}
             className="px-1 text-caption underline underline-offset-4 transition-colors hover:text-foreground"
           >

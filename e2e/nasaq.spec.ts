@@ -43,10 +43,9 @@ test.describe('نسق', () => {
     await page.getByRole('button', { name: 'تركيبات جديدة' }).click();
     await expect.poll(() => cards.first().getAttribute('aria-label')).not.toBe(first);
 
-    // الاستخدام: شرائح كشرائح التصنيف
-    const longform = page.getByRole('group', { name: 'الاستخدام' }).getByRole('button', { name: 'النصوص الطويلة' });
-    await longform.click();
-    await expect(longform).toHaveAttribute('aria-pressed', 'true');
+    // الاستخدام داخل «الخيارات»، ويظهر بعدها شريحةً قابلة للإزالة في سطر الحالة
+    await apply(page, { الاستخدام: 'النصوص الطويلة' });
+    await expect(page.getByRole('button', { name: 'إزالة النصوص الطويلة' })).toBeVisible();
     await expect(cards).toHaveCount(9);
 
     await apply(page, { 'عدد الخطوط': 'ثلاثة خطوط' });

@@ -3,17 +3,18 @@ import { type ReactElement, type ReactNode, useMemo, useState } from 'react';
 
 import { PanelSheetContent } from '@/components/shared/panel-sheet';
 import { Button } from '@/components/ui/button';
+import { Chip, ChipGroup } from '@/components/ui/chip-group';
 import { CrossIcon } from '@/components/ui/icons';
 import { Sheet, SheetClose, SheetDescription, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 
 import { type Brief, DEFAULT_BRIEF, FONTS_LABEL, LANG_LABEL, TIER_LABEL } from '../data/brief';
-import { FAMILIES, LANG_SETS, type LangSetKey, TIERS, type TierKey, USE_CASES } from '../data/catalog';
+import { FAMILIES, LANG_SETS, type LangSetKey, TIERS, type TierKey, USE_CASES, type UseCaseKey } from '../data/catalog';
 import { rankPairs } from '../utils/pairing';
 
-type Draft = Pick<Brief, 'lang' | 'tier' | 'fonts'>;
+type Draft = Pick<Brief, 'useCase' | 'lang' | 'tier' | 'fonts'>;
 
 /**
- * خيارات التركيب في لوحة التصفية نفسها (الهيكل والمقاسات): اللغة، الترخيص، عدد الخطوط.
+ * خيارات التركيب في لوحة التصفية نفسها (الهيكل والمقاسات): الاستخدام، اللغة، الترخيص، عدد الخطوط.
  * تُطبَّق بزرّ واحد، ويقول الزرّ مسبقاً إن كانت الخيارات لا تعطي أي تركيبة.
  */
 export function NasaqOptionsSheet({
@@ -29,18 +30,21 @@ export function NasaqOptionsSheet({
   const [draft, setDraft] = useState<Draft>(brief);
   const patch = (p: Partial<Draft>) => setDraft((d) => ({ ...d, ...p }));
   const dirty =
-    draft.lang !== DEFAULT_BRIEF.lang || draft.tier !== DEFAULT_BRIEF.tier || draft.fonts !== DEFAULT_BRIEF.fonts;
+    draft.useCase !== DEFAULT_BRIEF.useCase ||
+    draft.lang !== DEFAULT_BRIEF.lang ||
+    draft.tier !== DEFAULT_BRIEF.tier ||
+    draft.fonts !== DEFAULT_BRIEF.fonts;
 
   const possible = useMemo(
     () =>
       open
         ? rankPairs(FAMILIES, {
-            useCase: USE_CASES[brief.useCase],
+            useCase: USE_CASES[draft.useCase],
             tiers: TIERS[draft.tier].tiers,
             scripts: LANG_SETS[draft.lang].scripts,
           }).length
         : 0,
-    [open, brief.useCase, draft.tier, draft.lang],
+    [open, draft.useCase, draft.tier, draft.lang],
   );
 
   return (
@@ -55,11 +59,20 @@ export function NasaqOptionsSheet({
       <PanelSheetContent>
         <div className="flex items-center gap-3 border-b px-5 py-4">
           <SheetTitle className="flex-1 text-lg font-semibold">الخيارات</SheetTitle>
-          <SheetDescription className="sr-only">اختر اللغات والترخيص وعدد الخطوط في كل تركيبة</SheetDescription>
+          <SheetDescription className="sr-only">
+            اختر الاستخدام واللغات والترخيص وعدد الخطوط في كل تركيبة
+          </SheetDescription>
           <button
             type="button"
             disabled={!dirty}
-            onClick={() => setDraft({ lang: DEFAULT_BRIEF.lang, tier: DEFAULT_BRIEF.tier, fonts: DEFAULT_BRIEF.fonts })}
+            onClick={() =>
+              setDraft({
+                useCase: DEFAULT_BRIEF.useCase,
+                lang: DEFAULT_BRIEF.lang,
+                tier: DEFAULT_BRIEF.tier,
+                fonts: DEFAULT_BRIEF.fonts,
+              })
+            }
             className="rounded-full px-3 py-1.5 text-meta font-medium text-primary transition-[color,background-color,opacity] hover:bg-tint-brand disabled:pointer-events-none disabled:opacity-0"
           >
             مسح الكل
@@ -73,6 +86,20 @@ export function NasaqOptionsSheet({
         </div>
 
         <div className="flex-1 divide-y overflow-y-auto overscroll-contain px-5">
+          <Section title="الاستخدام" hint="نختار خطوطاً تناسب طبيعة التصميم">
+            <ChipGroup
+              type="single"
+              aria-label="الاستخدام"
+              value={draft.useCase}
+              onValueChange={(v) => v && patch({ useCase: v as UseCaseKey })}
+            >
+              {(Object.keys(USE_CASES) as UseCaseKey[]).map((k) => (
+                <Chip key={k} value={k}>
+                  {USE_CASES[k].label}
+                </Chip>
+              ))}
+            </ChipGroup>
+          </Section>
           <Section title="اللغة" hint="تظهر الخطوط التي تدعم كل اللغات المختارة">
             <Toggle
               label="اللغة"
