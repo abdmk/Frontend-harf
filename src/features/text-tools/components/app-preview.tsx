@@ -8,19 +8,17 @@ import { simulateBroken } from '../utils/arabic-reshape';
  * الألوان ثابتة في الوضعين: هي صورة لبرنامج آخر، لا جزء من واجهة حرف.
  */
 export function AppPreview({
-  appName,
   text,
   stage,
   className,
 }: {
-  appName: string;
   text: string;
   stage: 'before' | 'after';
   className?: string;
 }) {
   return (
     <figure
-      aria-label={`معاينة ${stage === 'before' ? 'قبل' : 'بعد'} المعالجة في ${appName}`}
+      aria-label={`معاينة ${stage === 'before' ? 'قبل' : 'بعد'} المعالجة في برنامج لا يدعم العربية`}
       className={cn('flex min-h-60 flex-col overflow-hidden bg-n-900 text-n-0', className)}
     >
       <figcaption className="flex h-9 shrink-0 items-center gap-3 border-b border-n-800 px-4 text-caption text-n-300">
@@ -30,7 +28,7 @@ export function AppPreview({
           <i className="size-2.5 rounded-full bg-n-700" />
         </span>
         <span dir="ltr" className="truncate">
-          {appName} — Composition
+          Composition
         </span>
         <span
           className={cn(
@@ -52,7 +50,7 @@ export function AppPreview({
             {simulateBroken(text)}
           </p>
         ) : (
-          <p className="text-center text-meta text-n-400">اكتب نصاً لترى كيف سيظهر في {appName}.</p>
+          <p className="text-center text-meta text-n-400">اكتب نصاً لترى كيف سيظهر في برنامجك.</p>
         )}
       </div>
     </figure>

@@ -1,8 +1,7 @@
 import { useId, useMemo, useState } from 'react';
-import { useSearchParams } from 'react-router';
 
 import { Button } from '@/components/ui/button';
-import { CheckIcon, CopyIcon, CrossSmallIcon, DownloadIcon, MagicWandIcon } from '@/components/ui/icons';
+import { CheckIcon, CopyIcon, CrossSmallIcon, DownloadIcon } from '@/components/ui/icons';
 import { Textarea } from '@/components/ui/input';
 import { SegmentedControl } from '@/components/ui/segmented-control';
 import { Switch } from '@/components/ui/switch';
@@ -10,22 +9,16 @@ import { toast } from '@/components/ui/toast';
 import { cn } from '@/lib/cn';
 
 import { AppPreview } from './app-preview';
-import { APPS, appById } from '../data/apps';
 import { prepareArabic } from '../utils/arabic-reshape';
 
 const EXAMPLE = 'حرفٌ يصنع الهوية\nخط «زيتون» — 5 أوزان';
 const MAX = 5000;
-
-const pill =
-  'inline-flex h-10 shrink-0 items-center rounded-full border px-4 text-control leading-none whitespace-nowrap transition-[background-color,color,border-color,transform] duration-(--dur-fast) active:scale-[.97]';
 
 /**
  * مساحة «عكس النص»: اختيار البرنامج، ثم النص، ثم النتيجة — إمّا للّصق مباشرة، وإمّا معاينةً
  * داخل نافذة بهيئة البرنامج «قبل» و«بعد». كل شيء في المتصفّح؛ النص لا يُرسل ولا يُحفظ.
  */
 export function ReverseWorkspace() {
-  const [params, setParams] = useSearchParams();
-  const app = appById(params.get('app'));
   const [text, setText] = useState('');
   const [shape, setShape] = useState(true);
   const [reverse, setReverse] = useState(true);
@@ -38,17 +31,6 @@ export function ReverseWorkspace() {
   const result = useMemo(() => prepareArabic(text, { shape, reverse, strip }), [text, shape, reverse, strip]);
   const chars = Array.from(text).length;
   const lines = text ? text.split('\n').length : 0;
-
-  const pickApp = (id: string) =>
-    setParams(
-      (p) => {
-        const n = new URLSearchParams(p);
-        if (id === 'other') n.delete('app');
-        else n.set('app', id);
-        return n;
-      },
-      { replace: true },
-    );
 
   async function copy() {
     if (!result) return;
@@ -77,39 +59,9 @@ export function ReverseWorkspace() {
 
   return (
     <div className="flex flex-col gap-4">
-      {/* ١ — البرنامج والخيارات */}
-      <section aria-labelledby={`${inId}-app`} className="rounded-xl border bg-card p-4 sm:p-5">
-        <h2 id={`${inId}-app`} className="text-control font-semibold">
-          لأي برنامج؟
-        </h2>
-        <div className="-mx-1 mt-3 [scrollbar-width:none] overflow-x-auto px-1 py-1 [&::-webkit-scrollbar]:hidden">
-          <div role="group" aria-label="البرنامج" className="flex w-max gap-2">
-            {APPS.map((a) => {
-              const on = a.id === app.id;
-              return (
-                <button
-                  key={a.id}
-                  type="button"
-                  aria-pressed={on}
-                  onClick={() => pickApp(a.id)}
-                  className={cn(
-                    pill,
-                    on
-                      ? 'border-primary bg-card font-medium text-primary dark:bg-paper dark:text-harf-600'
-                      : 'border-border bg-card text-muted-foreground hover:border-strong hover:text-foreground dark:border-transparent dark:bg-sunken',
-                  )}
-                >
-                  <span dir="auto">{a.name}</span>
-                </button>
-              );
-            })}
-          </div>
-        </div>
-        <p key={app.id} className="mt-3 flex animate-fade-up gap-2 text-meta leading-relaxed text-muted-foreground">
-          <MagicWandIcon className="mt-0.5 size-4 shrink-0 text-primary" />
-          {app.tip}
-        </p>
-        <div className="mt-4 flex flex-wrap gap-x-6 gap-y-3 border-t pt-4">
+      {/* ١ — الخيارات */}
+      <section aria-label="خيارات التحويل" className="rounded-xl border bg-card px-4 py-3.5 sm:px-5">
+        <div className="flex flex-wrap gap-x-6 gap-y-3">
           {(
             [
               ['وصل الحروف', shape, setShape],
@@ -228,12 +180,7 @@ export function ReverseWorkspace() {
                   ]}
                 />
               </div>
-              <AppPreview
-                appName={app.id === 'other' ? 'برنامجك' : app.name}
-                text={stage === 'before' ? text : result}
-                stage={stage}
-                className="flex-1"
-              />
+              <AppPreview text={stage === 'before' ? text : result} stage={stage} className="flex-1" />
             </div>
           )}
 

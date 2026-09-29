@@ -17,12 +17,8 @@ test('عكس النص: من الترويسة، والنتيجة متّصلة و�
   await expect(out).toHaveValue('سلام 2026');
 });
 
-test('عكس النص: البرنامج في الرابط، إزالة التشكيل، المعاينة قبل/بعد، وتنزيل النتيجة', async ({ page }) => {
+test('عكس النص: إزالة التشكيل، المعاينة قبل/بعد، وتنزيل النتيجة', async ({ page }) => {
   await page.goto('/tools/reverse-text');
-  await page.getByRole('group', { name: 'البرنامج' }).getByRole('button', { name: 'Unity' }).click();
-  await expect(page).toHaveURL(/app=unity/);
-  await expect(page.getByText(/TextMeshPro/)).toBeVisible();
-
   await page.getByRole('textbox', { name: 'النص العربي' }).fill('بَت');
   const out = page.getByRole('textbox', { name: 'النتيجة' });
   // ب(أول) + فتحة، ت(آخر)، ثم عكس: العنقود (حرف + حركته) يبقى معاً
@@ -31,9 +27,9 @@ test('عكس النص: البرنامج في الرابط، إزالة التش�
   await expect(out).toHaveValue('\ufe96\ufe91');
 
   await page.getByRole('button', { name: 'معاينة في البرنامج' }).click();
-  await expect(page.getByRole('figure', { name: /بعد المعالجة في Unity/ })).toBeVisible();
+  await expect(page.getByRole('figure', { name: /بعد المعالجة/ })).toBeVisible();
   await page.getByRole('button', { name: 'قبل', exact: true }).click();
-  const before = page.getByRole('figure', { name: /قبل المعالجة في Unity/ });
+  const before = page.getByRole('figure', { name: /قبل المعالجة/ });
   // الحروف مفصولة بـZWNJ كما يرسمها برنامج لا يدعم العربية
   await expect(before).toContainText('بَ\u200cت');
 

@@ -37,8 +37,8 @@ export function ReverseTextPage() {
       <header className="mb-8 max-w-[62ch]">
         <h1 className="text-2xl font-semibold sm:text-3xl">عكس النص</h1>
         <p className="mt-2 text-control leading-relaxed text-muted-foreground">
-          برامج كثيرة تعرض العربية حروفاً منفصلة ومقلوبة. اختر برنامجك، واكتب نصّك، وشاهده قبل المعالجة وبعدها، ثم انسخه
-          جاهزاً للّصق — في متصفّحك، ولا يُرسل نصّك إلى أي مكان.
+          برامج كثيرة تعرض العربية حروفاً منفصلة ومقلوبة. اكتب نصّك، وشاهده قبل المعالجة وبعدها، ثم انسخه جاهزاً للّصق —
+          في متصفّحك، ولا يُرسل نصّك إلى أي مكان.
         </p>
       </header>
 
