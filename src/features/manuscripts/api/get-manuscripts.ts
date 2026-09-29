@@ -96,9 +96,3 @@ export function getManuscripts(q: ManuscriptQuery, savedIds: ReadonlySet<string>
         m.fonts.some((f) => normalize(f.name).includes(needle))),
   ).sort((a, b) => (q.sort === 'popular' ? b.downloads - a.downloads : b.createdAt.localeCompare(a.createdAt)));
 }
-
-export function countByCategory() {
-  const out = new Map<ManuscriptCategory | 'all', number>([['all', MOCK_MANUSCRIPTS.length]]);
-  for (const m of MOCK_MANUSCRIPTS) out.set(m.category, (out.get(m.category) ?? 0) + 1);
-  return out;
-}

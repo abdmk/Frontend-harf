@@ -16,7 +16,6 @@ import { ManuscriptFilterSheet } from './manuscript-filter-sheet';
 import { ManuscriptViewer } from './manuscript-viewer';
 import {
   activeFilterCount,
-  countByCategory,
   DEFAULT_QUERY,
   DESIGNER_OPTIONS,
   FONT_OPTIONS,
@@ -30,6 +29,10 @@ import { useSavedManuscripts } from '../hooks/use-saved';
 const ratio = (m: Manuscript) => (1 - CARD_PAD) * (m.height / m.width) + CARD_PAD;
 const plural = (n: number) =>
   n === 0 ? 'لا أعمال' : n === 1 ? 'عمل واحد' : n === 2 ? 'عملان' : n <= 10 ? `${n} أعمال` : `${n} عملاً`;
+const CATS = (['all', ...MANUSCRIPT_CATEGORIES] as const).map((c) => ({
+  value: c,
+  label: c === 'all' ? 'الكل' : MANUSCRIPT_CATEGORY_LABEL[c],
+}));
 const LICENSE_CHIP = { personal: 'ترخيص شخصي', commercial: 'ترخيص تجاري' } as const;
 
 /**
@@ -42,16 +45,6 @@ export function ManuscriptsBrowser() {
   const query = parseQuery(params);
   const saved = useSavedManuscripts();
   const savedSet = useMemo(() => new Set(saved.ids), [saved.ids]);
-  const counts = useMemo(() => countByCategory(), []);
-  const cats = useMemo(
-    () =>
-      (['all', ...MANUSCRIPT_CATEGORIES] as const).map((c) => ({
-        value: c,
-        label: c === 'all' ? 'الكل' : MANUSCRIPT_CATEGORY_LABEL[c],
-        count: counts.get(c) ?? 0,
-      })),
-    [counts],
-  );
 
   const list = getManuscripts(query, savedSet);
   const openId = params.get('m');
@@ -98,7 +91,7 @@ export function ManuscriptsBrowser() {
       <div role="search" className="flex flex-wrap items-center gap-2 lg:flex-nowrap">
         <CategoryToggle
           id="manuscript-cats"
-          options={cats}
+          options={CATS}
           value={query.cat}
           defaultValue="all"
           onChange={(cat) => update({ cat })}

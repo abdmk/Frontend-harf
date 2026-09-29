@@ -16,7 +16,7 @@ export const toolbarChip = (on: boolean) =>
       : 'border-border bg-card text-muted-foreground hover:border-strong hover:text-foreground dark:border-transparent dark:bg-sunken',
   );
 
-type Option<T extends string> = { value: T; label: string; count?: number };
+type Option<T extends string> = { value: T; label: string };
 
 /**
  * زرّ «التصنيف» الأحمر وشرائح التصنيفات بجانبه: مطويّة افتراضياً، تنفتح أفقياً على الكمبيوتر
@@ -100,11 +100,6 @@ export function CategoryToggle<T extends string>({
                   className={cn(toolbarChip(on), open && 'animate-chip-in')}
                 >
                   {o.label}
-                  {o.count !== undefined && (
-                    <span dir="ltr" className={cn('text-caption text-tertiary tabular-nums', on && 'dark:text-n-600')}>
-                      {o.count}
-                    </span>
-                  )}
                 </button>
               );
             })}
