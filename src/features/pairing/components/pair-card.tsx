@@ -1,6 +1,10 @@
-import { BookmarkIcon, CheckIcon, CrownIcon, LockIcon } from '@/components/ui/icons';
+import { Link } from 'react-router';
+
+import { ArrowLeftIcon, BookmarkIcon, LockIcon, MagicWandIcon } from '@/components/ui/icons';
 import { Skeleton } from '@/components/ui/skeleton';
+import { paths } from '@/config/paths';
 import { cn } from '@/lib/cn';
+import { weightsLabel } from '@/lib/format';
 
 import { BuyAction, DownloadAction, libraryItems } from './font-actions';
 import type { Specimen } from '../data/specimens';
@@ -15,9 +19,9 @@ type Role = 'heading' | 'body';
 const SHORT_ROLE = { العناوين: 'العناوين', 'العناوين الفرعية': 'الفرعي', النصوص: 'النصوص' } as const;
 
 /**
- * بطاقة التركيبة بتشريح بطاقة الخط في المكتبة: عيّنة على سطح هادئ مع شارة الترخيص وزرّ الحفظ فوقها،
- * ثم الاسم والتناسق، والخطوط بأدوارها وأقفالها، ثم سطر الترخيص والفعل (تحميل/شراء).
- * البطاقة كلها تفتح التفاصيل.
+ * بطاقة التركيبة كـ«ورقة عيّنات»: لكل خط قسمه — دوره واسمه، المسبك والأوزان والسعر، القفل،
+ * ثم عيّنته بدوره الحقيقي (عنوان كبير، أو فقرة). في الأسفل: لماذا يتناسقان، الحفظ والتحميل/الشراء،
+ * وروابط صفحات الخطوط. النقر في أي مكان آخر يفتح التفاصيل.
  */
 export function PairCard({
   combo,
@@ -45,106 +49,55 @@ export function PairCard({
   );
   const title = comboTitle(combo);
   const items = libraryItems(slots.map((s) => s.font));
-  const paid = items.filter((i) => i.font.type === 'paid');
-  const cheapest = paid.length ? Math.min(...paid.map((i) => i.font.price)) : 0;
+  const paid = items.some((i) => i.font.type === 'paid');
 
   return (
     <article
       aria-label={title}
       className="group/card relative flex h-full flex-col overflow-hidden rounded-lg border bg-card transition-[transform,box-shadow,border-color] duration-(--dur-slow) ease-out-quint hover:-translate-y-1 hover:border-strong hover:shadow-float"
     >
-      <div
-        aria-hidden
-        className="relative flex aspect-[7/5] flex-col justify-center overflow-hidden border-b bg-sunken px-6 text-center"
-      >
-        {!ready && (
-          <span role="status" aria-label="تحميل الخطوط" className="flex flex-col items-center gap-3">
-            <Skeleton className="h-10 w-3/4 bg-inset" />
-            <Skeleton className="h-3.5 w-5/6 bg-inset" />
-          </span>
-        )}
-        <div
-          className={cn(
-            'flex flex-col transition-[opacity,transform] duration-(--dur-xslow) ease-out-quint group-hover/card:scale-[1.03]',
-            ready ? 'opacity-100' : 'absolute inset-x-6 opacity-0',
-          )}
-        >
-          <p className="line-clamp-2 text-4xl leading-snug [overflow-wrap:anywhere]" style={slotStyle(combo.heading)}>
-            {text.heading}
-          </p>
-          {combo.sub && (
-            <p className="mt-1.5 line-clamp-1 text-lg" style={slotStyle(combo.sub)}>
-              {text.sub}
-            </p>
-          )}
-          {showLatin && (
-            <p dir="ltr" className="mt-1 line-clamp-1 text-base text-muted-foreground" style={slotStyle(combo.heading)}>
-              {text.latin}
-            </p>
-          )}
-          <p
-            className="mx-auto mt-3 line-clamp-2 max-w-[34ch] text-sm leading-relaxed text-foreground/75"
-            style={slotStyle(combo.body)}
-          >
-            {text.body}
-          </p>
-          {failed && <p className="mt-2 text-caption text-warn-text">تعذّر تحميل أحد الخطوط — المعاينة تقريبية.</p>}
-        </div>
-      </div>
-
-      <span
-        className={cn(
-          'absolute end-4 top-4 z-10 inline-flex h-6 items-center gap-1 rounded-full px-2 text-caption leading-none font-medium',
-          paid.length ? 'bg-gold-500 text-gold-foreground' : 'bg-ok-700 text-white',
-        )}
-      >
-        {paid.length ? <CrownIcon className="size-3" /> : <CheckIcon className="size-3" />}
-        {paid.length ? 'مدفوع' : 'مجاني'}
-      </span>
-      {/* الحفظ بشكل زرّ المفضّلة في بطاقة الخط */}
+      {/* رابط البطاقة الممتدّ: النقر في أي مكان خارج الأزرار يفتح التفاصيل */}
       <button
         type="button"
-        aria-pressed={saved}
-        aria-label={saved ? `إزالة ${title} من المحفوظة` : `حفظ ${title}`}
-        title={saved ? 'محفوظة' : 'حفظ'}
-        onClick={onSave}
-        className="absolute start-4 top-4 z-10 grid size-8 place-items-center rounded-full bg-heart text-white backdrop-blur-sm transition-[transform,background-color] duration-(--dur-base) ease-pop hover:scale-105 active:scale-95 aria-pressed:bg-primary-fill"
-      >
-        <BookmarkIcon className={cn('size-3.75', saved && 'animate-pop-in [&_path]:fill-current')} />
-      </button>
+        onClick={onOpen}
+        aria-label={`تفاصيل ${title}`}
+        className="absolute inset-0 rounded-lg focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-primary focus-visible:outline-none"
+      />
 
-      <div className="flex flex-1 flex-col gap-3 p-5">
-        <div className="flex items-baseline justify-between gap-3">
-          {/* رابط البطاقة الممتدّ: النقر في أي مكان يفتح التفاصيل */}
-          <button
-            type="button"
-            onClick={onOpen}
-            aria-label={`تفاصيل ${title}`}
-            className="min-w-0 truncate text-start text-xl font-semibold tracking-tight after:absolute after:inset-0 after:content-[''] focus-visible:outline-none focus-visible:after:rounded-lg focus-visible:after:ring-2 focus-visible:after:ring-primary"
-          >
-            {slots.map((s) => s.font.nameAr).join(' + ')}
-          </button>
-          <span className="shrink-0 text-meta text-muted-foreground">
-            تناسق{' '}
-            <span dir="ltr" className="font-medium text-foreground tabular-nums">
-              {combo.score}٪
-            </span>
-          </span>
-        </div>
-
-        <ul className="flex flex-col gap-1">
-          {slots.map((s) => {
-            const role: Role | null = s === combo.heading ? 'heading' : s === combo.body ? 'body' : null;
-            const isLocked = role ? locked[role] === s.font.id : false;
-            return (
-              <li key={s.role} className="flex min-h-7 min-w-0 items-center gap-2 text-sm font-medium">
-                <span className="w-14 shrink-0 text-meta font-normal text-muted-foreground">{SHORT_ROLE[s.role]}</span>
-                <span className="min-w-0 truncate">
-                  {s.font.nameAr}{' '}
-                  <span dir="ltr" className="text-meta font-normal text-tertiary tabular-nums">
-                    {s.weight}
-                  </span>
-                </span>
+      {/* المحتوى يمرّر النقر إلى الرابط الممتدّ تحته — الأزرار والروابط وحدها تلتقطه */}
+      <div className="pointer-events-none relative flex flex-1 flex-col divide-y px-5 [&_a]:pointer-events-auto [&_button]:pointer-events-auto [&>*]:py-5">
+        {slots.map((s) => {
+          const role: Role | null = s === combo.heading ? 'heading' : s === combo.body ? 'body' : null;
+          const isLocked = role ? locked[role] === s.font.id : false;
+          const lib = items.find((i) => i.pair.id === s.font.id)?.font;
+          return (
+            <section key={s.role} aria-label={`${s.role}: ${s.font.nameAr}`} className="flex flex-col gap-3">
+              <div className="flex items-start gap-3">
+                <div className="min-w-0 flex-1">
+                  <p className="flex min-w-0 items-baseline gap-2">
+                    <span className="shrink-0 text-meta font-medium text-primary">{SHORT_ROLE[s.role]}</span>
+                    <span dir="ltr" className="truncate text-lead font-semibold">
+                      {s.font.name}
+                    </span>
+                  </p>
+                  <p className="mt-1.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-meta text-muted-foreground">
+                    <span dir="auto" className="truncate">
+                      {s.font.foundry}
+                    </span>
+                    <span aria-hidden>·</span>
+                    <span>{weightsLabel(s.font.weights.length)}</span>
+                    {lib && (
+                      <span
+                        className={cn(
+                          'inline-flex h-5.5 items-center rounded-full px-2 text-caption leading-none font-semibold',
+                          lib.type === 'paid' ? 'bg-ink text-ink-foreground' : 'bg-ok-700 text-white',
+                        )}
+                      >
+                        {lib.type === 'paid' ? <bdi dir="ltr">${lib.price}</bdi> : 'مجاني'}
+                      </span>
+                    )}
+                  </p>
+                </div>
                 {role && onLock && (
                   <button
                     type="button"
@@ -152,36 +105,88 @@ export function PairCard({
                     aria-label={isLocked ? `فكّ تثبيت ${s.font.nameAr}` : `ثبّت ${s.font.nameAr} لـ${s.role}`}
                     title={isLocked ? 'مثبّت — «تركيبات جديدة» تغيّر الباقي فقط' : 'ثبّت هذا الخط وغيّر الباقي'}
                     onClick={() => onLock(role, s.font.id)}
-                    className={cn(
-                      'relative z-10 grid size-7 shrink-0 place-items-center rounded-full text-tertiary transition-[color,background-color,opacity] hover:bg-sunken hover:text-foreground aria-pressed:bg-tint-brand aria-pressed:text-primary',
-                      !isLocked &&
-                        'sm:opacity-0 sm:group-focus-within/card:opacity-100 sm:group-hover/card:opacity-100',
-                    )}
+                    className="relative z-10 grid size-9 shrink-0 place-items-center rounded-full border text-muted-foreground transition-[color,background-color,border-color] duration-(--dur-fast) hover:border-strong hover:text-foreground aria-pressed:border-primary aria-pressed:bg-tint-brand aria-pressed:text-primary"
                   >
-                    <LockIcon className="size-3.5" />
+                    <LockIcon className={cn('size-4', isLocked && 'animate-pop-in')} />
                   </button>
                 )}
-              </li>
-            );
-          })}
-        </ul>
+              </div>
 
-        <div className="mt-auto flex items-center justify-between gap-3 pt-1">
-          <span className={cn('min-w-0 truncate text-sm font-medium', paid.length ? 'text-foreground' : 'text-lic')}>
-            {paid.length ? (
-              <>
-                الترخيص من <bdi dir="ltr">${cheapest}</bdi>
-              </>
-            ) : (
-              'مجانية بالكامل'
-            )}
-          </span>
-          <div className="flex shrink-0 items-center gap-2">
-            <DownloadAction items={items} tone={paid.length ? 'secondary' : 'primary'} />
-            <BuyAction items={items} />
-          </div>
-        </div>
+              {/* العيّنة بدور الخط الحقيقي */}
+              {!ready ? (
+                <span role="status" aria-label="تحميل الخطوط" className="flex flex-col gap-2">
+                  <Skeleton className={cn('bg-inset', role === 'body' ? 'h-3.5 w-full' : 'h-9 w-4/5')} />
+                  {role === 'body' && <Skeleton className="h-3.5 w-5/6 bg-inset" />}
+                </span>
+              ) : role === 'body' ? (
+                <p
+                  className="line-clamp-4 animate-fade-up text-sm leading-loose text-foreground/75"
+                  style={slotStyle(s)}
+                >
+                  {text.body}
+                </p>
+              ) : role === 'heading' ? (
+                <div className="animate-fade-up">
+                  <p className="line-clamp-2 text-4xl leading-snug [overflow-wrap:anywhere]" style={slotStyle(s)}>
+                    {text.heading}
+                  </p>
+                  {showLatin && (
+                    <p dir="ltr" className="mt-1 line-clamp-1 text-2xl text-muted-foreground" style={slotStyle(s)}>
+                      {text.latin}
+                    </p>
+                  )}
+                </div>
+              ) : (
+                <p className="line-clamp-1 animate-fade-up text-xl" style={slotStyle(s)}>
+                  {text.sub}
+                </p>
+              )}
+            </section>
+          );
+        })}
+        {failed && <p className="text-caption text-warn-text">تعذّر تحميل أحد الخطوط — المعاينة تقريبية.</p>}
       </div>
+
+      <footer className="pointer-events-none relative flex flex-col gap-4 border-t bg-sunken/60 p-5 pt-4 [&_a]:pointer-events-auto [&_button]:pointer-events-auto">
+        <p className="flex gap-2.5 text-meta leading-relaxed text-muted-foreground">
+          <MagicWandIcon className="mt-0.5 size-4 shrink-0 text-primary" />
+          <span className="flex-1">{combo.reason}</span>
+          <span className="shrink-0 text-caption">
+            تناسق{' '}
+            <span dir="ltr" className="font-semibold text-foreground tabular-nums">
+              {combo.score}٪
+            </span>
+          </span>
+        </p>
+
+        <div className="flex gap-2 [&>*]:h-10 [&>*]:flex-1">
+          <button
+            type="button"
+            aria-pressed={saved}
+            aria-label={saved ? `إزالة ${title} من المحفوظة` : `حفظ ${title}`}
+            onClick={onSave}
+            className="relative z-10 inline-flex items-center justify-center gap-2 rounded-xs border bg-card text-meta font-medium transition-[background-color,border-color,color,transform] duration-(--dur-base) hover:border-strong active:scale-[.97] aria-pressed:border-primary aria-pressed:text-primary"
+          >
+            <BookmarkIcon className={cn('size-4', saved && 'animate-pop-in [&_path]:fill-current')} />
+            {saved ? 'محفوظة' : 'حفظ'}
+          </button>
+          <DownloadAction items={items} tone={paid ? 'secondary' : 'primary'} className="h-10" />
+          <BuyAction items={items} className="h-10" />
+        </div>
+
+        <nav aria-label={`صفحات خطوط ${title}`} className="flex flex-wrap gap-x-5 gap-y-1 border-t pt-3">
+          {items.map(({ pair, font }) => (
+            <Link
+              key={pair.id}
+              to={paths.font.getHref(font.id)}
+              className="group/ln relative z-10 inline-flex items-center gap-1 text-meta font-medium text-primary"
+            >
+              <span dir="ltr">{pair.name}</span>
+              <ArrowLeftIcon className="size-3.5 transition-transform duration-(--dur-base) ease-out-quint group-hover/ln:-translate-x-0.5" />
+            </Link>
+          ))}
+        </nav>
+      </footer>
     </article>
   );
 }

@@ -46,7 +46,15 @@ const chevron = 'size-3 opacity-70 transition-transform duration-(--dur-base) gr
  * تحميل الخطوط المجانية من حرف مباشرة (حزمة OFL كاملة). خط واحد: رابط مباشر؛ أكثر: قائمة.
  * المدفوعة لا تظهر هنا أبداً.
  */
-export function DownloadAction({ items, tone = 'primary' }: { items: Item[]; tone?: Tone }) {
+export function DownloadAction({
+  items,
+  tone = 'primary',
+  className,
+}: {
+  items: Item[];
+  tone?: Tone;
+  className?: string;
+}) {
   const free = items.filter((i) => i.font.type === 'free' && i.font.download);
   if (!free.length) return null;
 
@@ -58,7 +66,7 @@ export function DownloadAction({ items, tone = 'primary' }: { items: Item[]; ton
         download
         aria-label={`تحميل ${pair.nameAr} (ZIP، ${formatBytes(font.download!.bytes)})`}
         title={`${pair.nameAr} · ZIP · ${formatBytes(font.download!.bytes)}`}
-        className={action(tone)}
+        className={cn(action(tone), className)}
       >
         <DownloadIcon className="size-3.5 transition-transform duration-(--dur-base) group-hover/act:translate-y-0.5" />
         تحميل
@@ -68,7 +76,7 @@ export function DownloadAction({ items, tone = 'primary' }: { items: Item[]; ton
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger className={action(tone)}>
+      <DropdownMenuTrigger className={cn(action(tone), className)}>
         <DownloadIcon className="size-3.5" />
         تحميل
         <ChevronDownIcon className={chevron} />
@@ -94,7 +102,7 @@ export function DownloadAction({ items, tone = 'primary' }: { items: Item[]; ton
  * شراء الخطوط المدفوعة عبر سلة حرف: يفتح صفحة الخط بلوحة الترخيص جاهزة، ومنها إلى السلة.
  * خط واحد: رابط مباشر؛ أكثر: قائمة بالأسعار.
  */
-export function BuyAction({ items }: { items: Item[] }) {
+export function BuyAction({ items, className }: { items: Item[]; className?: string }) {
   const paid = items.filter((i) => i.font.type === 'paid');
   if (!paid.length) return null;
 
@@ -104,7 +112,7 @@ export function BuyAction({ items }: { items: Item[] }) {
       <Link
         to={paths.font.getHref(font.id, { license: true })}
         aria-label={`شراء ترخيص ${pair.nameAr}`}
-        className={action('primary')}
+        className={cn(action('primary'), className)}
       >
         <CartIcon className="size-3.5" />
         شراء
@@ -114,7 +122,7 @@ export function BuyAction({ items }: { items: Item[] }) {
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger className={action('primary')}>
+      <DropdownMenuTrigger className={cn(action('primary'), className)}>
         <CartIcon className="size-3.5" />
         شراء
         <ChevronDownIcon className={chevron} />
