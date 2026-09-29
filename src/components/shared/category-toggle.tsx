@@ -61,7 +61,7 @@ export function CategoryToggle<T extends string>({
         aria-expanded={open}
         aria-controls={id}
         onClick={toggle}
-        className={cn(TOOLBAR_PILL, 'border-transparent bg-primary-fill ps-4 font-medium text-white hover:bg-harf-700')}
+        className={cn(TOOLBAR_PILL, 'border-transparent bg-primary-fill ps-4 font-medium text-white hover:bg-harf-600')}
       >
         <AppsIcon className={cn('size-4 transition-transform duration-(--dur-slow) ease-pop', !open && 'rotate-90')} />
         التصنيف

@@ -15,5 +15,5 @@ export const CATEGORY_LABEL: Record<Category, string> = {
   decorative: 'زخرفية',
   modern: 'حديثة',
 };
-export const TYPE_LABEL: Record<LicenseType, string> = { free: 'مجاني', trial: 'تجريبي', paid: 'مدفوع' };
+export const TYPE_LABEL: Record<LicenseType, string> = { free: 'مجاني', trial: 'تجربة', paid: 'مدفوع' };
 export const USAGE_LABEL: Record<Usage, string> = { personal: 'شخصي', commercial: 'تجاري & شخصي' };

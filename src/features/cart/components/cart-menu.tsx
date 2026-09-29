@@ -4,7 +4,7 @@ import { Link } from 'react-router';
 import { PriceDisplay } from '@/components/shared/price-display';
 import { Button } from '@/components/ui/button';
 import { CartIcon, CrossSmallIcon } from '@/components/ui/icons';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { focusPanel, Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { paths } from '@/config/paths';
 import type { Cart } from '@/types/domain/commerce';
 
@@ -41,6 +41,8 @@ export function CartMenu({
       </PopoverTrigger>
       <PopoverContent
         align="end"
+        tabIndex={-1}
+        onOpenAutoFocus={focusPanel}
         sideOffset={10}
         className="w-[min(var(--container-menu),calc(100vw-24px))] rounded-xl p-0 shadow-overlay"
       >

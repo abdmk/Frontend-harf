@@ -12,10 +12,10 @@
   --card-foreground: #161616;
   --popover: #ffffff;
   --popover-foreground: #161616;
-  /* الأحمر: #EC3B3C هو لون العلامة (الشعار، الرسوم، حلقة التركيز). للنصوص والأزرار درجة أعمق
-     (harf-600) لتحقيق تباين WCAG AA ≥ 4.5 — فوق الأبيض ومع النص الأبيض */
-  --primary: #d22528;
-  --primary-fill: #d22528; /* الأرضيات المصمتة تحت نص أبيض */
+  /* الأحمر: #EC3B3C هو لون العلامة (الشعار، الرسوم، حلقة التركيز). للأزرار والنصوص أقرب درجة
+     إليه تحقّق تباين WCAG AA ≥ 4.5: الأزرار مع النص الأبيض، والنص فوق الأبيض والأرضيات الفاتحة */
+  --primary: #d42a2c;
+  --primary-fill: #df3033; /* الأرضيات المصمتة تحت نص أبيض */
   --primary-foreground: #ffffff;
   --secondary: #f6f6f8;
   --secondary-foreground: #161616;
@@ -86,7 +86,7 @@
   --popover-foreground: #f4f4f4;
   /* في الداكن: نصّ أفتح قليلاً ليُقرأ فوق الأرضيات الداكنة، والأرضية المصمتة أعمق ليُقرأ الأبيض فوقها */
   --primary: #f25558;
-  --primary-fill: #d22528;
+  --primary-fill: #df3033;
   --primary-foreground: #ffffff;
   --secondary: #1e1e1e;
   --secondary-foreground: #f4f4f4;
@@ -306,6 +306,8 @@
   --ease-out-quint: cubic-bezier(0.2, 0, 0, 1);
   --ease-pop: cubic-bezier(0.34, 1.4, 0.64, 1);
   --ease-in-out-strong: cubic-bezier(0.65, 0, 0.35, 1);
+  --ease-menu: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-soft: cubic-bezier(0.4, 0, 1, 1);
 
   --animate-heart: heart var(--dur-xslow) var(--ease-pop);
   --animate-ring: ring 800ms var(--ease-out-quint);
@@ -313,6 +315,9 @@
   --animate-fade-up: fade-up var(--dur-slow) var(--ease-out-quint);
   --animate-page-in: page-in var(--dur-base) var(--ease-out-quint);
   --animate-chip-in: chip-in var(--dur-slow) var(--ease-out-quint) both;
+  /* القوائم المنبثقة: دخول هادئ يستقرّ بلا ارتداد، وخروج سريع لا يؤخّر الصفحة */
+  --animate-menu-in: menu-in var(--dur-slow) var(--ease-menu) both;
+  --animate-menu-out: menu-out var(--dur-fast) var(--ease-in-soft) both;
 
   @keyframes heart {
     25% {
@@ -355,6 +360,18 @@
   @keyframes page-in {
     from {
       opacity: 0;
+    }
+  }
+  @keyframes menu-in {
+    from {
+      opacity: 0;
+      transform: translateY(-4px) scale(0.97);
+    }
+  }
+  @keyframes menu-out {
+    to {
+      opacity: 0;
+      transform: scale(0.98);
     }
   }
   /* شرائح تخرج من جهة الزرّ (يمين الصفحة العربية) واحدةً تلو الأخرى */

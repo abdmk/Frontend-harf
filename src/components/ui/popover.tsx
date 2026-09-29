@@ -24,13 +24,23 @@ function PopoverContent({
         align={align}
         sideOffset={sideOffset}
         className={cn(
-          'z-50 w-72 origin-(--radix-popover-content-transform-origin) rounded-xl border bg-popover p-4 text-popover-foreground shadow-overlay outline-hidden duration-(--dur-base) ease-out-quint data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95',
+          'z-50 w-72 origin-(--radix-popover-content-transform-origin) rounded-xl border bg-popover p-4 text-popover-foreground shadow-overlay outline-hidden will-change-[transform,opacity] data-[state=closed]:animate-menu-out data-[state=open]:animate-menu-in',
           className,
         )}
         {...props}
       />
     </PopoverPrimitive.Portal>
   );
+}
+
+/**
+ * للقوائم التي تُفتح بالنقر (الحساب، الإشعارات، السلة): التركيز على اللوحة نفسها لا على أول زرّ —
+ * فلا تومض حلقة التركيز عند كل فتح، ويتابع مستخدم لوحة المفاتيح بـTab كالمعتاد.
+ * يُمرَّر مع tabIndex={-1} على المحتوى.
+ */
+export function focusPanel(e: Event) {
+  e.preventDefault();
+  (e.currentTarget as HTMLElement | null)?.focus({ preventScroll: true });
 }
 
 function PopoverAnchor({ ...props }: React.ComponentProps<typeof PopoverPrimitive.Anchor>) {

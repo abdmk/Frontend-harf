@@ -7,9 +7,8 @@ import { Button } from '@/components/ui/button';
 import { CheckIcon, CrossSmallIcon, FolderIcon, PlusIcon } from '@/components/ui/icons';
 import { Spinner } from '@/components/ui/spinner';
 import { cn } from '@/lib/cn';
-import { faceStyle } from '@/lib/font-weight';
 
-import { libraryPackage, libraryStarters } from '../api/library';
+import { libraryPackage } from '../api/library';
 import { TOOL_GROUPS, type ToolKey, toolByKey, TOOLS } from '../data/tools';
 import { LabProvider, useLab } from '../hooks/lab-context';
 import { ACCEPT } from '../utils/load';
@@ -58,9 +57,8 @@ function LabBody() {
 /* ───────────────────────── الحالة الأولى ───────────────────────── */
 
 function Empty() {
-  const { add, addFromLibrary, busy } = useLab();
+  const { add, busy } = useLab();
   const folder = useRef<HTMLInputElement>(null);
-  const starters = libraryStarters();
 
   return (
     <div className="mx-auto flex max-w-3xl flex-col gap-8">
@@ -103,31 +101,6 @@ function Empty() {
           </div>
         )}
       </div>
-
-      <section aria-labelledby="starters" className="flex flex-col gap-3">
-        <h2 id="starters" className="text-control font-semibold">
-          أو جرّب بخط من مكتبة حرف
-        </h2>
-        <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-          {starters.map((f) => (
-            <li key={f.id}>
-              <button
-                type="button"
-                disabled={busy}
-                onClick={() => void addFromLibrary(f.id, f.download!.url, f.name)}
-                className="group flex w-full flex-col items-start gap-1 rounded-lg border bg-card p-4 text-start transition-[border-color,transform,box-shadow] duration-(--dur-base) hover:-translate-y-0.5 hover:border-strong hover:shadow-float disabled:opacity-60"
-              >
-                <span className="text-2xl leading-snug" style={faceStyle(f.face, 700)}>
-                  {f.face!.nameAr}
-                </span>
-                <span dir="ltr" className="text-caption text-muted-foreground">
-                  {f.name}
-                </span>
-              </button>
-            </li>
-          ))}
-        </ul>
-      </section>
 
       <ul className="grid gap-3 text-caption text-muted-foreground sm:grid-cols-3">
         {[

@@ -37,7 +37,7 @@ const action = (tone: Tone) =>
   cn(
     'group/act relative z-10 inline-flex h-8 min-w-21 items-center justify-center gap-2 rounded-xs px-3 text-meta font-medium whitespace-nowrap transition-[background-color,transform] duration-(--dur-base) outline-none focus-visible:ring-2 focus-visible:ring-ring active:scale-[.97]',
     tone === 'primary'
-      ? 'bg-primary-fill text-primary-foreground hover:bg-harf-700'
+      ? 'bg-primary-fill text-primary-foreground hover:bg-harf-600'
       : 'border bg-sunken text-foreground hover:bg-inset',
   );
 const chevron = 'size-3 opacity-70 transition-transform duration-(--dur-base) group-data-[state=open]/act:rotate-180';

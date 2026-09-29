@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router';
 
 import { BellIcon } from '@/components/ui/icons';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { focusPanel, Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { cn } from '@/lib/cn';
 
 import { MarkAllRead, NotificationList } from './notification-list';
@@ -40,6 +40,8 @@ export function NotificationsMenu({ initial, allHref }: { initial: NotificationV
       </PopoverTrigger>
       <PopoverContent
         align="end"
+        tabIndex={-1}
+        onOpenAutoFocus={focusPanel}
         sideOffset={10}
         className="flex max-h-[min(520px,calc(100dvh-96px))] w-[min(var(--container-menu),calc(100vw-24px))] flex-col overflow-hidden rounded-xl p-2.5 shadow-overlay"
       >

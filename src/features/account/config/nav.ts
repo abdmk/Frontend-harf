@@ -1,6 +1,7 @@
 import type { IconProps } from '@/components/ui/icons';
 import {
   AppsIcon,
+  CloudUploadIcon,
   CrownIcon,
   FolderIcon,
   HeartIcon,
@@ -15,7 +16,8 @@ import { paths } from '@/config/paths';
 import type { AccountSection, User } from '@/features/account/types';
 
 export type NavItem = {
-  section: AccountSection;
+  /** قسم الحساب، أو «publish» لرفع خط (خارج صفحة الحساب) */
+  section: AccountSection | 'publish';
   label: string;
   Icon: (p: IconProps) => React.JSX.Element;
   meta?: (u: User) => string | undefined;
@@ -32,6 +34,17 @@ export function accountNavGroups(user: User): NavItem[][] {
   const groups: NavItem[][] = [
     [
       { section: 'profile', label: 'الملف الشخصي', Icon: UserIcon },
+      // الاستوديو وحده ينشر خطوطه على حرف — الوجهة محميّة بـrequireStudio أيضاً
+      ...(user.plan === 'studio'
+        ? [
+            {
+              section: 'publish',
+              label: 'رفع خط',
+              Icon: CloudUploadIcon,
+              href: paths.studio.getHref('publish'),
+            } as const,
+          ]
+        : []),
       { section: 'library', label: 'مكتبتي', Icon: FolderIcon, meta: (u) => String(u.stats.library) },
       { section: 'favorites', label: 'المفضلة', Icon: HeartIcon, meta: (u) => String(u.stats.favorites) },
       { section: 'purchases', label: 'المشتريات', Icon: ReceiptIcon, meta: (u) => String(u.stats.purchases) },

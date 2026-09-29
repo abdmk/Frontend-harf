@@ -101,7 +101,7 @@ export function PurchaseActions({
         <CartIcon />
       </Button>
       {font.type === 'trial' && (
-        <DownloadButton fontName={font.name} label="النسخة التجريبية" size="lg" variant="secondary" />
+        <DownloadButton fontName={font.name} label="تحميل للتجربة" size="lg" variant="secondary" />
       )}
       {sheet('شراء الترخيص')}
     </div>

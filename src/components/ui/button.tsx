@@ -20,7 +20,7 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        primary: 'bg-primary-fill text-primary-foreground hover:bg-harf-700',
+        primary: 'bg-primary-fill text-primary-foreground hover:bg-harf-600',
         secondary: 'border-border bg-sunken text-foreground hover:bg-inset',
         outline: 'border-border bg-card text-foreground hover:border-strong',
         ghost: 'text-muted-foreground hover:bg-sunken hover:text-foreground',

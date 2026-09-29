@@ -18,8 +18,21 @@ test.describe('الاستوديو والإدارة', () => {
     expect(csv.status()).toBe(404);
   });
 
+  test('قائمة الحساب: «رفع خط» للاستوديو، و«لوحة الإدارة» للمشرف وحده', async ({ page }) => {
+    await page.goto('/?as=studio');
+    await page.getByRole('button', { name: /^حساب/ }).click();
+    const menu = page.getByRole('dialog');
+    await expect(menu.getByRole('link', { name: 'لوحة الإدارة' })).toHaveCount(0);
+    await menu.getByRole('link', { name: 'رفع خط' }).click();
+    await expect(page).toHaveURL(/\/studio\/publish$/);
+
+    await page.goto('/?as=admin');
+    await page.getByRole('button', { name: /^حساب/ }).click();
+    await expect(page.getByRole('dialog').getByRole('link', { name: 'لوحة الإدارة' })).toBeVisible();
+  });
+
   test('المشرف: التبويبات، الفلتر، والتصدير', async ({ page }) => {
-    await page.goto('/admin/analytics?as=studio');
+    await page.goto('/admin/analytics?as=admin');
     await expect(page.getByRole('heading', { level: 1, name: 'التحليلات' })).toBeVisible();
     await page.getByRole('tab', { name: 'المستخدمون' }).click();
     await page.getByRole('searchbox').fill('zzz-nobody');

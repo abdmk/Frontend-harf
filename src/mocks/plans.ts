@@ -43,9 +43,9 @@ export const MOCK_PLANS: PlanOffer[] = [
     id: 'studio',
     name: 'الاستوديو',
     tagline: 'للمصمّمين والمسابك التي تنشر وتبيع',
-    monthly: cents(2000),
-    yearlyPerMonth: cents(1400),
-    yearlyTotal: cents(16800),
+    monthly: cents(1500),
+    yearlyPerMonth: cents(1050),
+    yearlyTotal: cents(12600),
     badge: 'للمسابك',
     inherits: 'كل ما في الأساسية، وإضافةً إليها',
     features: [
@@ -73,7 +73,7 @@ export function mockSubscription(plan: Plan): Subscription {
 
 export function mockInvoices(plan: Plan): Invoice[] {
   if (plan === 'free') return [];
-  const amount = plan === 'studio' ? cents(2000) : cents(1000);
+  const amount = plan === 'studio' ? cents(1500) : cents(1000);
   const name = plan === 'studio' ? 'الاستوديو' : 'الأساسية';
   return [
     { id: 'INV-2609', date: '2026-09-26', description: `${name} — شهري`, amount, status: 'paid' },

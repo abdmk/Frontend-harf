@@ -16,7 +16,7 @@ const TOP_MIN = 56;
 const COMPACT = 240;
 
 /** ما لا يتناسب مع عرض الرسم: تفاصيل البطاقة + ما يزيده الهامش العلوي الأدنى — لحساب التخطيط المتدفّق */
-export const cardExtra = (w: number) => (w < COMPACT ? 124 : 150) + Math.max(0, TOP_MIN - (CARD_PAD / 2) * w);
+export const cardExtra = (w: number) => (w < COMPACT ? 112 : 124) + Math.max(0, TOP_MIN - (CARD_PAD / 2) * w);
 
 /** اسم لاتيني آمن لكل الأنظمة — بعض المتصفّحات تتجاهل الأسماء العربية في download */
 export const fileName = (m: Manuscript) => `harf-${m.id}.svg`;
@@ -74,7 +74,7 @@ export function ManuscriptCard({
       </button>
 
       {/* تتقلّص التفاصيل مع عرض البطاقة (container query): عمودان على الجوال بلا اقتطاع */}
-      <div className="flex flex-col gap-3 p-5 @max-[15rem]:gap-2 @max-[15rem]:p-3.5">
+      <div className="flex flex-col gap-2 px-4 pt-3.5 pb-4 @max-[15rem]:p-3">
         <div className="flex items-baseline justify-between gap-3">
           <button
             type="button"
@@ -99,7 +99,7 @@ export function ManuscriptCard({
           </Link>
         </div>
 
-        <div className="mt-1 flex items-center justify-between gap-3">
+        <div className="flex items-center justify-between gap-3 pt-1">
           <span className="truncate text-sm font-medium text-lic @max-[15rem]:hidden">{USAGE_LABEL[m.license]}</span>
           <DownloadButton
             className="@max-[15rem]:w-full"

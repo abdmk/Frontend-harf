@@ -45,7 +45,7 @@ export function DownloadButton({
     state === 'done'
       ? 'bg-ok-700 text-white'
       : variant === 'primary'
-        ? 'bg-primary-fill text-primary-foreground hover:bg-harf-700'
+        ? 'bg-primary-fill text-primary-foreground hover:bg-harf-600'
         : 'border bg-sunken text-foreground hover:bg-inset',
     className,
   );

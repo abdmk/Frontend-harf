@@ -7,7 +7,7 @@ export { safeNext } from './safe-next';
 
 /** اسم مفتاح التخزين المحلي للحساب التجريبي */
 const DEMO_STORAGE_KEY = 'harf_demo_as';
-export const DEMO_ACCOUNTS = ['free', 'basic', 'studio', 'out'] as const;
+export const DEMO_ACCOUNTS = ['free', 'basic', 'studio', 'admin', 'out'] as const;
 export type DemoAccount = (typeof DEMO_ACCOUNTS)[number];
 
 const sessionSignal = createLocalStoreSignal();
@@ -23,6 +23,7 @@ export function getCurrentUser(): User | null {
   const as = getDemoSession();
   if (as === 'out') return null;
   if (as === 'studio') return MOCK_USERS.studio;
+  if (as === 'admin') return MOCK_USERS.admin;
   if (as === 'basic') return MOCK_USERS.basic;
   return MOCK_USERS.free;
 }
@@ -59,8 +60,7 @@ export function setDemoSession(account: DemoAccount) {
 export function getDemoSession(): DemoAccount | null {
   try {
     const v = localStorage.getItem(DEMO_STORAGE_KEY);
-    if (v === 'free' || v === 'basic' || v === 'studio' || v === 'out') return v;
-    return null;
+    return (DEMO_ACCOUNTS as readonly string[]).includes(v ?? '') ? (v as DemoAccount) : null;
   } catch {
     return null;
   }

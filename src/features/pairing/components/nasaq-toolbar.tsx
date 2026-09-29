@@ -51,7 +51,7 @@ export function NasaqToolbar({
           title="أو اضغط مسافة"
           className={cn(
             pill,
-            'group/re border-transparent bg-primary-fill ps-4 font-medium text-white hover:bg-harf-700',
+            'group/re border-transparent bg-primary-fill ps-4 font-medium text-white hover:bg-harf-600',
           )}
         >
           <RefreshIcon className="size-4 transition-transform duration-(--dur-slow) ease-out-quint group-active/re:-rotate-180" />

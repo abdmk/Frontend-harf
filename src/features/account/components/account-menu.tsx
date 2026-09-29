@@ -1,7 +1,7 @@
 import { type Ref, useState } from 'react';
 import { Link, useLocation } from 'react-router';
 
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { focusPanel, Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { paths } from '@/config/paths';
 import { ACCOUNT_SECTIONS, type AccountSection, type User } from '@/features/account/types';
 
@@ -44,6 +44,8 @@ export function AccountMenu({
         </PopoverTrigger>
         <PopoverContent
           align="end"
+          tabIndex={-1}
+          onOpenAutoFocus={focusPanel}
           sideOffset={10}
           className="max-h-[calc(100dvh-96px)] w-[min(var(--container-menu),calc(100vw-24px))] overflow-y-auto rounded-xl p-2.5 shadow-overlay"
         >

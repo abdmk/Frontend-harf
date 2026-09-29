@@ -44,7 +44,7 @@ const ROLES: [string, string, string][] = [
   ['primary', 'bg-primary-fill', 'لون الفعل الوحيد'],
   ['tint-brand', 'bg-tint-brand', 'تلوين خفيف'],
   ['tint-ok', 'bg-tint-ok', 'نجاح'],
-  ['tint-info', 'bg-tint-info', 'معلومة / تجريبي'],
+  ['tint-info', 'bg-tint-info', 'معلومة / تجربة'],
   ['tint-warn', 'bg-tint-warn', 'تحذير'],
   ['tint-dgr', 'bg-tint-dgr', 'خطأ'],
 ];
