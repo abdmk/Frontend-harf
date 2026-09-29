@@ -21,7 +21,7 @@ import { type Manuscript, MANUSCRIPT_CATEGORY_LABEL } from '@/types/domain/manus
 import { fileName } from './manuscript-card';
 
 const ZOOMS = [0.5, 0.75, 1, 1.5, 2, 3, 4];
-const LICENSE = { personal: 'مجاني للاستخدام الشخصي', commercial: 'مجاني للاستخدام الشخصي والتجاري' } as const;
+const LICENSE = { personal: 'مجاني — شخصي', commercial: 'مجاني — تجاري & شخصي' } as const;
 
 /**
  * عارض المخطوطة: تكبير وتصغير وتدوير وملء الشاشة، وسحب لتحريك الرسم المكبَّر، والتنقّل بالأسهم.
@@ -218,7 +218,15 @@ export function ManuscriptViewer({
                 {(
                   [
                     ['التصنيف', MANUSCRIPT_CATEGORY_LABEL[current.category]],
-                    ['الصيغة', 'SVG متجه — يُكبَّر بلا حدود'],
+                    [
+                      'المصمّم',
+                      <Link
+                        to={paths.designer.getHref(current.designer.id)}
+                        className="font-medium underline-offset-4 hover:text-primary hover:underline"
+                      >
+                        {current.designer.nameAr}
+                      </Link>,
+                    ],
                     [
                       'الأبعاد',
                       <span dir="ltr" className="tabular-nums">

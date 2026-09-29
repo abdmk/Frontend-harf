@@ -22,8 +22,8 @@ export function Masonry<T>({
   getKey: (item: T) => string;
   /** الارتفاع ÷ العرض لمحتوى العنصر المرن (الصورة) */
   ratio: (item: T) => number;
-  /** ارتفاع ثابت إضافي لكل بطاقة (العنوان والتفاصيل) */
-  extra?: number;
+  /** ارتفاع إضافي لكل بطاقة (العنوان والتفاصيل) — رقم، أو دالة لعرض العمود حين تتغيّر البطاقة بعرضها */
+  extra?: number | ((colWidth: number) => number);
   render: (item: T, index: number) => ReactNode;
   minColumn?: number;
   maxColumns?: number;
@@ -47,12 +47,13 @@ export function Masonry<T>({
   const count = Math.max(2, Math.min(maxColumns, Math.floor((width + gap) / (minColumn + gap)) || 2));
   const columns = useMemo(() => {
     const colWidth = width ? (width - gap * (count - 1)) / count : minColumn;
+    const fixed = typeof extra === 'function' ? extra(colWidth) : extra;
     const heights = new Array<number>(count).fill(0);
     const cols: { item: T; index: number }[][] = Array.from({ length: count }, () => []);
     items.forEach((item, index) => {
       const target = heights.indexOf(Math.min(...heights));
       cols[target]!.push({ item, index });
-      heights[target]! += colWidth * ratio(item) + extra + gap;
+      heights[target]! += colWidth * ratio(item) + fixed + gap;
     });
     return cols;
   }, [items, count, width, gap, minColumn, ratio, extra]);

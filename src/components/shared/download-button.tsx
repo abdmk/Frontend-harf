@@ -10,8 +10,8 @@ type Props = {
   /** secondary: للنسخة التجريبية بجانب زرّ الشراء */
   variant?: 'primary' | 'secondary';
   className?: string;
-  /** ملف حقيقي (خطوط OFL فقط) — يصير الزرّ رابط تحميل فعلياً */
-  file?: { url: string; bytes: number };
+  /** ملف حقيقي (خطوط OFL ومخطوطات مجانية فقط) — يصير الزرّ رابط تحميل فعلياً */
+  file?: { url: string; bytes: number; format?: string; name?: string };
 };
 
 /**
@@ -69,9 +69,9 @@ export function DownloadButton({
     return (
       <a
         href={file.url}
-        download
-        aria-label={`${label} ${fontName} (ZIP، ${formatBytes(file.bytes)})`}
-        title={`ZIP · ${formatBytes(file.bytes)}`}
+        download={file.name ?? true}
+        aria-label={`${label} ${fontName} (${file.format ?? 'ZIP'}، ${formatBytes(file.bytes)})`}
+        title={`${file.format ?? 'ZIP'} · ${formatBytes(file.bytes)}`}
         onClick={() => state === 'idle' && setState('busy')}
         className={classes}
       >

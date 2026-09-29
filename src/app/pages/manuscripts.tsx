@@ -1,14 +1,8 @@
 import { Container } from '@/components/layout/container';
 import { PageMeta } from '@/components/shared/page-meta';
-import { Button } from '@/components/ui/button';
-import { PlusIcon } from '@/components/ui/icons';
-import { AddManuscriptDialog } from '@/features/manuscripts/components/add-manuscript-dialog';
 import { ManuscriptsBrowser } from '@/features/manuscripts/components/manuscripts-browser';
-import { useCurrentUser } from '@/hooks/use-current-user';
 
 export function ManuscriptsPage() {
-  const user = useCurrentUser();
-  const canAdd = !!user && (user.role === 'admin' || user.plan === 'studio');
   return (
     <Container as="main" id="main" className="py-10 sm:py-14">
       <PageMeta
@@ -26,20 +20,7 @@ export function ManuscriptsPage() {
           نماذج تجريبية مكتوبة بخطوط المكتبة المجانية
         </p>
       </header>
-      <ManuscriptsBrowser
-        action={
-          canAdd ? (
-            <AddManuscriptDialog
-              trigger={
-                <Button shape="pill" className="h-11 px-5">
-                  <PlusIcon />
-                  أضف مخطوطة
-                </Button>
-              }
-            />
-          ) : undefined
-        }
-      />
+      <ManuscriptsBrowser />
     </Container>
   );
 }

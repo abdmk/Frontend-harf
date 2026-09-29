@@ -1,3 +1,5 @@
+import type { Designer } from './font';
+
 export const MANUSCRIPT_CATEGORIES = [
   'panels',
   'ramadan',
@@ -21,7 +23,7 @@ export const MANUSCRIPT_CATEGORY_LABEL: Record<ManuscriptCategory, string> = {
   occasions: 'مناسبات',
 };
 
-/** مخطوطة: عمل خطّي متجه (SVG) جاهز للتحميل */
+/** مخطوطة: عمل خطّي متجه (SVG) جاهز للتحميل — كلها مجانية حالياً */
 export type Manuscript = {
   id: string;
   title: string;
@@ -33,6 +35,8 @@ export type Manuscript = {
   url: string;
   /** الخطوط التي كُتب بها العمل (من مكتبة حرف) */
   fonts: { id: string; name: string }[];
+  /** الخطّاط/المصمّم صاحب العمل */
+  designer: Designer;
   downloads: number;
   createdAt: string;
   license: 'personal' | 'commercial';

@@ -1,6 +1,7 @@
 import { ToggleGroup as ToggleGroupPrimitive } from 'radix-ui';
-import { type ReactElement, type ReactNode, useMemo, useState } from 'react';
+import { type ReactElement, useMemo, useState } from 'react';
 
+import { FilterSection } from '@/components/shared/filter-section';
 import { PanelSheetContent } from '@/components/shared/panel-sheet';
 import { RangeField } from '@/components/shared/range-field';
 import { Button } from '@/components/ui/button';
@@ -92,7 +93,7 @@ export function FilterSheet({ trigger }: { trigger: ReactElement }) {
         </div>
 
         <div className="flex-1 divide-y overflow-y-auto overscroll-contain px-5">
-          <Section title="الرخصة" onReset={draft.license !== 'all' ? () => patch({ license: 'all' }) : undefined}>
+          <FilterSection title="الرخصة" onReset={draft.license !== 'all' ? () => patch({ license: 'all' }) : undefined}>
             <ToggleGroupPrimitive.Root
               type="single"
               aria-label="الرخصة"
@@ -110,9 +111,9 @@ export function FilterSheet({ trigger }: { trigger: ReactElement }) {
                 </ToggleGroupPrimitive.Item>
               ))}
             </ToggleGroupPrimitive.Root>
-          </Section>
+          </FilterSection>
 
-          <Section
+          <FilterSection
             title="اللغة"
             hint="تظهر الخطوط التي تدعم كل اللغات المختارة"
             onReset={draft.lang.length ? () => patch({ lang: [] }) : undefined}
@@ -131,9 +132,9 @@ export function FilterSheet({ trigger }: { trigger: ReactElement }) {
                 </Chip>
               ))}
             </ChipGroup>
-          </Section>
+          </FilterSection>
 
-          <Section title="تاريخ النشر" onReset={draft.date !== 'all' ? () => patch({ date: 'all' }) : undefined}>
+          <FilterSection title="تاريخ النشر" onReset={draft.date !== 'all' ? () => patch({ date: 'all' }) : undefined}>
             <ChipGroup
               type="single"
               aria-label="تاريخ النشر"
@@ -146,9 +147,9 @@ export function FilterSheet({ trigger }: { trigger: ReactElement }) {
                 </Chip>
               ))}
             </ChipGroup>
-          </Section>
+          </FilterSection>
 
-          <Section title="نطاق السعر" onReset={draft.price ? () => patch({ price: undefined }) : undefined}>
+          <FilterSection title="نطاق السعر" onReset={draft.price ? () => patch({ price: undefined }) : undefined}>
             <RangeField
               stops={PRICE_STOPS}
               value={draft.price}
@@ -156,9 +157,9 @@ export function FilterSheet({ trigger }: { trigger: ReactElement }) {
               format={(v) => `$${v}`}
               labels={['أدنى سعر', 'أعلى سعر']}
             />
-          </Section>
+          </FilterSection>
 
-          <Section title="الأوزان" onReset={draft.weights ? () => patch({ weights: undefined }) : undefined}>
+          <FilterSection title="الأوزان" onReset={draft.weights ? () => patch({ weights: undefined }) : undefined}>
             <RangeField
               stops={WEIGHT_STOPS}
               value={draft.weights}
@@ -166,7 +167,7 @@ export function FilterSheet({ trigger }: { trigger: ReactElement }) {
               format={weightsLabel}
               labels={['أقلّ عدد أوزان', 'أكثر عدد أوزان']}
             />
-          </Section>
+          </FilterSection>
         </div>
 
         <div className="border-t px-5 py-4">
@@ -184,40 +185,5 @@ export function FilterSheet({ trigger }: { trigger: ReactElement }) {
         </div>
       </PanelSheetContent>
     </Sheet>
-  );
-}
-
-/** قسم مسطّح: عنوان، تلميح اختياري، و«إعادة» تظهر فقط حين يختلف القسم عن الافتراضي */
-function Section({
-  title,
-  hint,
-  onReset,
-  children,
-}: {
-  title: string;
-  hint?: string;
-  onReset?: () => void;
-  children: ReactNode;
-}) {
-  return (
-    <section className="py-5">
-      <div className="mb-3.5 flex min-h-7 items-center justify-between gap-3">
-        <div>
-          <h3 className="text-control font-semibold">{title}</h3>
-          {hint && <p className="mt-0.5 text-caption text-tertiary">{hint}</p>}
-        </div>
-        {onReset && (
-          <button
-            type="button"
-            onClick={onReset}
-            aria-label={`إعادة ${title}`}
-            className="animate-pop-in rounded-full px-2.5 py-1 text-caption text-muted-foreground transition-colors hover:bg-sunken hover:text-foreground"
-          >
-            إعادة
-          </button>
-        )}
-      </div>
-      {children}
-    </section>
   );
 }

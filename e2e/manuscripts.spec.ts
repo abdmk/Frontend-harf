@@ -6,6 +6,8 @@ test.describe('المخطوطات', () => {
     const cards = page.getByRole('list', { name: 'المخطوطات' }).locator('article');
     await expect(cards).toHaveCount(36);
 
+    // التصنيفات مطويّة خلف زرّ «التصنيف» كما في المكتبة
+    await page.getByRole('button', { name: 'التصنيف', exact: true }).click();
     await page
       .getByRole('group', { name: 'التصنيفات' })
       .getByRole('button', { name: /^رمضان/ })
@@ -49,21 +51,35 @@ test.describe('المخطوطات', () => {
     await viewer.getByRole('button', { name: 'حفظ' }).click();
     await page.keyboard.press('Escape');
     await page.reload();
-    await page.getByRole('button', { name: /^المحفوظة/ }).click();
+    await page.getByRole('button', { name: /^تصفية/ }).click();
+    const sheet = page.getByRole('dialog', { name: 'تصفية' });
+    await sheet.getByRole('radio', { name: /^المحفوظة/ }).click();
+    await sheet.getByRole('button', { name: 'عرض عمل واحد' }).click();
+    await expect(page).toHaveURL(/view=saved/);
     await expect(page.getByRole('list', { name: 'المخطوطات' }).locator('article')).toHaveCount(1);
   });
 
-  test('«أضف مخطوطة» للاستوديو فقط، ويقبل SVG وحده', async ({ page }) => {
-    await page.goto('/manuscripts?as=free');
-    await expect(page.getByRole('button', { name: 'أضف مخطوطة' })).toHaveCount(0);
-    await page.goto('/manuscripts?as=studio');
-    await page.getByRole('button', { name: 'أضف مخطوطة' }).click();
-    const dialog = page.getByRole('dialog', { name: 'أضف مخطوطة' });
-    await dialog.locator('input[type=file]').setInputFiles({
-      name: 'x.png',
-      mimeType: 'image/png',
-      buffer: Buffer.from('x'),
-    });
-    await expect(dialog.getByRole('alert')).toContainText('SVG فقط');
+  test('البطاقة: شارة «مجاني»، المصمّم رابط لصفحته، وتحميل SVG؛ والتصفية بالمصمّم تُزال من سطر الحالة', async ({
+    page,
+  }) => {
+    await page.goto('/manuscripts');
+    const card = page.getByRole('list', { name: 'المخطوطات' }).locator('article').first();
+    await expect(card.getByText('مجاني', { exact: true })).toBeVisible();
+    await expect(card.getByRole('link').first()).toHaveAttribute('href', /^\/designers\//);
+    const [download] = await Promise.all([
+      page.waitForEvent('download'),
+      card.getByRole('link', { name: /^تحميل .*\(SVG،/ }).click(),
+    ]);
+    expect(download.suggestedFilename()).toMatch(/^harf-.*\.svg$/);
+
+    await page.getByRole('button', { name: /^تصفية/ }).click();
+    const sheet = page.getByRole('dialog', { name: 'تصفية' });
+    const designer = sheet.getByRole('toolbar', { name: 'المصمّم' }).getByRole('button').first();
+    const name = (await designer.textContent())!.trim();
+    await designer.click();
+    await sheet.getByRole('button', { name: /^عرض/ }).click();
+    await expect(page).toHaveURL(/by=/);
+    await page.getByRole('button', { name: `إزالة ${name}` }).click();
+    await expect(page).not.toHaveURL(/by=/);
   });
 });
