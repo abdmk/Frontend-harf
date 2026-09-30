@@ -11,7 +11,7 @@ import { cn } from '@/lib/cn';
 import { FilesStep, ImagesStep, InfoStep, PricingStep } from './publish-steps';
 import { ReviewStep } from './review-step';
 import type { SubmitResult } from '../api/submit';
-import { draftSchema, EMPTY_DRAFT, STEP_OF_FIELD, type WorkDraft } from '../types/draft';
+import { draftSchema, EMPTY_DRAFT, restoreDraft, STEP_OF_FIELD, type WorkDraft } from '../types/draft';
 
 const STEPS = [
   ['الملفات', 'ارفع ملفات الخط', 'كل أوزان العائلة دفعة واحدة — OTF أو TTF أو WOFF2.'],
@@ -44,7 +44,7 @@ export function PublishWorkspace({
   const [saved, setSaved] = useState<'idle' | 'saved'>('saved');
   // الخطوات التي طُلب إظهار نواقصها (بعد «التالي» عليها، أو كلّها عند الإرسال)
   const [checked, setChecked] = useState<ReadonlySet<number>>(new Set());
-  const [done, setDone] = useState<string | null>(null);
+  const [done, setDone] = useState<{ reference: string; notified: string[] } | null>(null);
   const [pending, start] = useTransition();
 
   // استرجاع المسودّة (الملفات والصور لا تُحفظ في المتصفّح — تُرفع للخادم في المنتج)
@@ -52,7 +52,7 @@ export function PublishWorkspace({
     try {
       const raw = localStorage.getItem(STORAGE);
       if (raw) {
-        const saved = { ...EMPTY_DRAFT, ...JSON.parse(raw), files: [], consent: false } as WorkDraft;
+        const saved = { ...EMPTY_DRAFT, ...restoreDraft(JSON.parse(raw)), files: [], consent: false } as WorkDraft;
         // eslint-disable-next-line react-hooks/set-state-in-effect -- قراءة التخزين بعد الترطيب
         setDraft(isAdmin ? saved : { ...saved, mode: 'studio' });
       }
@@ -104,7 +104,7 @@ export function PublishWorkspace({
     start(async () => {
       const res = await onSubmit(full);
       if (res.ok) {
-        setDone(res.reference);
+        setDone({ reference: res.reference, notified: res.notified });
         try {
           localStorage.removeItem(STORAGE);
         } catch {
@@ -127,12 +127,17 @@ export function PublishWorkspace({
         <p className="text-control text-muted-foreground">
           رقم المراجعة{' '}
           <span dir="ltr" className="tabular-nums">
-            {done}
+            {done.reference}
           </span>
           . تصلك رسالة خلال 24 ساعة.
         </p>
+        {done.notified.length > 0 && (
+          <p className="rounded-md bg-sunken px-4 py-2.5 text-meta text-muted-foreground">
+            أرسلنا إشعاراً إلى {done.notified.join('، ')} بأنك أضفتهم إلى الخط.
+          </p>
+        )}
         <Button asChild className="mt-2">
-          <Link to={paths.studio.getHref()}>العودة إلى الاستوديو</Link>
+          <Link to={paths.studio.getHref('fonts')}>إلى خطوطي</Link>
         </Button>
       </div>
     );

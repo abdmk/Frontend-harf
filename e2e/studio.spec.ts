@@ -136,8 +136,39 @@ test.describe('الاستوديو والإدارة', () => {
     await expect(page.getByText('الغلاف')).toBeVisible();
     await page.getByRole('button', { name: 'التالي: المعلومات' }).click();
 
+    // الاسم اللاتيني أوّلاً وإلزامي؛ العربي اختياري
+    await page.getByRole('button', { name: 'التالي: الإتاحة' }).click();
+    await expect(page.getByText('اكتب اسم الخط بالحروف اللاتينية.')).toBeVisible();
+    await page.getByLabel(/الاسم اللاتيني/).fill('Tufula Sans');
     await page.getByLabel(/الاسم بالعربية/).fill('طفولة');
-    await page.getByLabel(/المصمّمون/).fill('عبدالملك جاسم');
+
+    // المصمّمون بالإشارة: اكتب ثم اختر بالأسهم وEnter، وBackspace يحذف الأخير
+    const who = page.getByRole('combobox', { name: /المصمّمون/ });
+    await who.fill('@sara');
+    await page.getByRole('option', { name: /سارة نبيل/ }).click();
+    await who.fill('عبدالملك');
+    await who.press('ArrowDown');
+    await who.press('ArrowUp');
+    await who.press('Enter');
+    await expect(page.getByRole('list', { name: 'المصمّمون المختارون' }).getByRole('listitem')).toHaveCount(2);
+    await who.press('Backspace');
+    await expect(page.getByRole('list', { name: 'المصمّمون المختارون' }).getByRole('listitem')).toHaveCount(1);
+    await who.fill('عبدالملك');
+    await who.press('Enter');
+    await page.getByRole('combobox', { name: /المسبك/ }).fill('تجاريب');
+    await page.getByRole('option', { name: /مسبك تجاريب/ }).click();
+
+    // «كلاسيكية» تفتح أنماطها، وإلغاؤها يلغيها
+    const cats = page.getByRole('group', { name: 'التصنيف' });
+    await cats.getByRole('button', { name: 'كلاسيكية' }).click();
+    await page
+      .getByRole('toolbar', { name: /أي خط كلاسيكي/ })
+      .getByRole('button', { name: 'الخط الكوفي' })
+      .click();
+    await page
+      .getByRole('toolbar', { name: /أي خط كلاسيكي/ })
+      .getByRole('button', { name: 'خط الثلث' })
+      .click();
     await page.getByRole('group', { name: 'التصنيف' }).getByRole('button', { name: 'عناوين' }).click();
     await page.getByRole('group', { name: 'اللغات' }).getByRole('button', { name: 'العربية' }).click();
     await page.getByRole('button', { name: 'التالي: الإتاحة' }).click();
@@ -145,12 +176,14 @@ test.describe('الاستوديو والإدارة', () => {
 
     // المراجعة تعرض ما أُدخل، والإرسال بلا إقرار يسمّيه
     await expect(page.getByText('كل شيء جاهز')).toBeVisible();
-    await expect(page.getByRole('definition').filter({ hasText: 'عبدالملك جاسم' })).toBeVisible();
+    await expect(page.getByRole('definition').filter({ hasText: 'سارة نبيل، عبدالملك جاسم' })).toBeVisible();
+    await expect(page.getByRole('definition').filter({ hasText: 'الخط الكوفي، خط الثلث' })).toBeVisible();
     await page.getByRole('button', { name: 'إرسال للمراجعة' }).click();
     await expect(page.getByText('أقرّ بملكية الحقوق قبل الإرسال.')).toBeVisible();
     await page.getByRole('checkbox').click();
     await page.getByRole('button', { name: 'إرسال للمراجعة' }).click();
     await expect(page.getByRole('heading', { name: 'أُرسل الخط للمراجعة' })).toBeVisible();
+    await expect(page.getByText('أرسلنا إشعاراً إلى سارة نبيل، عبدالملك جاسم')).toBeVisible();
   });
 
   test('المصمّم والمسبك: من صفحة الخط إلى ملف المصمّم ثم مسبكه ومصمّميه', async ({ page }) => {

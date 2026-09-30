@@ -12,6 +12,20 @@ export const MAX_FONT_BYTES = 50 * 1024 * 1024;
 export const MAX_IMAGE_BYTES = 5 * 1024 * 1024;
 export const MAX_DESCRIPTION = 400;
 
+/** أنماط الخط الكلاسيكي — تظهر عند اختيار «كلاسيكية» */
+export const CLASSIC_STYLES = ['kufi', 'naskh', 'thuluth', 'ruqaa', 'diwani', 'nastaliq', 'farsi'] as const;
+export const CLASSIC_STYLE_LABEL: Record<(typeof CLASSIC_STYLES)[number], string> = {
+  kufi: 'الخط الكوفي',
+  naskh: 'خط النسخ',
+  thuluth: 'خط الثلث',
+  ruqaa: 'خط الرقعة',
+  diwani: 'الخط الديواني',
+  nastaliq: 'خط النستعليق',
+  farsi: 'الخط الفارسي',
+};
+/** معرّف حساب/مسبك — نصّ قصير آمن (يُتحقّق على الخادم أنه موجود) */
+const accountId = z.string().regex(/^[a-z0-9-]{1,40}$/);
+
 const fileMeta = z.object({
   name: z.string().min(1).max(180),
   size: z.number().int().positive().max(MAX_FONT_BYTES),
@@ -31,13 +45,20 @@ export const draftSchema = z
     mode: z.enum(['studio', 'admin']),
     files: z.array(fileMeta).min(1, 'ارفع ملف خط واحداً على الأقل.').max(40),
     images: z.number().int().min(1, 'أضف صورة غلاف واحدة على الأقل.').max(12),
-    nameAr: z.string().trim().min(2, 'اكتب اسم الخط بالعربية.').max(60),
     nameLatin: z
       .string()
       .trim()
+      .min(2, 'اكتب اسم الخط بالحروف اللاتينية.')
       .max(60)
-      .regex(/^[\w\s.-]*$/, 'حروف لاتينية وأرقام فقط.'),
-    designers: z.string().trim().min(2, 'اكتب اسم المصمّم.').max(120),
+      .refine((v) => !v || /^[A-Za-z0-9][A-Za-z0-9 .'-]*$/.test(v), 'حروف لاتينية وأرقام فقط، مثل: Tufula Sans.'),
+    nameAr: z
+      .string()
+      .trim()
+      .max(60)
+      .refine((v) => !v || v.length >= 2, 'الاسم العربي حرفان على الأقل، أو اتركه فارغاً.'),
+    designers: z.array(accountId).min(1, 'أضف مصمّماً واحداً على الأقل.').max(8, 'ثمانية مصمّمين على الأكثر.'),
+    foundries: z.array(accountId).max(4, 'أربعة مسابك على الأكثر.'),
+    styles: z.array(z.enum(CLASSIC_STYLES)),
     description: z.string().trim().max(MAX_DESCRIPTION, `الوصف أطول من ${MAX_DESCRIPTION} حرف.`),
     categories: z.array(z.enum(CATEGORIES)).min(1, 'اختر تصنيفاً واحداً على الأقل.'),
     langs: z.array(z.enum(LANGS)).min(1, 'اختر لغة واحدة على الأقل.'),
@@ -54,6 +75,8 @@ export const draftSchema = z
     consent: z.literal(true, 'أقرّ بملكية الحقوق قبل الإرسال.'),
   })
   .superRefine((d, ctx) => {
+    if (d.styles.length && !d.categories.includes('classic'))
+      ctx.addIssue({ code: 'custom', path: ['styles'], message: 'أنماط الخط للتصنيف الكلاسيكي فقط.' });
     if (d.mode === 'studio' && d.availability === 'paid' && d.familyPrice <= 0)
       ctx.addIssue({ code: 'custom', path: ['familyPrice'], message: 'حدّد سعر العائلة للخط المدفوع.' });
     if (d.mode === 'admin') {
@@ -73,9 +96,11 @@ export const EMPTY_DRAFT: WorkDraft = {
   mode: 'studio',
   files: [],
   images: 0,
-  nameAr: '',
   nameLatin: '',
-  designers: '',
+  nameAr: '',
+  designers: [],
+  foundries: [],
+  styles: [],
   description: '',
   categories: [],
   langs: [],
@@ -91,9 +116,11 @@ export const EMPTY_DRAFT: WorkDraft = {
 export const STEP_OF_FIELD: Record<string, number> = {
   files: 0,
   images: 1,
-  nameAr: 2,
   nameLatin: 2,
+  nameAr: 2,
   designers: 2,
+  foundries: 2,
+  styles: 2,
   description: 2,
   categories: 2,
   langs: 2,
@@ -101,3 +128,40 @@ export const STEP_OF_FIELD: Record<string, number> = {
   source: 3,
   consent: 4,
 };
+
+/**
+ * استرجاع مسودّة محفوظة في المتصفّح بأمان: تُهمَل القيم بشكل غير متوقّع (نسخة أقدم، أو عُدّلت يدوياً)
+ * بدل أن تكسر الصفحة — والتحقّق الكامل يبقى عند الإرسال.
+ */
+export function restoreDraft(raw: unknown): Partial<WorkDraft> {
+  if (!raw || typeof raw !== 'object') return {};
+  const x = raw as Record<string, unknown>;
+  const str = (v: unknown, max: number) => (typeof v === 'string' ? v.slice(0, max) : undefined);
+  const ids = (v: unknown) =>
+    Array.isArray(v)
+      ? v.filter((i): i is string => typeof i === 'string' && /^[a-z0-9-]{1,40}$/.test(i)).slice(0, 8)
+      : [];
+  const out: Partial<WorkDraft> = {
+    nameLatin: str(x.nameLatin, 60) ?? '',
+    nameAr: str(x.nameAr, 60) ?? '',
+    description: str(x.description, MAX_DESCRIPTION) ?? '',
+    designers: ids(x.designers),
+    foundries: ids(x.foundries).slice(0, 4),
+    styles: Array.isArray(x.styles)
+      ? x.styles.filter((s): s is (typeof CLASSIC_STYLES)[number] => (CLASSIC_STYLES as readonly unknown[]).includes(s))
+      : [],
+  };
+  const keep = [
+    'mode',
+    'images',
+    'categories',
+    'langs',
+    'availability',
+    'trial',
+    'familyPrice',
+    'singlePct',
+    'source',
+  ] as const;
+  for (const k of keep) if (k in x) (out as Record<string, unknown>)[k] = x[k];
+  return out;
+}

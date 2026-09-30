@@ -6,13 +6,18 @@ import { cn } from '@/lib/cn';
 import { CATEGORY_LABEL, LANG_LABEL } from '@/lib/labels';
 
 import { ConsentField, type StepProps } from './publish-steps';
-import type { WorkDraft } from '../types/draft';
+import { type DirectoryEntry, foundryById, personById } from '../api/directory';
+import { CLASSIC_STYLE_LABEL, type WorkDraft } from '../types/draft';
 
 type Issue = { step: number; message: string };
 type Image = { url: string; name: string };
 
 const SOURCE_KIND = { purchased: 'مشترى من موقع', free: 'مجاني من موقع', trial: 'تجريبي فقط' } as const;
 const SOURCE_LICENSE = { personal: 'شخصي فقط', commercial: 'شخصي وتجاري', ofl: 'SIL OFL' } as const;
+
+/** أسماء الحسابات المختارة بالترتيب */
+const names = (ids: string[], resolve: (id: string) => DirectoryEntry | undefined) =>
+  ids.map((id) => resolve(id)?.name ?? id).join('، ');
 
 /**
  * المراجعة (نمط «مراجعة التفاصيل» في مراجع Wayl): تنبيه بعدد النواقص، ثم بطاقة لكل خطوة
@@ -62,10 +67,17 @@ export function ReviewStep({
     },
     {
       rows: [
-        ['الاسم', draft.nameAr || dash],
         ['الاسم اللاتيني', draft.nameLatin ? <span dir="ltr">{draft.nameLatin}</span> : dash],
-        ['المصمّمون', draft.designers || dash],
-        ['التصنيف', draft.categories.map((c) => CATEGORY_LABEL[c]).join('، ') || dash],
+        ['الاسم بالعربية', draft.nameAr || dash],
+        ['المصمّمون', names(draft.designers, personById) || dash],
+        ['المسبك', names(draft.foundries, foundryById) || dash],
+        [
+          'التصنيف',
+          [
+            ...draft.categories.map((c) => CATEGORY_LABEL[c]),
+            ...draft.styles.map((st) => CLASSIC_STYLE_LABEL[st]),
+          ].join('، ') || dash,
+        ],
         ['اللغات', draft.langs.map((l) => LANG_LABEL[l]).join('، ') || dash],
       ],
     },
@@ -182,13 +194,17 @@ function Preview({ draft, cover }: { draft: WorkDraft; cover?: string }) {
         {cover ? (
           <img src={cover} alt="" className="absolute inset-0 size-full object-cover" />
         ) : (
-          draft.nameAr || 'خطّك'
+          draft.nameAr || draft.nameLatin || 'خطّك'
         )}
       </div>
       <figcaption className="min-w-0 flex-1">
         <span className="text-caption text-tertiary">كما سيظهر في المكتبة</span>
-        <span className="mt-1 block truncate text-lead font-semibold">{draft.nameAr || 'اسم الخط'}</span>
-        <span className="block truncate text-caption text-muted-foreground">{draft.designers || 'المصمّم'}</span>
+        <span dir="auto" className="mt-1 block truncate text-lead font-semibold">
+          {draft.nameLatin || draft.nameAr || 'اسم الخط'}
+        </span>
+        <span className="block truncate text-caption text-muted-foreground">
+          {names(draft.designers, personById) || 'المصمّم'}
+        </span>
         <span className="mt-2 inline-block">
           <Badge tone={badge.tone}>{badge.label}</Badge>
         </span>

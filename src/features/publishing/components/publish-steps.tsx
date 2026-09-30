@@ -16,7 +16,17 @@ import { CATEGORY_LABEL, LANG_LABEL } from '@/lib/labels';
 import { CATEGORIES, LANGS } from '@/types/domain/font';
 
 import { SortableImages } from './sortable-images';
-import { type Draft, IMAGE_TYPES, type WorkDraft, MAX_DESCRIPTION, MAX_IMAGE_BYTES } from '../types/draft';
+import { TagPicker } from './tag-picker';
+import { foundryById, personById, searchFoundries, searchPeople } from '../api/directory';
+import {
+  CLASSIC_STYLE_LABEL,
+  CLASSIC_STYLES,
+  type Draft,
+  IMAGE_TYPES,
+  type WorkDraft,
+  MAX_DESCRIPTION,
+  MAX_IMAGE_BYTES,
+} from '../types/draft';
 import { inferFontMeta } from '../utils/infer-weight';
 
 /** صندوق شرح رمادي تحت الحقل (نمط مراجع Wayl): يشرح لماذا نطلب المعلومة وأين تظهر */
@@ -210,47 +220,77 @@ export function ImagesStep({
 }
 
 export function InfoStep({ draft, set, errors }: StepProps) {
+  const classic = draft.categories.includes('classic');
   return (
     <div className="grid gap-5 sm:grid-cols-2">
       <Field>
-        <FieldLabel htmlFor="d-ar" required>
-          الاسم بالعربية
+        <FieldLabel htmlFor="d-la" required>
+          الاسم اللاتيني
         </FieldLabel>
-        <Input
-          id="d-ar"
-          value={draft.nameAr}
-          maxLength={60}
-          onChange={(e) => set({ nameAr: e.target.value })}
-          aria-invalid={!!errors.nameAr}
-        />
-        <FieldError>{errors.nameAr}</FieldError>
-      </Field>
-      <Field>
-        <FieldLabel htmlFor="d-la">الاسم اللاتيني</FieldLabel>
         <Input
           id="d-la"
           dir="ltr"
           value={draft.nameLatin}
           maxLength={60}
+          placeholder="Tufula Sans"
           onChange={(e) => set({ nameLatin: e.target.value })}
           aria-invalid={!!errors.nameLatin}
+          aria-describedby="d-la-hint"
         />
         <FieldError>{errors.nameLatin}</FieldError>
+        <FieldHint id="d-la-hint">الاسم الرئيسي في المكتبة والملفات والروابط.</FieldHint>
+      </Field>
+      <Field>
+        <FieldLabel htmlFor="d-ar">
+          الاسم بالعربية <span className="font-normal text-tertiary">(اختياري)</span>
+        </FieldLabel>
+        <Input
+          id="d-ar"
+          value={draft.nameAr}
+          maxLength={60}
+          placeholder="طفولة"
+          onChange={(e) => set({ nameAr: e.target.value })}
+          aria-invalid={!!errors.nameAr}
+        />
+        <FieldError>{errors.nameAr}</FieldError>
       </Field>
       <Field className="sm:col-span-2">
         <FieldLabel htmlFor="d-des" required>
           المصمّمون
         </FieldLabel>
-        <Input
+        <TagPicker
           id="d-des"
+          label="المصمّمون"
           value={draft.designers}
-          maxLength={120}
-          placeholder="مثال: عبدالملك جاسم، مي علي"
-          onChange={(e) => set({ designers: e.target.value })}
-          aria-invalid={!!errors.designers}
+          onChange={(v) => set({ designers: v })}
+          search={searchPeople}
+          resolve={personById}
+          placeholder="اكتب @ واسم المصمّم"
+          max={8}
+          invalid={!!errors.designers}
+          describedBy="d-des-hint"
         />
         <FieldError>{errors.designers}</FieldError>
-        <Hint className="mt-1">افصل بين الأسماء بفاصلة. تظهر بالترتيب الذي تكتبه تحت اسم الخط في البطاقة والصفحة.</Hint>
+        <FieldHint id="d-des-hint">
+          اختر من حسابات حرف — يصل كلَّ من تضيفه إشعار بأنك أضفته إلى الخط. يظهرون بهذا الترتيب تحت اسم الخط.
+        </FieldHint>
+      </Field>
+      <Field className="sm:col-span-2">
+        <FieldLabel htmlFor="d-fdy">
+          المسبك <span className="font-normal text-tertiary">(اختياري — واحد أو أكثر)</span>
+        </FieldLabel>
+        <TagPicker
+          id="d-fdy"
+          label="المسابك"
+          value={draft.foundries}
+          onChange={(v) => set({ foundries: v })}
+          search={searchFoundries}
+          resolve={foundryById}
+          placeholder="اكتب @ واسم المسبك"
+          max={4}
+          invalid={!!errors.foundries}
+        />
+        <FieldError>{errors.foundries}</FieldError>
       </Field>
       <Field className="sm:col-span-2">
         <FieldLabel htmlFor="d-desc">الوصف</FieldLabel>
@@ -272,7 +312,11 @@ export function InfoStep({ draft, set, errors }: StepProps) {
         <ChipGroup
           type="multiple"
           value={draft.categories}
-          onValueChange={(v) => set({ categories: v as Draft['categories'] })}
+          onValueChange={(v) => {
+            const categories = v as Draft['categories'];
+            // إلغاء «كلاسيكية» يلغي أنماطها معها
+            set(categories.includes('classic') ? { categories } : { categories, styles: [] });
+          }}
           aria-label="التصنيف"
         >
           {CATEGORIES.map((c) => (
@@ -282,6 +326,26 @@ export function InfoStep({ draft, set, errors }: StepProps) {
           ))}
         </ChipGroup>
         <FieldError>{errors.categories}</FieldError>
+        {classic && (
+          <div className="mt-2 animate-fade-up rounded-md bg-sunken p-4">
+            <p id="d-styles-label" className="mb-3 text-meta font-medium">
+              أي خط كلاسيكي؟ <span className="font-normal text-tertiary">(اختياري — واحد أو أكثر)</span>
+            </p>
+            <ChipGroup
+              type="multiple"
+              value={draft.styles}
+              onValueChange={(v) => set({ styles: v as Draft['styles'] })}
+              aria-labelledby="d-styles-label"
+            >
+              {CLASSIC_STYLES.map((st) => (
+                <Chip key={st} value={st}>
+                  {CLASSIC_STYLE_LABEL[st]}
+                </Chip>
+              ))}
+            </ChipGroup>
+            <FieldError>{errors.styles}</FieldError>
+          </div>
+        )}
       </fieldset>
       <fieldset className="flex flex-col gap-2 sm:col-span-2">
         <legend className="mb-2 text-meta font-medium text-muted-foreground">اللغات المدعومة</legend>
