@@ -8,7 +8,7 @@ export function CtaSection() {
     <Reveal
       as="section"
       aria-labelledby="cta-title"
-      className="mt-30 flex flex-col items-center gap-4 rounded-xl bg-callout px-6 py-[clamp(48px,7vw,96px)] text-center"
+      className="mt-30 flex flex-col items-center gap-4 rounded-xl border border-(--grad-dawn-edge) px-6 py-[clamp(48px,7vw,96px)] text-center [background:var(--grad-streaks),var(--grad-dawn-wide)]"
     >
       <h2 id="cta-title" className="text-display font-semibold tracking-tight">
         تبحث عن خط خاص؟

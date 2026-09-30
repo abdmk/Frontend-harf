@@ -14,9 +14,11 @@ import type { ChangePlanResult } from '../api/actions';
 
 const PLAN_ICON = { free: UserIcon, basic: DiamondIcon, studio: CrownIcon } as const;
 const PLAN_RING: Record<Plan, string> = {
-  free: '',
-  basic: 'border-gold-500 [--plan-badge:var(--color-gold-500)] [--plan-badge-fg:var(--color-gold-foreground)]',
-  studio: 'border-trial-500 [--plan-badge:var(--color-trial-600)] [--plan-badge-fg:var(--color-paper)]',
+  free: '[--plan-grad:var(--grad-plan-free)]',
+  basic:
+    '[--plan-grad:var(--grad-plan-basic)] border-gold-500 [--plan-badge:var(--color-gold-500)] [--plan-badge-fg:var(--color-gold-foreground)]',
+  studio:
+    '[--plan-grad:var(--grad-plan-studio)] border-trial-500 [--plan-badge:var(--color-trial-600)] [--plan-badge-fg:var(--color-paper)]',
 };
 
 type Step = { kind: 'plans' } | { kind: 'pay'; plan: PlanOffer } | { kind: 'done'; plan: PlanOffer };
@@ -164,7 +166,7 @@ export function PlansDialog({
                         </h3>
                         <p className="mt-1 text-caption text-muted-foreground">{p.tagline}</p>
                       </div>
-                      <div className="rounded-md bg-sunken p-4">
+                      <div className="rounded-md p-4 [background:var(--plan-grad)]">
                         <p className="flex items-baseline gap-1.5">
                           <span dir="ltr" className="text-4xl font-semibold tracking-tight">
                             {formatMoney(price)}
