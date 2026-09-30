@@ -38,7 +38,7 @@ export function SalesSection() {
         <StatCard
           label="متوسّط العملية"
           value={formatMoney(cents(month.length ? Math.round(gross / month.length) : 0))}
-          hint="صافيك في «الأرباح»"
+          hint="صافيك لكل عملية في الجدول"
           icon={<DollarIcon />}
         />
       </div>

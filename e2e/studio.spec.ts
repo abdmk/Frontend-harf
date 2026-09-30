@@ -25,10 +25,18 @@ test.describe('الاستوديو والإدارة', () => {
     await expect(page).toHaveURL(/\/fonts\/tajarib$/);
   });
 
-  test('المالية قسم واحد بأربع صفحات، والعناوين القديمة تُحوَّل إليه', async ({ page }) => {
+  test('المالية قسم واحد بثلاث صفحات، والعناوين القديمة تُحوَّل إليه', async ({ page }) => {
+    // «الأرباح» حُذف: عناوينه القديمة تذهب إلى النظرة المالية
     await page.goto('/account/earnings?as=studio');
-    await expect(page).toHaveURL(/\/studio\/finance\/earnings$/);
-    await expect(page.getByRole('heading', { level: 1, name: 'الأرباح' })).toBeVisible();
+    await expect(page).toHaveURL(/\/studio\/finance$/);
+    await page.goto('/studio/finance/earnings');
+    await expect(page).toHaveURL(/\/studio\/finance$/);
+    await expect(
+      page
+        .getByRole('navigation', { name: 'أقسام الاستوديو' })
+        .filter({ visible: true })
+        .getByRole('link', { name: 'الأرباح' }),
+    ).toHaveCount(0);
     const nav = page.getByRole('navigation', { name: 'أقسام الاستوديو' }).filter({ visible: true });
     await nav.getByRole('link', { name: 'نظرة عامة مالية' }).click();
     await expect(page).toHaveURL(/\/studio\/finance$/);

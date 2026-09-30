@@ -84,8 +84,9 @@ export function App() {
           <Route path="analytics" element={<StudioAnalyticsPage />} />
           <Route path="finance" element={<StudioFinancePage page="overview" />} />
           <Route path="finance/sales" element={<StudioFinancePage page="sales" />} />
-          <Route path="finance/earnings" element={<StudioFinancePage page="earnings" />} />
           <Route path="finance/payouts" element={<StudioFinancePage page="payouts" />} />
+          {/* «الأرباح» حُذف — العنوان القديم يذهب إلى النظرة المالية */}
+          <Route path="finance/earnings" element={<Navigate to="/studio/finance" replace />} />
           <Route path="profile" element={<StudioProfilePage />} />
           <Route path="publish" element={<PublishPage />} />
           <Route path="*" element={<Navigate to="/studio" replace />} />
@@ -93,7 +94,7 @@ export function App() {
 
         {/* عناوين المالية القديمة في الحساب */}
         <Route path="account/sales" element={<Navigate to="/studio/finance/sales" replace />} />
-        <Route path="account/earnings" element={<Navigate to="/studio/finance/earnings" replace />} />
+        <Route path="account/earnings" element={<Navigate to="/studio/finance" replace />} />
         <Route path="account/payouts" element={<Navigate to="/studio/finance/payouts" replace />} />
 
         {/* المشرف */}

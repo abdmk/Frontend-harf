@@ -21,7 +21,6 @@ export const STUDIO_NAV: StudioNavItem[] = [
     children: [
       { section: 'finance', label: 'نظرة عامة مالية' },
       { section: 'finance/sales', label: 'المبيعات' },
-      { section: 'finance/earnings', label: 'الأرباح' },
       { section: 'finance/payouts', label: 'السحوبات' },
     ],
   },
@@ -35,7 +34,6 @@ export const STUDIO_TITLE: Record<string, string> = {
   analytics: 'التحليلات',
   finance: 'المالية',
   'finance/sales': 'المبيعات',
-  'finance/earnings': 'الأرباح',
   'finance/payouts': 'السحوبات',
   profile: 'الملف العام',
   publish: 'رفع خط',

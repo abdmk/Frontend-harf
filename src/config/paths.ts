@@ -1,6 +1,6 @@
 /** أقسام مساحة الاستوديو — قائمة مغلقة (لا مسارات حرّة) */
 export type StudioSection =
-  'fonts' | 'analytics' | 'finance' | 'finance/sales' | 'finance/earnings' | 'finance/payouts' | 'profile' | 'publish';
+  'fonts' | 'analytics' | 'finance' | 'finance/sales' | 'finance/payouts' | 'profile' | 'publish';
 
 /** كل روابط التطبيق في مكان واحد — لا روابط نصّية متفرّقة في المكوّنات */
 export const paths = {

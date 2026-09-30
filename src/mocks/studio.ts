@@ -411,13 +411,3 @@ export const MOCK_PAYOUTS: MockPayout[] = [
   { id: 'P-1034', date: '2026-08-02', amountCents: 87400, status: 'failed' },
   { id: 'P-1033', date: '2026-08-04', amountCents: 87400, status: 'paid' },
 ];
-
-/** صافي الأرباح الشهري (بالدولار) — آخر ستة أشهر */
-export const MOCK_MONTHLY_NET = [
-  { label: 'أبريل', value: 1840 },
-  { label: 'مايو', value: 2210 },
-  { label: 'يونيو', value: 1975 },
-  { label: 'يوليو', value: 2630 },
-  { label: 'أغسطس', value: 2290 },
-  { label: 'سبتمبر', value: 2480 },
-];

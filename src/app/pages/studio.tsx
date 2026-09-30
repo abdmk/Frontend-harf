@@ -1,6 +1,5 @@
 import { PageMeta } from '@/components/shared/page-meta';
 import { studioTotals } from '@/features/studio/api/get-studio';
-import { EarningsSection } from '@/features/studio/components/money/earnings-section';
 import { FinanceEmpty, FinanceOverview } from '@/features/studio/components/money/finance-overview';
 import { PayoutsSection } from '@/features/studio/components/money/payouts-section';
 import { SalesSection } from '@/features/studio/components/money/sales-section';
@@ -47,7 +46,6 @@ export function StudioAnalyticsPage() {
 const FINANCE = {
   overview: { title: 'المالية', description: 'أرصدتك وآخر مبيعاتك في مكان واحد.' },
   sales: { title: 'المبيعات', description: 'كل عملية بيع لخطوطك وحالتها.' },
-  earnings: { title: 'الأرباح', description: 'كيف يُحسب صافيك، وتطوّره عبر الأشهر.' },
   payouts: { title: 'السحوبات', description: 'رصيدك القابل للسحب، حساب التحويل، وسجلّ التحويلات.' },
 } as const;
 
@@ -61,8 +59,6 @@ export function StudioFinancePage({ page }: { page: keyof typeof FINANCE }) {
     <FinanceOverview />
   ) : page === 'sales' ? (
     <SalesSection />
-  ) : page === 'earnings' ? (
-    <EarningsSection fonts={fonts} />
   ) : (
     <PayoutsSection />
   );
