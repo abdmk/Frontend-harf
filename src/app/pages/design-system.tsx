@@ -458,7 +458,7 @@ export function DesignSystemPage() {
               <Link to={paths.foundry.getHref('tajarib')}>صفحة المسبك</Link>
             </Button>
             <Button asChild variant="outline">
-              <Link to={paths.admin.analytics.getHref()}>التحليلات</Link>
+              <Link to={paths.admin.getHref('analytics')}>التحليلات</Link>
             </Button>
           </DsPanel>
         </DsSection>

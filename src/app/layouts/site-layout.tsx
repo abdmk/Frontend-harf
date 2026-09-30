@@ -1,5 +1,6 @@
 import { Outlet } from 'react-router';
 
+import { AnnouncementBar } from '@/components/layout/announcement-bar';
 import { SiteFooter } from '@/components/layout/site-footer';
 import { SiteHeader } from '@/components/layout/site-header';
 
@@ -10,6 +11,7 @@ import { PageTransition } from './page-transition';
 export function SiteLayout() {
   return (
     <>
+      <AnnouncementBar />
       <SiteHeader actions={<HeaderActions />} onNavIntent={preloadPage} />
       <PageTransition>
         <Outlet />

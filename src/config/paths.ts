@@ -2,6 +2,9 @@
 export type StudioSection =
   'fonts' | 'analytics' | 'finance' | 'finance/sales' | 'finance/payouts' | 'profile' | 'publish';
 
+/** أقسام لوحة الإدارة */
+export type AdminSection = 'review' | 'fonts' | 'content' | 'analytics';
+
 /** كل روابط التطبيق في مكان واحد — لا روابط نصّية متفرّقة في المكوّنات */
 export const paths = {
   home: { getHref: () => '/' },
@@ -24,7 +27,11 @@ export const paths = {
   },
   foundry: { getHref: (id: string) => `/foundries/${encodeURIComponent(id)}` },
   designer: { getHref: (id: string) => `/designers/${encodeURIComponent(id)}` },
-  admin: { analytics: { getHref: () => '/admin/analytics' } },
+  admin: {
+    getHref: (section?: AdminSection) => (section ? `/admin/${section}` : '/admin'),
+    review: { getHref: (id: string) => `/admin/review/${encodeURIComponent(id)}` },
+    font: { getHref: (id: string) => `/admin/fonts/${encodeURIComponent(id)}` },
+  },
   tools: { reverseText: { getHref: () => '/tools/reverse-text' } },
   designSystem: { getHref: () => '/design-system' },
 } as const;

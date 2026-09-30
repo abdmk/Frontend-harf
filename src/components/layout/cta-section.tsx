@@ -1,9 +1,12 @@
 import { Link } from 'react-router';
 
 import { Reveal } from '@/components/shared/reveal';
+import { useSiteContent } from '@/lib/site-content';
 
-/** «تبحث عن خط خاص؟» — دعوة ثابتة أسفل صفحات المكتبة */
+/** «تبحث عن خط خاص؟» — دعوة أسفل صفحات المكتبة */
 export function CtaSection() {
+  // النصوص من لوحة الإدارة («المحتوى»)
+  const { cta } = useSiteContent();
   return (
     <Reveal
       as="section"
@@ -11,11 +14,9 @@ export function CtaSection() {
       className="mt-30 flex flex-col items-center gap-4 rounded-xl border border-(--grad-dawn-edge) px-6 py-[clamp(48px,7vw,96px)] text-center [background:var(--grad-streaks),var(--grad-dawn-wide)]"
     >
       <h2 id="cta-title" className="text-display font-semibold tracking-tight">
-        تبحث عن خط خاص؟
+        {cta.title}
       </h2>
-      <p className="max-w-[44ch] text-sm leading-[1.8] text-muted-foreground">
-        احجز جلسة سريعة مع فريقنا، نساعدك تختار الخط الأنسب لمشروعك أو نخصص لك خط يعكس هويتك بشكل أوضح وأميز.
-      </p>
+      <p className="max-w-[44ch] text-sm leading-[1.8] text-muted-foreground">{cta.lead}</p>
       <Link
         to="/services"
         className="group mt-4 inline-flex h-12 items-center gap-2 rounded-full bg-ink ps-4 pe-6 text-sm font-medium text-ink-foreground transition-[opacity,transform] hover:opacity-90 active:scale-[.97]"
@@ -34,7 +35,7 @@ export function CtaSection() {
             KM
           </i>
         </span>
-        تحدث مع فريقنا
+        {cta.button}
       </Link>
     </Reveal>
   );

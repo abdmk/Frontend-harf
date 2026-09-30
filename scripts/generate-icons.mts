@@ -120,6 +120,7 @@ const MAP: Record<string, string> = {
   computer: 'fi-rr-computer',
   'map-pin': 'fi-rr-map-marker',
   mobile: 'fi-rr-mobile',
+  'menu-dots': 'fi-rr-menu-dots',
 };
 
 function parse(file: string) {
@@ -183,6 +184,10 @@ const SOLID = new Set([
   'badge',
   'magic-wand',
   'document',
+  // لوحة الإدارة
+  'document-signed',
+  'picture',
+  'star',
 ]);
 const out: Record<string, { viewBox: string; nodes: IconNode[]; solid?: IconNode[] }> = {};
 for (const [name, file] of Object.entries(MAP)) {

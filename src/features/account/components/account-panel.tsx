@@ -137,7 +137,7 @@ export function AccountPanel({
           <>
             <hr className={cn('border-border', s.hr)} />
             <Link
-              to={paths.admin.analytics.getHref()}
+              to={paths.admin.getHref()}
               onClick={onNavigate}
               className={cn('flex items-center rounded-sm transition-colors hover:bg-sunken', s.row)}
             >

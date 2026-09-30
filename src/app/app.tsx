@@ -3,13 +3,22 @@ import { Navigate, Route, Routes } from 'react-router';
 import { COMING_SOON, type ComingSoonKey } from '@/config/coming-soon';
 
 import { ErrorBoundary } from './error';
+import { AdminLayout } from './layouts/admin-layout';
 import { SiteLayout } from './layouts/site-layout';
 import { StudioLayout } from './layouts/studio-layout';
 import { WideLayout } from './layouts/wide-layout';
 import { FontLabPage, FontMatchingPage, NasaqPage } from './lazy-pages';
 import { AccountIndexPage } from './pages/account-index';
 import { AccountSectionPage } from './pages/account-section';
-import { AnalyticsPage } from './pages/analytics';
+import {
+  AdminAnalyticsPage,
+  AdminContentPage,
+  AdminFontDetailPage,
+  AdminFontsPage,
+  AdminHomePage,
+  AdminReviewDetailPage,
+  AdminReviewPage,
+} from './pages/admin';
 import { CartPage } from './pages/cart';
 import { CheckoutPage } from './pages/checkout';
 import { ComingSoonPage } from './pages/coming-soon';
@@ -97,9 +106,16 @@ export function App() {
         <Route path="account/earnings" element={<Navigate to="/studio/finance" replace />} />
         <Route path="account/payouts" element={<Navigate to="/studio/finance/payouts" replace />} />
 
-        {/* المشرف */}
-        <Route errorElement={<ErrorBoundary />} element={<WideLayout />}>
-          <Route path="admin/analytics" element={<AnalyticsPage />} />
+        {/* لوحة الإدارة — مساحة مستقلّة بعمود جانبي وحارس واحد */}
+        <Route path="admin" errorElement={<ErrorBoundary />} element={<AdminLayout />}>
+          <Route index element={<AdminHomePage />} />
+          <Route path="review" element={<AdminReviewPage />} />
+          <Route path="review/:id" element={<AdminReviewDetailPage />} />
+          <Route path="fonts" element={<AdminFontsPage />} />
+          <Route path="fonts/:id" element={<AdminFontDetailPage />} />
+          <Route path="content" element={<AdminContentPage />} />
+          <Route path="analytics" element={<AdminAnalyticsPage />} />
+          <Route path="*" element={<Navigate to="/admin" replace />} />
         </Route>
 
         {/* دليل التصميم */}

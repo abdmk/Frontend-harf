@@ -1,5 +1,6 @@
 import type { CatalogQuery } from '@/features/catalog/types/catalog-query';
 import { filterFonts } from '@/features/catalog/utils/filter-fonts';
+import { publicFonts } from '@/lib/catalog-overrides';
 import { MOCK_FONTS } from '@/mocks/fonts';
 import type { Font } from '@/types/domain/font';
 
@@ -9,9 +10,10 @@ import type { Font } from '@/types/domain/font';
  * فلا تتغيّر المكوّنات.
  */
 export function getFonts(query: CatalogQuery): Font[] {
-  return filterFonts(MOCK_FONTS, query);
+  // المخفي والمحذوف من «مخزن الخطوط» لا يظهر للزوّار
+  return filterFonts(publicFonts(MOCK_FONTS), query);
 }
 
 export function getAllFontIds(): string[] {
-  return MOCK_FONTS.map((f) => f.id);
+  return publicFonts(MOCK_FONTS).map((f) => f.id);
 }
