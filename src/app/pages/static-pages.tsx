@@ -1,11 +1,13 @@
 import { Collapsible as CollapsiblePrimitive } from 'radix-ui';
-import { Link } from 'react-router';
 
 import { ContentPage, ContentSection } from '@/components/layout/content-page';
+import { LegalDocument } from '@/components/layout/legal-document';
 import { Button } from '@/components/ui/button';
-import { ChevronDownIcon, ExclamationIcon, MailIcon } from '@/components/ui/icons';
+import { ChevronDownIcon, MailIcon } from '@/components/ui/icons';
 import { CONTACT_EMAIL, FAQ } from '@/config/faq';
-import { paths } from '@/config/paths';
+import { parseLegal } from '@/content/legal/parse';
+import privacyText from '@/content/legal/privacy.txt?raw';
+import termsText from '@/content/legal/terms.txt?raw';
 
 function ContactButton({ label = CONTACT_EMAIL }: { label?: string }) {
   return (
@@ -90,67 +92,30 @@ export function HelpPage() {
 }
 
 /** تنبيه ظاهر أن النص مسودّة — لا يُطلق الموقع قبل مراجعته قانونياً */
-function DraftNotice() {
-  return (
-    <div role="note" className="mb-10 flex gap-3 rounded-lg bg-tint-warn p-4 text-warn-text">
-      <ExclamationIcon className="mt-0.5 size-5 shrink-0" />
-      <p className="text-meta leading-relaxed">
-        <strong className="font-semibold">مسودّة.</strong> هذا النص هيكل مؤقت يوضّح الأقسام المطلوبة، ويجب أن يُكتب
-        ويُراجَع مع مختصّ قانوني قبل إطلاق المنصة.
-      </p>
-    </div>
-  );
-}
+const TERMS = parseLegal(termsText);
+const PRIVACY = parseLegal(privacyText);
+const LEGAL_UPDATED = '2026-09-30';
 
 export function TermsPage() {
   return (
-    <ContentPage title="الشروط والأحكام" lead="القواعد التي تنظّم استخدامك لمنصة حرف." notice={<DraftNotice />}>
-      <ContentSection title="الحساب">
-        <p>مسؤوليتك عن صحة بياناتك وسرّية كلمة المرور، وعن النشاط الذي يتمّ من حسابك.</p>
-      </ContentSection>
-      <ContentSection title="التراخيص والاستخدام">
-        <p>
-          كل خط يُستخدم وفق ترخيصه المحدد في صفحته. الشراء يمنح حق الاستخدام لا ملكية الخط. تفاصيل نطاقات الاستخدام
-          تُرفق مع ملفات كل ترخيص.
-        </p>
-      </ContentSection>
-      <ContentSection title="الدفع والاسترجاع">
-        <p>تُعالَج المدفوعات عبر Stripe. سياسة الاسترجاع ومدّتها تُحدَّد هنا.</p>
-      </ContentSection>
-      <ContentSection title="نشر الخطوط (للمسابك والمصمّمين)">
-        <p>إقرار الناشر بملكية الحقوق، ومراجعة الخطوط قبل نشرها، وحصّة المنصة ومواعيد التحويل.</p>
-      </ContentSection>
-      <ContentSection title="التعديلات والتواصل">
-        <p>
-          كيف نُبلغك بتغيير هذه الشروط، وطريق التواصل: <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>.
-        </p>
-      </ContentSection>
-    </ContentPage>
+    <LegalDocument
+      title="الشروط والأحكام"
+      description="القواعد التي تنظّم استخدامك لمنصة حرف وخطوطها وتراخيصها ومنتجاتها الرقمية."
+      updated={LEGAL_UPDATED}
+      doc={TERMS}
+      current="/terms"
+    />
   );
 }
 
 export function PrivacyPage() {
   return (
-    <ContentPage title="سياسة الخصوصية" lead="ما البيانات التي نجمعها، ولماذا، وكيف نحميها." notice={<DraftNotice />}>
-      <ContentSection title="ما نجمعه">
-        <ul>
-          <li>بيانات الحساب: الاسم والبريد الإلكتروني وما تضيفه لملفك.</li>
-          <li>سجل المشتريات والتراخيص والتحميلات.</li>
-          <li>بيانات استخدام تقنية لتحسين المنصة وحمايتها.</li>
-        </ul>
-      </ContentSection>
-      <ContentSection title="الدفع">
-        <p>بيانات البطاقات تُعالَج عبر Stripe مباشرة، ولا تُخزَّن على خوادم حرف.</p>
-      </ContentSection>
-      <ContentSection title="ملفات تعريف الارتباط">
-        <p>ما نستخدمه منها (الجلسة، التفضيلات) ولماذا، وكيف تتحكّم بها.</p>
-      </ContentSection>
-      <ContentSection title="حقوقك">
-        <p>
-          الاطّلاع على بياناتك وتصحيحها وحذف حسابك من <Link to={paths.account.getHref('security')}>إعدادات الحساب</Link>
-          ، أو بمراسلتنا على <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>.
-        </p>
-      </ContentSection>
-    </ContentPage>
+    <LegalDocument
+      title="سياسة الخصوصية"
+      description="كيف تجمع حرف بياناتك الشخصية وتستخدمها وتحميها وتشاركها."
+      updated={LEGAL_UPDATED}
+      doc={PRIVACY}
+      current="/privacy"
+    />
   );
 }

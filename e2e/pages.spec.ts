@@ -1,6 +1,6 @@
 import { expect, test } from './fixtures';
 
-test('روابط التذييل تفتح صفحاتها، والشروط والخصوصية معلَّمتان كمسودّة', async ({ page }) => {
+test('روابط التذييل تفتح صفحاتها، والوثائق القانونية كاملة بفهرسها', async ({ page }) => {
   await page.goto('/');
   const footer = page.locator('footer');
   for (const [name, heading] of [
@@ -12,7 +12,27 @@ test('روابط التذييل تفتح صفحاتها، والشروط وال�
     await expect(page.getByRole('heading', { level: 1, name: heading })).toBeVisible();
   }
   await page.locator('footer').getByRole('link', { name: 'سياسة الخصوصية' }).click();
-  await expect(page.getByRole('note')).toContainText('مسودّة');
+  await expect(page.getByRole('heading', { level: 1, name: 'سياسة الخصوصية' })).toBeVisible();
+  await expect(page.locator('main section[id^="s-"]')).toHaveCount(19);
+  await expect(page.locator('dt', { hasText: 'آخر تحديث' })).toBeVisible();
+
+  // التنقّل بين الوثيقتين، والفهرس يقفز إلى البند
+  await page
+    .getByRole('navigation', { name: 'الوثائق القانونية' })
+    .getByRole('link', { name: 'الشروط والأحكام' })
+    .click();
+  await expect(page).toHaveURL(/\/terms$/);
+  await expect(page.locator('main section[id^="s-"]')).toHaveCount(26);
+  await page
+    .getByRole('navigation', { name: 'فهرس الشروط والأحكام' })
+    .getByRole('link', { name: /الدفع عبر Stripe/ })
+    .first()
+    .click();
+  await expect(page).toHaveURL(/#s-6$/);
+  await expect(page.getByRole('link', { name: 'abdulmalik@harflibrary.com' })).toHaveAttribute(
+    'href',
+    'mailto:abdulmalik@harflibrary.com',
+  );
 });
 
 test('صفحة «قريباً»: من الترويسة، و«نبّهني» يبقى بعد إعادة التحميل', async ({ page }) => {
