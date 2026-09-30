@@ -1,5 +1,8 @@
 import { useEffect, useRef, useSyncExternalStore } from 'react';
 
+import { cn } from '@/lib/cn';
+import { useToastPosition } from '@/lib/toast-position';
+
 import { Alert, AlertAction, type AlertProps } from './alert';
 
 /**
@@ -42,10 +45,17 @@ export function Toaster() {
     () => items,
     () => EMPTY,
   );
+  const pos = useToastPosition();
   return (
     <section
       aria-label="الإشعارات العابرة"
-      className="pointer-events-none fixed inset-x-4 bottom-4 z-100 mx-auto flex max-w-95 flex-col items-center gap-2 sm:bottom-6"
+      data-position={pos}
+      className={cn(
+        'pointer-events-none fixed inset-x-4 bottom-4 z-100 mx-auto flex max-w-95 flex-col items-center gap-2 sm:bottom-6',
+        // على الجوال دائماً في الوسط؛ الموضع المختار من الشاشات الأوسع
+        pos === 'start' && 'sm:start-6 sm:end-auto sm:mx-0 sm:w-95',
+        pos === 'end' && 'sm:start-auto sm:end-6 sm:mx-0 sm:w-95',
+      )}
     >
       {list.map((t) => (
         <ToastCard key={t.id} item={t} />

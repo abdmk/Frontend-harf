@@ -71,4 +71,18 @@ test.describe('الحساب', () => {
     await page.getByRole('dialog').getByRole('button', { name: 'تسجيل خروج' }).click();
     await page.waitForURL('/');
   });
+
+  test('المظهر وموضع الإشعارات ببطاقات المعاينة، ويبقيان بعد إعادة التحميل', async ({ page }) => {
+    await page.goto('/account/preferences?as=free');
+    await page.getByRole('radio', { name: 'داكن' }).click();
+    await expect(page.locator('html')).toHaveClass(/dark/);
+    await page.getByRole('radio', { name: 'أسفل اليسار' }).click();
+    const region = page.getByRole('region', { name: 'الإشعارات العابرة' });
+    await expect(region).toHaveAttribute('data-position', 'end');
+    await expect(region.getByText('هنا تظهر الإشعارات')).toBeVisible();
+    await page.reload();
+    await expect(page.locator('html')).toHaveClass(/dark/);
+    await expect(page.getByRole('radio', { name: 'أسفل اليسار' })).toBeChecked();
+    await expect(page.getByRole('region', { name: 'الإشعارات العابرة' })).toHaveAttribute('data-position', 'end');
+  });
 });

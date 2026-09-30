@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-import { RadioGroup, RadioOption } from '@/components/ui/radio-group';
+import { ChoiceCards, MockWindow } from '@/components/shared/choice-cards';
 
 const THEME_STORAGE_KEY = 'harf-theme';
 
@@ -19,7 +19,7 @@ function apply(mode: Mode) {
   }
 }
 
-/** اختيار المظهر: فاتح، داكن، أو حسب النظام — يُحفظ في هذا المتصفّح */
+/** اختيار المظهر ببطاقات معاينة: فاتح، داكن، أو حسب النظام — يُحفظ في هذا المتصفّح */
 export function ThemePreference() {
   const [mode, setMode] = useState<Mode>('system');
   useEffect(() => {
@@ -32,18 +32,18 @@ export function ThemePreference() {
     }
   }, []);
   return (
-    <RadioGroup
-      aria-label="المظهر"
+    <ChoiceCards
+      label="المظهر"
       value={mode}
-      onValueChange={(v) => {
-        setMode(v as Mode);
-        apply(v as Mode);
+      onChange={(v) => {
+        setMode(v);
+        apply(v);
       }}
-      className="flex flex-wrap gap-6"
-    >
-      <RadioOption value="light" label="فاتح" />
-      <RadioOption value="dark" label="داكن" />
-      <RadioOption value="system" label="حسب النظام" />
-    </RadioGroup>
+      options={[
+        { value: 'light', label: 'فاتح', preview: <MockWindow tone="light" /> },
+        { value: 'dark', label: 'داكن', preview: <MockWindow tone="dark" /> },
+        { value: 'system', label: 'حسب النظام', preview: <MockWindow tone="split" /> },
+      ]}
+    />
   );
 }

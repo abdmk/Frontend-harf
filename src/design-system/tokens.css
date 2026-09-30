@@ -253,6 +253,15 @@
   --color-paper: #ffffff;
   --color-paper-foreground: #161616; /* النص فوق شارة «مدفوع» الذهبية */
 
+  /* معاينات المظهر المصغّرة — ثابتة في الوضعين: الفاتح يبقى فاتحاً والداكن داكناً */
+  --color-mock-light: #ffffff;
+  --color-mock-light-bar: #ececec;
+  --color-mock-dark: #141414;
+  --color-mock-dark-bar: #2e2e31;
+  --color-mock-dot-1: #ec6a5e;
+  --color-mock-dot-2: #f4bf4f;
+  --color-mock-dot-3: #61c554;
+
   /* ألوان أنواع الملفات (FileIcon) */
   --color-file-pdf: #d42a37;
   --color-file-otf: #7b3bf0;

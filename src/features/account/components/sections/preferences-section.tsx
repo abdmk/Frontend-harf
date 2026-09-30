@@ -1,5 +1,6 @@
 import { SectionCard } from '@/components/shared/section-card';
 import { ThemePreference } from '@/components/shared/theme-preference';
+import { ToastPositionPreference } from '@/components/shared/toast-position-preference';
 import { Switch } from '@/components/ui/switch';
 
 const NOTIFY = [
@@ -13,7 +14,14 @@ export function PreferencesSection() {
   return (
     <div className="flex flex-col gap-5">
       <SectionCard title="المظهر" description="يُحفظ في هذا المتصفّح.">
-        <ThemePreference />
+        <div className="flex max-w-xl flex-col gap-8">
+          <ThemePreference />
+          <div>
+            <h3 className="mb-3 text-control font-medium">موضع الإشعارات</h3>
+            <ToastPositionPreference />
+            <p className="mt-2 text-caption text-tertiary">على الجوال تظهر في الوسط دائماً.</p>
+          </div>
+        </div>
       </SectionCard>
       <SectionCard title="اللغة">
         <p className="text-control">العربية</p>
