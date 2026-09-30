@@ -19,7 +19,7 @@ const MAP: Record<string, string> = {
   heart: 'fi-rr-heart',
   'heart-filled': 'fi-sr-heart',
   receipt: 'fi-rr-receipt',
-  usage: 'fi-rr-signal-alt-2',
+  usage: 'fi-rr-signal-alt',
   crown: 'fi-rr-crown',
   apps: 'fi-rr-apps',
   sliders: 'fi-rr-settings-sliders',
@@ -189,10 +189,13 @@ const SOLID = new Set([
   'picture',
   'star',
 ]);
+// نسخة مصمتة من ملف باسم مختلف عن الخطّية (حين لا يطابق fi-sr اسم fi-rr)
+const SOLID_FILE: Record<string, string> = { usage: 'fi-sr-signal-alt-2' };
+
 const out: Record<string, { viewBox: string; nodes: IconNode[]; solid?: IconNode[] }> = {};
 for (const [name, file] of Object.entries(MAP)) {
   const icon = parse(file);
-  const solidFile = file.replace(/^fi-rr-/, 'fi-sr-');
+  const solidFile = SOLID_FILE[name] ?? file.replace(/^fi-rr-/, 'fi-sr-');
   let solid: IconNode[] | undefined;
   if (SOLID.has(name) && solidFile !== file && existsSync(join(dir, solidFile + '.svg'))) {
     const s = parse(solidFile);
