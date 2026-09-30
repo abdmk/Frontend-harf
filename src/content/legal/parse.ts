@@ -37,11 +37,3 @@ export function parseLegal(src: string): LegalDoc {
   }
   return { intro, sections };
 }
-
-/** عدد الكلمات لتقدير مدّة القراءة */
-export function wordCount(doc: LegalDoc) {
-  const text = [...doc.intro, ...doc.sections.flatMap((s) => [{ type: 'p', text: s.title } as LegalBlock, ...s.blocks])]
-    .map((b) => (b.type === 'p' || b.type === 'h' ? b.text : b.items.join(' ')))
-    .join(' ');
-  return text.split(/\s+/).filter(Boolean).length;
-}

@@ -103,7 +103,6 @@ export function TermsPage() {
       description="القواعد التي تنظّم استخدامك لمنصة حرف وخطوطها وتراخيصها ومنتجاتها الرقمية."
       updated={LEGAL_UPDATED}
       doc={TERMS}
-      current="/terms"
     />
   );
 }
@@ -115,7 +114,6 @@ export function PrivacyPage() {
       description="كيف تجمع حرف بياناتك الشخصية وتستخدمها وتحميها وتشاركها."
       updated={LEGAL_UPDATED}
       doc={PRIVACY}
-      current="/privacy"
     />
   );
 }

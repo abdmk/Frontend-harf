@@ -14,19 +14,16 @@ test('روابط التذييل تفتح صفحاتها، والوثائق ال�
   await page.locator('footer').getByRole('link', { name: 'سياسة الخصوصية' }).click();
   await expect(page.getByRole('heading', { level: 1, name: 'سياسة الخصوصية' })).toBeVisible();
   await expect(page.locator('main section[id^="s-"]')).toHaveCount(19);
-  await expect(page.locator('dt', { hasText: 'آخر تحديث' })).toBeVisible();
+  await expect(page.getByText(/آخر تحديث:/)).toBeVisible();
 
-  // التنقّل بين الوثيقتين، والفهرس يقفز إلى البند
-  await page
-    .getByRole('navigation', { name: 'الوثائق القانونية' })
-    .getByRole('link', { name: 'الشروط والأحكام' })
-    .click();
+  // الوثيقة الأخرى من التذييل، و«في هذه الصفحة» يقفز إلى القسم
+  await page.locator('footer').getByRole('link', { name: 'الشروط والأحكام' }).click();
   await expect(page).toHaveURL(/\/terms$/);
   await expect(page.locator('main section[id^="s-"]')).toHaveCount(26);
   await page
     .getByRole('navigation', { name: 'فهرس الشروط والأحكام' })
     .getByRole('link', { name: /الدفع عبر Stripe/ })
-    .first()
+    .filter({ visible: true })
     .click();
   await expect(page).toHaveURL(/#s-6$/);
   await expect(page.getByRole('link', { name: 'abdulmalik@harflibrary.com' })).toHaveAttribute(
