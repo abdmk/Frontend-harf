@@ -296,10 +296,12 @@ function Progress({ done, progress, onCancel }: { done: StepKey[]; progress: num
           {Math.round(progress * 100)}٪
         </span>
       </div>
+      {/* transform لا width: المطابقة تشغل الخيط الرئيسي، وتحريك العرض يتقطّع معها؛ scaleX يتحرّك على
+          طبقة التركيب منفصلاً عنه فيبقى سلساً. البداية من اليمين (RTL) */}
       <div className="h-1.5 overflow-hidden rounded-full bg-inset">
         <div
-          className="h-full rounded-full bg-primary-fill transition-[width] duration-(--dur-base)"
-          style={{ width: `${Math.round(progress * 100)}%` }}
+          className="h-full origin-right rounded-full bg-primary-fill transition-transform duration-500 ease-out will-change-transform motion-reduce:transition-none"
+          style={{ transform: `scaleX(${Math.min(1, Math.max(0, progress))})` }}
         />
       </div>
       <ol className="flex flex-col gap-3">

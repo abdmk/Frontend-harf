@@ -28,9 +28,15 @@ function ResultCard({ match, text, selected, onCompare }: ResultCardProps) {
             aria-valuemin={0}
             aria-valuemax={100}
             aria-valuenow={match.score}
-            className="h-1 flex-1 overflow-hidden rounded-full bg-inset"
+            className="relative h-1.5 flex-1 rounded-full bg-inset"
           >
-            <span className="block h-full rounded-full bg-foreground/70" style={{ width: `${match.score}%` }} />
+            {/* أخضر بنقطة في نهايته — التقدّم مقروء من اللون والطول معاً */}
+            <span className="absolute inset-y-0 start-0 rounded-full bg-ok-500" style={{ width: `${match.score}%` }}>
+              <span
+                aria-hidden
+                className="absolute end-0 top-1/2 size-3.5 translate-x-1/2 -translate-y-1/2 rounded-full bg-ok-500 ring-[2.5px] ring-card rtl:-translate-x-1/2"
+              />
+            </span>
           </div>
           <Button
             variant={selected ? 'secondary' : 'ghost'}
