@@ -1,3 +1,7 @@
+/** أقسام مساحة الاستوديو — قائمة مغلقة (لا مسارات حرّة) */
+export type StudioSection =
+  'fonts' | 'analytics' | 'finance' | 'finance/sales' | 'finance/earnings' | 'finance/payouts' | 'profile' | 'publish';
+
 /** كل روابط التطبيق في مكان واحد — لا روابط نصّية متفرّقة في المكوّنات */
 export const paths = {
   home: { getHref: () => '/' },
@@ -16,7 +20,7 @@ export const paths = {
   },
   notifications: { getHref: () => '/notifications' },
   studio: {
-    getHref: (section?: string) => (section ? `/studio/${encodeURIComponent(section)}` : '/studio'),
+    getHref: (section?: StudioSection) => (section ? `/studio/${section}` : '/studio'),
   },
   foundry: { getHref: (id: string) => `/foundries/${encodeURIComponent(id)}` },
   designer: { getHref: (id: string) => `/designers/${encodeURIComponent(id)}` },

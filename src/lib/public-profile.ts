@@ -1,0 +1,128 @@
+import { useSyncExternalStore } from 'react';
+import { z } from 'zod';
+
+import { isSafeImageUrl } from './image-upload';
+import { createLocalStoreSignal } from './local-store-signal';
+
+/**
+ * الملف العام لحساب الاستوديو (صفحة المسبك/المصمّم): الشعار، الغلاف، النبذة، وحسابات التواصل.
+ * ⚠️ عرض: يُحفظ في هذا المتصفّح؛ مع الخادم يُرسل للتحقّق نفسه وتُرفع الصور إلى تخزين خاص
+ * يعيد ترميزها. الروابط تُبنى من «اسم المستخدم» فقط — لا يُقبل رابط حرّ غير الموقع (https).
+ */
+
+export const SOCIALS = {
+  instagram: { label: 'Instagram', prefix: 'instagram.com/' },
+  x: { label: 'X', prefix: 'x.com/' },
+  behance: { label: 'Behance', prefix: 'behance.net/' },
+  linkedin: { label: 'LinkedIn', prefix: 'linkedin.com/in/' },
+} as const;
+export type SocialKey = keyof typeof SOCIALS;
+
+export type PublicProfile = {
+  avatar?: string;
+  cover?: string;
+  bio: string;
+  website: string;
+  social: Partial<Record<SocialKey, string>>;
+};
+
+const HANDLE = /^[A-Za-z0-9._-]{1,40}$/;
+export const BIO_MIN = 40;
+export const BIO_MAX = 300;
+
+export const profileSchema = z.object({
+  bio: z.string().trim().max(BIO_MAX, `النبذة أقصر من ${BIO_MAX} حرف.`),
+  website: z
+    .string()
+    .trim()
+    .max(200)
+    .refine((v) => !v || /^https:\/\/[^\s/$.?#][^\s]*$/i.test(v), 'الرابط يجب أن يبدأ بـ https://'),
+  ...Object.fromEntries(
+    Object.keys(SOCIALS).map((k) => [
+      k,
+      z
+        .string()
+        .trim()
+        .transform((v) => v.replace(/^@/, ''))
+        .refine((v) => !v || HANDLE.test(v), 'اسم المستخدم فقط — حروف لاتينية وأرقام و . _ -'),
+    ]),
+  ),
+});
+
+/** الرابط الكامل لحساب تواصل — يُبنى من اسم مستخدم تحقّقنا منه */
+export function socialUrl(k: SocialKey, handle: string) {
+  return `https://${SOCIALS[k].prefix}${encodeURIComponent(handle)}`;
+}
+
+const KEY = 'harf_public_profile';
+const EMPTY: PublicProfile = { bio: '', website: '', social: {} };
+const signal = createLocalStoreSignal();
+let cache: { raw: string | null; value: PublicProfile | null } = { raw: null, value: null };
+
+function read(): PublicProfile | null {
+  let raw: string | null = null;
+  try {
+    raw = localStorage.getItem(KEY);
+  } catch {
+    return cache.value;
+  }
+  if (raw === cache.raw) return cache.value;
+  let value: PublicProfile | null = null;
+  try {
+    const x = JSON.parse(raw ?? 'null') as Record<string, unknown> | null;
+    if (x && typeof x === 'object') {
+      const social: PublicProfile['social'] = {};
+      const s = (x.social ?? {}) as Record<string, unknown>;
+      for (const k of Object.keys(SOCIALS) as SocialKey[])
+        if (typeof s[k] === 'string' && HANDLE.test(s[k])) social[k] = s[k];
+      value = {
+        avatar: isSafeImageUrl(x.avatar) ? x.avatar : undefined,
+        cover: isSafeImageUrl(x.cover) ? x.cover : undefined,
+        bio: typeof x.bio === 'string' ? x.bio.slice(0, BIO_MAX) : '',
+        website: typeof x.website === 'string' && /^https:\/\//i.test(x.website) ? x.website.slice(0, 200) : '',
+        social,
+      };
+    }
+  } catch {
+    value = null;
+  }
+  cache = { raw, value };
+  return value;
+}
+
+export function getPublicProfile(): PublicProfile | null {
+  return read();
+}
+
+/** يعيد false إن امتلأ التخزين (صور كبيرة) — ليُعرض خطأ واضح بدل فقدان صامت */
+export function savePublicProfile(p: PublicProfile): boolean {
+  try {
+    localStorage.setItem(KEY, JSON.stringify(p));
+  } catch {
+    return false;
+  }
+  signal.notify();
+  return true;
+}
+
+export function usePublicProfile(fallback: PublicProfile = EMPTY): PublicProfile {
+  return useSyncExternalStore(signal.subscribe, read, () => null) ?? fallback;
+}
+
+/** عناصر اكتمال الملف العام — «غير مكتمل» حتى تكتمل كلّها */
+export function profileChecklist(p: PublicProfile) {
+  return [
+    { key: 'avatar', label: 'الشعار أو الصورة', done: !!p.avatar },
+    { key: 'cover', label: 'صورة الغلاف', done: !!p.cover },
+    { key: 'bio', label: `نبذة (${BIO_MIN} حرفاً على الأقل)`, done: p.bio.trim().length >= BIO_MIN },
+    {
+      key: 'social',
+      label: 'حساب تواصل واحد على الأقل',
+      done: !!p.website || Object.values(p.social).some(Boolean),
+    },
+  ];
+}
+
+export function useProfileIncomplete(fallback?: PublicProfile) {
+  return profileChecklist(usePublicProfile(fallback)).some((c) => !c.done);
+}

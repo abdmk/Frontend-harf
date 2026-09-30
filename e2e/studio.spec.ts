@@ -1,20 +1,47 @@
 import { expect, test } from './fixtures';
 
 test.describe('الاستوديو والإدارة', () => {
-  test('لوحة المسبك للاستوديو فقط', async ({ page }) => {
-    await page.goto('/studio?as=free');
+  test('مساحة الاستوديو للاستوديو وحده، بعمودها الجانبي وأقسامها', async ({ page }) => {
+    await page.goto('/studio/finance?as=free');
     await expect(page).toHaveURL(/\/account\/subscription$/);
     await page.goto('/studio?as=studio');
-    await expect(page.getByRole('heading', { level: 1, name: 'مسبك تجاريب' })).toBeVisible();
-    await expect(page.getByText('$1,284.50')).toBeVisible();
+    await expect(page.getByRole('heading', { level: 1, name: 'نظرة عامة' })).toBeVisible();
+    const nav = page.getByRole('navigation', { name: 'أقسام الاستوديو' }).filter({ visible: true });
+    await expect(nav.getByRole('link', { name: 'نظرة عامة' })).toHaveAttribute('aria-current', 'page');
 
-    // «خطوطك»: المنشور يفتح صفحته، وقيد المراجعة يفتح النشر
-    const table = page.locator('section[aria-labelledby="fonts-title"]');
-    await table.getByRole('link', { name: 'نقش', exact: true }).click();
+    // «خطوطي»: المجاني بلا أرقام بيع، والمدفوع بها؛ قيد المراجعة يفتح النشر
+    await nav.getByRole('link', { name: 'خطوطي' }).click();
+    await expect(page).toHaveURL(/\/studio\/fonts$/);
+    const list = page.getByRole('list', { name: 'خطوط الاستوديو' });
+    const free = list.getByRole('listitem').filter({ hasText: 'تجاريب' });
+    await expect(free.getByText('مبيعات')).toHaveCount(0);
+    await expect(list.getByRole('listitem').filter({ hasText: 'رواق' }).getByText('مبيعات')).toBeVisible();
+    await page.getByRole('button', { name: 'مدفوعة' }).click();
+    await expect(list.getByRole('listitem')).toHaveCount(3);
+    await list.getByRole('link', { name: 'نقش', exact: true }).click();
     await expect(page).toHaveURL(/\/studio\/publish$/);
-    await page.goBack();
-    await table.getByRole('link', { name: 'تجاريب', exact: true }).click();
+    await page.goto('/studio/fonts');
+    await page.getByRole('list', { name: 'خطوط الاستوديو' }).getByRole('link', { name: 'تجاريب', exact: true }).click();
     await expect(page).toHaveURL(/\/fonts\/tajarib$/);
+  });
+
+  test('المالية قسم واحد بأربع صفحات، والعناوين القديمة تُحوَّل إليه', async ({ page }) => {
+    await page.goto('/account/earnings?as=studio');
+    await expect(page).toHaveURL(/\/studio\/finance\/earnings$/);
+    await expect(page.getByRole('heading', { level: 1, name: 'الأرباح' })).toBeVisible();
+    const nav = page.getByRole('navigation', { name: 'أقسام الاستوديو' }).filter({ visible: true });
+    await nav.getByRole('link', { name: 'نظرة عامة مالية' }).click();
+    await expect(page).toHaveURL(/\/studio\/finance$/);
+    await expect(page.getByText('الرصيد المتاح للسحب')).toBeVisible();
+    await page.getByRole('link', { name: 'كل المبيعات' }).click();
+    await expect(page.getByRole('table', { name: 'سجلّ المبيعات' })).toBeVisible();
+    await page.getByRole('button', { name: 'مستردّة' }).click();
+    await expect(page.getByRole('table', { name: 'سجلّ المبيعات' }).getByRole('row')).toHaveCount(2);
+    // الحساب الشخصي لم يعد يحمل أقسام المال
+    await page.goto('/account/profile');
+    const acc = page.getByRole('navigation', { name: 'قائمة الحساب' });
+    await expect(acc.getByRole('link', { name: 'المبيعات' })).toHaveCount(0);
+    await expect(acc.getByRole('link', { name: 'الاستوديو', exact: true })).toBeVisible();
   });
 
   // ⚠️ يتطلّب خادماً حقيقياً: ملف ثابت (SPA) يعيد 200 لأي مسار — حماية الصفحة والتصدير هنا
@@ -145,21 +172,9 @@ test.describe('الاستوديو والإدارة', () => {
   });
 });
 
-test.describe('المبيعات والأرباح والسحب', () => {
-  test('للاستوديو وحده', async ({ page }) => {
-    await page.goto('/account/payouts?as=free');
-    await expect(page).toHaveURL(/\/account\/subscription$/);
-    await page.goto('/account/sales?as=studio');
-    await expect(page.getByRole('table', { name: 'سجلّ المبيعات' })).toBeVisible();
-    await page.getByRole('button', { name: 'مستردّة' }).click();
-    await expect(page.getByRole('table', { name: 'سجلّ المبيعات' }).getByRole('row')).toHaveCount(2);
-    const nav = page.getByRole('navigation', { name: 'قائمة الحساب' });
-    await nav.getByRole('link', { name: /الأرباح/ }).click();
-    await expect(page.getByText('الرصيد المتاح للسحب')).toBeVisible();
-  });
-
+test.describe('السحوبات', () => {
   test('طلب سحب يقلّل الرصيد ويظهر في السجلّ، وIBAN خاطئ يُرفض', async ({ page }) => {
-    await page.goto('/account/payouts?as=studio');
+    await page.goto('/studio/finance/payouts?as=studio');
     await page.getByRole('button', { name: 'اطلب سحباً' }).click();
     const dlg = page.getByRole('dialog', { name: 'اطلب سحباً' });
     await dlg.getByLabel('المبلغ (دولار)').fill('10');
@@ -186,4 +201,57 @@ test.describe('المبيعات والأرباح والسحب', () => {
     // الرقم الكامل لا يُحفظ في المتصفّح
     expect(await page.evaluate(() => localStorage.getItem('harf_payouts'))).not.toContain('NBIQ');
   });
+});
+
+test('الملف العام: صور آمنة فقط، روابط بأسماء مستخدمين، و«غير مكتمل» يختفي عند الاكتمال', async ({ page }) => {
+  await page.goto('/studio/profile?as=studio');
+  const side = page.getByRole('navigation', { name: 'أقسام الاستوديو' }).filter({ visible: true });
+  await expect(side.getByText('غير مكتمل')).toBeVisible();
+
+  // صورة PNG حقيقية بمقاس محدّد — تُرسم في المتصفّح
+  const png = async (w: number, h: number) =>
+    Buffer.from(
+      await page.evaluate(
+        ([w, h]) => {
+          const c = document.createElement('canvas');
+          c.width = w!;
+          c.height = h!;
+          c.getContext('2d')!.fillRect(0, 0, w!, h!);
+          return c.toDataURL('image/png').split(',')[1]!;
+        },
+        [w, h],
+      ),
+      'base64',
+    );
+  const avatarInput = page.locator('input[type=file][data-kind="avatar"]');
+  const coverInput = page.locator('input[type=file][data-kind="cover"]');
+
+  await avatarInput.setInputFiles({
+    name: 'logo.svg',
+    mimeType: 'image/svg+xml',
+    buffer: Buffer.from('<svg xmlns="http://www.w3.org/2000/svg"><script>alert(1)</script></svg>'),
+  });
+  await expect(page.getByRole('alert')).toHaveText('الصيغ المقبولة: PNG أو JPG أو WebP.');
+  await avatarInput.setInputFiles({ name: 'tiny.png', mimeType: 'image/png', buffer: await png(40, 40) });
+  await expect(page.getByRole('alert')).toContainText('الصورة صغيرة');
+  await avatarInput.setInputFiles({ name: 'logo.png', mimeType: 'image/png', buffer: await png(256, 256) });
+  await expect(page.getByRole('img', { name: 'شعار الاستوديو' })).toBeVisible();
+  await coverInput.setInputFiles({ name: 'cover.png', mimeType: 'image/png', buffer: await png(1600, 400) });
+  await expect(page.getByRole('img', { name: 'غلاف الاستوديو' })).toBeVisible();
+
+  await page.getByLabel('Instagram').fill('bad handle!');
+  await page.getByRole('button', { name: 'حفظ الملف العام' }).click();
+  await expect(page.getByText('اسم المستخدم فقط — حروف لاتينية وأرقام و . _ -')).toBeVisible();
+  await page.getByLabel('Instagram').fill('@tajarib.type');
+  await page.getByRole('button', { name: 'حفظ الملف العام' }).click();
+  await expect(side.getByText('غير مكتمل')).toHaveCount(0);
+  // الصور مُعاد ترميزها JPEG — لا يُحفظ الملف الأصلي
+  expect(await page.evaluate(() => localStorage.getItem('harf_public_profile'))).toContain('data:image/jpeg');
+
+  await page.goto('/foundries/tajarib');
+  await expect(page.getByRole('img', { name: 'شعار مسبك تجاريب' })).toBeVisible();
+  await expect(page.getByRole('main').getByRole('link', { name: 'Instagram' })).toHaveAttribute(
+    'href',
+    'https://instagram.com/tajarib.type',
+  );
 });

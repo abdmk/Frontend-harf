@@ -132,7 +132,7 @@ export function PublishWorkspace({
           . تصلك رسالة خلال 24 ساعة.
         </p>
         <Button asChild className="mt-2">
-          <Link to={paths.studio.getHref()}>العودة إلى لوحة المسبك</Link>
+          <Link to={paths.studio.getHref()}>العودة إلى الاستوديو</Link>
         </Button>
       </div>
     );
@@ -143,11 +143,11 @@ export function PublishWorkspace({
     <div className="mx-auto flex max-w-170 flex-col">
       <div className="flex items-center justify-between gap-3">
         <Link
-          to={paths.studio.getHref()}
+          to={paths.studio.getHref('fonts')}
           className="inline-flex items-center gap-1 rounded-full py-1.5 ps-1 pe-3 text-meta text-muted-foreground transition-colors hover:bg-sunken hover:text-foreground"
         >
           <ChevronRightIcon className="size-4" />
-          لوحة المسبك
+          خطوطي
         </Link>
         <span role="status" className="flex items-center gap-1.5 text-caption text-tertiary">
           <span

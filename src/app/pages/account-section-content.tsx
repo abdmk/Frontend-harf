@@ -19,9 +19,6 @@ import type { AccountSection, User } from '@/features/account/types';
 import { getFonts } from '@/features/catalog/api/get-fonts';
 import { DEFAULT_QUERY } from '@/features/catalog/types/catalog-query';
 import { FavoritesGrid } from '@/features/favorites/components/favorites-grid';
-import { EarningsSection } from '@/features/studio/components/money/earnings-section';
-import { PayoutsSection } from '@/features/studio/components/money/payouts-section';
-import { SalesSection } from '@/features/studio/components/money/sales-section';
 import { changePlan } from '@/features/subscriptions/api/actions';
 import { getInvoices, getPlans, getSubscription } from '@/features/subscriptions/api/get-subscription';
 import { PlansDialog } from '@/features/subscriptions/components/plans-dialog';
@@ -112,12 +109,6 @@ export function SectionContent({ user, section }: { user: User; section: Account
         />
       );
     }
-    case 'sales':
-      return <SalesSection />;
-    case 'earnings':
-      return <EarningsSection />;
-    case 'payouts':
-      return <PayoutsSection />;
     case 'foundry':
       // لا يُعرض: AccountSectionPage يوجّه هذا القسم إلى /studio
       return null;

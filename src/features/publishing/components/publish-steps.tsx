@@ -371,7 +371,7 @@ export function PricingStep({ draft, set, errors }: StepProps) {
         {(
           [
             ['free', 'مجاني', 'يحمّله الجميع بلا مقابل ضمن حدود خطّتهم.', <GiftIcon key="i" />],
-            ['paid', 'مدفوع', 'يُباع بتراخيص، وتصلك أرباحه في لوحة المسبك.', <DollarIcon key="i" />],
+            ['paid', 'مدفوع', 'يُباع بتراخيص، وتصلك أرباحه في «المالية» بالاستوديو.', <DollarIcon key="i" />],
           ] as const
         ).map(([value, label, desc, icon]) => (
           <RadioGroupPrimitive.Item

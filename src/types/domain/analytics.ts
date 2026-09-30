@@ -40,11 +40,15 @@ export type AdminAnalytics = {
   transactions: { id: string; buyer: string; kind: 'sale' | 'subscription'; when: string; amount: Money }[];
 };
 
+/** مدى تحليلات الاستوديو بالأيام */
+export type StudioRange = '7' | '30' | '90';
+export type StudioSeries = { labels: string[]; downloads: number[]; visits: number[]; users: number[] };
+
 export type StudioAnalytics = {
-  downloads: Kpi;
   followers: Kpi;
-  published: { total: number; free: number; paid: number };
-  rating: { value: number; count: number };
+  /** التغيّر ٪ مقارنةً بالمدّة السابقة لكل مدى */
+  deltas: Record<StudioRange, { downloads: number; visits: number; users: number }>;
+  series: Record<StudioRange, StudioSeries>;
   earnings: {
     available: Money;
     total: Money;
@@ -55,7 +59,4 @@ export type StudioAnalytics = {
     bankLast4: string;
     minPayout: Money;
   };
-  days: string[];
-  downloadsByDay: number[];
-  topFonts: { label: string; value: number }[];
 };

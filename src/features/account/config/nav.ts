@@ -1,11 +1,8 @@
 import type { IconProps } from '@/components/ui/icons';
 import {
   AppsIcon,
-  BankIcon,
-  CartIcon,
   CloudUploadIcon,
   CrownIcon,
-  DollarIcon,
   FolderIcon,
   HeartIcon,
   HelpIcon,
@@ -32,7 +29,7 @@ export type NavItem = {
 export const PLAN_LABEL = { free: 'المجانية', basic: 'الأساسية', studio: 'الاستوديو' } as const;
 export const PLAN_TITLE = { free: 'الخطة المجانية', basic: 'الخطة الأساسية', studio: 'خطة الاستوديو' } as const;
 
-/** مجموعات القائمة كما في التصميم — «لوحة المسبك» لحساب الاستوديو وحده */
+/** مجموعات القائمة كما في التصميم — «الاستوديو» لحساب الاستوديو وحده */
 export function accountNavGroups(user: User): NavItem[][] {
   const groups: NavItem[][] = [
     [
@@ -58,12 +55,7 @@ export function accountNavGroups(user: User): NavItem[][] {
     ],
   ];
   if (user.plan === 'studio')
-    groups.push([
-      { section: 'foundry', label: 'لوحة المسبك', Icon: AppsIcon, badge: 'جديد', href: paths.studio.getHref() },
-      { section: 'sales', label: 'المبيعات', Icon: CartIcon },
-      { section: 'earnings', label: 'الأرباح', Icon: DollarIcon },
-      { section: 'payouts', label: 'السحب', Icon: BankIcon },
-    ]);
+    groups.push([{ section: 'foundry', label: 'الاستوديو', Icon: AppsIcon, href: paths.studio.getHref() }]);
   groups.push([
     { section: 'preferences', label: 'التفضيلات', Icon: SlidersIcon },
     { section: 'security', label: 'الحساب', Icon: LockIcon },
@@ -79,10 +71,7 @@ export const SECTION_TITLE: Record<AccountSection, string> = {
   purchases: 'المشتريات',
   usage: 'حالة الاستخدام',
   subscription: 'الاشتراك',
-  foundry: 'لوحة المسبك',
-  sales: 'المبيعات',
-  earnings: 'الأرباح',
-  payouts: 'السحب',
+  foundry: 'الاستوديو',
   preferences: 'التفضيلات',
   security: 'الحساب',
   help: 'المساعدة',

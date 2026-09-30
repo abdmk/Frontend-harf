@@ -1,9 +1,10 @@
-import { Route, Routes } from 'react-router';
+import { Navigate, Route, Routes } from 'react-router';
 
 import { COMING_SOON, type ComingSoonKey } from '@/config/coming-soon';
 
 import { ErrorBoundary } from './error';
 import { SiteLayout } from './layouts/site-layout';
+import { StudioLayout } from './layouts/studio-layout';
 import { WideLayout } from './layouts/wide-layout';
 import { FontLabPage, FontMatchingPage, NasaqPage } from './lazy-pages';
 import { AccountIndexPage } from './pages/account-index';
@@ -25,7 +26,13 @@ import { PublishPage } from './pages/publish';
 import { RegisterPage } from './pages/register';
 import { ReverseTextPage } from './pages/reverse-text';
 import { AboutPage, HelpPage, PrivacyPage, ServicesPage, TermsPage } from './pages/static-pages';
-import { StudioPage } from './pages/studio';
+import {
+  StudioAnalyticsPage,
+  StudioFinancePage,
+  StudioFontsPage,
+  StudioOverviewPage,
+  StudioProfilePage,
+} from './pages/studio';
 import { AppProviders } from './providers';
 import { ScrollToTop } from './scroll-to-top';
 
@@ -70,11 +77,24 @@ export function App() {
           <Route path="account/:section" element={<AccountSectionPage />} />
         </Route>
 
-        {/* الاستوديو — ترويسة عريضة */}
-        <Route errorElement={<ErrorBoundary />} element={<WideLayout />}>
-          <Route path="studio" element={<StudioPage />} />
-          <Route path="studio/publish" element={<PublishPage />} />
+        {/* الاستوديو — مساحة مستقلّة بعمودها الجانبي */}
+        <Route path="studio" errorElement={<ErrorBoundary />} element={<StudioLayout />}>
+          <Route index element={<StudioOverviewPage />} />
+          <Route path="fonts" element={<StudioFontsPage />} />
+          <Route path="analytics" element={<StudioAnalyticsPage />} />
+          <Route path="finance" element={<StudioFinancePage page="overview" />} />
+          <Route path="finance/sales" element={<StudioFinancePage page="sales" />} />
+          <Route path="finance/earnings" element={<StudioFinancePage page="earnings" />} />
+          <Route path="finance/payouts" element={<StudioFinancePage page="payouts" />} />
+          <Route path="profile" element={<StudioProfilePage />} />
+          <Route path="publish" element={<PublishPage />} />
+          <Route path="*" element={<Navigate to="/studio" replace />} />
         </Route>
+
+        {/* عناوين المالية القديمة في الحساب */}
+        <Route path="account/sales" element={<Navigate to="/studio/finance/sales" replace />} />
+        <Route path="account/earnings" element={<Navigate to="/studio/finance/earnings" replace />} />
+        <Route path="account/payouts" element={<Navigate to="/studio/finance/payouts" replace />} />
 
         {/* المشرف */}
         <Route errorElement={<ErrorBoundary />} element={<WideLayout />}>

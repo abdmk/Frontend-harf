@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { GlobeIcon, MapPinIcon, ShareIcon } from '@/components/ui/icons';
 import { toast } from '@/components/ui/toast';
 
-type Links = { website?: string; instagram?: string; behance?: string };
+type Links = { website?: string; instagram?: string; behance?: string; x?: string; linkedin?: string };
 
 /**
  * رأس الملف العام — مشترك بين صفحة المسبك وصفحة المصمّم حتى تبدوا زوجاً واحداً:
@@ -27,6 +27,7 @@ export function ProfileHeader({
   links,
   stats,
   aside,
+  cover,
 }: {
   titleId: string;
   /** الشعار أو الصورة — يتداخل مع الغلاف */
@@ -42,6 +43,8 @@ export function ProfileHeader({
   stats: readonly (readonly [string, number])[];
   /** محتوى إضافي تحت الأرقام (مثل «ينشر مع») */
   aside?: ReactNode;
+  /** صورة الغلاف (مُعاد ترميزها) — بدونها سطح هادئ */
+  cover?: string;
 }) {
   const items = [
     links.website && { href: links.website, label: 'الموقع', icon: <GlobeIcon className="size-4.5" /> },
@@ -55,12 +58,22 @@ export function ProfileHeader({
       label: 'Behance',
       icon: <span className="text-caption font-bold">Bē</span>,
     },
+    links.x && { href: links.x, label: 'X', icon: <SocialIcon label="X" className="size-4" /> },
+    links.linkedin && {
+      href: links.linkedin,
+      label: 'LinkedIn',
+      icon: <SocialIcon label="LinkedIn" className="size-4" />,
+    },
   ].filter(Boolean) as { href: string; label: string; icon: ReactNode }[];
 
   return (
     <section aria-labelledby={titleId} className="overflow-hidden rounded-xl border bg-card">
       {/* غلاف مسطّح هادئ بلا تدرّج */}
-      <div aria-hidden className="h-24 bg-sunken sm:h-32" />
+      {cover ? (
+        <img src={cover} alt="" className="h-28 w-full object-cover sm:h-44" />
+      ) : (
+        <div aria-hidden className="h-24 bg-sunken sm:h-32" />
+      )}
       <div className="grid gap-6 px-5 pb-6 sm:px-8 sm:pb-8 lg:grid-cols-[minmax(0,1fr)_300px] lg:gap-12">
         <div className="min-w-0">
           <div className="-mt-12 sm:-mt-14">{mark}</div>

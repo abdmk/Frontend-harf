@@ -167,7 +167,7 @@ export function DesignSystemPage() {
           num="3.7"
           title="قائمة الحساب"
           en="Account Menu"
-          note="مكوّن واحد في مكانين: قائمة الصورة في الترويسة والعمود الجانبي لصفحة الحساب. المجاني يرى دعوة التحويل، والاستوديو يرى «لوحة المسبك»."
+          note="مكوّن واحد في مكانين: قائمة الصورة في الترويسة والعمود الجانبي لصفحة الحساب. المجاني يرى دعوة التحويل، والاستوديو يرى «الاستوديو»."
         >
           <div className="grid grid-cols-[minmax(0,1fr)] gap-4 lg:grid-cols-2">
             <DsPanel label="حساب مجاني">
@@ -447,7 +447,7 @@ export function DesignSystemPage() {
         >
           <DsPanel className="flex flex-wrap gap-3">
             <Button asChild variant="outline">
-              <Link to={paths.studio.getHref()}>لوحة المسبك</Link>
+              <Link to={paths.studio.getHref()}>الاستوديو</Link>
             </Button>
             <Button asChild variant="outline">
               <Link to={paths.studio.getHref('publish')}>مساحة النشر</Link>

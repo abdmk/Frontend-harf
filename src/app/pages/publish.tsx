@@ -9,10 +9,11 @@ import { requireStudio } from '@/lib/auth';
 export function PublishPage() {
   const user = requireStudio();
   if (!user) return <Navigate to={paths.login.getHref(paths.studio.getHref('publish'))} replace />;
+  // داخل مساحة الاستوديو: التخطيط يوفّر العمود الجانبي و<main>
   return (
-    <main id="main" className="container-page py-8 sm:py-10">
+    <>
       <PageMeta title="نشر خط جديد" noindex />
       <PublishWorkspace isAdmin={user.role === 'admin'} onSubmit={submitForReview} />
-    </main>
+    </>
   );
 }

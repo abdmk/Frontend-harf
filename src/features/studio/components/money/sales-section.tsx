@@ -29,7 +29,6 @@ export function SalesSection() {
   const rows = sales.filter((s) => filter === 'all' || s.status === filter);
   const month = sales.filter((s) => s.date.startsWith('2026-09') && s.status !== 'refunded');
   const gross = month.reduce((n, s) => n + s.grossCents, 0);
-  const net = month.reduce((n, s) => n + s.netCents, 0);
 
   return (
     <div className="flex flex-col gap-6">
@@ -37,9 +36,9 @@ export function SalesSection() {
         <StatCard label="مبيعات هذا الشهر" value={formatMoney(cents(gross))} icon={<CartIcon />} />
         <StatCard label="عدد العمليات" value={month.length} hint="دون المستردّة" />
         <StatCard
-          label="صافيك هذا الشهر"
-          value={formatMoney(cents(net))}
-          hint={`بعد حصّة حرف ${PUBLISHER_TERMS.platformPct}٪`}
+          label="متوسّط العملية"
+          value={formatMoney(cents(month.length ? Math.round(gross / month.length) : 0))}
+          hint="صافيك في «الأرباح»"
           icon={<DollarIcon />}
         />
       </div>

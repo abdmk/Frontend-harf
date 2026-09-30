@@ -22,6 +22,11 @@ const ROUTES = [
   '/account/subscription?as=studio',
   '/account/usage',
   '/studio?as=studio',
+  '/studio/fonts?as=studio',
+  '/studio/analytics?as=studio',
+  '/studio/finance?as=studio',
+  '/studio/finance/payouts?as=studio',
+  '/studio/profile?as=studio',
   '/design-system',
 ];
 

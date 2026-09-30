@@ -13,11 +13,30 @@ import { getFonts } from '@/features/catalog/api/get-fonts';
 import { DEFAULT_QUERY } from '@/features/catalog/types/catalog-query';
 import { getFoundry, getFoundryDesigners } from '@/features/studio/api/get-studio';
 import { FoundryProfile } from '@/features/studio/components/foundry-profile';
+import { getCurrentUser } from '@/lib/auth';
+import { getPublicProfile, type SocialKey, socialUrl } from '@/lib/public-profile';
 
 export function FoundryPage() {
   const { id } = useParams<{ id: string }>();
-  const data = getFoundry(id!);
-  if (!data) return <Navigate to="/" replace />;
+  const found = getFoundry(id!);
+  if (!found) return <Navigate to="/" replace />;
+  // ⚠️ عرض: الملف العام المحفوظ في هذا المتصفّح يظهر لصاحب الاستوديو؛ مع الخادم يأتي من قاعدة البيانات
+  const own = getCurrentUser()?.plan === 'studio' ? getPublicProfile() : null;
+  const data = own
+    ? {
+        ...found,
+        foundry: {
+          ...found.foundry,
+          bio: own.bio || found.foundry.bio,
+          links: {
+            website: own.website || undefined,
+            ...Object.fromEntries(
+              (Object.keys(own.social) as SocialKey[]).map((k) => [k, socialUrl(k, own.social[k]!)]),
+            ),
+          },
+        },
+      }
+    : found;
   const ids = new Set(data.fonts.map((f) => f.id));
   const fonts = getFonts(DEFAULT_QUERY).filter((f) => ids.has(f.id));
   const downloads = data.fonts.reduce((sum, f) => sum + f.downloads, 0);
@@ -30,7 +49,12 @@ export function FoundryPage() {
   return (
     <Container as="main" id="main" className="py-8 sm:py-12">
       <PageMeta title={data.foundry.name} description={data.foundry.bio} />
-      <FoundryProfile foundry={data.foundry} stats={{ fonts: data.fonts.length, downloads }} />
+      <FoundryProfile
+        foundry={data.foundry}
+        stats={{ fonts: data.fonts.length, downloads }}
+        cover={own?.cover}
+        avatar={own?.avatar}
+      />
       <section aria-labelledby="ff-title" className="mt-12">
         <SectionHeading
           id="ff-title"

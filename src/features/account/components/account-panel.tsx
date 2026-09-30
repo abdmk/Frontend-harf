@@ -1,6 +1,7 @@
 import { Fragment } from 'react';
 import { Link, useNavigate } from 'react-router';
 
+import { sideNavIcon, sideNavRow } from '@/components/shared/side-nav';
 import { ChartHistogramIcon, CrownIcon, LayersIcon, SignOutIcon } from '@/components/ui/icons';
 import { paths } from '@/config/paths';
 import { signOut } from '@/features/account/api/sign-out';
@@ -115,21 +116,9 @@ export function AccountPanel({
                       to={href ?? paths.account.getHref(section)}
                       onClick={onNavigate}
                       aria-current={on ? 'page' : undefined}
-                      className={cn(
-                        'group/it relative flex items-center rounded-sm transition-colors duration-(--dur-fast)',
-                        s.row,
-                        on
-                          ? 'bg-tint-brand text-primary before:absolute before:inset-y-1.5 before:start-0 before:w-0.75 before:animate-in before:rounded-full before:bg-primary-fill before:zoom-in-50'
-                          : 'text-foreground hover:bg-sunken',
-                      )}
+                      className={sideNavRow(on, menu ? 'sm' : 'lg')}
                     >
-                      <Icon
-                        className={cn(
-                          'transition-transform duration-(--dur-base) ease-pop group-hover/it:scale-110',
-                          s.icon,
-                          on ? 'text-primary' : 'text-foreground/80',
-                        )}
-                      />
+                      <Icon className={sideNavIcon(on, menu ? 'sm' : 'lg')} />
                       <span className="flex-1">{label}</span>
                       {m && <span className={cn('text-muted-foreground', s.meta)}>{m}</span>}
                       {badge && (

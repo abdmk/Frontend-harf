@@ -33,7 +33,7 @@ export function requireUser(): User | null {
   return getCurrentUser();
 }
 
-/** لوحة المسبك والنشر: حساب الاستوديو وحده */
+/** الاستوديو والنشر: حساب الاستوديو وحده */
 export function requireStudio(): User | null {
   const user = getCurrentUser();
   if (!user || user.plan !== 'studio') return null;

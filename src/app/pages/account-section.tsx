@@ -16,15 +16,11 @@ export function AccountSectionPage() {
   if (!section || !isSection(section)) return <Navigate to="/account" replace />;
   const user = requireUser();
   if (!user) return <Navigate to={paths.login.getHref(paths.account.getHref(section))} replace />;
-  // لوحة المسبك تعيش في /studio؛ الرابط القديم يوجّه إليها مباشرة
+  // الاستوديو يعيش في /studio؛ الرابط القديم يوجّه إليها مباشرة
   if (section === 'foundry')
     return (
       <Navigate to={user.plan === 'studio' ? paths.studio.getHref() : paths.account.getHref('subscription')} replace />
     );
-
-  // المبيعات والأرباح والسحب لحساب الاستوديو وحده (والخادم يتحقّق من الدور في كل طلب)
-  if ((section === 'sales' || section === 'earnings' || section === 'payouts') && user.plan !== 'studio')
-    return <Navigate to={paths.account.getHref('subscription')} replace />;
 
   return (
     <AccountShell user={user} section={section}>
