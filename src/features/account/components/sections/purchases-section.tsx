@@ -2,14 +2,13 @@ import { Link } from 'react-router';
 
 import { DownloadButton } from '@/components/shared/download-button';
 import { EmptyState } from '@/components/shared/empty-state';
+import { SectionCard } from '@/components/shared/section-card';
 import { Button } from '@/components/ui/button';
 import { ReceiptIcon } from '@/components/ui/icons';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { paths } from '@/config/paths';
 import { formatDateAr, formatMoney } from '@/lib/format';
 import type { Purchase } from '@/types/domain/commerce';
-
-import { SectionCard } from './section-card';
 
 /** المشتريات: رقم الترخيص، الخط، الحزمة، التاريخ، المبلغ، والتحميل مجدداً */
 export function PurchasesSection({ purchases }: { purchases: Purchase[] }) {

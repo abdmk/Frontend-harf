@@ -144,3 +144,46 @@ test.describe('الاستوديو والإدارة', () => {
     await expect(page).toHaveURL(/\/designers\/sn$/);
   });
 });
+
+test.describe('المبيعات والأرباح والسحب', () => {
+  test('للاستوديو وحده', async ({ page }) => {
+    await page.goto('/account/payouts?as=free');
+    await expect(page).toHaveURL(/\/account\/subscription$/);
+    await page.goto('/account/sales?as=studio');
+    await expect(page.getByRole('table', { name: 'سجلّ المبيعات' })).toBeVisible();
+    await page.getByRole('button', { name: 'مستردّة' }).click();
+    await expect(page.getByRole('table', { name: 'سجلّ المبيعات' }).getByRole('row')).toHaveCount(2);
+    const nav = page.getByRole('navigation', { name: 'قائمة الحساب' });
+    await nav.getByRole('link', { name: /الأرباح/ }).click();
+    await expect(page.getByText('الرصيد المتاح للسحب')).toBeVisible();
+  });
+
+  test('طلب سحب يقلّل الرصيد ويظهر في السجلّ، وIBAN خاطئ يُرفض', async ({ page }) => {
+    await page.goto('/account/payouts?as=studio');
+    await page.getByRole('button', { name: 'اطلب سحباً' }).click();
+    const dlg = page.getByRole('dialog', { name: 'اطلب سحباً' });
+    await dlg.getByLabel('المبلغ (دولار)').fill('10');
+    await dlg.getByRole('button', { name: 'تأكيد السحب' }).click();
+    await expect(dlg.getByText(/الحدّ الأدنى للسحب/)).toBeVisible();
+    await dlg.getByLabel('المبلغ (دولار)').fill('100');
+    await dlg.getByRole('button', { name: 'تأكيد السحب' }).click();
+    await expect(dlg).toBeHidden();
+    await expect(page.getByText('$1,184.50').first()).toBeVisible();
+    await expect(page.getByRole('table', { name: 'سجلّ التحويلات' }).getByText('قيد المعالجة')).toBeVisible();
+
+    await page.getByRole('button', { name: 'تغيير', exact: true }).click();
+    const acc = page.getByRole('dialog', { name: 'تغيير حساب التحويل' });
+    await acc.getByLabel('اسم صاحب الحساب').fill('مسبك تجاريب');
+    await acc.getByLabel('رقم الحساب الدولي (IBAN)').fill('IQ98 NBIQ 8501 2345 6789 013');
+    await acc.getByRole('checkbox').click();
+    await acc.getByRole('button', { name: 'حفظ الحساب' }).click();
+    await expect(acc.getByText('رقم IBAN غير صحيح — راجِع الأرقام.')).toBeVisible();
+    await acc.getByLabel('رقم الحساب الدولي (IBAN)').fill('IQ98 NBIQ 8501 2345 6789 012');
+    await acc.getByRole('button', { name: 'حفظ الحساب' }).click();
+    await expect(acc).toBeHidden();
+    await expect(page.getByText('•••• 9012').first()).toBeVisible();
+    await expect(page.getByRole('button', { name: 'اطلب سحباً' })).toBeDisabled();
+    // الرقم الكامل لا يُحفظ في المتصفّح
+    expect(await page.evaluate(() => localStorage.getItem('harf_payouts'))).not.toContain('NBIQ');
+  });
+});

@@ -128,13 +128,17 @@ export function StudioDashboard({
               </p>
             </div>
             <div className="flex flex-wrap items-center gap-3">
-              <Button>
-                <DollarIcon />
-                اطلب تحويل الرصيد
+              <Button asChild>
+                <Link to={paths.account.getHref('payouts')}>
+                  <DollarIcon />
+                  اسحب رصيدك
+                </Link>
               </Button>
-              <Button variant="ghost">
-                <BankIcon />
-                تفاصيل الحساب البنكي
+              <Button asChild variant="ghost">
+                <Link to={paths.account.getHref('earnings')}>
+                  <BankIcon />
+                  تفاصيل الأرباح
+                </Link>
               </Button>
             </div>
           </div>

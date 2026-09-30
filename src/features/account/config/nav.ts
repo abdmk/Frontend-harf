@@ -1,8 +1,11 @@
 import type { IconProps } from '@/components/ui/icons';
 import {
   AppsIcon,
+  BankIcon,
+  CartIcon,
   CloudUploadIcon,
   CrownIcon,
+  DollarIcon,
   FolderIcon,
   HeartIcon,
   HelpIcon,
@@ -57,6 +60,9 @@ export function accountNavGroups(user: User): NavItem[][] {
   if (user.plan === 'studio')
     groups.push([
       { section: 'foundry', label: 'لوحة المسبك', Icon: AppsIcon, badge: 'جديد', href: paths.studio.getHref() },
+      { section: 'sales', label: 'المبيعات', Icon: CartIcon },
+      { section: 'earnings', label: 'الأرباح', Icon: DollarIcon },
+      { section: 'payouts', label: 'السحب', Icon: BankIcon },
     ]);
   groups.push([
     { section: 'preferences', label: 'التفضيلات', Icon: SlidersIcon },
@@ -74,6 +80,9 @@ export const SECTION_TITLE: Record<AccountSection, string> = {
   usage: 'حالة الاستخدام',
   subscription: 'الاشتراك',
   foundry: 'لوحة المسبك',
+  sales: 'المبيعات',
+  earnings: 'الأرباح',
+  payouts: 'السحب',
   preferences: 'التفضيلات',
   security: 'الحساب',
   help: 'المساعدة',

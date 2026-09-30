@@ -1,10 +1,9 @@
 import { Collapsible as CollapsiblePrimitive } from 'radix-ui';
 
+import { SectionCard } from '@/components/shared/section-card';
 import { Button } from '@/components/ui/button';
 import { ChevronDownIcon, MailIcon } from '@/components/ui/icons';
 import { CONTACT_EMAIL, FAQ } from '@/config/faq';
-
-import { SectionCard } from './section-card';
 
 export function HelpSection() {
   return (

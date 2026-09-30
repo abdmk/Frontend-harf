@@ -1,5 +1,6 @@
 import { useActionState } from 'react';
 
+import { SectionCard } from '@/components/shared/section-card';
 import { Alert } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -18,7 +19,6 @@ import { LaptopIcon, TrashIcon } from '@/components/ui/icons';
 import type { User } from '@/features/account/types';
 
 import { PasswordField } from './password-field';
-import { SectionCard } from './section-card';
 import type { FormState } from '../../api/actions';
 
 /** الحساب والأمان: البريد، كلمة المرور، الجلسات، وحذف الحساب */

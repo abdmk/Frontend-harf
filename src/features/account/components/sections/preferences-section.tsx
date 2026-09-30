@@ -1,7 +1,6 @@
+import { SectionCard } from '@/components/shared/section-card';
 import { ThemePreference } from '@/components/shared/theme-preference';
 import { Switch } from '@/components/ui/switch';
-
-import { SectionCard } from './section-card';
 
 const NOTIFY = [
   ['orders', 'الإيصالات والتراخيص', 'تصلك دائماً — لا يمكن إيقافها', true, true],

@@ -67,8 +67,8 @@ export const MOCK_STUDIO_ANALYTICS: StudioAnalytics = {
     total: cents(1894000),
     pending: cents(0),
     paid: cents(1765550),
-    nextPayout: '2026-09-27',
-    lastPayout: '2026-09-13',
+    nextPayout: '2026-10-11',
+    lastPayout: '2026-09-27',
     bankLast4: '4471',
     minPayout: cents(5000),
   },
@@ -141,7 +141,7 @@ export const MOCK_ADMIN_ANALYTICS: AdminAnalytics = {
       ],
     },
   },
-  months: ['نيسان', 'أيار', 'حزيران', 'تموز', 'آب', 'أيلول'],
+  months: ['أبريل', 'مايو', 'يونيو', 'يوليو', 'آب', 'أيلول'],
   salesByMonth: [1810, 2140, 1990, 2720, 3110, 3460],
   subsByMonth: [420, 480, 530, 610, 780, 840],
   days: DAYS_AR,
@@ -192,3 +192,148 @@ export const MOCK_ADMIN_ANALYTICS: AdminAnalytics = {
     { id: 'T-1038', buyer: 'ليلى جواد', kind: 'sale', when: 'قبل يومين', amount: cents(6400) },
   ],
 };
+
+/* ══ مبيعات ودفعات المسبك — أرقام عرض فقط ══════════════════════════════════ */
+
+export type MockSale = {
+  id: string;
+  fontId: string;
+  fontName: string;
+  license: string;
+  /** المشتري مقنّع — الناشر لا يرى بيانات المشترين كاملة (تقليل البيانات) */
+  buyer: string;
+  /** YYYY-MM-DD */
+  date: string;
+  grossCents: number;
+  status: 'completed' | 'pending' | 'refunded';
+};
+
+export const MOCK_SALES: MockSale[] = [
+  {
+    id: 'S-24931',
+    fontId: 'tajarib',
+    fontName: 'تجاريب',
+    license: 'تجاري',
+    buyer: 'ن*** س.',
+    date: '2026-09-29',
+    grossCents: 26000,
+    status: 'pending',
+  },
+  {
+    id: 'S-24918',
+    fontId: 'rawi',
+    fontName: 'رواق',
+    license: 'شخصي',
+    buyer: 'L*** H.',
+    date: '2026-09-27',
+    grossCents: 4900,
+    status: 'pending',
+  },
+  {
+    id: 'S-24880',
+    fontId: 'tajarib',
+    fontName: 'تجاريب',
+    license: 'هوية بصرية',
+    buyer: 'ك*** ي.',
+    date: '2026-09-22',
+    grossCents: 52000,
+    status: 'pending',
+  },
+  {
+    id: 'S-24811',
+    fontId: 'rawi',
+    fontName: 'رواق',
+    license: 'تجاري',
+    buyer: 'O*** F.',
+    date: '2026-09-15',
+    grossCents: 18000,
+    status: 'completed',
+  },
+  {
+    id: 'S-24790',
+    fontId: 'tajarib',
+    fontName: 'تجاريب',
+    license: 'شخصي',
+    buyer: 'س*** م.',
+    date: '2026-09-12',
+    grossCents: 6500,
+    status: 'refunded',
+  },
+  {
+    id: 'S-24702',
+    fontId: 'tajarib',
+    fontName: 'تجاريب',
+    license: 'تجاري',
+    buyer: 'Y*** K.',
+    date: '2026-09-08',
+    grossCents: 26000,
+    status: 'completed',
+  },
+  {
+    id: 'S-24655',
+    fontId: 'rawi',
+    fontName: 'رواق',
+    license: 'مواقع إلكترونية',
+    buyer: 'ح*** ع.',
+    date: '2026-09-03',
+    grossCents: 35000,
+    status: 'completed',
+  },
+  {
+    id: 'S-24590',
+    fontId: 'tajarib',
+    fontName: 'تجاريب',
+    license: 'هوية بصرية',
+    buyer: 'M*** S.',
+    date: '2026-08-28',
+    grossCents: 52000,
+    status: 'completed',
+  },
+  {
+    id: 'S-24533',
+    fontId: 'rawi',
+    fontName: 'رواق',
+    license: 'شخصي',
+    buyer: 'ر*** ط.',
+    date: '2026-08-21',
+    grossCents: 4900,
+    status: 'completed',
+  },
+  {
+    id: 'S-24470',
+    fontId: 'tajarib',
+    fontName: 'تجاريب',
+    license: 'تجاري',
+    buyer: 'A*** H.',
+    date: '2026-08-14',
+    grossCents: 26000,
+    status: 'completed',
+  },
+];
+
+export type MockPayout = {
+  id: string;
+  /** YYYY-MM-DD */
+  date: string;
+  amountCents: number;
+  status: 'paid' | 'processing' | 'failed';
+};
+
+export const MOCK_PAYOUTS: MockPayout[] = [
+  { id: 'P-1108', date: '2026-09-27', amountCents: 116900, status: 'paid' },
+  { id: 'P-1093', date: '2026-09-13', amountCents: 142300, status: 'paid' },
+  { id: 'P-1071', date: '2026-08-30', amountCents: 98750, status: 'paid' },
+  { id: 'P-1052', date: '2026-08-16', amountCents: 121500, status: 'paid' },
+  { id: 'P-1034', date: '2026-08-02', amountCents: 87400, status: 'failed' },
+  { id: 'P-1033', date: '2026-08-04', amountCents: 87400, status: 'paid' },
+];
+
+/** صافي الأرباح الشهري (بالدولار) — آخر ستة أشهر */
+export const MOCK_MONTHLY_NET = [
+  { label: 'أبريل', value: 1840 },
+  { label: 'مايو', value: 2210 },
+  { label: 'يونيو', value: 1975 },
+  { label: 'يوليو', value: 2630 },
+  { label: 'أغسطس', value: 2290 },
+  { label: 'سبتمبر', value: 2480 },
+];

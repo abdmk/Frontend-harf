@@ -61,7 +61,7 @@ function AddRevenueDialog({ onAdd }: { onAdd: (e: ManualRevenue) => void }) {
             دخل من خارج المتجر — تصميم أو تطوير خط لعميل، مخطوطة، استشارة…
           </DialogDescription>
         </div>
-        <form action={formAction} noValidate className="flex flex-col gap-5">
+        <form key={JSON.stringify(state?.values ?? {})} action={formAction} noValidate className="flex flex-col gap-5">
           <input type="hidden" name="category" value={category} />
           <Field>
             <FieldLabel id="rev-cat-label" required>
@@ -92,6 +92,7 @@ function AddRevenueDialog({ onAdd }: { onAdd: (e: ManualRevenue) => void }) {
                 inputMode="decimal"
                 dir="ltr"
                 placeholder="250"
+                defaultValue={state?.values?.amount}
                 maxLength={10}
                 aria-invalid={!!f.amount}
                 aria-describedby="rev-amount-err"
@@ -106,7 +107,7 @@ function AddRevenueDialog({ onAdd }: { onAdd: (e: ManualRevenue) => void }) {
                 id="rev-date"
                 name="date"
                 type="date"
-                defaultValue={today()}
+                defaultValue={state?.values?.date ?? today()}
                 max={today()}
                 aria-invalid={!!f.date}
                 aria-describedby="rev-date-err"
@@ -123,6 +124,7 @@ function AddRevenueDialog({ onAdd }: { onAdd: (e: ManualRevenue) => void }) {
               name="client"
               maxLength={80}
               placeholder="مثل: شركة ما"
+              defaultValue={state?.values?.client}
               aria-invalid={!!f.client}
               aria-describedby="rev-client-err"
             />
@@ -136,6 +138,7 @@ function AddRevenueDialog({ onAdd }: { onAdd: (e: ManualRevenue) => void }) {
               maxLength={200}
               className="min-h-20"
               placeholder="اختياري — تفاصيل المشروع"
+              defaultValue={state?.values?.note}
               aria-invalid={!!f.note}
               aria-describedby="rev-note-err"
             />

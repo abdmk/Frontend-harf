@@ -22,6 +22,10 @@ export function AccountSectionPage() {
       <Navigate to={user.plan === 'studio' ? paths.studio.getHref() : paths.account.getHref('subscription')} replace />
     );
 
+  // المبيعات والأرباح والسحب لحساب الاستوديو وحده (والخادم يتحقّق من الدور في كل طلب)
+  if ((section === 'sales' || section === 'earnings' || section === 'payouts') && user.plan !== 'studio')
+    return <Navigate to={paths.account.getHref('subscription')} replace />;
+
   return (
     <AccountShell user={user} section={section}>
       <PageMeta title={SECTION_TITLE[section]} noindex />

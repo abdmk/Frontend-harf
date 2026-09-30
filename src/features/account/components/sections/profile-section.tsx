@@ -1,6 +1,7 @@
 import { useActionState, useEffect } from 'react';
 import { Link } from 'react-router';
 
+import { SectionCard } from '@/components/shared/section-card';
 import { UsageMeter } from '@/components/shared/usage-meter';
 import { Button } from '@/components/ui/button';
 import { Field, FieldError, FieldLabel } from '@/components/ui/field';
@@ -20,7 +21,6 @@ import type { User } from '@/features/account/types';
 import type { FormState } from '../../api/actions';
 import { PlanBadge } from '../plan-badge';
 import { UserAvatar } from '../user-avatar';
-import { SectionCard } from './section-card';
 
 /** «الملف الشخصي» (تصميم 21-09): بطاقة المستخدم بأرقامه، الاستخدام الآن، ومعلوماتك */
 export function ProfileSection({

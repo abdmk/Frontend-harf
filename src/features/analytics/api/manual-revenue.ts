@@ -38,6 +38,8 @@ export type RevenueFormState = {
   message?: string;
   fields?: Partial<Record<'category' | 'amount' | 'client' | 'date' | 'note', string>>;
   entry?: ManualRevenue;
+  /** ما كتبه المشرف — يعود إلى الحقول بعد خطأ (React يفرّغ النموذج بعد كل إرسال) */
+  values?: Record<string, string>;
 } | null;
 
 /** تاريخ اليوم بتوقيت الجهاز (لا UTC) — YYYY-MM-DD */
@@ -77,7 +79,11 @@ export function createRevenue(_prev: RevenueFormState, form: FormData): RevenueF
   const parsed = schema.safeParse(raw);
   if (!parsed.success) {
     const f = parsed.error.flatten().fieldErrors;
-    return { ok: false, fields: Object.fromEntries(Object.entries(f).map(([k, v]) => [k, v?.[0]])) };
+    return {
+      ok: false,
+      fields: Object.fromEntries(Object.entries(f).map(([k, v]) => [k, v?.[0]])),
+      values: raw as Record<string, string>,
+    };
   }
   const v = parsed.data;
   return {
