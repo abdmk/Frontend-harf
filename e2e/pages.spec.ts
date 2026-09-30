@@ -26,7 +26,7 @@ test('روابط التذييل تفتح صفحاتها، والوثائق ال�
     .filter({ visible: true })
     .click();
   await expect(page).toHaveURL(/#s-6$/);
-  await expect(page.getByRole('link', { name: 'abdulmalik@harflibrary.com' })).toHaveAttribute(
+  await expect(page.getByRole('link', { name: 'abdulmalik@harflibrary.com' }).last()).toHaveAttribute(
     'href',
     'mailto:abdulmalik@harflibrary.com',
   );
@@ -58,4 +58,24 @@ test('حسابات التواصل في التذييل حقيقية، وتلغر�
   );
   await expect(footer.getByRole('link', { name: 'حرف على Telegram' })).toHaveCount(0);
   await expect(page.locator('a[href="#"]')).toHaveCount(0);
+});
+
+test('إعدادات ملفات تعريف الارتباط: من التذييل وسياسة الخصوصية، والاختيار يُحفظ', async ({ page }) => {
+  await page.goto('/');
+  await page.locator('footer').getByRole('button', { name: 'إعدادات ملفات تعريف الارتباط' }).click();
+  const dialog = page.getByRole('dialog', { name: 'إعدادات ملفات تعريف الارتباط' });
+  await expect(dialog.getByRole('switch', { name: /الضرورية/ })).toBeDisabled();
+  await expect(dialog.getByRole('switch', { name: 'التحليلات' })).not.toBeChecked();
+  await dialog.getByRole('switch', { name: 'التحليلات' }).click();
+  await dialog.getByRole('button', { name: 'حفظ اختياري' }).click();
+  await expect(dialog).toBeHidden();
+
+  await page.goto('/privacy');
+  await page.getByRole('main').getByRole('button', { name: 'إعدادات ملفات تعريف الارتباط' }).click();
+  await expect(dialog.getByRole('switch', { name: 'التحليلات' })).toBeChecked();
+  await expect(dialog.getByRole('switch', { name: 'التسويق' })).not.toBeChecked();
+  await dialog.getByRole('button', { name: 'الضرورية فقط' }).click();
+  expect(await page.evaluate(() => JSON.parse(localStorage.getItem('harf_consent')!).analytics)).toBe(false);
+  // لا شريط موافقة ما دامت لا أداة غير ضرورية مفعّلة
+  await expect(page.getByRole('region', { name: 'ملفات تعريف الارتباط' })).toHaveCount(0);
 });

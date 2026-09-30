@@ -6,4 +6,4 @@ export const FAQ = [
   ['كيف أنشر خطوطي في حرف؟', 'حوّل حسابك إلى الاستوديو، ثم ارفع ملفاتك من «لوحة المسبك».'],
 ] as const;
 
-export const CONTACT_EMAIL = 'hello@harf.co';
+export const CONTACT_EMAIL = 'abdulmalik@harflibrary.com';

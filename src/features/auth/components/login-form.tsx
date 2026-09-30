@@ -64,7 +64,7 @@ export function LoginForm({
           <Checkbox name="remember" defaultChecked /> تذكّرني
         </label>
         <a
-          href="mailto:hello@harf.co?subject=استعادة كلمة المرور"
+          href="mailto:abdulmalik@harflibrary.com?subject=استعادة كلمة المرور"
           className="text-muted-foreground hover:text-foreground"
         >
           نسيت كلمة المرور؟

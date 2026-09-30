@@ -8,6 +8,7 @@ import { CONTACT_EMAIL, FAQ } from '@/config/faq';
 import { parseLegal } from '@/content/legal/parse';
 import privacyText from '@/content/legal/privacy.txt?raw';
 import termsText from '@/content/legal/terms.txt?raw';
+import { openConsentSettings } from '@/lib/consent';
 
 function ContactButton({ label = CONTACT_EMAIL }: { label?: string }) {
   return (
@@ -114,6 +115,13 @@ export function PrivacyPage() {
       description="كيف تجمع حرف بياناتك الشخصية وتستخدمها وتحميها وتشاركها."
       updated={LEGAL_UPDATED}
       doc={PRIVACY}
+      extras={{
+        'ملفات تعريف الارتباط': (
+          <Button variant="outline" onClick={openConsentSettings}>
+            إعدادات ملفات تعريف الارتباط
+          </Button>
+        ),
+      }}
     />
   );
 }

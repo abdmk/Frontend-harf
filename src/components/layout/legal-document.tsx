@@ -85,12 +85,15 @@ export function LegalDocument({
   description,
   updated,
   doc,
+  extras,
 }: {
   title: string;
   description: string;
   /** YYYY-MM-DD */
   updated: string;
   doc: LegalDoc;
+  /** عناصر تفاعلية تُلحق بقسم باسم عنوانه (مثل زرّ إعدادات ملفات تعريف الارتباط) */
+  extras?: Record<string, ReactNode>;
 }) {
   const ids = useMemo(() => [OVERVIEW, ...doc.sections.map((s) => s.id)], [doc]);
   const active = useActiveSection(ids);
@@ -174,6 +177,7 @@ export function LegalDocument({
                   <Block key={i} b={b} />
                 ))}
               </div>
+              {extras?.[s.title] && <div className="mt-5">{extras[s.title]}</div>}
             </section>
           ))}
         </article>

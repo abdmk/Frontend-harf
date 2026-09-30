@@ -229,7 +229,7 @@ export function LicenseSheet({
               })}
               <p className="flex flex-wrap items-center justify-between gap-2 rounded-md border border-dashed px-3.5 py-2.5 text-caption text-muted-foreground">
                 استخدام أوسع؟ علامة تجارية، بثّ، أو مؤسسة كبيرة
-                <a href="mailto:hello@harf.co" className="font-medium text-primary hover:underline">
+                <a href="mailto:abdulmalik@harflibrary.com" className="font-medium text-primary hover:underline">
                   تواصل معنا
                 </a>
               </p>
