@@ -13,12 +13,15 @@ import { getPlans } from '@/features/subscriptions/api/get-subscription';
 import { PlansDialog } from '@/features/subscriptions/components/plans-dialog';
 import { useCart } from '@/hooks/use-cart';
 import { useCurrentUser } from '@/hooks/use-current-user';
+import { clearWelcome, isWelcomePending } from '@/lib/auth';
 
 export function HeaderActions() {
   const user = useCurrentUser();
   const cart = useCart();
   // نافذة الخطط خارج قائمة الحساب: إغلاق القائمة لا يُسقطها
-  const [plansOpen, setPlansOpen] = useState(false);
+  // أول دخول بعد إنشاء الحساب: نافذة الخطط تُفتح مرّة واحدة بوضع الترحيب («تابع مجاناً»)
+  const [welcome, setWelcome] = useState(() => !!user && isWelcomePending());
+  const [plansOpen, setPlansOpen] = useState(welcome);
   const avatarRef = useRef<HTMLButtonElement>(null);
   return (
     <>
@@ -32,7 +35,14 @@ export function HeaderActions() {
             current={user.plan}
             onChange={changePlan}
             open={plansOpen}
-            onOpenChange={setPlansOpen}
+            onOpenChange={(v) => {
+              setPlansOpen(v);
+              if (!v && welcome) {
+                clearWelcome();
+                setWelcome(false);
+              }
+            }}
+            welcome={welcome}
             returnFocusTo={avatarRef}
           />
         </>

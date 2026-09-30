@@ -45,7 +45,7 @@ export function Toaster() {
   return (
     <section
       aria-label="الإشعارات العابرة"
-      className="pointer-events-none fixed inset-x-4 bottom-4 z-100 flex flex-col items-center gap-2 sm:inset-x-auto sm:end-6 sm:bottom-6 sm:w-95"
+      className="pointer-events-none fixed inset-x-4 bottom-4 z-100 mx-auto flex max-w-95 flex-col items-center gap-2 sm:bottom-6"
     >
       {list.map((t) => (
         <ToastCard key={t.id} item={t} />

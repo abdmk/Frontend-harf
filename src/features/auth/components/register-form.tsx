@@ -12,6 +12,7 @@ import { cn } from '@/lib/cn';
 import { AuthDivider } from './auth-divider';
 import { GoogleButton } from './google-button';
 import { PasswordInput } from './password-input';
+import { VerifyEmail } from './verify-email';
 import type { AuthState } from '../api/actions';
 
 const RULES: [string, (p: string) => boolean][] = [
@@ -27,27 +28,21 @@ export function RegisterForm({
 }) {
   const [state, formAction, pending] = useActionState(action, null);
   const [pw, setPw] = useState('');
+  // «غيّر البريد» يعيد النموذج بقيمه — وإرسال جديد يعود لصندوق التحقّق
+  const [editing, setEditing] = useState(false);
   const f = state?.fields ?? {};
 
-  if (state?.sent)
-    return (
-      <div role="status" className="flex animate-fade-up flex-col items-center gap-3 py-8 text-center">
-        <span className="grid size-14 place-items-center rounded-full bg-tint-ok text-ok-text">
-          <MailIcon className="size-6" />
-        </span>
-        <h2 className="text-xl font-semibold">تحقّق من بريدك</h2>
-        <p className="max-w-[36ch] text-control text-muted-foreground">
-          أرسلنا رابط تفعيل إلى{' '}
-          <span dir="ltr" className="font-medium text-foreground">
-            {state.sent}
-          </span>
-          . افتحه لإكمال إنشاء الحساب.
-        </p>
-      </div>
-    );
+  if (state?.sent && !editing) return <VerifyEmail email={state.sent} onEdit={() => setEditing(true)} />;
 
   return (
-    <form action={formAction} noValidate className="flex flex-col gap-5">
+    <form
+      action={(fd) => {
+        setEditing(false);
+        formAction(fd);
+      }}
+      noValidate
+      className="flex flex-col gap-5"
+    >
       <GoogleButton />
       <AuthDivider />
       {state?.error && <Alert tone="danger" title={state.error} />}

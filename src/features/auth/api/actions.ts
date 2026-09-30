@@ -64,5 +64,5 @@ export function signUp(_prev: AuthState, form: FormData): AuthState {
     };
   }
   if (!hit(clientKey('register'), 5, 60 * 60_000)) return { error: 'محاولات كثيرة. حاول لاحقاً.' };
-  return { sent: parsed.data.email };
+  return { sent: parsed.data.email, values: keep(form) };
 }

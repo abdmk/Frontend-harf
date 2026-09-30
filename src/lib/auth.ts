@@ -65,3 +65,34 @@ export function getDemoSession(): DemoAccount | null {
     return null;
   }
 }
+
+const WELCOME_KEY = 'harf_welcome_pending';
+
+/**
+ * أول دخول بعد إنشاء الحساب: تُعرض نافذة الخطط مرّة واحدة («تابع مجاناً» أو اختر خطة).
+ * ⚠️ عرض: علامة في هذا المتصفّح؛ مع الخادم تصير حقلاً في حساب المستخدم (onboarded).
+ */
+export function markWelcomePending() {
+  try {
+    localStorage.setItem(WELCOME_KEY, '1');
+  } catch {
+    /* التخزين غير متاح */
+  }
+}
+
+/** هل تنتظر نافذة الترحيب؟ (قراءة فقط — تُمسح عند إغلاقها بـclearWelcome) */
+export function isWelcomePending(): boolean {
+  try {
+    return localStorage.getItem(WELCOME_KEY) === '1';
+  } catch {
+    return false;
+  }
+}
+
+export function clearWelcome() {
+  try {
+    localStorage.removeItem(WELCOME_KEY);
+  } catch {
+    /* التخزين غير متاح */
+  }
+}
