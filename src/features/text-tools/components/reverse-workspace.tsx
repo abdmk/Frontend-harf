@@ -3,28 +3,24 @@ import { useId, useMemo, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { CheckIcon, CopyIcon, CrossSmallIcon, DownloadIcon } from '@/components/ui/icons';
 import { Textarea } from '@/components/ui/input';
-import { SegmentedControl } from '@/components/ui/segmented-control';
 import { Switch } from '@/components/ui/switch';
 import { toast } from '@/components/ui/toast';
 import { cn } from '@/lib/cn';
 
-import { AppPreview } from './app-preview';
 import { prepareArabic } from '../utils/arabic-reshape';
 
 const EXAMPLE = 'حرفٌ يصنع الهوية\nخط «زيتون» — 5 أوزان';
 const MAX = 5000;
 
 /**
- * مساحة «عكس النص»: اختيار البرنامج، ثم النص، ثم النتيجة — إمّا للّصق مباشرة، وإمّا معاينةً
- * داخل نافذة بهيئة البرنامج «قبل» و«بعد». كل شيء في المتصفّح؛ النص لا يُرسل ولا يُحفظ.
+ * مساحة «عكس النص»: الخيارات، ثم النص، ثم النتيجة جاهزةً للّصق في البرنامج.
+ * كل شيء في المتصفّح؛ النص لا يُرسل ولا يُحفظ.
  */
 export function ReverseWorkspace() {
   const [text, setText] = useState('');
   const [shape, setShape] = useState(true);
   const [reverse, setReverse] = useState(true);
   const [strip, setStrip] = useState(false);
-  const [view, setView] = useState<'paste' | 'preview'>('paste');
-  const [stage, setStage] = useState<'before' | 'after'>('after');
   const [copied, setCopied] = useState(false);
   const inId = useId();
   const outId = useId();
@@ -135,62 +131,25 @@ export function ReverseWorkspace() {
             <h2 id={`${outId}-t`} className="text-control font-semibold">
               النتيجة
             </h2>
-            <SegmentedControl
-              label="طريقة العرض"
-              value={view}
-              onChange={setView}
-              className="h-9"
-              options={[
-                { value: 'paste', label: 'للّصق' },
-                { value: 'preview', label: 'معاينة في البرنامج' },
-              ]}
-            />
           </div>
 
-          {view === 'paste' ? (
-            <>
-              <label htmlFor={outId} className="sr-only">
-                النتيجة
-              </label>
-              {/* النتيجة بترتيب مرئي من اليسار لليمين — كما ستظهر في البرنامج الذي لا يدعم العربية */}
-              <Textarea
-                id={outId}
-                dir="ltr"
-                readOnly
-                value={result}
-                placeholder="ستظهر النتيجة هنا"
-                onFocus={(e) => e.currentTarget.select()}
-                className="min-h-64 flex-1 resize-y rounded-none border-0 bg-sunken/50 px-4 py-4 text-left text-lead leading-loose shadow-none [unicode-bidi:bidi-override] focus-visible:shadow-none sm:px-5"
-              />
-            </>
-          ) : (
-            <div className="flex flex-1 flex-col">
-              <div className="flex items-center justify-between gap-3 bg-sunken/50 px-4 py-2.5 sm:px-5">
-                <p className="text-caption text-muted-foreground">
-                  {stage === 'before' ? 'هكذا يظهر نصّك الأصلي في البرنامج.' : 'وهكذا تظهر النتيجة بعد المعالجة.'}
-                </p>
-                <SegmentedControl
-                  label="المرحلة"
-                  value={stage}
-                  onChange={setStage}
-                  className="h-9"
-                  options={[
-                    { value: 'before', label: 'قبل' },
-                    { value: 'after', label: 'بعد' },
-                  ]}
-                />
-              </div>
-              <AppPreview text={stage === 'before' ? text : result} stage={stage} className="flex-1" />
-            </div>
-          )}
+          <label htmlFor={outId} className="sr-only">
+            النتيجة
+          </label>
+          {/* النتيجة بترتيب مرئي من اليسار لليمين — كما ستظهر في البرنامج الذي لا يدعم العربية */}
+          <Textarea
+            id={outId}
+            dir="ltr"
+            readOnly
+            value={result}
+            placeholder="ستظهر النتيجة هنا"
+            onFocus={(e) => e.currentTarget.select()}
+            className="min-h-64 flex-1 resize-y rounded-none border-0 bg-sunken/50 px-4 py-4 text-left text-lead leading-loose shadow-none [unicode-bidi:bidi-override] focus-visible:shadow-none sm:px-5"
+          />
 
           <div className={cn(foot, 'flex-wrap justify-between py-2.5')}>
             <p aria-live="polite">
-              {copied
-                ? 'نُسخت النتيجة — الصقها في برنامجك.'
-                : view === 'paste'
-                  ? 'انقر على النتيجة لتحديدها كلها.'
-                  : 'المعاينة تقريبية؛ يختلف الشكل حسب خط البرنامج.'}
+              {copied ? 'نُسخت النتيجة — الصقها في برنامجك.' : 'انقر على النتيجة لتحديدها كلها.'}
             </p>
             <div className="flex gap-2">
               <Button variant="outline" size="sm" onClick={download} disabled={!result}>
