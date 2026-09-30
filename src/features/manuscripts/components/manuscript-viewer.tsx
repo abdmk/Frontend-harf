@@ -206,7 +206,7 @@ export function ManuscriptViewer({
                   </a>
                 </Button>
                 <Button variant="outline" aria-pressed={saved} onClick={onSave}>
-                  <BookmarkIcon className={cn(saved && '[&_path]:fill-current')} />
+                  <BookmarkIcon filled={saved} />
                   {saved ? 'محفوظة' : 'حفظ'}
                 </Button>
                 <span className="ms-auto text-caption text-tertiary max-sm:hidden">

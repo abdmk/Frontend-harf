@@ -127,7 +127,7 @@ export function PairDetail({
                 نسخ CSS
               </Button>
               <Button variant={saved ? 'secondary' : 'primary'} aria-pressed={saved} onClick={onSave}>
-                <BookmarkIcon />
+                <BookmarkIcon filled={saved} />
                 {saved ? 'محفوظة' : 'حفظ التركيبة'}
               </Button>
             </div>

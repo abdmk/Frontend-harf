@@ -30,7 +30,7 @@ import type { Money, PaymentMethod } from '@/types/domain/commerce';
 import type { PayState } from '../api/pay';
 
 const METHODS: [PaymentMethod, string, ReactNode][] = [
-  ['card', 'بطاقة', <CreditCardIcon key="c" className="size-5" />],
+  ['card', 'بطاقة', <CreditCardIcon key="c" filled="auto" className="size-5" />],
   [
     'apple_pay',
     'Apple Pay',

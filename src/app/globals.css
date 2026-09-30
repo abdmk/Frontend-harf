@@ -59,6 +59,35 @@
 
 /* ══ الأساس ══ */
 @layer base {
+  /* أيقونة filled="auto": خطّية، ومصمتة حين يكون أبوها المباشر مختاراً أو مفتوحاً */
+  svg[data-auto-fill] > [data-v='solid'],
+  :is(
+      [aria-pressed='true'],
+      [aria-current='page'],
+      [aria-expanded='true'],
+      [data-state='open'],
+      [data-state='on'],
+      [data-state='active'],
+      [data-state='checked']
+    )
+    > svg[data-auto-fill]
+    > [data-v='line'] {
+    display: none;
+  }
+  :is(
+      [aria-pressed='true'],
+      [aria-current='page'],
+      [aria-expanded='true'],
+      [data-state='open'],
+      [data-state='on'],
+      [data-state='active'],
+      [data-state='checked']
+    )
+    > svg[data-auto-fill]
+    > [data-v='solid'] {
+    display: inline;
+  }
+
   * {
     @apply border-border outline-ring/60;
   }

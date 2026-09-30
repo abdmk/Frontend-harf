@@ -1,7 +1,7 @@
 // يولّد src/components/ui/icons/icons.generated.ts من طقم الأيقونات tools/icons/uicons.zip.
 // الاستعمال:  pnpm icons   (يحتاج أداة unzip في النظام)
 import { execFileSync } from 'node:child_process';
-import { mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
@@ -122,8 +122,7 @@ const MAP: Record<string, string> = {
   mobile: 'fi-rr-mobile',
 };
 
-const out: Record<string, { viewBox: string; nodes: IconNode[] }> = {};
-for (const [name, file] of Object.entries(MAP)) {
+function parse(file: string) {
   const svg = readFileSync(join(dir, file + '.svg'), 'utf8');
   const viewBox = /viewBox="([^"]+)"/.exec(svg)?.[1] ?? '0 0 24 24';
   const body = svg.replace(/<defs>[\s\S]*?<\/defs>/g, '');
@@ -138,13 +137,71 @@ for (const [name, file] of Object.entries(MAP)) {
     nodes.push([m[1], attrs]);
   }
   if (!nodes.length) throw new Error('no shapes in ' + file);
-  out[name] = { viewBox, nodes };
+  return { viewBox, nodes };
 }
+
+// النسخة المصمتة (fi-sr) للأيقونات التي تظهر في عنصر له حالة اختيار (قوائم، أزرار مضغوطة، قوائم تفتح):
+// خطّية في الحالة العادية ومصمتة عند الاختيار (prop filled). محصورة بهذه القائمة لأن كل أيقونة
+// مستعملة تحمل نسختها المصمتة في الحزمة — أضف الاسم هنا حين تمرّر filled لأيقونة جديدة.
+const SOLID = new Set([
+  // قائمة الحساب والاستوديو
+  'user',
+  'cloud-upload',
+  'folder',
+  'heart',
+  'receipt',
+  'usage',
+  'crown',
+  'apps',
+  'sliders',
+  'lock',
+  'help',
+  'home',
+  'layers',
+  'stats',
+  'dollar',
+  // الهيدر وأزرار الحفظ والقوائم
+  'bell',
+  'cart',
+  'bookmark',
+  'download',
+  // خيارات مختارة (ترتيب، إتاحة، دفع، استخدام الترخيص، محاذاة، أدوات مختبر الخط)
+  'flame',
+  'time-past',
+  'gift',
+  'credit-card',
+  'computer',
+  'globe',
+  'mobile',
+  'align-left',
+  'align-right',
+  'align-center',
+  'align-justify',
+  'text',
+  'interlining',
+  'grid',
+  'badge',
+  'magic-wand',
+  'document',
+]);
+const out: Record<string, { viewBox: string; nodes: IconNode[]; solid?: IconNode[] }> = {};
+for (const [name, file] of Object.entries(MAP)) {
+  const icon = parse(file);
+  const solidFile = file.replace(/^fi-rr-/, 'fi-sr-');
+  let solid: IconNode[] | undefined;
+  if (SOLID.has(name) && solidFile !== file && existsSync(join(dir, solidFile + '.svg'))) {
+    const s = parse(solidFile);
+    if (s.viewBox !== icon.viewBox) throw new Error('viewBox mismatch: ' + file);
+    solid = s.nodes;
+  } else if (SOLID.has(name)) throw new Error('no solid variant for ' + name);
+  out[name] = { ...icon, solid };
+}
+for (const n of SOLID) if (!MAP[n]) throw new Error('unknown icon in SOLID: ' + n);
 
 const pascal = (n: string) => n.replace(/(^|-)([a-z])/g, (_, __, c: string) => c.toUpperCase()) + 'Icon';
 const lines = Object.entries(out).map(
-  ([name, { viewBox, nodes }]) =>
-    `export const ${pascal(name)} = /*#__PURE__*/ createIcon('${name}', '${viewBox}', ${JSON.stringify(nodes)});`,
+  ([name, { viewBox, nodes, solid }]) =>
+    `export const ${pascal(name)} = /*#__PURE__*/ createIcon('${name}', '${viewBox}', ${JSON.stringify(nodes)}${solid ? `, ${JSON.stringify(solid)}` : ''});`,
 );
 const ts = `// ⚠️ ملف مولَّد — لا تعدّله يدوياً. المصدر: tools/icons/uicons.zip، والمولّد: scripts/generate-icons.mts
 // كل أيقونة تصدير مستقلّ، فلا يدخل الحزمة إلا ما يُستعمل فعلاً.

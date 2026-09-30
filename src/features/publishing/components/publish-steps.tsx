@@ -434,17 +434,17 @@ export function PricingStep({ draft, set, errors }: StepProps) {
       >
         {(
           [
-            ['free', 'مجاني', 'يحمّله الجميع بلا مقابل ضمن حدود خطّتهم.', <GiftIcon key="i" />],
-            ['paid', 'مدفوع', 'يُباع بتراخيص، وتصلك أرباحه في «المالية» بالاستوديو.', <DollarIcon key="i" />],
+            ['free', 'مجاني', 'يحمّله الجميع بلا مقابل ضمن حدود خطّتهم.', GiftIcon],
+            ['paid', 'مدفوع', 'يُباع بتراخيص، وتصلك أرباحه في «المالية» بالاستوديو.', DollarIcon],
           ] as const
-        ).map(([value, label, desc, icon]) => (
+        ).map(([value, label, desc, Icon]) => (
           <RadioGroupPrimitive.Item
             key={value}
             value={value}
             className="group/opt flex items-start gap-3 rounded-lg border bg-card p-4 text-start transition-[border-color,box-shadow] duration-(--dur-base) hover:border-strong data-[state=checked]:border-primary data-[state=checked]:shadow-[0_0_0_1px_var(--color-primary)]"
           >
             <span className="grid size-10 shrink-0 place-items-center rounded-full bg-sunken text-muted-foreground transition-colors group-data-[state=checked]/opt:bg-tint-brand group-data-[state=checked]/opt:text-primary [&_svg]:size-4.5">
-              {icon}
+              <Icon filled={draft.availability === value} />
             </span>
             <span className="min-w-0 flex-1">
               <span className="block text-control font-semibold">{label}</span>

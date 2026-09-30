@@ -28,7 +28,11 @@ export function NotificationsMenu({ initial, allHref }: { initial: NotificationV
         aria-label={`الإشعارات${unread ? ` — ${unread} غير مقروءة` : ''}`}
         className="relative grid size-9 place-items-center rounded-sm text-muted-foreground transition-colors hover:bg-sunken hover:text-foreground data-[state=open]:bg-sunken data-[state=open]:text-foreground"
       >
-        <BellIcon className={cn('size-4.5 origin-top', ring && 'animate-ring')} onAnimationEnd={() => setRing(false)} />
+        <BellIcon
+          filled={open}
+          className={cn('size-4.5 origin-top', ring && 'animate-ring')}
+          onAnimationEnd={() => setRing(false)}
+        />
         {unread > 0 && (
           <span
             className="absolute end-1 top-1 grid h-4 min-w-4 animate-pop-in place-items-center rounded-full bg-primary-fill px-1 text-2xs leading-none font-medium text-white ring-2 ring-background"

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import { HeartFilledIcon, HeartIcon } from '@/components/ui/icons';
+import { HeartIcon } from '@/components/ui/icons';
 import { useFavorite } from '@/features/favorites/hooks/use-favorites';
 import { cn } from '@/lib/cn';
 
@@ -10,7 +10,6 @@ type Props = { fontId: string; fontName: string; variant?: 'card' | 'square'; cl
 export function FavoriteButton({ fontId, fontName, variant = 'card', className }: Props) {
   const { isFav, toggle } = useFavorite(fontId);
   const [pop, setPop] = useState(0);
-  const Icon = isFav ? HeartFilledIcon : HeartIcon;
   return (
     <button
       type="button"
@@ -29,7 +28,11 @@ export function FavoriteButton({ fontId, fontName, variant = 'card', className }
         className,
       )}
     >
-      <Icon key={pop} className={cn(variant === 'card' ? 'size-3.75' : 'size-4.5', pop > 0 && 'animate-heart')} />
+      <HeartIcon
+        key={pop}
+        filled={isFav}
+        className={cn(variant === 'card' ? 'size-3.75' : 'size-4.5', pop > 0 && 'animate-heart')}
+      />
     </button>
   );
 }

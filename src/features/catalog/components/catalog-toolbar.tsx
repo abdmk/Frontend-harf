@@ -14,8 +14,8 @@ import { useCatalog } from './catalog-context';
 import { FilterSheet } from './filter-sheet';
 
 const SORT_OPTIONS = [
-  { value: 'popular', label: 'الأكثر شهرة', icon: <FlameIcon /> },
-  { value: 'newest', label: 'الأحدث', icon: <TimePastIcon /> },
+  { value: 'popular', label: 'الأكثر شهرة', icon: <FlameIcon filled="auto" /> },
+  { value: 'newest', label: 'الأحدث', icon: <TimePastIcon filled="auto" /> },
 ] as const satisfies readonly { value: Sort; label: string; icon: ReactNode }[];
 
 const CHIPS = [
@@ -57,7 +57,7 @@ export function CatalogToolbar() {
               'border-border bg-card font-medium hover:border-strong dark:border-transparent dark:bg-sunken',
             )}
           >
-            <SlidersIcon className="size-4" />
+            <SlidersIcon filled="auto" className="size-4" />
             تصفية
             {count > 0 && (
               <span

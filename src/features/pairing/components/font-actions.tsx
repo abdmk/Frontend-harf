@@ -77,7 +77,7 @@ export function DownloadAction({
   return (
     <DropdownMenu>
       <DropdownMenuTrigger className={cn(action(tone), className)}>
-        <DownloadIcon className="size-3.5" />
+        <DownloadIcon filled="auto" className="size-3.5" />
         تحميل
         <ChevronDownIcon className={chevron} />
       </DropdownMenuTrigger>
@@ -123,7 +123,7 @@ export function BuyAction({ items, className }: { items: Item[]; className?: str
   return (
     <DropdownMenu>
       <DropdownMenuTrigger className={cn(action('primary'), className)}>
-        <CartIcon className="size-3.5" />
+        <CartIcon filled="auto" className="size-3.5" />
         شراء
         <ChevronDownIcon className={chevron} />
       </DropdownMenuTrigger>

@@ -63,7 +63,10 @@ export function CategoryToggle<T extends string>({
         onClick={toggle}
         className={cn(TOOLBAR_PILL, 'border-transparent bg-primary-fill ps-4 font-medium text-white hover:bg-harf-600')}
       >
-        <AppsIcon className={cn('size-4 transition-transform duration-(--dur-slow) ease-pop', !open && 'rotate-90')} />
+        <AppsIcon
+          filled={open}
+          className={cn('size-4 transition-transform duration-(--dur-slow) ease-pop', !open && 'rotate-90')}
+        />
         التصنيف
         {/* مطويّ وتصنيف مختار: يظهر اسمه على الزرّ حتى لا يُنسى الفلتر */}
         {!open && value !== defaultValue && current && (

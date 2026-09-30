@@ -90,7 +90,7 @@ export function StudioSidebar({ foundry }: { foundry: Foundry }) {
                   aria-current={on && !children ? 'page' : undefined}
                   className={sideNavRow(on && !open)}
                 >
-                  <Icon className={sideNavIcon(on)} />
+                  <Icon filled={on} className={sideNavIcon(on)} />
                   <span className="flex-1">{label}</span>
                 </Link>
                 {open && (
@@ -121,7 +121,7 @@ export function StudioSidebar({ foundry }: { foundry: Foundry }) {
           aria-current={profileOn ? 'page' : undefined}
           className={sideNavRow(profileOn)}
         >
-          <STUDIO_PROFILE_ITEM.Icon className={sideNavIcon(profileOn)} />
+          <STUDIO_PROFILE_ITEM.Icon filled={profileOn} className={sideNavIcon(profileOn)} />
           <span className="flex-1">{STUDIO_PROFILE_ITEM.label}</span>
           {incomplete && <IncompleteBadge />}
         </Link>

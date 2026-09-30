@@ -180,7 +180,7 @@ export function FontTester({ face }: { face?: LiveFace } = {}) {
               title={label}
               onClick={() => setS((x) => ({ ...x, align: a }))}
             >
-              <Icon className="size-4" />
+              <Icon filled="auto" className="size-4" />
             </button>
           ))}
         </div>

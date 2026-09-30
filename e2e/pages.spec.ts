@@ -118,3 +118,19 @@ test('المساعدة: البحث في الأسئلة، وروابط سريعة
     .click();
   await expect(page).toHaveURL(/\/privacy$/);
 });
+
+test('الأيقونات: مصمتة للعنصر المختار وخطّية لغيره', async ({ page }) => {
+  await page.goto('/account/purchases?as=studio');
+  const nav = page.getByRole('navigation', { name: 'قائمة الحساب' });
+  await expect(nav.locator('[aria-current="page"] svg[data-filled]')).toHaveCount(1);
+  await expect(nav.locator('a:not([aria-current]) svg[data-filled]')).toHaveCount(0);
+
+  // زرّ يفتح نافذة: الأيقونة تتبع حالته (filled="auto")
+  await page.goto('/');
+  // بعد الفتح يُخفى ما خارج النافذة عن شجرة الوصول، فنحدّد الزرّ بالـCSS لا بالدور
+  const trigger = page.locator('button[aria-haspopup="dialog"]', { hasText: 'تصفية' }).first();
+  const solid = trigger.locator('svg[data-auto-fill] > [data-v="solid"]');
+  await expect(solid).toBeHidden();
+  await trigger.click();
+  await expect(solid).toBeVisible();
+});

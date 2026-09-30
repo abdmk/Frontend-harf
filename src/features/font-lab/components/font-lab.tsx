@@ -250,7 +250,7 @@ function ToolNav({ current, onGo }: { current: ToolKey; onGo: (k: ToolKey) => vo
                           : 'text-muted-foreground hover:bg-sunken hover:text-foreground',
                       )}
                     >
-                      <t.icon className="size-4 shrink-0" />
+                      <t.icon filled={on} className="size-4 shrink-0" />
                       <span className="flex-1 text-start">{t.label}</span>
                       {count ? (
                         <span dir="ltr" className="text-caption text-tertiary tabular-nums">
@@ -281,7 +281,7 @@ function ToolNav({ current, onGo }: { current: ToolKey; onGo: (k: ToolKey) => vo
                     on ? 'border-primary font-medium text-primary' : 'bg-card text-muted-foreground',
                   )}
                 >
-                  <t.icon className="size-4" />
+                  <t.icon filled={on} className="size-4" />
                   {t.label}
                 </button>
               </li>

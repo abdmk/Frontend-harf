@@ -118,7 +118,7 @@ export function AccountPanel({
                       aria-current={on ? 'page' : undefined}
                       className={sideNavRow(on, menu ? 'sm' : 'lg')}
                     >
-                      <Icon className={sideNavIcon(on, menu ? 'sm' : 'lg')} />
+                      <Icon filled={on} className={sideNavIcon(on, menu ? 'sm' : 'lg')} />
                       <span className="flex-1">{label}</span>
                       {m && <span className={cn('text-muted-foreground', s.meta)}>{m}</span>}
                       {badge && (

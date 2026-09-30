@@ -170,7 +170,7 @@ export function PairCard({
                     onClick={() => onLock(role, s.font.id)}
                     className="relative z-10 -me-1.5 grid size-8 shrink-0 place-items-center rounded-full text-tertiary transition-[color,background-color] duration-(--dur-fast) hover:bg-sunken hover:text-foreground aria-pressed:bg-tint-brand aria-pressed:text-primary"
                   >
-                    <LockIcon className={cn('size-4', isLocked && 'animate-pop-in')} />
+                    <LockIcon filled={isLocked} className={cn('size-4', isLocked && 'animate-pop-in')} />
                   </button>
                 )}
               </li>
@@ -192,7 +192,7 @@ export function PairCard({
               onClick={onSave}
               className="relative z-10 grid size-8 place-items-center rounded-xs border bg-sunken text-foreground transition-[background-color,border-color,color,transform] duration-(--dur-base) hover:bg-inset active:scale-[.95] aria-pressed:border-primary aria-pressed:bg-tint-brand aria-pressed:text-primary"
             >
-              <BookmarkIcon className={cn('size-4', saved && 'animate-pop-in [&_path]:fill-current')} />
+              <BookmarkIcon filled={saved} className={cn('size-4', saved && 'animate-pop-in')} />
             </button>
             <DownloadAction items={items} tone={paid ? 'secondary' : 'primary'} />
             <BuyAction items={items} />

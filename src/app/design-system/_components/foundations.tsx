@@ -178,7 +178,7 @@ export function Foundations() {
         num="1.3"
         title="الأيقونات"
         en="Icons"
-        note={`${icons.length} أيقونة من طقم UIcons، تولَّد بـpnpm icons ويُستورد منها ما يُستعمل فقط. الخطّي للواجهة، والمصمت (Filled) للحالة المفعّلة.`}
+        note={`${icons.length} أيقونة من طقم UIcons، تولَّد بـpnpm icons ويُستورد منها ما يُستعمل فقط. الخطّي هو الافتراضي، والمصمت للعنصر المختار: filled={on}، أو filled="auto" ليتبع حالة الزرّ الأب (مضغوط، مفتوح، حالي). قائمة المصمتات في scripts/generate-icons.mts.`}
       >
         <DsPanel>
           <ul className="grid grid-cols-4 gap-2 sm:grid-cols-8 lg:grid-cols-10">

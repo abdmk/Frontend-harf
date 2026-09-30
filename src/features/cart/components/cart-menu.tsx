@@ -28,7 +28,7 @@ export function CartMenu({
         aria-label={count ? (count === 1 ? 'السلة، عنصر واحد' : `السلة، ${count} عناصر`) : 'السلة'}
         className="relative grid size-9 place-items-center rounded-sm text-muted-foreground transition-colors hover:bg-sunken hover:text-foreground data-[state=open]:bg-sunken data-[state=open]:text-foreground"
       >
-        <CartIcon className="size-4.5" />
+        <CartIcon filled={open} className="size-4.5" />
         {count > 0 && (
           <span
             aria-hidden

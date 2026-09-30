@@ -188,7 +188,7 @@ export function LicenseSheet({
                     <label className="flex cursor-pointer items-start gap-3">
                       <Checkbox checked={on} onCheckedChange={(v) => toggleUse(use, v === true)} className="mt-0.5" />
                       <span className="grid size-8 shrink-0 place-items-center rounded-xs bg-sunken text-muted-foreground">
-                        <Icon className="size-4" />
+                        <Icon filled={on} className="size-4" />
                       </span>
                       <span className="min-w-0 flex-1">
                         <span className="block text-control font-medium">{USE_LABEL[use]}</span>

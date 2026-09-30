@@ -117,7 +117,7 @@ export function ManuscriptsBrowser() {
                 'border-border bg-card font-medium hover:border-strong dark:border-transparent dark:bg-sunken',
               )}
             >
-              <SlidersIcon className="size-4" />
+              <SlidersIcon filled="auto" className="size-4" />
               تصفية
               {count > 0 && (
                 <span
@@ -136,8 +136,8 @@ export function ManuscriptsBrowser() {
           value={query.sort}
           onChange={(sort) => update({ sort })}
           options={[
-            { value: 'newest', label: 'الأحدث', icon: <TimePastIcon /> },
-            { value: 'popular', label: 'الأكثر تحميلاً', icon: <FlameIcon /> },
+            { value: 'newest', label: 'الأحدث', icon: <TimePastIcon filled="auto" /> },
+            { value: 'popular', label: 'الأكثر تحميلاً', icon: <FlameIcon filled="auto" /> },
           ]}
         />
       </div>

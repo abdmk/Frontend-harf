@@ -100,7 +100,7 @@ export function Sample() {
                 onClick={() => set({ align: value })}
                 className="grid size-9 place-items-center rounded-full text-muted-foreground transition-colors aria-pressed:bg-paper aria-pressed:text-paper-foreground aria-pressed:shadow-soft"
               >
-                <Icon className="size-4" />
+                <Icon filled="auto" className="size-4" />
               </button>
             ))}
           </div>

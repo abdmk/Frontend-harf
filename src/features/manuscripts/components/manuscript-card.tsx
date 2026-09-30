@@ -70,7 +70,7 @@ export function ManuscriptCard({
         onClick={onSave}
         className="absolute start-4 top-4 z-10 grid size-8 place-items-center rounded-full bg-heart text-white backdrop-blur-sm transition-[transform,background-color] duration-(--dur-base) ease-pop hover:scale-105 active:scale-95 aria-pressed:bg-primary-fill"
       >
-        <BookmarkIcon className={cn('size-3.75', saved && 'animate-pop-in [&_path]:fill-current')} />
+        <BookmarkIcon filled={saved} className={cn('size-3.75', saved && 'animate-pop-in')} />
       </button>
 
       {/* تتقلّص التفاصيل مع عرض البطاقة (container query): عمودان على الجوال بلا اقتطاع */}

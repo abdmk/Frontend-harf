@@ -93,7 +93,7 @@ export function NasaqToolbar({
                 'border-border bg-card font-medium hover:border-strong dark:border-transparent dark:bg-sunken',
               )}
             >
-              <SlidersIcon className="size-4" />
+              <SlidersIcon filled="auto" className="size-4" />
               الخيارات
               {count > 0 && (
                 <span
