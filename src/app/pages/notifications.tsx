@@ -1,6 +1,7 @@
 import { Navigate } from 'react-router';
 
 import { Container } from '@/components/layout/container';
+import { PageIntro } from '@/components/layout/page-intro';
 import { PageMeta } from '@/components/shared/page-meta';
 import { paths } from '@/config/paths';
 import { getNotifications } from '@/features/notifications/api/get-notifications';
@@ -14,7 +15,7 @@ export function NotificationsPage() {
   return (
     <Container as="main" id="main" className="max-w-2xl py-8 sm:py-12">
       <PageMeta title="الإشعارات" noindex />
-      <h1 className="mb-8 text-2xl font-semibold">الإشعارات</h1>
+      <PageIntro size="compact" title="الإشعارات" />
       <NotificationsPanel initial={items} />
     </Container>
   );

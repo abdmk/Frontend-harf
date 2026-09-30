@@ -1,5 +1,6 @@
 import { CatalogCard } from '@/app/_components/catalog-card';
 import { Container } from '@/components/layout/container';
+import { PageIntro } from '@/components/layout/page-intro';
 import { PageMeta } from '@/components/shared/page-meta';
 import { Button } from '@/components/ui/button';
 import { FontMatchingTool, type ResultCardProps } from '@/features/font-matching/components/font-matching-tool';
@@ -54,13 +55,11 @@ export function FontMatchingPage() {
         title="مطابقة الخطوط"
         description="ارفع صورة فيها كتابة عربية، ونقارن شكل حروفها بخطوط مكتبة حرف — في متصفّحك."
       />
-      <header className="mb-8 max-w-[62ch]">
-        <h1 className="text-2xl font-semibold sm:text-3xl">مطابقة الخطوط</h1>
-        <p className="mt-2 text-control leading-relaxed text-muted-foreground">
-          ارفع صورة فيها كتابة عربية واكتب ما فيها، ونقارن شكل الحروف بخطوط مكتبة حرف — في متصفّحك، ولا تُرفع صورتك إلى
-          أي خادم.
-        </p>
-      </header>
+      <PageIntro
+        eyebrow="أدوات حرف"
+        title="مطابقة الخطوط"
+        lead="ارفع صورة فيها كتابة عربية واكتب ما فيها، ونقارن شكل الحروف بخطوط مكتبة حرف — في متصفّحك، ولا تُرفع صورتك إلى أي خادم."
+      />
       <FontMatchingTool renderResult={(p) => <ResultCard {...p} />} />
     </Container>
   );

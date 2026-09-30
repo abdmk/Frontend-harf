@@ -2,6 +2,7 @@ import { Collapsible as CollapsiblePrimitive } from 'radix-ui';
 import { Link } from 'react-router';
 
 import { Container } from '@/components/layout/container';
+import { PageIntro } from '@/components/layout/page-intro';
 import { PageMeta } from '@/components/shared/page-meta';
 import { ArrowLeftIcon, ChevronDownIcon } from '@/components/ui/icons';
 import { paths } from '@/config/paths';
@@ -34,13 +35,11 @@ export function ReverseTextPage() {
         title="عكس النص"
         description="حوّل النص العربي ليظهر متّصلاً وصحيح الاتجاه في After Effects وPhotoshop وUnity والبرامج التي لا تدعم العربية."
       />
-      <header className="mb-8 max-w-[62ch]">
-        <h1 className="text-2xl font-semibold sm:text-3xl">عكس النص</h1>
-        <p className="mt-2 text-control leading-relaxed text-muted-foreground">
-          برامج كثيرة تعرض العربية حروفاً منفصلة ومقلوبة. اكتب نصّك، وشاهده قبل المعالجة وبعدها، ثم انسخه جاهزاً للّصق —
-          في متصفّحك، ولا يُرسل نصّك إلى أي مكان.
-        </p>
-      </header>
+      <PageIntro
+        eyebrow="أدوات حرف"
+        title="عكس النص"
+        lead="برامج كثيرة تعرض العربية حروفاً منفصلة ومقلوبة. اكتب نصّك، واختر ما يناسب برنامجك، ثم انسخه جاهزاً للّصق — في متصفّحك، ولا يُرسل نصّك إلى أي مكان."
+      />
 
       <ReverseWorkspace />
 

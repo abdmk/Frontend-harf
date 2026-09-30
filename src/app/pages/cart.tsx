@@ -1,6 +1,7 @@
 import { Link } from 'react-router';
 
 import { Container } from '@/components/layout/container';
+import { PageIntro } from '@/components/layout/page-intro';
 import { EmptyState } from '@/components/shared/empty-state';
 import { OrderSummary } from '@/components/shared/order-summary';
 import { PageMeta } from '@/components/shared/page-meta';
@@ -46,15 +47,7 @@ export function CartPage() {
   return (
     <Container as="main" id="main" className="py-10 sm:py-14">
       <PageMeta title="السلة" />
-      <h1 className="mb-8 flex items-center gap-3 text-2xl font-semibold">
-        <CartIcon className="size-6" />
-        السلة
-        {cart.items.length > 0 && (
-          <span dir="ltr" className="grid size-7 place-items-center rounded-full bg-sunken text-meta font-medium">
-            {cart.items.length}
-          </span>
-        )}
-      </h1>
+      <PageIntro size="compact" title="السلة" icon={<CartIcon />} count={cart.items.length} />
 
       {cart.items.length === 0 ? (
         <EmptyState

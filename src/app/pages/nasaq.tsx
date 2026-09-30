@@ -1,4 +1,5 @@
 import { Container } from '@/components/layout/container';
+import { PageIntro } from '@/components/layout/page-intro';
 import { PageMeta } from '@/components/shared/page-meta';
 import { NasaqTool } from '@/features/pairing/components/nasaq-tool';
 
@@ -10,13 +11,11 @@ export function NasaqPage() {
         title="نسق — تركيبات خطوط متناسقة"
         description="اختر ما تصمّمه، ونقترح عليك خطوطاً عربية تعمل معاً — معروضة بخطوطها الحقيقية."
       />
-      <header className="mb-8 max-w-[62ch]">
-        <h1 className="text-2xl font-semibold sm:text-3xl">نسق</h1>
-        <p className="mt-2 text-control leading-relaxed text-muted-foreground">
-          اختر ما تصمّمه، ونقترح عليك خطوطاً عربية تعمل معاً — معروضة بخطوطها الحقيقية، وكلها من مكتبة حرف: حمّل
-          المجانية مباشرة، واشترِ ترخيص المدفوعة من السلة.
-        </p>
-      </header>
+      <PageIntro
+        eyebrow="أدوات حرف"
+        title="نسق"
+        lead="اختر ما تصمّمه، ونقترح عليك خطوطاً عربية تعمل معاً — معروضة بخطوطها الحقيقية، وكلها من مكتبة حرف: حمّل المجانية مباشرة، واشترِ ترخيص المدفوعة من السلة."
+      />
       <NasaqTool />
     </Container>
   );
