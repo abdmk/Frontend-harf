@@ -126,7 +126,7 @@ export function PublishWorkspace({
         <h2 className="text-xl font-semibold">أُرسل الخط للمراجعة</h2>
         <p className="text-control text-muted-foreground">
           رقم المراجعة{' '}
-          <span dir="ltr" className="font-mono">
+          <span dir="ltr" className="tabular-nums">
             {done}
           </span>
           . تصلك رسالة خلال 24 ساعة.
@@ -246,7 +246,7 @@ export function PublishWorkspace({
       </section>
 
       {/* شريط الإجراءات: يلتصق بأسفل الشاشة أثناء التمرير، ويستقرّ فوق التذييل في النهاية */}
-      <div className="sticky bottom-0 z-10 -mx-4 mt-10 border-t bg-background/90 px-4 py-4 backdrop-blur-md sm:mx-0 sm:rounded-t-xl sm:border-x sm:px-5">
+      <div className="sticky bottom-0 z-10 -mx-4 mt-10 bg-background/90 px-4 py-4 backdrop-blur-md sm:mx-0 sm:px-0">
         <div className="flex gap-3">
           <Button
             variant="secondary"

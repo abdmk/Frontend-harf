@@ -122,7 +122,7 @@ export function StudioDashboard({
               <p className="mt-3 text-meta text-muted-foreground">
                 الدفعة القادمة <strong className="text-foreground">{formatDateAr(a.earnings.nextPayout)}</strong> ·
                 التحويل كل 14 يوماً إلى{' '}
-                <span dir="ltr" className="font-mono">
+                <span dir="ltr" className="tabular-nums">
                   IQ•• {a.earnings.bankLast4}
                 </span>
               </p>

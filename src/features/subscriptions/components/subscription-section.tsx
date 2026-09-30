@@ -124,11 +124,11 @@ export function SubscriptionSection({
       <Card title="طريقة الدفع" icon={<CreditCardIcon />}>
         {subscription.paymentMethod ? (
           <div className="flex items-center gap-4 rounded-md border p-4">
-            <span className="rounded-[4px] border px-1.5 font-mono text-micro font-bold text-visa uppercase">
+            <span className="rounded-[4px] border px-1.5 text-micro font-bold font-medium text-visa uppercase">
               {subscription.paymentMethod.brand}
             </span>
             <div className="flex-1">
-              <p dir="ltr" className="text-right font-mono text-control">
+              <p dir="ltr" className="text-right text-control tabular-nums">
                 •••• {subscription.paymentMethod.last4}
               </p>
               <p className="text-caption text-muted-foreground">تنتهي {subscription.paymentMethod.expires}</p>

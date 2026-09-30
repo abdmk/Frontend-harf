@@ -52,6 +52,15 @@
   html {
     -webkit-text-size-adjust: 100%;
     --font-graphik: 'Graphik Arabic', sans-serif;
+    /* مساحة شريط التمرير محجوزة دائماً: لا يتغيّر عرض الصفحة (ولا تنزاح الواجهة أفقياً)
+       حين يظهر الشريط أو يختفي بين صفحة قصيرة وطويلة، أو عند فتح نافذة */
+    scrollbar-gutter: stable;
+  }
+  /* قفل التمرير في نوافذ Radix يضيف هامشاً بعرض الشريط تعويضاً عنه — المساحة محجوزة أصلاً
+     بـscrollbar-gutter، فالهامش يزيح الصفحة. نلغيه. */
+  html body[data-scroll-locked] {
+    margin-right: 0 !important;
+    margin-left: 0 !important;
   }
   body {
     @apply bg-background text-foreground antialiased;

@@ -60,7 +60,7 @@ export function PurchaseActions({
         <Badge tone="neutral" size="md" icon={<CheckIcon />}>
           مملوك
           {licenseId && (
-            <span dir="ltr" className="font-mono">
+            <span dir="ltr" className="tabular-nums">
               {' '}
               · {licenseId}
             </span>

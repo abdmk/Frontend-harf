@@ -43,7 +43,7 @@ export function PurchasesSection({ purchases }: { purchases: Purchase[] }) {
         <TableBody>
           {purchases.map((p) => (
             <TableRow key={p.licenseId}>
-              <TableCell dir="ltr" className="text-right font-mono text-meta">
+              <TableCell dir="ltr" className="text-right text-meta tabular-nums">
                 {p.licenseId}
               </TableCell>
               <TableCell>

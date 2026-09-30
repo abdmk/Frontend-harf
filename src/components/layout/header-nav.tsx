@@ -11,7 +11,14 @@ function isActive(href: string, pathname: string, paid: boolean) {
   return href !== '#' && pathname.startsWith(href);
 }
 
-export function HeaderNav({ className }: { className?: string }) {
+export function HeaderNav({
+  className,
+  onIntent,
+}: {
+  className?: string;
+  /** مرور المؤشّر أو التركيز على رابط — لبدء تنزيل حزمة الصفحة مسبقاً (من طبقة التطبيق) */
+  onIntent?: (href: string) => void;
+}) {
   const { pathname } = useLocation();
   const [searchParams] = useSearchParams();
   const paid = searchParams.get('license') === 'paid';
@@ -76,6 +83,9 @@ export function HeaderNav({ className }: { className?: string }) {
             key={item.label}
             to={item.href}
             aria-current={active ? 'page' : undefined}
+            // تبدأ حزمة الصفحة الثقيلة بالتنزيل قبل النقر — فيكون الانتقال شبه فوري
+            onPointerEnter={() => onIntent?.(item.href)}
+            onFocus={() => onIntent?.(item.href)}
             className={cn(
               'flex shrink-0 items-center px-3 text-sm whitespace-nowrap text-muted-foreground transition-colors duration-(--dur-fast) hover:text-foreground',
               active && 'font-medium text-primary hover:text-primary',

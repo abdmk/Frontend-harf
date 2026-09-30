@@ -1,12 +1,11 @@
-import { lazy, Suspense } from 'react';
 import { Route, Routes } from 'react-router';
 
-import { LoadingState } from '@/components/shared/loading-state';
 import { COMING_SOON, type ComingSoonKey } from '@/config/coming-soon';
 
 import { ErrorBoundary } from './error';
 import { SiteLayout } from './layouts/site-layout';
 import { WideLayout } from './layouts/wide-layout';
+import { FontLabPage, FontMatchingPage, NasaqPage } from './lazy-pages';
 import { AccountIndexPage } from './pages/account-index';
 import { AccountSectionPage } from './pages/account-section';
 import { AnalyticsPage } from './pages/analytics';
@@ -30,11 +29,6 @@ import { StudioPage } from './pages/studio';
 import { AppProviders } from './providers';
 import { ScrollToTop } from './scroll-to-top';
 
-// «نسق» في حزمة منفصلة: الكتالوج والخطوط لا تُحمَّل إلا لمن يفتح الأداة
-const NasaqPage = lazy(() => import('./pages/nasaq').then((m) => ({ default: m.NasaqPage })));
-const FontLabPage = lazy(() => import('./pages/font-lab').then((m) => ({ default: m.FontLabPage })));
-const FontMatchingPage = lazy(() => import('./pages/font-matching').then((m) => ({ default: m.FontMatchingPage })));
-
 export function App() {
   return (
     <AppProviders>
@@ -51,32 +45,9 @@ export function App() {
           <Route path="designers/:id" element={<DesignerPage />} />
           <Route path="manuscripts" element={<ManuscriptsPage />} />
           <Route path="tools/reverse-text" element={<ReverseTextPage />} />
-          <Route
-            path="tools/nasaq"
-            element={
-              <Suspense fallback={<LoadingState className="container-page py-14" label="جارٍ تحميل «نسق»…" />}>
-                <NasaqPage />
-              </Suspense>
-            }
-          />
-          <Route
-            path="tools/font-lab"
-            element={
-              <Suspense fallback={<LoadingState className="container-page py-14" label="جارٍ تحميل «مختبر الخط»…" />}>
-                <FontLabPage />
-              </Suspense>
-            }
-          />
-          <Route
-            path="tools/font-matching"
-            element={
-              <Suspense
-                fallback={<LoadingState className="container-page py-14" label="جارٍ تحميل «مطابقة الخطوط»…" />}
-              >
-                <FontMatchingPage />
-              </Suspense>
-            }
-          />
+          <Route path="tools/nasaq" element={<NasaqPage />} />
+          <Route path="tools/font-lab" element={<FontLabPage />} />
+          <Route path="tools/font-matching" element={<FontMatchingPage />} />
           {(Object.keys(COMING_SOON) as ComingSoonKey[]).map((k) => (
             <Route key={k} path={COMING_SOON[k].path.slice(1)} element={<ComingSoonPage page={k} />} />
           ))}

@@ -141,7 +141,7 @@ export function FilesStep({ draft, set, errors }: StepProps) {
                     <p dir="ltr" className="truncate text-right text-control font-medium">
                       {f.weight} {f.style}
                     </p>
-                    <p dir="ltr" className="truncate text-right font-mono text-caption text-tertiary">
+                    <p dir="ltr" className="truncate text-right text-caption text-tertiary tabular-nums">
                       {f.name} · {formatBytesAr(f.size)}
                     </p>
                   </div>

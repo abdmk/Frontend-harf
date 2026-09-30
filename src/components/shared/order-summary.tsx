@@ -62,7 +62,7 @@ export function OrderSummary({
           <div className="flex justify-between gap-4 text-ok-text">
             <dt>
               الخصم{' '}
-              <span dir="ltr" className="font-mono text-caption">
+              <span dir="ltr" className="text-caption tabular-nums">
                 ({cart.coupon})
               </span>
             </dt>

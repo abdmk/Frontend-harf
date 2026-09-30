@@ -34,14 +34,14 @@ const METHODS: [PaymentMethod, string, ReactNode][] = [
   [
     'apple_pay',
     'Apple Pay',
-    <span key="a" className="rounded-[4px] border px-1 font-mono text-micro">
+    <span key="a" className="rounded-[4px] border px-1 text-micro font-medium">
       Apple Pay
     </span>,
   ],
   [
     'google_pay',
     'Google Pay',
-    <span key="g" className="rounded-[4px] border px-1 font-mono text-micro">
+    <span key="g" className="rounded-[4px] border px-1 text-micro font-medium">
       G Pay
     </span>,
   ],
@@ -72,13 +72,13 @@ export function CheckoutForm({ user, total, empty, action }: Props) {
         <dl className="my-5 flex flex-col divide-y text-control">
           <div className="flex justify-between py-2.5">
             <dt className="text-muted-foreground">رقم الطلب</dt>
-            <dd dir="ltr" className="font-mono">
+            <dd dir="ltr" className="tabular-nums">
               {state.order.id}
             </dd>
           </div>
           <div className="flex justify-between py-2.5">
             <dt className="text-muted-foreground">طريقة الدفع</dt>
-            <dd dir="ltr" className="font-mono">
+            <dd dir="ltr" className="tabular-nums">
               {state.order.last4
                 ? `Visa •••• ${state.order.last4}`
                 : METHODS.find(([m]) => m === state.order.method)?.[1]}
@@ -238,7 +238,7 @@ export function CheckoutForm({ user, total, empty, action }: Props) {
                 placeholder="1234 1234 1234 1234"
                 autoComplete="off"
                 start={<CreditCardIcon />}
-                end={<span className="font-mono text-micro">VISA · MC · AMEX</span>}
+                end={<span className="text-micro font-medium">VISA · MC · AMEX</span>}
               />
             </Field>
             <div className="grid grid-cols-3 gap-3">

@@ -113,34 +113,38 @@ export function PairCard({
               </div>
 
               {/* العيّنة بدور الخط الحقيقي */}
-              {!ready ? (
-                <span role="status" aria-label="تحميل الخطوط" className="flex flex-col gap-2">
-                  <Skeleton className={cn('bg-inset', role === 'body' ? 'h-3.5 w-full' : 'h-9 w-4/5')} />
-                  {role === 'body' && <Skeleton className="h-3.5 w-5/6 bg-inset" />}
-                </span>
-              ) : role === 'body' ? (
-                <p
-                  className="line-clamp-4 animate-fade-up text-sm leading-loose text-foreground/75"
-                  style={slotStyle(s)}
-                >
-                  {text.body}
-                </p>
-              ) : role === 'heading' ? (
-                <div className="animate-fade-up">
-                  <p className="line-clamp-2 text-4xl leading-snug [overflow-wrap:anywhere]" style={slotStyle(s)}>
-                    {text.heading}
-                  </p>
-                  {showLatin && (
-                    <p dir="ltr" className="mt-1 line-clamp-1 text-2xl text-muted-foreground" style={slotStyle(s)}>
-                      {text.latin}
+              {/* النص الحقيقي يحجز مكانه من اللحظة الأولى (مخفيّاً حتى يُحمَّل خطّه)، والهيكل فوقه —
+                  فلا يتغيّر ارتفاع البطاقة حين يصل الخط */}
+              <div className="relative">
+                <div className={cn('transition-opacity duration-(--dur-slow)', !ready && 'opacity-0')}>
+                  {role === 'body' ? (
+                    <p className="line-clamp-4 text-sm leading-loose text-foreground/75" style={slotStyle(s)}>
+                      {text.body}
+                    </p>
+                  ) : role === 'heading' ? (
+                    <>
+                      <p className="line-clamp-2 text-4xl leading-snug [overflow-wrap:anywhere]" style={slotStyle(s)}>
+                        {text.heading}
+                      </p>
+                      {showLatin && (
+                        <p dir="ltr" className="mt-1 line-clamp-1 text-2xl text-muted-foreground" style={slotStyle(s)}>
+                          {text.latin}
+                        </p>
+                      )}
+                    </>
+                  ) : (
+                    <p className="line-clamp-1 text-xl" style={slotStyle(s)}>
+                      {text.sub}
                     </p>
                   )}
                 </div>
-              ) : (
-                <p className="line-clamp-1 animate-fade-up text-xl" style={slotStyle(s)}>
-                  {text.sub}
-                </p>
-              )}
+                {!ready && (
+                  <span role="status" aria-label="تحميل الخطوط" className="absolute inset-0 flex flex-col gap-2">
+                    <Skeleton className={cn('bg-inset', role === 'body' ? 'h-3.5 w-full' : 'h-9 w-4/5')} />
+                    {role === 'body' && <Skeleton className="h-3.5 w-5/6 bg-inset" />}
+                  </span>
+                )}
+              </div>
             </section>
           );
         })}

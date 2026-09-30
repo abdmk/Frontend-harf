@@ -14,10 +14,12 @@ const NAV_CLASS =
 type SiteHeaderProps = {
   /** أزرار الترويسة القادمة من الـfeatures (السلة، الإشعارات، الحساب) */
   actions?: ReactNode;
+  /** يُمرَّر إلى روابط الأقسام: بدء تنزيل الصفحة قبل النقر */
+  onNavIntent?: (href: string) => void;
 };
 
 /** الترويسة بعرض عمود المحتوى نفسه في كل الصفحات */
-export function SiteHeader({ actions }: SiteHeaderProps) {
+export function SiteHeader({ actions, onNavIntent }: SiteHeaderProps) {
   return (
     <header className="sticky top-0 z-50 border-b border-subtle bg-background/90 backdrop-blur-lg backdrop-saturate-150">
       <a
@@ -41,7 +43,7 @@ export function SiteHeader({ actions }: SiteHeaderProps) {
         </div>
         {/* useSearchParams يحتاج حدّ Suspense في الصفحات الثابتة */}
         <Suspense fallback={<div className={NAV_CLASS} />}>
-          <HeaderNav className={NAV_CLASS} />
+          <HeaderNav className={NAV_CLASS} onIntent={onNavIntent} />
         </Suspense>
       </div>
     </header>

@@ -51,7 +51,7 @@ export function FontDetailsTabs({ font }: { font: Font }) {
           {files.map(([name, kind, desc]) => (
             <li key={name} className="flex items-center gap-4 border-b border-subtle py-3 text-sm">
               <FileIcon kind={kind} className="h-10 w-8" />
-              <span dir="ltr" className="flex-1 text-right font-mono text-meta">
+              <span dir="ltr" className="flex-1 text-right text-meta tabular-nums">
                 {name}
               </span>
               <span className="text-meta text-tertiary">{desc}</span>
