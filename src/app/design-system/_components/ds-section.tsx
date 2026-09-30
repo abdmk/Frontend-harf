@@ -2,12 +2,13 @@ import type { ReactNode } from 'react';
 
 import { cn } from '@/lib/cn';
 
-export type DsStatus = 'live' | 'reference' | 'not-designed';
+export type DsStatus = 'live' | 'reference' | 'not-designed' | 'proposal';
 
 const STATUS: Record<DsStatus, [string, string]> = {
   live: ['نموذج حيّ', 'bg-tint-ok text-ok-text'],
   reference: ['مرجع ثابت', 'bg-sunken text-muted-foreground'],
   'not-designed': ['لم يُصمَّم بعد', 'bg-tint-warn text-warn-text'],
+  proposal: ['مقترح — للمراجعة', 'bg-tint-ai text-ai-text'],
 };
 
 /** قسم في الدليل: رقم + عنوان عربي/إنجليزي + حالة التنفيذ */

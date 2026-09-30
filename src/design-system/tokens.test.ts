@@ -6,8 +6,10 @@ import { describe, expect, it } from 'vitest';
 import { breakpoints, duration, easing, surface } from './tokens';
 
 const css = readFileSync(join(__dirname, 'tokens.css'), 'utf8');
+/** كتلة المحدِّد — ‎:root‎ مشترك مع جزيرة ‎.light‎ («:root,\n.light {») */
 const block = (selector: string) => {
-  const start = css.indexOf(`${selector} {`);
+  const m = new RegExp(`(^|\\n)${selector.replace('.', '\\.')}(,[^{]*)? \\{`).exec(css);
+  const start = m ? m.index : -1;
   return css.slice(start, css.indexOf('\n}', start));
 };
 const cssVar = (scope: string, name: string) => new RegExp(`--${name}:\\s*([^;]+);`).exec(scope)?.[1].trim();

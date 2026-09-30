@@ -36,6 +36,7 @@ import { ComponentsDemo } from '../design-system/_components/components-demo';
 import { demoPlan, demoSubmit } from '../design-system/_components/demo-actions';
 import { DsPanel, DsSection } from '../design-system/_components/ds-section';
 import { Foundations } from '../design-system/_components/foundations';
+import { GradientsDemo } from '../design-system/_components/gradients-demo';
 import { DS_GROUPS } from '../design-system/_components/nav-items';
 import { DataPatternsDemo, NavigationDemo } from '../design-system/_components/patterns-demo';
 
@@ -121,6 +122,7 @@ export function DesignSystemPage() {
         </header>
 
         <Foundations />
+        <GradientsDemo />
         <ComponentsDemo />
 
         <DsSection
