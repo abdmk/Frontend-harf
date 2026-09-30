@@ -1,61 +1,23 @@
 /*
- * لحظات لونية (Gradient Moments) — ⚠️ مقترحات للمراجعة فقط، غير مستعملة في الموقع بعد.
+ * لحظات لونية (Gradient Moments) — الاتجاه المعتمد: «فجر» (خوخي يذوب في وردي).
  *
- * القاعدة: 80% من الواجهة هادئة ومحايدة، و20% لحظات لونية مختارة. اللون لا يدور حول أحمر حرف.
- * كل اتجاه زوج مصمَّم لوضعه — لا نفس التدرّج بسطوع مختلف:
- *   الفاتح: لونان باستيليّان من زاوية/حافّة، يتلاشيان نحو الأبيض قبل منتصف العنصر.
- *   الداكن: لون واحد عميق قليل التشبّع من زاوية، يذوب في سطح البطاقة، مع حدّ رفيع ملوّن على
- *           الزاوية المضيئة — بلا توهّج خارج العنصر وبلا ألوان نيون.
- * لكل اتجاه: --grad-X (الخلفية) و--grad-X-edge (حدّ الزاوية) و--grad-X-ink (لون الأيقونة/النقطة).
- * الزوايا بـ«at 100% 0%» = أعلى اليمين = بداية السطر في RTL.
+ * القاعدة: 80% من الواجهة هادئة ومحايدة، و20% لحظات لونية. لحظة واحدة في الشاشة على الأكثر:
+ * مقدّمة الأدوات والمجموعات، صناديق التواصل، وبطاقة الرصيد في المالية. لا على النصوص ولا الأزرار
+ * ولا الجداول.
+ *   الفاتح: لونان باستيليّان من زاوية البداية، يتلاشيان نحو الأبيض قبل منتصف العنصر.
+ *   الداكن: لون عميق قليل التشبّع من الزاوية يذوب في سطح البطاقة، مع حدّ رفيع — بلا توهّج ولا نيون.
+ * «at 100% 0%» = أعلى اليمين = بداية السطر في RTL. الاستعمال عبر الصنف ‎moment‎ (globals.css).
  */
 
 :root,
 .light {
-  /* فجر — خوخي ← وردي */
   --grad-dawn:
     radial-gradient(70% 110% at 100% 0%, #ffdcc8 0%, rgb(255 220 200 / 0) 62%),
-    radial-gradient(55% 90% at 62% 0%, #fcd6e6 0%, rgb(252 214 230 / 0) 64%), #ffffff;
+    radial-gradient(55% 90% at 62% 0%, #fcd6e6 0%, rgb(252 214 230 / 0) 64%), var(--card);
   --grad-dawn-edge: rgb(245 170 140 / 0.35);
-  --grad-dawn-ink: #d9764f;
+  --grad-dawn-ink: #b8532c;
 
-  /* نعناع — أخضر مائي ← سماوي */
-  --grad-mint:
-    radial-gradient(70% 110% at 100% 0%, #cdf2e7 0%, rgb(205 242 231 / 0) 62%),
-    radial-gradient(55% 90% at 60% 0%, #d8eff8 0%, rgb(216 239 248 / 0) 64%), #ffffff;
-  --grad-mint-edge: rgb(110 200 175 / 0.35);
-  --grad-mint-ink: #2f9e80;
-
-  /* ليلك — بنفسجي فاتح ← لازوردي */
-  --grad-lilac:
-    radial-gradient(70% 110% at 100% 0%, #e5dcff 0%, rgb(229 220 255 / 0) 62%),
-    radial-gradient(55% 90% at 58% 0%, #d7e5ff 0%, rgb(215 229 255 / 0) 64%), #ffffff;
-  --grad-lilac-edge: rgb(150 130 240 / 0.35);
-  --grad-lilac-ink: #6d55e0;
-
-  /* رمل — زبدي ← مشمشي */
-  --grad-sand:
-    radial-gradient(70% 110% at 100% 0%, #fff0c4 0%, rgb(255 240 196 / 0) 62%),
-    radial-gradient(55% 90% at 60% 0%, #ffe2cf 0%, rgb(255 226 207 / 0) 64%), #ffffff;
-  --grad-sand-edge: rgb(230 180 80 / 0.4);
-  --grad-sand-ink: #b9851a;
-
-  /* سماء — أزرق صافٍ ← أبيض (ليل عميق في الداكن) */
-  --grad-sky:
-    radial-gradient(80% 120% at 100% 0%, #d8e9ff 0%, rgb(216 233 255 / 0) 60%),
-    radial-gradient(50% 80% at 40% 0%, #e8f3ff 0%, rgb(232 243 255 / 0) 60%), #ffffff;
-  --grad-sky-edge: rgb(100 150 240 / 0.35);
-  --grad-sky-ink: #2f6fd6;
-
-  /* قزح — مزيج خافت متعدّد للّحظات الخاصّة (الخطط، الترقية) */
-  --grad-prism:
-    radial-gradient(45% 100% at 100% 0%, #ffd6e4 0%, rgb(255 214 228 / 0) 66%),
-    radial-gradient(45% 100% at 66% 0%, #e2dcff 0%, rgb(226 220 255 / 0) 66%),
-    radial-gradient(45% 100% at 32% 0%, #d4f1ea 0%, rgb(212 241 234 / 0) 66%), #ffffff;
-  --grad-prism-edge: rgb(190 160 230 / 0.35);
-  --grad-prism-ink: #9a5bd6;
-
-  /* لمعة قطرية خفيفة (كخطوط الضوء في مرجع Wayl) — طبقة فوق أي اتجاه */
+  /* لمعة قطرية خفيفة (كخطوط الضوء في مرجع Wayl) */
   --grad-sheen: linear-gradient(115deg, rgb(255 255 255 / 0) 30%, rgb(255 255 255 / 0.6) 40%, rgb(255 255 255 / 0) 52%);
 }
 
@@ -65,29 +27,6 @@
     radial-gradient(45% 80% at 66% 0%, rgb(96 42 70 / 0.32) 0%, rgb(96 42 70 / 0) 62%), var(--card);
   --grad-dawn-edge: rgb(214 130 98 / 0.4);
   --grad-dawn-ink: #f0a07f;
-
-  --grad-mint: radial-gradient(65% 100% at 100% 0%, rgb(24 98 82 / 0.5) 0%, rgb(24 98 82 / 0) 60%), var(--card);
-  --grad-mint-edge: rgb(80 190 160 / 0.4);
-  --grad-mint-ink: #6fd3b5;
-
-  --grad-lilac: radial-gradient(65% 100% at 100% 0%, rgb(70 52 150 / 0.5) 0%, rgb(70 52 150 / 0) 60%), var(--card);
-  --grad-lilac-edge: rgb(150 128 255 / 0.4);
-  --grad-lilac-ink: #b2a2ff;
-
-  --grad-sand: radial-gradient(65% 100% at 100% 0%, rgb(120 86 24 / 0.5) 0%, rgb(120 86 24 / 0) 60%), var(--card);
-  --grad-sand-edge: rgb(230 176 70 / 0.4);
-  --grad-sand-ink: #f0c060;
-
-  --grad-sky: linear-gradient(180deg, rgb(24 40 110 / 0.62) 0%, rgb(24 40 110 / 0) 70%), var(--card);
-  --grad-sky-edge: rgb(90 130 255 / 0.4);
-  --grad-sky-ink: #8fb2ff;
-
-  --grad-prism:
-    radial-gradient(40% 90% at 100% 0%, rgb(110 44 80 / 0.4) 0%, rgb(110 44 80 / 0) 66%),
-    radial-gradient(40% 90% at 64% 0%, rgb(66 50 140 / 0.4) 0%, rgb(66 50 140 / 0) 66%),
-    radial-gradient(40% 90% at 28% 0%, rgb(22 90 76 / 0.36) 0%, rgb(22 90 76 / 0) 66%), var(--card);
-  --grad-prism-edge: rgb(170 140 240 / 0.35);
-  --grad-prism-ink: #c9a6ff;
 
   --grad-sheen: linear-gradient(
     115deg,

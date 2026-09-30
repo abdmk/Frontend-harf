@@ -166,7 +166,7 @@ export function LegalDocument({
               aria-labelledby={`${s.id}-t`}
               className={cn(
                 'scroll-mt-24',
-                s === contact ? 'mt-12 rounded-xl bg-sunken p-6 sm:p-8' : 'mt-10 border-t pt-10',
+                s === contact ? 'mt-12 rounded-xl border moment p-6 sm:p-8' : 'mt-10 border-t pt-10',
               )}
             >
               <h2 id={`${s.id}-t`} className="text-xl leading-snug font-bold">

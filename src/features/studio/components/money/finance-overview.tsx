@@ -49,7 +49,7 @@ export function FinanceOverview() {
     <div className="flex flex-col gap-6">
       <section
         aria-labelledby="bal-t"
-        className="flex animate-fade-up flex-col gap-6 rounded-xl border bg-card p-6 sm:flex-row sm:items-end sm:justify-between"
+        className="flex animate-fade-up flex-col gap-6 rounded-xl border moment p-6 sm:flex-row sm:items-end sm:justify-between"
       >
         <div>
           <p id="bal-t" className="text-control text-muted-foreground">

@@ -51,6 +51,12 @@
   scrollbar-color: var(--strong) transparent;
 }
 
+/* لحظة لونية «فجر» — للأماكن المعتمدة فقط (انظر design-system/gradients.css) */
+@utility moment {
+  background: var(--grad-sheen), var(--grad-dawn);
+  border-color: var(--grad-dawn-edge);
+}
+
 /* ══ الأساس ══ */
 @layer base {
   * {

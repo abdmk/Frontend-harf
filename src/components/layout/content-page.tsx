@@ -60,7 +60,7 @@ export function ContentSection({
 /** صندوق التواصل الرمادي في نهاية الصفحة — كقسم «التواصل» في الوثائق القانونية */
 export function ContactBox({ title, children, action }: { title: string; children: ReactNode; action: ReactNode }) {
   return (
-    <section className="flex flex-col gap-4 rounded-xl bg-sunken p-6 sm:flex-row sm:items-center sm:justify-between sm:p-8">
+    <section className="flex flex-col gap-4 rounded-xl border moment p-6 sm:flex-row sm:items-center sm:justify-between sm:p-8">
       <div>
         <h2 className="text-xl font-bold">{title}</h2>
         <p className="mt-1 text-control leading-relaxed text-muted-foreground">{children}</p>
