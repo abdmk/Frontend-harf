@@ -60,9 +60,11 @@ test('حسابات التواصل في التذييل حقيقية، وتلغر�
   await expect(page.locator('a[href="#"]')).toHaveCount(0);
 });
 
-test('إعدادات ملفات تعريف الارتباط: من التذييل وسياسة الخصوصية، والاختيار يُحفظ', async ({ page }) => {
+test('إعدادات ملفات تعريف الارتباط: من سياسة الخصوصية (لا زرّ في التذييل)، والاختيار يُحفظ', async ({ page }) => {
   await page.goto('/');
-  await page.locator('footer').getByRole('button', { name: 'إعدادات ملفات تعريف الارتباط' }).click();
+  await expect(page.locator('footer').getByRole('button', { name: 'إعدادات ملفات تعريف الارتباط' })).toHaveCount(0);
+  await page.goto('/privacy');
+  await page.getByRole('main').getByRole('button', { name: 'إعدادات ملفات تعريف الارتباط' }).click();
   const dialog = page.getByRole('dialog', { name: 'إعدادات ملفات تعريف الارتباط' });
   await expect(dialog.getByRole('switch', { name: /الضرورية/ })).toBeDisabled();
   await expect(dialog.getByRole('switch', { name: 'التحليلات' })).not.toBeChecked();
@@ -70,7 +72,7 @@ test('إعدادات ملفات تعريف الارتباط: من التذييل
   await dialog.getByRole('button', { name: 'حفظ اختياري' }).click();
   await expect(dialog).toBeHidden();
 
-  await page.goto('/privacy');
+  await page.reload();
   await page.getByRole('main').getByRole('button', { name: 'إعدادات ملفات تعريف الارتباط' }).click();
   await expect(dialog.getByRole('switch', { name: 'التحليلات' })).toBeChecked();
   await expect(dialog.getByRole('switch', { name: 'التسويق' })).not.toBeChecked();

@@ -9,7 +9,6 @@ import stripe from '@/assets/payments/stripe.svg';
 import visa from '@/assets/payments/visa.svg';
 import { SOCIAL, SocialIcon } from '@/components/shared/social-icons';
 import { footerNav, socialLinks } from '@/config/site';
-import { openConsentSettings } from '@/lib/consent';
 
 /** شعارات وسائل الدفع كما وردت من ملف الهوية؛ Apple Pay وGoogle Pay لهما نسخة للوضع الداكن، وVisa تُقلب للأبيض */
 function PaymentMarks() {
@@ -92,9 +91,6 @@ export function SiteFooter() {
               {l.label}
             </Link>
           ))}
-          <button type="button" onClick={openConsentSettings} className="transition-colors hover:text-primary">
-            إعدادات ملفات تعريف الارتباط
-          </button>
         </nav>
         <span>جميع الحقوق محفوظة لحرف © 2026</span>
       </div>
