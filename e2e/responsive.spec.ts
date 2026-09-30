@@ -29,6 +29,20 @@ const PAGES = [
   '/tools/font-matching',
   '/tools/font-lab?font=cairo',
   '/manuscripts',
+  '/?license=paid',
+  '/about',
+  '/services',
+  '/help',
+  '/terms',
+  '/privacy',
+  '/blog',
+  '/designers/aj',
+  '/studio/finance/sales?as=studio',
+  '/account/preferences?as=free',
+  '/account/usage?as=free',
+  '/account/library?as=free',
+  '/account/favorites?as=free',
+  '/does-not-exist',
 ];
 
 for (const path of PAGES) {
@@ -45,7 +59,8 @@ for (const path of PAGES) {
   }
 }
 
-test('لوحة التصفية تفتح من الأسفل على الجوال', async ({ page }) => {
+test('لوحة التصفية تفتح من الأسفل على الجوال', async ({ page }, info) => {
+  test.skip(info.project.name !== 'mobile', 'على التابلت والحاسوب تُفتح في الوسط');
   await page.goto('/');
   await page.getByRole('button', { name: /تصفية/ }).click();
   const sheet = page.getByRole('dialog', { name: 'تصفية' });
