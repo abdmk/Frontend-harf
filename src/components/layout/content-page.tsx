@@ -2,43 +2,70 @@ import type { ReactNode } from 'react';
 
 import { Container } from '@/components/layout/container';
 import { PageMeta } from '@/components/shared/page-meta';
+import { cn } from '@/lib/cn';
 
-/** صفحة محتوى ثابت (عن حرف، الخدمات، المساعدة، الشروط…): عنوان ومقدّمة ثم محتوى بعرض قراءة مريح */
+/**
+ * صفحة محتوى (عن حرف، الخدمات، المساعدة): عنوان في الوسط ومقدّمة كالوثائق القانونية،
+ * ثم أقسام بعرض قراءة مريح — وأعرض قليلاً حين تحوي بطاقات.
+ */
 export function ContentPage({
   title,
   lead,
-  notice,
+  wide,
   children,
 }: {
   title: string;
   lead?: string;
-  /** شريط تنبيه أعلى المحتوى (مثل «مسودّة») */
-  notice?: ReactNode;
+  /** عرض أوسع للصفحات ذات البطاقات */
+  wide?: boolean;
   children: ReactNode;
 }) {
   return (
-    <Container as="main" id="main" className="py-10 sm:py-14">
+    <Container as="main" id="main" className="py-12 sm:py-20">
       <PageMeta title={title} description={lead} />
-      <div className="mx-auto max-w-170">
-        <header className="mb-10">
-          <h1 className="text-2xl font-semibold sm:text-3xl">{title}</h1>
-          {lead && <p className="mt-3 text-lead leading-relaxed text-muted-foreground">{lead}</p>}
-        </header>
-        {notice}
-        <div className="flex flex-col gap-10">{children}</div>
+      <header className="mx-auto max-w-2xl text-center">
+        <h1 className="animate-fade-up text-display leading-tight font-bold">{title}</h1>
+        {lead && <p className="mt-4 text-lead leading-relaxed text-muted-foreground">{lead}</p>}
+      </header>
+      <div className={cn('mx-auto mt-12 flex flex-col gap-14 sm:mt-16', wide ? 'max-w-4xl' : 'max-w-2xl')}>
+        {children}
       </div>
     </Container>
   );
 }
 
-/** قسم داخل صفحة المحتوى: عنوان ثم فقرات أو قائمة */
-export function ContentSection({ title, children }: { title: string; children: ReactNode }) {
+/** قسم داخل صفحة المحتوى: عنوان ثم فقرات أو قائمة أو بطاقات */
+export function ContentSection({
+  title,
+  description,
+  children,
+}: {
+  title: string;
+  description?: string;
+  children: ReactNode;
+}) {
   return (
-    <section className="flex flex-col gap-3">
-      <h2 className="text-lg font-semibold">{title}</h2>
-      <div className="flex flex-col gap-3 text-control leading-loose text-muted-foreground [&_a:not([data-slot])]:text-foreground [&_a:not([data-slot])]:underline [&_a:not([data-slot])]:underline-offset-4 [&_a:not([data-slot])]:hover:text-primary [&_li]:ms-5 [&_ul]:list-disc [&_ul]:space-y-1.5">
+    <section className="flex flex-col gap-4">
+      <div>
+        <h2 className="text-xl font-bold">{title}</h2>
+        {description && <p className="mt-1 text-meta text-muted-foreground">{description}</p>}
+      </div>
+      <div className="flex flex-col gap-3 text-control leading-loose text-muted-foreground [&_a:not([data-slot])]:text-foreground [&_a:not([data-slot])]:underline [&_a:not([data-slot])]:underline-offset-4 [&_a:not([data-slot])]:hover:text-primary">
         {children}
       </div>
+    </section>
+  );
+}
+
+/** صندوق التواصل الرمادي في نهاية الصفحة — كقسم «التواصل» في الوثائق القانونية */
+export function ContactBox({ title, children, action }: { title: string; children: ReactNode; action: ReactNode }) {
+  return (
+    <section className="flex flex-col gap-4 rounded-xl bg-sunken p-6 sm:flex-row sm:items-center sm:justify-between sm:p-8">
+      <div>
+        <h2 className="text-xl font-bold">{title}</h2>
+        <p className="mt-1 text-control leading-relaxed text-muted-foreground">{children}</p>
+      </div>
+      <div className="shrink-0">{action}</div>
     </section>
   );
 }

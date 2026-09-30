@@ -79,3 +79,20 @@ test('إعدادات ملفات تعريف الارتباط: من التذييل
   // لا شريط موافقة ما دامت لا أداة غير ضرورية مفعّلة
   await expect(page.getByRole('region', { name: 'ملفات تعريف الارتباط' })).toHaveCount(0);
 });
+
+test('المساعدة: البحث في الأسئلة، وروابط سريعة', async ({ page }) => {
+  await page.goto('/help');
+  const search = page.getByRole('searchbox', { name: 'ابحث في الأسئلة' });
+  await search.fill('استرجاع');
+  await expect(page.getByRole('button', { name: 'هل يمكن استرجاع المبلغ؟' })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'كيف أحذف حسابي؟' })).toHaveCount(0);
+  await page.getByRole('button', { name: 'هل يمكن استرجاع المبلغ؟' }).click();
+  await expect(page.getByText(/أحكام خاصة في الاسترجاع/)).toBeVisible();
+  await search.fill('زززز');
+  await expect(page.getByRole('status').filter({ hasText: 'لا أسئلة تطابق' })).toBeVisible();
+  await page
+    .getByRole('main')
+    .getByRole('link', { name: /الخصوصية/ })
+    .click();
+  await expect(page).toHaveURL(/\/privacy$/);
+});
