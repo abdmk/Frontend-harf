@@ -1,10 +1,12 @@
 import { Link } from 'react-router';
 
-import { ArrowLeftIcon, BookmarkIcon, LockIcon, MagicWandIcon } from '@/components/ui/icons';
+import { BookmarkIcon, CheckIcon, ClockIcon, CrownIcon, LockIcon } from '@/components/ui/icons';
 import { Skeleton } from '@/components/ui/skeleton';
 import { paths } from '@/config/paths';
 import { cn } from '@/lib/cn';
 import { weightsLabel } from '@/lib/format';
+import { TYPE_LABEL } from '@/lib/labels';
+import type { Font } from '@/types/domain/font';
 
 import { BuyAction, DownloadAction, libraryItems } from './font-actions';
 import type { Specimen } from '../data/specimens';
@@ -18,10 +20,32 @@ export const comboTitle = (c: Combo) => `تركيبة ${c.heading.font.nameAr} �
 type Role = 'heading' | 'body';
 const SHORT_ROLE = { العناوين: 'العناوين', 'العناوين الفرعية': 'الفرعي', النصوص: 'النصوص' } as const;
 
+/** شارات الترخيص نفسها في بطاقة الخط */
+const BADGE = {
+  free: { cls: 'bg-ok-700 text-white', Icon: CheckIcon },
+  trial: { cls: 'bg-trial-600 text-white', Icon: ClockIcon },
+  paid: { cls: 'bg-gold-500 text-gold-foreground', Icon: CrownIcon },
+} as const;
+
+function LicenseBadge({ font }: { font: Font }) {
+  const b = BADGE[font.type];
+  return (
+    <span
+      className={cn(
+        'inline-flex h-5.5 shrink-0 items-center gap-1 rounded-full px-2 text-caption leading-none font-medium',
+        b.cls,
+      )}
+    >
+      <b.Icon className="size-3" />
+      {font.type === 'paid' ? <bdi dir="ltr">${font.price}</bdi> : TYPE_LABEL[font.type]}
+    </span>
+  );
+}
+
 /**
- * بطاقة التركيبة كـ«ورقة عيّنات»: لكل خط قسمه — دوره واسمه، المسبك والأوزان والسعر، القفل،
- * ثم عيّنته بدوره الحقيقي (عنوان كبير، أو فقرة). في الأسفل: لماذا يتناسقان، الحفظ والتحميل/الشراء،
- * وروابط صفحات الخطوط. النقر في أي مكان آخر يفتح التفاصيل.
+ * بطاقة التركيبة بتشريح بطاقة الخط: في الأعلى لوحة العيّنة — الخطّان معاً كما سيُستعملان
+ * (عنوان فوق فقرة) — ثم سطر لكل خط: دوره، اسمه رابطاً لصفحته، أوزانه، شارة ترخيصه، والقفل.
+ * في الأسفل سبب التناسق، ثم الحفظ والتحميل/الشراء. النقر في أي مكان آخر يفتح التفاصيل.
  */
 export function PairCard({
   combo,
@@ -64,40 +88,79 @@ export function PairCard({
         className="absolute inset-0 rounded-lg focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-primary focus-visible:outline-none"
       />
 
+      {/* لوحة العيّنة — النص الحقيقي يحجز مكانه مخفيّاً حتى يصل خطّه، والهيكل فوقه: لا قفزة في الارتفاع */}
+      <div aria-hidden className="pointer-events-none relative border-b bg-sunken px-6 pt-12 pb-7">
+        <span className="absolute end-4 top-4 inline-flex h-6 items-center gap-1 rounded-full bg-card px-2.5 text-caption leading-none text-muted-foreground shadow-soft">
+          تناسق
+          <span dir="ltr" className="font-semibold text-foreground tabular-nums">
+            {combo.score}٪
+          </span>
+        </span>
+        <div
+          className={cn(
+            'flex flex-col gap-3 transition-[opacity,transform] duration-(--dur-slow) ease-out-quint group-hover/card:scale-[1.02]',
+            !ready && 'opacity-0',
+          )}
+        >
+          <p className="line-clamp-2 text-4xl leading-snug [overflow-wrap:anywhere]" style={slotStyle(combo.heading)}>
+            {text.heading}
+          </p>
+          {showLatin && (
+            <p dir="ltr" className="-mt-2 line-clamp-1 text-2xl text-muted-foreground" style={slotStyle(combo.heading)}>
+              {text.latin}
+            </p>
+          )}
+          {combo.sub && (
+            <p className="line-clamp-1 text-xl" style={slotStyle(combo.sub)}>
+              {text.sub}
+            </p>
+          )}
+          <p className="line-clamp-3 text-sm leading-loose text-foreground/75" style={slotStyle(combo.body)}>
+            {text.body}
+          </p>
+        </div>
+        {!ready && (
+          <span className="absolute inset-x-6 top-12 flex flex-col gap-3">
+            <Skeleton className="h-9 w-4/5 bg-inset" />
+            <Skeleton className="mt-2 h-3.5 w-full bg-inset" />
+            <Skeleton className="h-3.5 w-5/6 bg-inset" />
+          </span>
+        )}
+      </div>
+      {!ready && <span role="status" aria-label="تحميل الخطوط" className="sr-only" />}
+
       {/* المحتوى يمرّر النقر إلى الرابط الممتدّ تحته — الأزرار والروابط وحدها تلتقطه */}
-      <div className="pointer-events-none relative flex flex-1 flex-col divide-y px-5 [&_a]:pointer-events-auto [&_button]:pointer-events-auto [&>*]:py-5">
-        {slots.map((s) => {
-          const role: Role | null = s === combo.heading ? 'heading' : s === combo.body ? 'body' : null;
-          const isLocked = role ? locked[role] === s.font.id : false;
-          const lib = items.find((i) => i.pair.id === s.font.id)?.font;
-          return (
-            <section key={s.role} aria-label={`${s.role}: ${s.font.nameAr}`} className="flex flex-col gap-3">
-              <div className="flex items-start gap-3">
-                <div className="min-w-0 flex-1">
-                  <p className="flex min-w-0 items-baseline gap-2">
-                    <span className="shrink-0 text-meta font-medium text-primary">{SHORT_ROLE[s.role]}</span>
-                    <span dir="ltr" className="truncate text-lead font-semibold">
+      <div className="pointer-events-none relative flex flex-1 flex-col gap-4 p-5 [&_a]:pointer-events-auto [&_button]:pointer-events-auto">
+        <ul className="flex flex-col divide-y">
+          {slots.map((s) => {
+            const role: Role | null = s === combo.heading ? 'heading' : s === combo.body ? 'body' : null;
+            const isLocked = role ? locked[role] === s.font.id : false;
+            const lib = items.find((i) => i.pair.id === s.font.id)?.font;
+            return (
+              <li
+                key={s.role}
+                aria-label={`${s.role}: ${s.font.nameAr}`}
+                className="flex items-center gap-3 py-3 first:pt-0 last:pb-0"
+              >
+                <span className="flex min-w-0 flex-1 flex-col gap-0.5">
+                  {lib ? (
+                    <Link
+                      to={paths.font.getHref(lib.id)}
+                      dir="ltr"
+                      className="relative z-10 max-w-full self-start truncate font-semibold underline-offset-4 transition-colors hover:text-primary hover:underline"
+                    >
+                      {s.font.name}
+                    </Link>
+                  ) : (
+                    <span dir="ltr" className="max-w-full self-start truncate font-semibold">
                       {s.font.name}
                     </span>
-                  </p>
-                  <p className="mt-1.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-meta text-muted-foreground">
-                    <span dir="auto" className="truncate">
-                      {s.font.foundry}
-                    </span>
-                    <span aria-hidden>·</span>
-                    <span>{weightsLabel(s.font.weights.length)}</span>
-                    {lib && (
-                      <span
-                        className={cn(
-                          'inline-flex h-5.5 items-center rounded-full px-2 text-caption leading-none font-semibold',
-                          lib.type === 'paid' ? 'bg-ink text-ink-foreground' : 'bg-ok-700 text-white',
-                        )}
-                      >
-                        {lib.type === 'paid' ? <bdi dir="ltr">${lib.price}</bdi> : 'مجاني'}
-                      </span>
-                    )}
-                  </p>
-                </div>
+                  )}
+                  <span className="truncate text-caption text-muted-foreground">
+                    {SHORT_ROLE[s.role]} · {weightsLabel(s.font.weights.length)}
+                  </span>
+                </span>
+                {lib && <LicenseBadge font={lib} />}
                 {role && onLock && (
                   <button
                     type="button"
@@ -105,92 +168,37 @@ export function PairCard({
                     aria-label={isLocked ? `فكّ تثبيت ${s.font.nameAr}` : `ثبّت ${s.font.nameAr} لـ${s.role}`}
                     title={isLocked ? 'مثبّت — «تركيبات جديدة» تغيّر الباقي فقط' : 'ثبّت هذا الخط وغيّر الباقي'}
                     onClick={() => onLock(role, s.font.id)}
-                    className="relative z-10 grid size-9 shrink-0 place-items-center rounded-full border text-muted-foreground transition-[color,background-color,border-color] duration-(--dur-fast) hover:border-strong hover:text-foreground aria-pressed:border-primary aria-pressed:bg-tint-brand aria-pressed:text-primary"
+                    className="relative z-10 -me-1.5 grid size-8 shrink-0 place-items-center rounded-full text-tertiary transition-[color,background-color] duration-(--dur-fast) hover:bg-sunken hover:text-foreground aria-pressed:bg-tint-brand aria-pressed:text-primary"
                   >
                     <LockIcon className={cn('size-4', isLocked && 'animate-pop-in')} />
                   </button>
                 )}
-              </div>
+              </li>
+            );
+          })}
+        </ul>
 
-              {/* العيّنة بدور الخط الحقيقي */}
-              {/* النص الحقيقي يحجز مكانه من اللحظة الأولى (مخفيّاً حتى يُحمَّل خطّه)، والهيكل فوقه —
-                  فلا يتغيّر ارتفاع البطاقة حين يصل الخط */}
-              <div className="relative">
-                <div className={cn('transition-opacity duration-(--dur-slow)', !ready && 'opacity-0')}>
-                  {role === 'body' ? (
-                    <p className="line-clamp-4 text-sm leading-loose text-foreground/75" style={slotStyle(s)}>
-                      {text.body}
-                    </p>
-                  ) : role === 'heading' ? (
-                    <>
-                      <p className="line-clamp-2 text-4xl leading-snug [overflow-wrap:anywhere]" style={slotStyle(s)}>
-                        {text.heading}
-                      </p>
-                      {showLatin && (
-                        <p dir="ltr" className="mt-1 line-clamp-1 text-2xl text-muted-foreground" style={slotStyle(s)}>
-                          {text.latin}
-                        </p>
-                      )}
-                    </>
-                  ) : (
-                    <p className="line-clamp-1 text-xl" style={slotStyle(s)}>
-                      {text.sub}
-                    </p>
-                  )}
-                </div>
-                {!ready && (
-                  <span role="status" aria-label="تحميل الخطوط" className="absolute inset-0 flex flex-col gap-2">
-                    <Skeleton className={cn('bg-inset', role === 'body' ? 'h-3.5 w-full' : 'h-9 w-4/5')} />
-                    {role === 'body' && <Skeleton className="h-3.5 w-5/6 bg-inset" />}
-                  </span>
-                )}
-              </div>
-            </section>
-          );
-        })}
+        <p className="line-clamp-2 text-meta leading-relaxed text-muted-foreground">{combo.reason}</p>
         {failed && <p className="text-caption text-warn-text">تعذّر تحميل أحد الخطوط — المعاينة تقريبية.</p>}
-      </div>
 
-      <footer className="pointer-events-none relative flex flex-col gap-4 border-t bg-sunken/60 p-5 pt-4 [&_a]:pointer-events-auto [&_button]:pointer-events-auto">
-        <p className="flex gap-2.5 text-meta leading-relaxed text-muted-foreground">
-          <MagicWandIcon className="mt-0.5 size-4 shrink-0 text-primary" />
-          <span className="flex-1">{combo.reason}</span>
-          <span className="shrink-0 text-caption">
-            تناسق{' '}
-            <span dir="ltr" className="font-semibold text-foreground tabular-nums">
-              {combo.score}٪
-            </span>
-          </span>
-        </p>
-
-        <div className="flex gap-2 [&>*]:h-10 [&>*]:flex-1">
-          <button
-            type="button"
-            aria-pressed={saved}
-            aria-label={saved ? `إزالة ${title} من المحفوظة` : `حفظ ${title}`}
-            onClick={onSave}
-            className="relative z-10 inline-flex items-center justify-center gap-2 rounded-xs border bg-card text-meta font-medium transition-[background-color,border-color,color,transform] duration-(--dur-base) hover:border-strong active:scale-[.97] aria-pressed:border-primary aria-pressed:text-primary"
-          >
-            <BookmarkIcon className={cn('size-4', saved && 'animate-pop-in [&_path]:fill-current')} />
-            {saved ? 'محفوظة' : 'حفظ'}
-          </button>
-          <DownloadAction items={items} tone={paid ? 'secondary' : 'primary'} className="h-10" />
-          <BuyAction items={items} className="h-10" />
-        </div>
-
-        <nav aria-label={`صفحات خطوط ${title}`} className="flex flex-wrap gap-x-5 gap-y-1 border-t pt-3">
-          {items.map(({ pair, font }) => (
-            <Link
-              key={pair.id}
-              to={paths.font.getHref(font.id)}
-              className="group/ln relative z-10 inline-flex items-center gap-1 text-meta font-medium text-primary"
+        <div className="mt-auto flex items-center justify-between gap-3">
+          <span className="truncate text-sm font-medium text-lic">{paid ? 'خط مدفوع' : 'مجانية بالكامل'}</span>
+          <div className="flex shrink-0 gap-2">
+            <button
+              type="button"
+              aria-pressed={saved}
+              aria-label={saved ? `إزالة ${title} من المحفوظة` : `حفظ ${title}`}
+              title={saved ? 'محفوظة' : 'حفظ'}
+              onClick={onSave}
+              className="relative z-10 grid size-8 place-items-center rounded-xs border bg-sunken text-foreground transition-[background-color,border-color,color,transform] duration-(--dur-base) hover:bg-inset active:scale-[.95] aria-pressed:border-primary aria-pressed:bg-tint-brand aria-pressed:text-primary"
             >
-              <span dir="ltr">{pair.name}</span>
-              <ArrowLeftIcon className="size-3.5 transition-transform duration-(--dur-base) ease-out-quint group-hover/ln:-translate-x-0.5" />
-            </Link>
-          ))}
-        </nav>
-      </footer>
+              <BookmarkIcon className={cn('size-4', saved && 'animate-pop-in [&_path]:fill-current')} />
+            </button>
+            <DownloadAction items={items} tone={paid ? 'secondary' : 'primary'} />
+            <BuyAction items={items} />
+          </div>
+        </div>
+      </div>
     </article>
   );
 }
