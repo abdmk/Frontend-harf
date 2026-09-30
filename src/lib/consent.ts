@@ -8,10 +8,11 @@ import { createLocalStoreSignal } from './local-store-signal';
  * رفع VERSION يعيد السؤال (عند إضافة فئة أو تغيير جوهري في الاستخدام).
  */
 export type ConsentCategory = 'analytics' | 'marketing';
-export type Consent = Record<ConsentCategory, boolean> & { at: string };
+/** users: الحسابات التي أجابت في هذا المتصفّح — يُسأل كل حساب مرّة بعد أوّل دخول له */
+export type Consent = Record<ConsentCategory, boolean> & { at: string; users: string[] };
 
 const KEY = 'harf_consent';
-const VERSION = 1;
+const VERSION = 2;
 const signal = createLocalStoreSignal();
 
 let cache: { raw: string | null; value: Consent | null } = { raw: null, value: null };
@@ -35,7 +36,14 @@ function read(): Consent | null {
       typeof x.marketing === 'boolean' &&
       typeof x.at === 'string'
     )
-      value = { analytics: x.analytics, marketing: x.marketing, at: x.at };
+      value = {
+        analytics: x.analytics,
+        marketing: x.marketing,
+        at: x.at,
+        users: Array.isArray(x.users)
+          ? x.users.filter((u): u is string => typeof u === 'string' && u.length <= 64).slice(0, 20)
+          : [],
+      };
   } catch {
     value = null;
   }
@@ -52,7 +60,13 @@ export function hasConsent(c: ConsentCategory): boolean {
   return read()?.[c] === true;
 }
 
-export function saveConsent(choice: Record<ConsentCategory, boolean>) {
+/** يُسأل الزائر أوّل مرّة، ويُسأل الحساب المسجّل إن لم يُجب بعد في هذا المتصفّح */
+export function needsConsent(c: Consent | null, userId: string | null): boolean {
+  return !c || (!!userId && !c.users.includes(userId));
+}
+
+export function saveConsent(choice: Record<ConsentCategory, boolean>, userId?: string | null) {
+  const users = [...new Set([...(read()?.users ?? []), ...(userId ? [userId] : [])])].slice(-20);
   try {
     localStorage.setItem(
       KEY,
@@ -61,6 +75,7 @@ export function saveConsent(choice: Record<ConsentCategory, boolean>) {
         analytics: choice.analytics,
         marketing: choice.marketing,
         at: new Date().toISOString(),
+        users,
       }),
     );
   } catch {

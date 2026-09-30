@@ -1,11 +1,19 @@
-import { useEffect, useId, useState } from 'react';
-import { Link } from 'react-router';
+import { useEffect, useId, useState, useSyncExternalStore } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from '@/components/ui/dialog';
+import { ShieldCheckIcon } from '@/components/ui/icons';
 import { Switch } from '@/components/ui/switch';
 import { NON_ESSENTIAL_TOOLS } from '@/config/tracking';
-import { type ConsentCategory, getConsent, onOpenConsentSettings, saveConsent, useConsent } from '@/lib/consent';
+import { getCurrentUser, subscribeSession } from '@/lib/auth';
+import {
+  type ConsentCategory,
+  getConsent,
+  needsConsent,
+  onOpenConsentSettings,
+  saveConsent,
+  useConsent,
+} from '@/lib/consent';
 
 const ROWS: { key: 'necessary' | ConsentCategory; title: string; body: string }[] = [
   {
@@ -18,11 +26,17 @@ const ROWS: { key: 'necessary' | ConsentCategory; title: string; body: string }[
 ];
 
 /**
- * موافقة ملفات تعريف الارتباط: نافذة إعدادات (من التذييل وسياسة الخصوصية)، وشريط أوّل زيارة يظهر
- * فقط حين تُفعَّل أداة غير ضرورية. «الضرورية فقط» بوزن «قبول الكل» نفسه — لا دفع نحو الموافقة.
+ * موافقة ملفات تعريف الارتباط: بطاقة كالإشعارات تظهر في أوّل زيارة، ومرّة بعد أوّل دخول لكل حساب —
+ * «موافق» و«لا» بالوزن نفسه (لا دفع نحو الموافقة)، و«تخصيص» يفتح نافذة الإعدادات (وهي أيضاً في
+ * التذييل وسياسة الخصوصية).
  */
 export function CookieConsent() {
   const consent = useConsent();
+  const userId = useSyncExternalStore(
+    subscribeSession,
+    () => getCurrentUser()?.id ?? null,
+    () => null,
+  );
   const [open, setOpen] = useState(false);
   const [draft, setDraft] = useState<Record<ConsentCategory, boolean>>({ analytics: false, marketing: false });
   const id = useId();
@@ -38,12 +52,13 @@ export function CookieConsent() {
   );
 
   const decide = (choice: Record<ConsentCategory, boolean>) => {
-    saveConsent(choice);
+    saveConsent(choice, userId);
     setOpen(false);
   };
   const all = { analytics: true, marketing: true };
   const none = { analytics: false, marketing: false };
-  const banner = NON_ESSENTIAL_TOOLS.length > 0 && !consent && !open;
+  // الزائر يُسأل أوّل مرّة، والحساب يُسأل بعد أوّل دخول له — لا يظهر فوق نافذة الإعدادات
+  const prompt = needsConsent(consent, userId) && !open;
 
   return (
     <>
@@ -100,26 +115,39 @@ export function CookieConsent() {
         </DialogContent>
       </Dialog>
 
-      {banner && (
+      {prompt && (
         <section
-          aria-label="ملفات تعريف الارتباط"
-          className="fixed inset-x-4 bottom-4 z-40 mx-auto flex max-w-2xl animate-page-in flex-col gap-4 rounded-xl border bg-card p-5 shadow-overlay sm:bottom-6 sm:flex-row sm:items-center"
+          role="dialog"
+          aria-modal="false"
+          aria-labelledby={`${id}-p`}
+          className="fixed inset-x-4 bottom-4 z-40 mx-auto flex max-w-95 animate-fade-up flex-col gap-3 rounded-xl border bg-card p-4 shadow-overlay sm:inset-x-auto sm:end-6 sm:bottom-6 sm:mx-0 sm:w-95"
         >
-          <p className="flex-1 text-meta leading-relaxed text-muted-foreground">
-            نستخدم ملفات ضرورية لتشغيل الموقع، وأخرى للتحليلات لا تعمل إلا بموافقتك.{' '}
-            <Link to="/privacy#s-10" className="font-medium text-foreground underline underline-offset-4">
-              سياسة الخصوصية
-            </Link>
-          </p>
-          <div className="flex shrink-0 flex-wrap gap-2">
-            <Button size="sm" variant="ghost" onClick={() => setOpen(true)}>
-              تخصيص
-            </Button>
+          <div className="flex items-start gap-3">
+            <span className="grid size-9 shrink-0 place-items-center rounded-full bg-sunken">
+              <ShieldCheckIcon className="size-4.5" />
+            </span>
+            <div className="min-w-0">
+              <h2 id={`${id}-p`} className="text-control font-semibold">
+                ملفات تعريف الارتباط
+              </h2>
+              <p className="mt-0.5 text-meta leading-relaxed text-muted-foreground">
+                نستخدم ملفات ضرورية لتشغيل الموقع، وأخرى للتحليلات لا تعمل إلا بموافقتك.{' '}
+                <button
+                  type="button"
+                  onClick={() => setOpen(true)}
+                  className="font-medium text-foreground underline underline-offset-4"
+                >
+                  تخصيص
+                </button>
+              </p>
+            </div>
+          </div>
+          <div className="grid grid-cols-2 gap-2">
             <Button size="sm" variant="outline" onClick={() => decide(none)}>
-              الضرورية فقط
+              لا
             </Button>
             <Button size="sm" variant="outline" onClick={() => decide(all)}>
-              قبول الكل
+              موافق
             </Button>
           </div>
         </section>

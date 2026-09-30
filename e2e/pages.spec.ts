@@ -76,8 +76,28 @@ test('إعدادات ملفات تعريف الارتباط: من التذييل
   await expect(dialog.getByRole('switch', { name: 'التسويق' })).not.toBeChecked();
   await dialog.getByRole('button', { name: 'الضرورية فقط' }).click();
   expect(await page.evaluate(() => JSON.parse(localStorage.getItem('harf_consent')!).analytics)).toBe(false);
-  // لا شريط موافقة ما دامت لا أداة غير ضرورية مفعّلة
-  await expect(page.getByRole('region', { name: 'ملفات تعريف الارتباط' })).toHaveCount(0);
+});
+
+test('بطاقة الكوكيز: أوّل زيارة، ومرّة بعد أوّل دخول لكل حساب', async ({ page }) => {
+  await page.goto('/?as=out&askConsent');
+  const card = page.getByRole('dialog', { name: 'ملفات تعريف الارتباط' });
+  await expect(card).toBeVisible();
+  await card.getByRole('button', { name: 'لا', exact: true }).click();
+  await expect(card).toHaveCount(0);
+  await page.reload();
+  await expect(card).toHaveCount(0);
+  expect(await page.evaluate(() => JSON.parse(localStorage.getItem('harf_consent')!).analytics)).toBe(false);
+
+  // بعد الدخول بحساب لم يُجب بعد ← تظهر مرّة واحدة
+  await page.goto('/?as=studio&askConsent');
+  await expect(card).toBeVisible();
+  await card.getByRole('button', { name: 'تخصيص' }).click();
+  const settings = page.getByRole('dialog', { name: 'إعدادات ملفات تعريف الارتباط' });
+  await settings.getByRole('button', { name: 'قبول الكل' }).click();
+  await expect(card).toHaveCount(0);
+  await page.goto('/account/profile?askConsent');
+  await expect(card).toHaveCount(0);
+  expect(await page.evaluate(() => JSON.parse(localStorage.getItem('harf_consent')!).analytics)).toBe(true);
 });
 
 test('المساعدة: البحث في الأسئلة، وروابط سريعة', async ({ page }) => {
