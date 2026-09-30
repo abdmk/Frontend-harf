@@ -217,7 +217,13 @@ export function StudioDashboard({
               return (
                 <TableRow key={f.id}>
                   <TableCell>
-                    <span className="font-medium">{f.name}</span>
+                    {/* المنشور يفتح صفحته في المكتبة، والباقي يفتح النشر لإكماله أو تعديله */}
+                    <Link
+                      to={f.status === 'published' ? paths.font.getHref(f.id) : paths.studio.getHref('publish')}
+                      className="font-medium underline-offset-4 transition-colors hover:text-primary hover:underline"
+                    >
+                      {f.name}
+                    </Link>
                     <span className="block text-caption text-muted-foreground">
                       {f.weights} أوزان{f.note ? ` · ${f.note}` : ''}
                     </span>

@@ -7,6 +7,14 @@ test.describe('الاستوديو والإدارة', () => {
     await page.goto('/studio?as=studio');
     await expect(page.getByRole('heading', { level: 1, name: 'مسبك تجاريب' })).toBeVisible();
     await expect(page.getByText('$1,284.50')).toBeVisible();
+
+    // «خطوطك»: المنشور يفتح صفحته، وقيد المراجعة يفتح النشر
+    const table = page.locator('section[aria-labelledby="fonts-title"]');
+    await table.getByRole('link', { name: 'نقش', exact: true }).click();
+    await expect(page).toHaveURL(/\/studio\/publish$/);
+    await page.goBack();
+    await table.getByRole('link', { name: 'تجاريب', exact: true }).click();
+    await expect(page).toHaveURL(/\/fonts\/tajarib$/);
   });
 
   // ⚠️ يتطلّب خادماً حقيقياً: ملف ثابت (SPA) يعيد 200 لأي مسار — حماية الصفحة والتصدير هنا
