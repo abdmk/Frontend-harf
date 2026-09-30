@@ -56,6 +56,7 @@ export function NotificationsMenu({ initial, allHref }: { initial: NotificationV
             variant="menu"
             items={items.filter((n) => n.group !== 'earlier')}
             onRead={markRead}
+            onNavigate={() => setOpen(false)}
             emptyText="لا جديد هذا الأسبوع."
           />
         </div>

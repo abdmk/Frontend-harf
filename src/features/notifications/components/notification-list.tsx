@@ -1,7 +1,10 @@
+import { Link } from 'react-router';
+
 import { CheckIcon, DownloadIcon, MagicWandIcon, ReceiptIcon, UserIcon } from '@/components/ui/icons';
 import { cn } from '@/lib/cn';
 import type { NotificationKind } from '@/types/domain/notification';
 
+import { safeHref } from '../hooks/use-notifications';
 import { groupViews, type NotificationView } from '../utils/group';
 
 const KIND = {
@@ -56,12 +59,15 @@ const SIZE = {
 export function NotificationList({
   items,
   onRead,
+  onNavigate,
   titleLevel = 'h3',
   emptyText = 'لا إشعارات بعد.',
   variant = 'page',
 }: {
   items: NotificationView[];
   onRead: (id: string) => void;
+  /** بعد النقر على إشعار له وجهة (مثل إغلاق القائمة) */
+  onNavigate?: () => void;
   titleLevel?: 'h2' | 'h3';
   emptyText?: string;
   variant?: keyof typeof SIZE;
@@ -79,40 +85,58 @@ export function NotificationList({
           <ul className={s.list}>
             {g.items.map((n) => {
               const { Icon, tone } = KIND[n.kind];
-              return (
-                <li key={n.id}>
-                  <button
-                    type="button"
-                    onClick={() => onRead(n.id)}
-                    aria-label={n.unread ? `${n.text} — غير مقروء` : undefined}
+              const href = safeHref(n.href);
+              const label = n.unread ? `${n.text} — غير مقروء` : undefined;
+              const rowCls = cn(
+                'flex w-full items-start text-start transition-colors hover:bg-sunken focus-visible:bg-sunken focus-visible:outline-none',
+                s.row,
+                n.unread && 'bg-tint-brand/40 hover:bg-tint-brand/60',
+              );
+              const body = (
+                <>
+                  <span className={cn('grid shrink-0 place-items-center rounded-full', s.badge, tone)}>
+                    <Icon className={s.icon} />
+                  </span>
+                  <span className="min-w-0 flex-1 pt-0.5">
+                    <span className={cn('block leading-relaxed', s.text)}>
+                      <Emphasis text={n.text} strong={n.strong} />
+                    </span>
+                    <time dateTime={n.at} className={cn('mt-0.5 block text-tertiary', s.time)}>
+                      {n.when}
+                    </time>
+                  </span>
+                  <span
+                    aria-hidden
                     className={cn(
-                      'flex w-full items-start text-start transition-colors hover:bg-sunken focus-visible:bg-sunken focus-visible:outline-none',
-                      s.row,
-                      n.unread && 'bg-tint-brand/40 hover:bg-tint-brand/60',
+                      'grid shrink-0 place-items-center rounded-full transition-opacity',
+                      s.dot,
+                      n.unread ? 'bg-tint-brand' : 'opacity-0',
                     )}
                   >
-                    <span className={cn('grid shrink-0 place-items-center rounded-full', s.badge, tone)}>
-                      <Icon className={s.icon} />
-                    </span>
-                    <span className="min-w-0 flex-1 pt-0.5">
-                      <span className={cn('block leading-relaxed', s.text)}>
-                        <Emphasis text={n.text} strong={n.strong} />
-                      </span>
-                      <time dateTime={n.at} className={cn('mt-0.5 block text-tertiary', s.time)}>
-                        {n.when}
-                      </time>
-                    </span>
-                    <span
-                      aria-hidden
-                      className={cn(
-                        'grid shrink-0 place-items-center rounded-full transition-opacity',
-                        s.dot,
-                        n.unread ? 'bg-tint-brand' : 'opacity-0',
-                      )}
+                    <span className="size-2 rounded-full bg-primary-fill" />
+                  </span>
+                </>
+              );
+              return (
+                <li key={n.id}>
+                  {/* إشعار له وجهة يفتحها (ويُعلَّم مقروءاً)؛ بلا وجهة: يُعلَّم مقروءاً فقط */}
+                  {href ? (
+                    <Link
+                      to={href}
+                      onClick={() => {
+                        onRead(n.id);
+                        onNavigate?.();
+                      }}
+                      aria-label={label}
+                      className={rowCls}
                     >
-                      <span className="size-2 rounded-full bg-primary-fill" />
-                    </span>
-                  </button>
+                      {body}
+                    </Link>
+                  ) : (
+                    <button type="button" onClick={() => onRead(n.id)} aria-label={label} className={rowCls}>
+                      {body}
+                    </button>
+                  )}
                 </li>
               );
             })}

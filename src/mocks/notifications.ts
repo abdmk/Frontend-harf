@@ -14,6 +14,7 @@ export function mockNotifications(now: number): Notification[] {
       strong: 'خط طفولة',
       at: ago(20),
       unread: true,
+      href: '/studio',
     },
     {
       id: 'n2',
@@ -22,8 +23,17 @@ export function mockNotifications(now: number): Notification[] {
       strong: '34 تحميلاً',
       at: ago(120),
       unread: true,
+      href: '/studio',
     },
-    { id: 'n3', kind: 'follow', text: 'Mays Ali بدأت متابعتك', strong: 'Mays Ali', at: ago(26 * 60), unread: false },
+    {
+      id: 'n3',
+      kind: 'follow',
+      text: 'سارة نبيل بدأت متابعتك',
+      strong: 'سارة نبيل',
+      at: ago(26 * 60),
+      unread: false,
+      href: '/designers/sn',
+    },
     {
       id: 'n4',
       kind: 'ai',
@@ -31,6 +41,7 @@ export function mockNotifications(now: number): Notification[] {
       strong: 'تجاريب',
       at: ago(3 * 24 * 60),
       unread: false,
+      href: '/fonts/tajarib',
     },
     {
       id: 'n5',
@@ -39,6 +50,7 @@ export function mockNotifications(now: number): Notification[] {
       strong: 'HRF-24918',
       at: ago(12 * 24 * 60),
       unread: false,
+      href: '/account/purchases',
     },
   ];
 }

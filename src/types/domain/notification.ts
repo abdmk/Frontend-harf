@@ -9,4 +9,6 @@ export type Notification = {
   /** ISO 8601 */
   at: string;
   unread: boolean;
+  /** وجهة الإشعار داخل الموقع (مسار يبدأ بـ«/») — يُتحقّق منه قبل الاستعمال */
+  href?: string;
 };
