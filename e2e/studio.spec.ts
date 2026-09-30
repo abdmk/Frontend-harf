@@ -31,6 +31,35 @@ test.describe('الاستوديو والإدارة', () => {
     await expect(page.getByRole('dialog').getByRole('link', { name: 'لوحة الإدارة' })).toBeVisible();
   });
 
+  test('صور الخط: تُرتَّب بالسحب، وبالأسهم من لوحة المفاتيح', async ({ page }) => {
+    await page.goto('/studio/publish?as=studio');
+    await page.getByRole('button', { name: /الصور/ }).first().click();
+    const png = Buffer.from(
+      'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==',
+      'base64',
+    );
+    await page
+      .locator('input[type=file][accept*="image"]')
+      .setInputFiles(['a', 'b', 'c'].map((n) => ({ name: `${n}.png`, mimeType: 'image/png', buffer: png })));
+    const items = page.getByRole('list', { name: /صور الخط/ }).getByRole('listitem');
+    const order = () => items.evaluateAll((els) => els.map((e) => e.getAttribute('aria-label')!.split('،')[0]));
+    await expect.poll(order).toEqual(['a.png', 'b.png', 'c.png']);
+
+    // سحب الأولى إلى مكان الثالثة، بحركة تدريجية كما يفعل المستخدم
+    const from = (await items.nth(0).boundingBox())!;
+    const to = (await items.nth(2).boundingBox())!;
+    await page.mouse.move(from.x + from.width / 2, from.y + 40);
+    await page.mouse.down();
+    await page.mouse.move(to.x + to.width / 2, to.y + 40, { steps: 25 });
+    await page.mouse.up();
+    await expect.poll(order).toEqual(['b.png', 'c.png', 'a.png']);
+
+    // لوحة المفاتيح: السهم الأيمن يقدّم الصورة المركّز عليها (الصفحة من اليمين)
+    await items.nth(2).focus();
+    await page.keyboard.press('ArrowRight');
+    await expect.poll(order).toEqual(['b.png', 'a.png', 'c.png']);
+  });
+
   test('المشرف: التبويبات، الفلتر، والتصدير', async ({ page }) => {
     await page.goto('/admin/analytics?as=admin');
     await expect(page.getByRole('heading', { level: 1, name: 'التحليلات' })).toBeVisible();

@@ -6,16 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Chip, ChipGroup } from '@/components/ui/chip-group';
 import { Field, FieldError, FieldHint, FieldLabel } from '@/components/ui/field';
-import {
-  ArrowDownIcon,
-  ArrowUpIcon,
-  CheckIcon,
-  CloudUploadIcon,
-  DollarIcon,
-  GiftIcon,
-  PictureIcon,
-  TrashIcon,
-} from '@/components/ui/icons';
+import { CheckIcon, CloudUploadIcon, DollarIcon, GiftIcon, PictureIcon, TrashIcon } from '@/components/ui/icons';
 import { Input, Textarea } from '@/components/ui/input';
 import { RadioGroup, RadioOption } from '@/components/ui/radio-group';
 import { Switch } from '@/components/ui/switch';
@@ -24,6 +15,7 @@ import { formatBytesAr } from '@/lib/format';
 import { CATEGORY_LABEL, LANG_LABEL } from '@/lib/labels';
 import { CATEGORIES, LANGS } from '@/types/domain/font';
 
+import { SortableImages } from './sortable-images';
 import { type Draft, IMAGE_TYPES, type WorkDraft, MAX_DESCRIPTION, MAX_IMAGE_BYTES } from '../types/draft';
 import { inferFontMeta } from '../utils/infer-weight';
 
@@ -178,12 +170,6 @@ export function ImagesStep({
   errors: Record<string, string | undefined>;
 }) {
   const [rejected, setRejected] = useState<string[]>([]);
-  const move = (i: number, d: -1 | 1) => {
-    const next = [...images];
-    const [x] = next.splice(i, 1);
-    next.splice(i + d, 0, x!);
-    setImages(next);
-  };
   return (
     <div className="flex flex-col gap-5">
       <Drop
@@ -211,60 +197,12 @@ export function ImagesStep({
         </ul>
       )}
       <FieldError>{errors.images}</FieldError>
-      {images.length > 0 && (
-        <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-          {images.map((img, i) => (
-            <li key={img.url} className="overflow-hidden rounded-md border bg-card">
-              <div className="relative aspect-[4/3] bg-sunken">
-                <img src={img.url} alt={img.name} className="size-full object-cover" />
-                {i === 0 && (
-                  <span className="absolute start-2 top-2 rounded-full bg-ink px-2 py-0.5 text-micro text-ink-foreground">
-                    الغلاف
-                  </span>
-                )}
-              </div>
-              <div className="flex items-center justify-between gap-1 p-1.5">
-                <div className="flex">
-                  <button
-                    type="button"
-                    aria-label="قدّم الصورة"
-                    disabled={i === 0}
-                    onClick={() => move(i, -1)}
-                    className="grid size-8 place-items-center rounded-xs text-muted-foreground hover:bg-sunken disabled:opacity-30"
-                  >
-                    <ArrowUpIcon className="size-4" />
-                  </button>
-                  <button
-                    type="button"
-                    aria-label="أخّر الصورة"
-                    disabled={i === images.length - 1}
-                    onClick={() => move(i, 1)}
-                    className="grid size-8 place-items-center rounded-xs text-muted-foreground hover:bg-sunken disabled:opacity-30"
-                  >
-                    <ArrowDownIcon className="size-4" />
-                  </button>
-                </div>
-                <button
-                  type="button"
-                  aria-label={`احذف ${img.name}`}
-                  onClick={() => {
-                    URL.revokeObjectURL(img.url);
-                    setImages(images.filter((_, j) => j !== i));
-                  }}
-                  className="grid size-8 place-items-center rounded-xs text-tertiary hover:bg-sunken hover:text-foreground"
-                >
-                  <TrashIcon className="size-4" />
-                </button>
-              </div>
-            </li>
-          ))}
-        </ul>
-      )}
+      {images.length > 0 && <SortableImages images={images} onChange={setImages} />}
       <Hint className="flex items-start gap-2.5">
         <PictureIcon className="mt-0.5 size-4 shrink-0" />
         <span>
-          الصورة الأولى غلاف بطاقة الخط في المكتبة، والبقيّة تظهر في معرض صفحته. رتّبها بالسهمين؛ الصور الواضحة لحروف
-          الخط وأوزانه تبيع أكثر من الصور الزخرفية.
+          الصورة الأولى غلاف بطاقة الخط في المكتبة، والبقيّة تظهر في معرض صفحته. اسحب الصور لترتيبها؛ الصور الواضحة
+          لحروف الخط وأوزانه تبيع أكثر من الصور الزخرفية.
         </span>
       </Hint>
     </div>
