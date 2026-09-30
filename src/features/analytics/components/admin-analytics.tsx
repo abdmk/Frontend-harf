@@ -16,9 +16,12 @@ import { cn } from '@/lib/cn';
 import { formatMoney } from '@/lib/format';
 import type { AdminAnalytics, Range } from '@/types/domain/analytics';
 
+import { ManualRevenueSection } from './manual-revenue';
 import { TransactionsLog } from './transactions-log';
 import { UsersRegistry } from './users-registry';
 import { downloadAnalyticsCsv } from '../api/export-csv';
+import { localToday, REVENUE_CATEGORY_LABEL } from '../api/manual-revenue';
+import { useManualRevenue } from '../hooks/use-manual-revenue';
 
 const RANGE_LABEL: Record<Range, string> = { '7': '7 أيام', '30': '30 يوماً', '365': 'سنة' };
 
@@ -74,6 +77,21 @@ export function AdminAnalyticsView({ data: d, range }: { data: AdminAnalytics; r
   const k = d.kpis;
   const s = d.revenue.sales;
   const sub = d.revenue.subscriptions;
+  const manual = useManualRevenue();
+  // الإيرادات اليدوية لهذا الشهر تُضاف إلى إيراد الشهر، وكل القيود تظهر في سجلّ العمليات
+  const month = localToday().slice(0, 7);
+  const manualMonth = manual.items.filter((e) => e.date.startsWith(month)).reduce((n, e) => n + e.amount.cents, 0);
+  const log = [
+    ...manual.items.map((e) => ({
+      id: e.id,
+      buyer: e.client,
+      kind: 'other' as const,
+      label: REVENUE_CATEGORY_LABEL[e.category],
+      when: new Date(`${e.date}T00:00:00`).toLocaleDateString('ar', { day: 'numeric', month: 'long' }),
+      amount: e.amount,
+    })),
+    ...d.transactions,
+  ];
   return (
     <div className="flex flex-col gap-6">
       <div className="flex flex-wrap items-end justify-between gap-4">
@@ -258,7 +276,15 @@ export function AdminAnalyticsView({ data: d, range }: { data: AdminAnalytics; r
 
         <TabsContent value="sales" className="flex flex-col gap-6">
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
-            <StatCard label="إيراد هذا الشهر" value={formatMoney(s.month)} delta={s.delta} icon={<CartIcon />} />
+            <StatCard
+              label="إيراد هذا الشهر"
+              value={formatMoney({ cents: s.month.cents + manualMonth, currency: 'USD' })}
+              delta={s.delta}
+              icon={<CartIcon />}
+              hint={
+                manualMonth ? `منها ${formatMoney({ cents: manualMonth, currency: 'USD' })} إيرادات أخرى` : undefined
+              }
+            />
             <StatCard label="عدد العمليات" value={s.orders} hint="3 مستردّة · 1.4% من العمليات" />
             <StatCard
               label="الدخل المتكرّر (MRR)"
@@ -272,10 +298,16 @@ export function AdminAnalyticsView({ data: d, range }: { data: AdminAnalytics; r
             <ChartCard title="أعلى الأعمال مبيعاً" subtitle="هذا الشهر · بالإيراد (دولار)">
               <BarList items={d.topWorks} />
             </ChartCard>
-            <ChartCard title="سجلّ العمليات" subtitle="مبيعات واشتراكات — كلٌّ بشارته">
-              <TransactionsLog items={d.transactions} />
+            <ChartCard title="سجلّ العمليات" subtitle="مبيعات واشتراكات وإيرادات أخرى — كلٌّ بشارته">
+              <TransactionsLog items={log} />
             </ChartCard>
           </div>
+          <ManualRevenueSection
+            items={manual.items}
+            onAdd={manual.add}
+            onRemove={manual.remove}
+            onRestore={manual.restore}
+          />
         </TabsContent>
       </Tabs>
     </div>
