@@ -1,6 +1,7 @@
 import { type Ref, useState } from 'react';
 import { Link, useLocation } from 'react-router';
 
+import { ShieldCheckIcon } from '@/components/ui/icons';
 import { focusPanel, Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { paths } from '@/config/paths';
 import { ACCOUNT_SECTIONS, type AccountSection, type User } from '@/features/account/types';
@@ -27,13 +28,24 @@ export function AccountMenu({
 
   return (
     <>
-      <Link
-        to={paths.account.getHref('subscription')}
-        className="mx-1 hidden transition-transform active:scale-95 sm:inline-flex"
-        aria-label={`خطّتك: ${PLAN_BADGE_LABEL[user.plan]}`}
-      >
-        <PlanBadge plan={user.plan} />
-      </Link>
+      {/* المشرف: «الإدارة» مكان شارة الخطة — مدخل لوحة الإدارة */}
+      {user.role === 'admin' ? (
+        <Link
+          to={paths.admin.getHref()}
+          className="mx-1 hidden h-7.5 items-center gap-1.5 rounded-full bg-tint-brand px-3 text-meta leading-none font-medium whitespace-nowrap text-primary transition-transform active:scale-95 sm:inline-flex"
+        >
+          <ShieldCheckIcon className="size-3.5" />
+          الإدارة
+        </Link>
+      ) : (
+        <Link
+          to={paths.account.getHref('subscription')}
+          className="mx-1 hidden transition-transform active:scale-95 sm:inline-flex"
+          aria-label={`خطّتك: ${PLAN_BADGE_LABEL[user.plan]}`}
+        >
+          <PlanBadge plan={user.plan} />
+        </Link>
+      )}
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger
           ref={triggerRef}

@@ -24,7 +24,8 @@ export function HomePage() {
     <Container as="main" id="main" className="pt-6 sm:pt-12">
       <PageMeta title={heading} />
       <h1 className="sr-only">{heading}</h1>
-      <FeaturedCarousel overlay={<BannerQuickEdit />} />
+      <FeaturedCarousel />
+      <BannerQuickEdit />
       <CatalogProvider>
         <CatalogToolbar />
         <ActiveFilters count={fonts.length} />

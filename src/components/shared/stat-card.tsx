@@ -5,6 +5,15 @@ import { cn } from '@/lib/cn';
 
 import { Sparkline } from './charts/sparkline';
 
+const ICON_TONE = {
+  brand: 'text-primary',
+  info: 'text-info-text',
+  ok: 'text-ok-text',
+  warn: 'text-warn-text',
+  ai: 'text-ai-text',
+  danger: 'text-dgr-text',
+} as const;
+
 /** بطاقة رقم (لوحات الإحصاء والأرباح): عنوان، قيمة كبيرة، وتغيّر نسبي اختياري */
 export function StatCard({
   label,
@@ -15,6 +24,7 @@ export function StatCard({
   trend,
   trendColor,
   deltaSuffix = '%',
+  tone,
   className,
 }: {
   label: string;
@@ -28,6 +38,8 @@ export function StatCard({
   trendColor?: string;
   /** «%» للنسب، و«» للأعداد المطلقة (+312) */
   deltaSuffix?: string;
+  /** لون الأيقونة (لمسة بسيطة تميّز البطاقات) — بلا لون تبقى رمادية */
+  tone?: keyof typeof ICON_TONE;
   className?: string;
 }) {
   const up = (delta ?? 0) >= 0;
@@ -35,7 +47,7 @@ export function StatCard({
     <div className={cn('flex flex-col gap-3 rounded-lg border bg-card p-5', className)}>
       <div className="flex items-center justify-between gap-3 text-meta text-muted-foreground">
         <span>{label}</span>
-        {icon && <span className="text-tertiary [&_svg]:size-4.5">{icon}</span>}
+        {icon && <span className={cn('[&_svg]:size-4.5', tone ? ICON_TONE[tone] : 'text-tertiary')}>{icon}</span>}
       </div>
       <div className="flex items-end justify-between gap-3">
         <span dir="ltr" className="text-2xl font-semibold tracking-tight">

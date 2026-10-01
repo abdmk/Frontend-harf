@@ -3,7 +3,7 @@ import { Link } from 'react-router';
 
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from '@/components/ui/dialog';
-import { PencilIcon } from '@/components/ui/icons';
+import { PencilIcon, ShieldCheckIcon } from '@/components/ui/icons';
 import { Spinner } from '@/components/ui/spinner';
 import { paths } from '@/config/paths';
 import { useIsAdmin } from '@/lib/auth';
@@ -13,7 +13,7 @@ import { useSiteContent } from '@/lib/site-content';
 const BannersEditor = lazy(() => import('./content-manager').then((m) => ({ default: m.BannersEditor })));
 
 /**
- * زرّ «إدارة البنرات» فوق الشريحة في الصفحة الرئيسية — للمشرف وحده، يفتح المحرّر نفسه دون مغادرة
+ * شريط «إدارة البنرات» تحت الشريحة في الصفحة الرئيسية — للمشرف وحده، يفتح المحرّر نفسه دون مغادرة
  * الصفحة. الإخفاء هنا للواجهة؛ الحفظ يتحقّق من الدور (features/admin/api/content).
  */
 export function BannerQuickEdit() {
@@ -23,15 +23,20 @@ export function BannerQuickEdit() {
   if (!isAdmin) return null;
   return (
     <>
-      <Button
-        size="sm"
-        variant="ink"
-        onClick={() => setOpen(true)}
-        className="absolute end-5 bottom-5 z-10 shadow-float"
-      >
-        <PencilIcon />
-        إدارة البنرات
-      </Button>
+      {/* شريط مشرف هادئ تحت الشريحة: حالة البنرات وزرّ التحرير — لا يغطّي البنر نفسه */}
+      <div className="mt-3 flex flex-wrap items-center justify-between gap-3 rounded-lg border border-dashed bg-sunken/50 py-2 ps-4 pe-2">
+        <p className="flex items-center gap-2 text-meta text-muted-foreground">
+          <ShieldCheckIcon className="size-4 text-primary" />
+          {banners.length
+            ? `${banners.filter((b) => b.active).length} من ${banners.length} بنرات مفعّلة`
+            : 'لا بنرات بعد — تظهر أرضيات مؤقتة'}
+          <span className="text-caption text-tertiary">· للمشرف فقط</span>
+        </p>
+        <Button size="sm" variant="outline" onClick={() => setOpen(true)} className="bg-card">
+          <PencilIcon />
+          إدارة البنرات
+        </Button>
+      </div>
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="max-h-[90dvh] overflow-y-auto sm:max-w-dialog-lg">
           <div>

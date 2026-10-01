@@ -148,6 +148,7 @@ export function AdminAnalyticsView({ data: d, range }: { data: AdminAnalytics; r
         <TabsContent value="overview" className="flex flex-col gap-6">
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
             <StatCard
+              tone="info"
               label={k.accounts.label}
               value={k.accounts.value.toLocaleString('en-US')}
               delta={k.accounts.delta}
@@ -158,6 +159,7 @@ export function AdminAnalyticsView({ data: d, range }: { data: AdminAnalytics; r
               trendColor="var(--chart-1)"
             />
             <StatCard
+              tone="ok"
               label={k.visitors.label}
               value={k.visitors.value.toLocaleString('en-US')}
               hint={k.visitors.hint}
@@ -166,6 +168,7 @@ export function AdminAnalyticsView({ data: d, range }: { data: AdminAnalytics; r
               trendColor="var(--chart-2)"
             />
             <StatCard
+              tone="ok"
               label={k.downloads.label}
               value={k.downloads.value.toLocaleString('en-US')}
               hint={k.downloads.hint}
@@ -174,6 +177,7 @@ export function AdminAnalyticsView({ data: d, range }: { data: AdminAnalytics; r
               trendColor="var(--color-ok-500)"
             />
             <StatCard
+              tone="warn"
               label={k.subscribers.label}
               value={k.subscribers.value}
               hint={k.subscribers.hint}
@@ -281,6 +285,7 @@ export function AdminAnalyticsView({ data: d, range }: { data: AdminAnalytics; r
         <TabsContent value="users" className="flex flex-col gap-6">
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
             <StatCard
+              tone="info"
               label="المسجّلون"
               value={k.accounts.value.toLocaleString('en-US')}
               delta={k.accounts.delta}
@@ -291,6 +296,7 @@ export function AdminAnalyticsView({ data: d, range }: { data: AdminAnalytics; r
               trendColor="var(--chart-1)"
             />
             <StatCard
+              tone="warn"
               label="المشتركون"
               value={k.subscribers.value.toLocaleString('en-US')}
               hint={`${((k.subscribers.value / Math.max(1, k.accounts.value)) * 100).toFixed(1)}% من المسجّلين`}
@@ -299,6 +305,7 @@ export function AdminAnalyticsView({ data: d, range }: { data: AdminAnalytics; r
               trendColor="var(--chart-3)"
             />
             <StatCard
+              tone="ok"
               label="الزيارات"
               value={k.visitors.value.toLocaleString('en-US')}
               hint={k.visitors.hint}
@@ -354,6 +361,7 @@ export function AdminAnalyticsView({ data: d, range }: { data: AdminAnalytics; r
         <TabsContent value="sales" className="flex flex-col gap-6">
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
             <StatCard
+              tone="brand"
               label="إيراد هذا الشهر"
               value={formatMoney({ cents: s.month.cents + manualMonth, currency: 'USD' })}
               delta={s.delta}
@@ -364,6 +372,7 @@ export function AdminAnalyticsView({ data: d, range }: { data: AdminAnalytics; r
             />
             <StatCard label="عدد العمليات" value={s.orders} hint="3 مستردّة · 1.4% من العمليات" />
             <StatCard
+              tone="warn"
               label="الدخل المتكرّر (MRR)"
               value={formatMoney(sub.mrr)}
               delta={sub.delta}

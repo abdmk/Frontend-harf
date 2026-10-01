@@ -42,7 +42,8 @@ export function Carousel({
   );
 
   useEffect(() => {
-    if (!autoPlay || n < 2 || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    // مع «تقليل الحركة» يبقى التقلّب لكن بلا انزلاق (التحريك يُلغى من globals.css) — والمرور يوقفه
+    if (!autoPlay || n < 2) return;
     const t = window.setInterval(() => {
       if (!paused.current && !document.hidden) go(current + 1);
     }, autoPlay);
@@ -58,7 +59,8 @@ export function Carousel({
       className={cn('group/car relative isolate overflow-hidden bg-sunken outline-offset-4', className)}
       onMouseEnter={() => (paused.current = true)}
       onMouseLeave={() => (paused.current = false)}
-      onFocus={() => (paused.current = true)}
+      // التركيز بلوحة المفاتيح يوقف التقلّب؛ النقر على الأسهم لا يوقفه إلى الأبد
+      onFocus={(e) => (paused.current = (e.target as HTMLElement).matches(':focus-visible'))}
       onBlur={() => (paused.current = false)}
       onKeyDown={(e) => {
         if ((e.target as HTMLElement).closest('input,[contenteditable]')) return;

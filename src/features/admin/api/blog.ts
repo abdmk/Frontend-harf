@@ -1,4 +1,4 @@
-import { getPosts, postSchema, type PostStatus, savePosts } from '@/lib/blog';
+import { getPosts, type PostBlock, postSchema, type PostStatus, savePosts } from '@/lib/blog';
 
 import { logAdmin } from './audit';
 import { adminOrNull, type AdminResult, DENIED } from './guard';
@@ -51,10 +51,18 @@ export function deletePost(id: string): AdminResult {
   );
 }
 
-export type PostInput = { id?: string; title: string; slug: string; excerpt: string; body: string; author: string };
+export type PostInput = {
+  id?: string;
+  title: string;
+  slug: string;
+  excerpt: string;
+  body: PostBlock[];
+  cover?: string;
+  author: string;
+};
 export type PostResult = AdminResult | { ok: false; error: string; field: string };
 
-/** إنشاء أو تعديل — النصّ فقرات مفصولة بسطر فارغ، ويُعرض نصّاً لا HTML */
+/** إنشاء أو تعديل — كتل (فقرة/صورة/فيديو) تُتحقَّق كلّها بالمخطّط، وتُعرض نصّاً ووسائط لا HTML */
 export function savePost(input: PostInput): PostResult {
   const admin = adminOrNull();
   if (!admin) return DENIED;
@@ -66,10 +74,9 @@ export function savePost(input: PostInput): PostResult {
     slug: input.slug.trim().toLowerCase(),
     title: input.title,
     excerpt: input.excerpt,
-    body: input.body
-      .split(/\n\s*\n/)
-      .map((x) => x.trim())
-      .filter(Boolean),
+    // الفقرات الفارغة تُهمل بدل أن تُفشل الحفظ
+    body: input.body.filter((b) => b.t !== 'p' || b.text.trim()),
+    ...(input.cover ? { cover: input.cover } : {}),
     author: input.author || admin.name,
     status: existing?.status ?? 'draft',
     updatedAt: today(),

@@ -33,9 +33,10 @@ export function SalesSection() {
   return (
     <div className="flex flex-col gap-6">
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-        <StatCard label="مبيعات هذا الشهر" value={formatMoney(cents(gross))} icon={<CartIcon />} />
+        <StatCard tone="brand" label="مبيعات هذا الشهر" value={formatMoney(cents(gross))} icon={<CartIcon />} />
         <StatCard label="عدد العمليات" value={month.length} hint="دون المستردّة" />
         <StatCard
+          tone="ok"
           label="متوسّط العملية"
           value={formatMoney(cents(month.length ? Math.round(gross / month.length) : 0))}
           hint="صافيك لكل عملية في الجدول"

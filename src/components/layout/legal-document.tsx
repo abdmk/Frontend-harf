@@ -132,7 +132,8 @@ export function LegalDocument({
         </p>
       </header>
 
-      <div className="mx-auto mt-12 grid max-w-2xl gap-8 sm:mt-16 lg:max-w-4xl lg:grid-cols-[minmax(0,1fr)_12rem] lg:gap-16">
+      {/* بعرض الحاوية كلها: النص يبدأ بمحاذاة الشعار، والفهرس ينتهي بمحاذاة طرف الترويسة الآخر */}
+      <div className="mt-12 grid gap-8 sm:mt-16 lg:grid-cols-[minmax(0,1fr)_15rem] lg:gap-16">
         {/* في هذه الصفحة: بجانب النص على الشاشات الواسعة، قابل للطيّ على الجوال */}
         <aside className="lg:sticky lg:top-24 lg:order-last lg:max-h-[calc(100dvh-8rem)] lg:scroll-thin lg:self-start lg:overflow-y-auto">
           <nav aria-label={`فهرس ${title}`}>
@@ -152,7 +153,7 @@ export function LegalDocument({
           </nav>
         </aside>
 
-        <article className="max-w-2xl min-w-0">
+        <article className="max-w-3xl min-w-0">
           <section id={OVERVIEW} aria-label="نظرة عامة" className={cn(prose, 'scroll-mt-24')}>
             {doc.intro.map((b, i) => (
               <Block key={i} b={b} />

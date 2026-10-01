@@ -138,18 +138,25 @@ export function FontDetail({ id }: { id: string }) {
       )}
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <StatCard label="المشاهدات" value={fmt(s.views)} icon={<EyeIcon />} hint="زيارات صفحة الخط" />
+        <StatCard tone="info" label="المشاهدات" value={fmt(s.views)} icon={<EyeIcon />} hint="زيارات صفحة الخط" />
         <StatCard
+          tone="ok"
           label="التحميلات"
           value={fmt(s.downloads)}
           icon={<DownloadIcon />}
           hint={`${conversion}% من المشاهدات`}
         />
-        <StatCard label="في المفضّلة" value={fmt(s.favorites)} icon={<HeartIcon />} />
+        <StatCard tone="brand" label="في المفضّلة" value={fmt(s.favorites)} icon={<HeartIcon />} />
         {f.type === 'free' ? (
-          <StatCard label="الإيراد" value="—" icon={<CartIcon />} hint="خط مجاني" />
+          <StatCard tone="brand" label="الإيراد" value="—" icon={<CartIcon />} hint="خط مجاني" />
         ) : (
-          <StatCard label="الإيراد" value={`$${fmt(s.revenue)}`} icon={<CartIcon />} hint={`${fmt(s.sales)} ترخيص`} />
+          <StatCard
+            tone="brand"
+            label="الإيراد"
+            value={`$${fmt(s.revenue)}`}
+            icon={<CartIcon />}
+            hint={`${fmt(s.sales)} ترخيص`}
+          />
         )}
       </div>
 

@@ -1,13 +1,20 @@
-import { useId, useState } from 'react';
+import { useId, useRef, useState } from 'react';
 import { Link } from 'react-router';
 
+import { ConfirmDialog } from '@/components/shared/confirm-dialog';
 import { EmptyState } from '@/components/shared/empty-state';
+import { PostBlocks } from '@/components/shared/post-blocks';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from '@/components/ui/dialog';
 import { Field, FieldError, FieldHint, FieldLabel } from '@/components/ui/field';
 import {
+  ArrowDownIcon,
+  ArrowUpIcon,
   CheckIcon,
+  PictureIcon,
+  PlayIcon,
+  TextIcon,
   ClockIcon,
   DocumentIcon,
   EyeIcon,
@@ -18,8 +25,10 @@ import {
 } from '@/components/ui/icons';
 import { Input, Textarea } from '@/components/ui/input';
 import { toast } from '@/components/ui/toast';
-import { type BlogPost, POST_LIMITS, type PostStatus, usePosts } from '@/lib/blog';
+import { type BlogPost, POST_LIMITS, type PostBlock, type PostStatus, usePosts } from '@/lib/blog';
 import { formatDateAr } from '@/lib/format';
+import { prepareImage } from '@/lib/image-upload';
+import { deleteVideo, storeVideo } from '@/lib/media-store';
 
 import { deletePost, savePost, setPostStatus } from '../api/blog';
 
@@ -29,38 +38,137 @@ const STATUS: Record<PostStatus, { label: string; tone: 'neutral' | 'warning' | 
   published: { label: 'منشور', tone: 'success', Icon: CheckIcon },
 };
 
+type Draft = PostBlock & { key: string };
+const keyed = (b: PostBlock): Draft => ({ ...b, key: Math.random().toString(36).slice(2) });
+
+/** محرّر كتل بسيط: فقرة، صورة، فيديو — مع ترتيب وحذف. لا محرّر HTML (لا حقن). */
 function PostEditor({ post, onClose }: { post?: BlogPost; onClose: () => void }) {
   const [v, setV] = useState({
     title: post?.title ?? '',
     slug: post?.slug ?? '',
     excerpt: post?.excerpt ?? '',
-    body: post?.body.join('\n\n') ?? '',
     author: post?.author ?? '',
   });
+  const [cover, setCover] = useState<string | undefined>(post?.cover);
+  const [blocks, setBlocks] = useState<Draft[]>(() => (post?.body ?? [{ t: 'p', text: '' } as PostBlock]).map(keyed));
+  const [busy, setBusy] = useState(false);
   const [error, setError] = useState<{ field: string; message: string }>();
   const id = useId();
+  const coverRef = useRef<HTMLInputElement>(null);
+  const imgRef = useRef<HTMLInputElement>(null);
+  const vidRef = useRef<HTMLInputElement>(null);
   const err = (k: string) => (error?.field === k ? error.message : undefined);
   const set = (k: keyof typeof v) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
     setV((x) => ({ ...x, [k]: e.target.value }));
+  const patch = (i: number, p: Partial<PostBlock>) =>
+    setBlocks((xs) => xs.map((x, k) => (k === i ? ({ ...x, ...p } as Draft) : x)));
+  const move = (i: number, d: -1 | 1) =>
+    setBlocks((xs) => {
+      const n = [...xs];
+      [n[i], n[i + d]] = [n[i + d]!, n[i]!];
+      return n;
+    });
+
+  async function pickImage(file: File | undefined, target: 'cover' | 'block') {
+    if (!file) return;
+    setBusy(true);
+    const r = await prepareImage(file, { maxBytes: 8 * 1024 * 1024, maxSide: 1600, minSide: 320, quality: 0.8 });
+    setBusy(false);
+    if (!r.ok) return setError({ field: 'media', message: r.error });
+    setError(undefined);
+    if (target === 'cover') setCover(r.url);
+    else setBlocks((xs) => [...xs, keyed({ t: 'img', src: r.url, alt: '' })]);
+  }
+
+  async function pickVideo(file: File | undefined) {
+    if (!file) return;
+    setBusy(true);
+    const r = await storeVideo(file);
+    setBusy(false);
+    if (!r.ok) return setError({ field: 'media', message: r.error });
+    setError(undefined);
+    setBlocks((xs) => [...xs, keyed({ t: 'video', media: r.id })]);
+  }
 
   function save(e: React.FormEvent) {
     e.preventDefault();
-    const r = savePost({ id: post?.id, ...v });
+    const body = blocks.map((b) => {
+      const { key, ...block } = b;
+      void key;
+      return block as PostBlock;
+    });
+    const r = savePost({ id: post?.id, ...v, cover, body });
     if (!r.ok) return setError({ field: 'field' in r ? r.field : '', message: r.error });
     toast({ tone: 'success', title: post ? 'حُفظ المقال' : 'أُنشئ المقال كمسودّة' });
     onClose();
   }
 
+  const fileInput = (ref: React.RefObject<HTMLInputElement | null>, accept: string, onPick: (f?: File) => void) => (
+    <input
+      ref={ref}
+      type="file"
+      accept={accept}
+      className="sr-only"
+      tabIndex={-1}
+      aria-hidden
+      onChange={(e) => {
+        onPick(e.target.files?.[0]);
+        e.target.value = '';
+      }}
+    />
+  );
+
   return (
     <Dialog open onOpenChange={(o) => !o && onClose()}>
-      <DialogContent className="max-h-[90dvh] overflow-y-auto sm:max-w-dialog-lg">
+      <DialogContent className="max-h-[92dvh] overflow-y-auto sm:max-w-dialog-lg">
         <div>
           <DialogTitle>{post ? 'تعديل المقال' : 'مقال جديد'}</DialogTitle>
           <DialogDescription className="mt-1 text-meta text-muted-foreground">
-            يُعرض نصّاً كما تكتبه. افصل الفقرات بسطر فارغ.
+            غلاف، ثم كتل: فقرات وصور وفيديو بالترتيب الذي تريده.
           </DialogDescription>
         </div>
-        <form onSubmit={save} noValidate className="flex flex-col gap-4">
+        <form onSubmit={save} noValidate className="flex flex-col gap-5">
+          {/* الغلاف */}
+          <div>
+            <p className="mb-1.5 text-meta font-medium text-muted-foreground">صورة الغلاف</p>
+            {cover ? (
+              <div className="relative overflow-hidden rounded-lg border">
+                <img src={cover} alt="" className="aspect-[2/1] w-full object-cover" />
+                <div className="absolute end-2 top-2 flex gap-1.5">
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant="outline"
+                    className="bg-card"
+                    onClick={() => coverRef.current?.click()}
+                  >
+                    تغيير
+                  </Button>
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant="outline"
+                    className="bg-card"
+                    onClick={() => setCover(undefined)}
+                  >
+                    إزالة
+                  </Button>
+                </div>
+              </div>
+            ) : (
+              <button
+                type="button"
+                onClick={() => coverRef.current?.click()}
+                className="flex aspect-[3/1] w-full flex-col items-center justify-center gap-1.5 rounded-lg border border-dashed bg-sunken/50 text-meta text-muted-foreground transition-colors hover:border-strong hover:text-foreground"
+              >
+                <PictureIcon className="size-6" />
+                أضف صورة غلاف
+                <span className="text-caption text-tertiary">PNG أو JPG أو WebP · تظهر فوق البطاقة وأعلى المقال</span>
+              </button>
+            )}
+            {fileInput(coverRef, 'image/png,image/jpeg,image/webp', (f) => pickImage(f, 'cover'))}
+          </div>
+
           <Field>
             <FieldLabel htmlFor={`${id}-t`} required>
               العنوان
@@ -110,21 +218,137 @@ function PostEditor({ post, onClose }: { post?: BlogPost; onClose: () => void })
             />
             <FieldError>{err('excerpt')}</FieldError>
           </Field>
-          <Field>
-            <FieldLabel htmlFor={`${id}-b`} required>
-              النصّ
-            </FieldLabel>
-            <Textarea id={`${id}-b`} value={v.body} onChange={set('body')} className="min-h-56" />
-            <FieldError>{err('body')}</FieldError>
-          </Field>
-          {error && !['title', 'slug', 'excerpt', 'body'].includes(error.field) && (
+
+          {/* الكتل */}
+          <div className="flex flex-col gap-3">
+            <p className="text-meta font-medium text-muted-foreground">نصّ المقال</p>
+            <ol className="flex flex-col gap-3">
+              {blocks.map((b, i) => (
+                <li key={b.key} className="rounded-lg border bg-card p-3">
+                  <div className="mb-2 flex items-center justify-between gap-2">
+                    <span className="flex items-center gap-1.5 text-caption font-medium text-tertiary">
+                      {b.t === 'p' ? (
+                        <TextIcon className="size-3.5" />
+                      ) : b.t === 'img' ? (
+                        <PictureIcon className="size-3.5" />
+                      ) : (
+                        <PlayIcon className="size-3.5" />
+                      )}
+                      {b.t === 'p' ? 'فقرة' : b.t === 'img' ? 'صورة' : 'فيديو'}
+                    </span>
+                    <span className="flex gap-0.5">
+                      <Button
+                        type="button"
+                        size="icon-sm"
+                        variant="ghost"
+                        disabled={i === 0}
+                        onClick={() => move(i, -1)}
+                        aria-label="تقديم"
+                      >
+                        <ArrowUpIcon className="size-4" />
+                      </Button>
+                      <Button
+                        type="button"
+                        size="icon-sm"
+                        variant="ghost"
+                        disabled={i === blocks.length - 1}
+                        onClick={() => move(i, 1)}
+                        aria-label="تأخير"
+                      >
+                        <ArrowDownIcon className="size-4" />
+                      </Button>
+                      <Button
+                        type="button"
+                        size="icon-sm"
+                        variant="ghost"
+                        aria-label="حذف الكتلة"
+                        onClick={() => {
+                          if (b.t === 'video') void deleteVideo(b.media);
+                          setBlocks((xs) => xs.filter((_, k) => k !== i));
+                        }}
+                      >
+                        <TrashIcon className="size-4" />
+                      </Button>
+                    </span>
+                  </div>
+                  {b.t === 'p' ? (
+                    <Textarea
+                      aria-label={`الفقرة ${i + 1}`}
+                      value={b.text}
+                      maxLength={POST_LIMITS.paragraph}
+                      onChange={(e) => patch(i, { text: e.target.value })}
+                      className="min-h-24"
+                    />
+                  ) : b.t === 'img' ? (
+                    <div className="grid gap-3 sm:grid-cols-[10rem_minmax(0,1fr)]">
+                      <img src={b.src} alt="" className="aspect-video w-full rounded-md border object-cover" />
+                      <div className="flex flex-col gap-2">
+                        <Input
+                          aria-label="وصف الصورة"
+                          placeholder="وصف الصورة (لقارئ الشاشة)"
+                          value={b.alt}
+                          maxLength={POST_LIMITS.caption}
+                          onChange={(e) => patch(i, { alt: e.target.value })}
+                        />
+                        <Input
+                          aria-label="تعليق تحت الصورة"
+                          placeholder="تعليق اختياري"
+                          value={b.caption ?? ''}
+                          maxLength={POST_LIMITS.caption}
+                          onChange={(e) => patch(i, { caption: e.target.value })}
+                        />
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="flex flex-col gap-2">
+                      <PostBlocks blocks={[{ t: 'video', media: b.media }]} />
+                      <Input
+                        aria-label="تعليق تحت الفيديو"
+                        placeholder="تعليق اختياري"
+                        value={b.caption ?? ''}
+                        maxLength={POST_LIMITS.caption}
+                        onChange={(e) => patch(i, { caption: e.target.value })}
+                      />
+                    </div>
+                  )}
+                </li>
+              ))}
+            </ol>
+            <div className="flex flex-wrap gap-2">
+              <Button
+                type="button"
+                size="sm"
+                variant="outline"
+                onClick={() => setBlocks((xs) => [...xs, keyed({ t: 'p', text: '' })])}
+              >
+                <TextIcon />
+                فقرة
+              </Button>
+              <Button type="button" size="sm" variant="outline" loading={busy} onClick={() => imgRef.current?.click()}>
+                <PictureIcon />
+                صورة
+              </Button>
+              <Button type="button" size="sm" variant="outline" loading={busy} onClick={() => vidRef.current?.click()}>
+                <PlayIcon />
+                فيديو
+              </Button>
+            </div>
+            <FieldHint>الصور تُعاد معالجتها وتُزال بياناتها الوصفية · الفيديو MP4 أو WebM حتى 50 ميغابايت.</FieldHint>
+            {fileInput(imgRef, 'image/png,image/jpeg,image/webp', (f) => pickImage(f, 'block'))}
+            {fileInput(vidRef, 'video/mp4,video/webm', pickVideo)}
+            <FieldError>{err('media') ?? err('body')}</FieldError>
+          </div>
+
+          {error && !['title', 'slug', 'excerpt', 'body', 'media'].includes(error.field) && (
             <FieldError>{error.message}</FieldError>
           )}
-          <div className="flex justify-end gap-2">
+          <div className="sticky bottom-0 -mx-1 flex justify-end gap-2 bg-card/95 px-1 pt-2 backdrop-blur-sm">
             <Button type="button" variant="ghost" onClick={onClose}>
               إلغاء
             </Button>
-            <Button type="submit">حفظ</Button>
+            <Button type="submit" disabled={busy}>
+              حفظ
+            </Button>
           </div>
         </form>
       </DialogContent>
@@ -134,31 +358,18 @@ function PostEditor({ post, onClose }: { post?: BlogPost; onClose: () => void })
 
 function DeletePostDialog({ post, onClose }: { post: BlogPost; onClose: () => void }) {
   return (
-    <Dialog open onOpenChange={(o) => !o && onClose()}>
-      <DialogContent>
-        <div>
-          <DialogTitle>حذف «{post.title}»؟</DialogTitle>
-          <DialogDescription className="mt-1 text-meta text-muted-foreground">
-            يُحذف المقال نهائياً{post.status === 'published' ? ' ويختفي من المدونة' : ''}. لا يمكن التراجع.
-          </DialogDescription>
-        </div>
-        <div className="flex justify-end gap-2">
-          <Button variant="ghost" onClick={onClose}>
-            إلغاء
-          </Button>
-          <Button
-            variant="danger"
-            onClick={() => {
-              if (deletePost(post.id).ok) toast({ tone: 'info', title: 'حُذف المقال' });
-              onClose();
-            }}
-          >
-            <TrashIcon />
-            حذف المقال
-          </Button>
-        </div>
-      </DialogContent>
-    </Dialog>
+    <ConfirmDialog
+      open
+      onOpenChange={(o) => !o && onClose()}
+      title={`حذف «${post.title}»؟`}
+      description={`يُحذف المقال نهائياً${post.status === 'published' ? ' ويختفي من المدونة' : ''}. لا يمكن التراجع.`}
+      confirmLabel="حذف المقال"
+      icon={<TrashIcon />}
+      onConfirm={() => {
+        if (deletePost(post.id).ok) toast({ tone: 'info', title: 'حُذف المقال' });
+        onClose();
+      }}
+    />
   );
 }
 

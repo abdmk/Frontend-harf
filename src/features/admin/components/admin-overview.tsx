@@ -165,6 +165,7 @@ export function AdminOverview({ analytics: d, adminName }: { analytics: AdminAna
         </div>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
           <StatCard
+            tone="info"
             label={k.accounts.label}
             value={fmt(k.accounts.value)}
             delta={k.accounts.delta}
@@ -173,12 +174,14 @@ export function AdminOverview({ analytics: d, adminName }: { analytics: AdminAna
             hint={k.accounts.hint}
           />
           <StatCard
+            tone="ok"
             label={k.downloads.label}
             value={fmt(k.downloads.value)}
             icon={<DownloadIcon />}
             hint={k.downloads.hint}
           />
           <StatCard
+            tone="brand"
             label="إيراد المبيعات"
             value={formatMoney(d.revenue.sales.month)}
             delta={d.revenue.sales.delta}

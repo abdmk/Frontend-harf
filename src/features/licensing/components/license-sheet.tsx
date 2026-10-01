@@ -118,7 +118,7 @@ export function LicenseSheet({
   return (
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>{trigger}</SheetTrigger>
-      <PanelSheetContent>
+      <PanelSheetContent className="sm:max-h-[min(760px,calc(100dvh-3rem))] sm:w-[min(560px,calc(100vw-2rem))]">
         <header className="flex items-center gap-3 border-b px-5 py-4">
           <span
             aria-hidden

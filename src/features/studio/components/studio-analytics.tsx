@@ -45,11 +45,18 @@ export function StudioAnalyticsView({ fonts, analytics: a }: { fonts: StudioFont
       />
 
       <div className="grid grid-cols-2 gap-3 sm:gap-4 xl:grid-cols-5">
-        <StatCard label="الزيارات" value={fmt(sum(s.visits))} delta={d.visits} icon={<EyeIcon />} />
-        <StatCard label="التحميلات" value={fmt(sum(s.downloads))} delta={d.downloads} icon={<DownloadIcon />} />
-        <StatCard label="المستخدمون" value={fmt(sum(s.users))} delta={d.users} icon={<UserIcon />} />
-        <StatCard label="في المفضّلة" value={fmt(t.favorites)} hint="منذ النشر" icon={<HeartIcon />} />
+        <StatCard tone="info" label="الزيارات" value={fmt(sum(s.visits))} delta={d.visits} icon={<EyeIcon />} />
         <StatCard
+          tone="ok"
+          label="التحميلات"
+          value={fmt(sum(s.downloads))}
+          delta={d.downloads}
+          icon={<DownloadIcon />}
+        />
+        <StatCard tone="info" label="المستخدمون" value={fmt(sum(s.users))} delta={d.users} icon={<UserIcon />} />
+        <StatCard tone="brand" label="في المفضّلة" value={fmt(t.favorites)} hint="منذ النشر" icon={<HeartIcon />} />
+        <StatCard
+          tone="warn"
           label="التقييم"
           value={t.rating ? t.rating.value.toFixed(1) : '—'}
           hint={t.rating ? `${fmt(t.rating.count)} تقييماً` : undefined}

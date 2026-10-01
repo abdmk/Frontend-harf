@@ -83,10 +83,11 @@ export function AccountPanel({
           </p>
         </div>
         {/* في العمود الجانبي الضيّق (lg) تُخفى الشارة ليظهر البريد كاملاً؛ الخطة في بند «الاشتراك» */}
-        {!menu && <PlanBadge plan={user.plan} className="lg:hidden" />}
+        {!menu && user.role !== 'admin' && <PlanBadge plan={user.plan} className="lg:hidden" />}
       </div>
 
-      {menu && (
+      {/* المشرف بلا خطة — حسابه للإدارة لا للاشتراك */}
+      {menu && user.role !== 'admin' && (
         <div className="flex items-center gap-2.5 rounded-md bg-sunken py-2 ps-3 pe-2">
           <CrownIcon className={cn('size-4.5', PLAN_TEXT[user.plan])} />
           <p className="flex-1 text-control">{PLAN_TITLE[user.plan]}</p>

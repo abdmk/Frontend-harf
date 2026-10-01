@@ -205,4 +205,50 @@ test.describe('لوحة الإدارة', () => {
       page.getByRole('dialog', { name: 'بنرات الصفحة الرئيسية' }).getByRole('button', { name: 'إضافة بنر' }),
     ).toBeVisible();
   });
+
+  test('المدونة: مقال جديد بغلاف وصورة داخل النصّ يظهر منشوراً', async ({ page }) => {
+    await page.goto('/admin/content?as=admin');
+    await page.getByRole('tab', { name: 'المدونة' }).click();
+    await page.getByRole('button', { name: 'مقال جديد' }).click();
+    const dlg = page.getByRole('dialog', { name: 'مقال جديد' });
+    const png = async () => {
+      const b64 = await page.evaluate(() => {
+        const c = document.createElement('canvas');
+        c.width = 800;
+        c.height = 400;
+        const ctx = c.getContext('2d')!;
+        ctx.fillStyle = 'rgb(30 120 200)';
+        ctx.fillRect(0, 0, 800, 400);
+        return c.toDataURL('image/png').split(',')[1]!;
+      });
+      return { name: 'a.png', mimeType: 'image/png', buffer: Buffer.from(b64, 'base64') };
+    };
+    const inputs = dlg.locator('input[type=file]');
+    await inputs.nth(0).setInputFiles(await png());
+    await expect(dlg.getByRole('button', { name: 'إزالة' })).toBeVisible();
+    await dlg.getByLabel('العنوان').fill('مقال تجريبي بالصور');
+    await dlg.getByLabel('الرابط').fill('test-media-post');
+    await dlg.getByLabel('الملخّص').fill('ملخّص تجريبي لمقال فيه صورة.');
+    await dlg.getByLabel('الفقرة 1').fill('فقرة أولى.');
+    await inputs.nth(1).setInputFiles(await png());
+    await dlg.getByRole('button', { name: 'حفظ' }).click();
+    await expect(dlg.getByText('صف الصورة لقارئ الشاشة.')).toBeVisible();
+    await dlg.getByLabel('وصف الصورة').fill('مربّع أزرق');
+    await dlg.getByRole('button', { name: 'حفظ' }).click();
+    await expect(dlg).toBeHidden();
+
+    const item = page.getByRole('listitem').filter({ hasText: 'مقال تجريبي بالصور' });
+    await item.getByRole('button', { name: 'نشر' }).click();
+    await page.goto('/blog/test-media-post');
+    await expect(page.getByRole('img', { name: 'مربّع أزرق' })).toBeVisible();
+  });
+
+  test('نوافذ التأكيد: الحذف بنافذة تحذير قبل التنفيذ', async ({ page }) => {
+    await page.goto('/admin/content?as=admin');
+    await page.getByRole('tab', { name: 'المدونة' }).click();
+    await page.getByRole('button', { name: 'حذف دليل مختصر لتراخيص الخطوط' }).click();
+    const dlg = page.getByRole('dialog', { name: /حذف «دليل مختصر/ });
+    await dlg.getByRole('button', { name: 'إلغاء' }).click();
+    await expect(page.getByText('دليل مختصر لتراخيص الخطوط')).toBeVisible();
+  });
 });

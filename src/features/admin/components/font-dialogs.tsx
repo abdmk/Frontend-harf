@@ -1,8 +1,10 @@
 import { useId, useState } from 'react';
 
+import { ConfirmDialog } from '@/components/shared/confirm-dialog';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from '@/components/ui/dialog';
 import { Field, FieldError, FieldHint, FieldLabel } from '@/components/ui/field';
+import { TrashIcon } from '@/components/ui/icons';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toast } from '@/components/ui/toast';
@@ -137,8 +139,7 @@ export function DeleteFontDialog({
   const id = useId();
   const name = item.font.name;
 
-  function remove(e: React.FormEvent) {
-    e.preventDefault();
+  function remove() {
     const r = deleteFont(item.font.id, confirm);
     if (!r.ok) return setError(r.error);
     toast({ tone: 'info', title: `حُذف «${name}»`, description: 'يمكنك استرجاعه من «المحذوفة».' });
@@ -147,41 +148,32 @@ export function DeleteFontDialog({
   }
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent>
-        <div>
-          <DialogTitle>حذف «{name}»؟</DialogTitle>
-          <DialogDescription className="mt-1 text-meta leading-relaxed text-muted-foreground">
-            يختفي من المكتبة والأدوات فوراً. من اشتراه يبقى له ترخيصه وملفّاته. يمكن استرجاعه لاحقاً.
-          </DialogDescription>
-        </div>
-        <form onSubmit={remove} noValidate className="flex flex-col gap-5">
-          <Field>
-            <FieldLabel htmlFor={`${id}-c`}>
-              اكتب <bdi className="font-semibold text-foreground">{name}</bdi> للتأكيد
-            </FieldLabel>
-            <Input
-              id={`${id}-c`}
-              value={confirm}
-              autoComplete="off"
-              onChange={(e) => {
-                setConfirm(e.target.value);
-                setError(undefined);
-              }}
-              aria-invalid={!!error}
-            />
-            <FieldError>{error}</FieldError>
-          </Field>
-          <div className="flex justify-end gap-2">
-            <Button type="button" variant="ghost" onClick={() => onOpenChange(false)}>
-              إلغاء
-            </Button>
-            <Button type="submit" variant="danger" disabled={confirm.trim() !== name}>
-              حذف الخط
-            </Button>
-          </div>
-        </form>
-      </DialogContent>
-    </Dialog>
+    <ConfirmDialog
+      open={open}
+      onOpenChange={onOpenChange}
+      title={`حذف «${name}»؟`}
+      description="يختفي من المكتبة والأدوات فوراً. من اشتراه يبقى له ترخيصه وملفّاته، ويمكن استرجاعه لاحقاً."
+      confirmLabel="حذف الخط"
+      disabled={confirm.trim() !== name}
+      icon={<TrashIcon />}
+      onConfirm={remove}
+    >
+      <Field>
+        <FieldLabel htmlFor={`${id}-c`}>
+          اكتب <bdi className="font-semibold text-foreground">{name}</bdi> للتأكيد
+        </FieldLabel>
+        <Input
+          id={`${id}-c`}
+          value={confirm}
+          autoComplete="off"
+          onChange={(e) => {
+            setConfirm(e.target.value);
+            setError(undefined);
+          }}
+          aria-invalid={!!error}
+        />
+        <FieldError>{error}</FieldError>
+      </Field>
+    </ConfirmDialog>
   );
 }

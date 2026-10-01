@@ -3,11 +3,26 @@ import { Link, Navigate, useParams } from 'react-router';
 import { Container } from '@/components/layout/container';
 import { ContentPage } from '@/components/layout/content-page';
 import { PageMeta } from '@/components/shared/page-meta';
+import { PostBlocks } from '@/components/shared/post-blocks';
 import { ChevronRightIcon } from '@/components/ui/icons';
-import { usePublishedPosts } from '@/lib/blog';
+import { type BlogPost, usePublishedPosts } from '@/lib/blog';
+import { cn } from '@/lib/cn';
 import { formatDateAr } from '@/lib/format';
 
 import { ComingSoonPage } from './coming-soon';
+
+/** غلاف المقال، وبلا صورة أرضية «فجر» بأول حرف من العنوان — كي لا تبدو البطاقة فارغة */
+function Cover({ post, className }: { post: BlogPost; className?: string }) {
+  return post.cover ? (
+    <img src={post.cover} alt="" loading="lazy" decoding="async" className={cn('w-full object-cover', className)} />
+  ) : (
+    <div aria-hidden className={cn('grid w-full place-items-center moment', className)}>
+      <span className="text-6xl font-bold" style={{ color: 'var(--grad-dawn-ink)' }}>
+        {post.title.trim()[0]}
+      </span>
+    </div>
+  );
+}
 
 /** المدونة: المقالات المنشورة من لوحة الإدارة — وبلا مقالات تبقى صفحة «قريباً» */
 export function BlogPage() {
@@ -20,14 +35,17 @@ export function BlogPage() {
           <li key={p.id}>
             <Link
               to={`/blog/${p.slug}`}
-              className="group flex h-full flex-col gap-3 rounded-xl border bg-card p-6 transition-[border-color,transform,box-shadow] duration-(--dur-slow) hover:-translate-y-0.5 hover:border-strong hover:shadow-float"
+              className="group flex h-full flex-col overflow-hidden rounded-xl border bg-card transition-[border-color,transform,box-shadow] duration-(--dur-slow) hover:-translate-y-0.5 hover:border-strong hover:shadow-float"
             >
-              <p className="text-caption text-tertiary">
-                {p.author} · {formatDateAr(p.publishedAt ?? p.updatedAt)}
-              </p>
-              <h2 className="text-xl leading-snug font-bold group-hover:text-primary">{p.title}</h2>
-              <p className="text-meta leading-relaxed text-muted-foreground">{p.excerpt}</p>
-              <span className="mt-auto pt-2 text-meta font-medium">اقرأ المقال</span>
+              <Cover post={p} className="aspect-[16/9] border-b" />
+              <div className="flex flex-1 flex-col gap-3 p-6">
+                <p className="text-caption text-tertiary">
+                  {p.author} · {formatDateAr(p.publishedAt ?? p.updatedAt)}
+                </p>
+                <h2 className="text-xl leading-snug font-bold group-hover:text-primary">{p.title}</h2>
+                <p className="text-meta leading-relaxed text-muted-foreground">{p.excerpt}</p>
+                <span className="mt-auto pt-2 text-meta font-medium">اقرأ المقال</span>
+              </div>
             </Link>
           </li>
         ))}
@@ -56,11 +74,10 @@ export function BlogPostPage() {
         <p className="mt-4 text-meta text-muted-foreground">
           {post.author} · {formatDateAr(post.publishedAt ?? post.updatedAt)}
         </p>
+        {post.cover && <Cover post={post} className="mt-8 aspect-[2/1] rounded-xl border" />}
         <p className="mt-8 text-lead leading-relaxed">{post.excerpt}</p>
-        <div className="mt-8 flex flex-col gap-5 border-t pt-8 text-control leading-loose text-muted-foreground">
-          {post.body.map((para, i) => (
-            <p key={i}>{para}</p>
-          ))}
+        <div className="mt-8 border-t pt-8">
+          <PostBlocks blocks={post.body} />
         </div>
       </article>
     </Container>

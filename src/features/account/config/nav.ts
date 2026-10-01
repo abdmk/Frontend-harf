@@ -64,7 +64,17 @@ export function accountNavGroups(user: User): NavItem[][] {
     ],
     [
       { section: 'usage', label: 'الاستخدام', Icon: UsageIcon, meta: (u) => `${u.stats.usagePct}%` },
-      { section: 'subscription', label: 'الاشتراك', Icon: CrownIcon, meta: (u) => PLAN_LABEL[u.plan] },
+      // المشرف بلا خطة اشتراك
+      ...(user.role === 'admin'
+        ? []
+        : [
+            {
+              section: 'subscription',
+              label: 'الاشتراك',
+              Icon: CrownIcon,
+              meta: (u: User) => PLAN_LABEL[u.plan],
+            } as const,
+          ]),
     ],
   ];
   // مساحة العمل: المشرف يرى «لوحة الإدارة» مكان «الاستوديو»

@@ -1,6 +1,7 @@
 import { useDeferredValue, useId, useState } from 'react';
 
 import { Avatar } from '@/components/shared/avatar';
+import { ConfirmDialog } from '@/components/shared/confirm-dialog';
 import { EmptyState } from '@/components/shared/empty-state';
 import { StatCard } from '@/components/shared/stat-card';
 import { Badge } from '@/components/ui/badge';
@@ -133,53 +134,42 @@ function BanDialog({ u, onClose }: { u: AdminAccount; onClose: () => void }) {
   const [reason, setReason] = useState('');
   const [error, setError] = useState<string>();
   const id = useId();
-  function save(e: React.FormEvent) {
-    e.preventDefault();
+  function save() {
     const r = ban(u.id, reason);
     if (!r.ok) return setError(r.error);
     toast({ tone: 'info', title: `حُظر ${u.name}`, description: 'لا يستطيع الدخول حتى يُفكّ الحظر.' });
     onClose();
   }
   return (
-    <Dialog open onOpenChange={(o) => !o && onClose()}>
-      <DialogContent>
-        <div>
-          <DialogTitle>حظر {u.name}؟</DialogTitle>
-          <DialogDescription className="mt-1 text-meta leading-relaxed text-muted-foreground">
-            تُنهى جلسته ولا يستطيع الدخول. مشترياته وتراخيصه تبقى محفوظة، ويمكن فكّ الحظر في أي وقت.
-          </DialogDescription>
-        </div>
-        <form onSubmit={save} noValidate className="flex flex-col gap-4">
-          <Field>
-            <FieldLabel htmlFor={`${id}-r`} required>
-              السبب
-            </FieldLabel>
-            <Textarea
-              id={`${id}-r`}
-              value={reason}
-              maxLength={300}
-              onChange={(e) => {
-                setReason(e.target.value);
-                setError(undefined);
-              }}
-              placeholder="مثل: إعادة توزيع خطوط مدفوعة"
-              className="min-h-20"
-            />
-            <FieldHint>يُحفظ في سجلّ النشاط للمشرفين فقط.</FieldHint>
-            <FieldError>{error}</FieldError>
-          </Field>
-          <div className="flex justify-end gap-2">
-            <Button type="button" variant="ghost" onClick={onClose}>
-              إلغاء
-            </Button>
-            <Button type="submit" variant="danger" disabled={reason.trim().length < BAN_REASON_MIN}>
-              <BanIcon />
-              حظر الحساب
-            </Button>
-          </div>
-        </form>
-      </DialogContent>
-    </Dialog>
+    <ConfirmDialog
+      open
+      onOpenChange={(o) => !o && onClose()}
+      title={`حظر ${u.name}؟`}
+      description="تُنهى جلسته ولا يستطيع الدخول. مشترياته وتراخيصه تبقى محفوظة، ويمكن فكّ الحظر في أي وقت."
+      confirmLabel="حظر الحساب"
+      icon={<BanIcon />}
+      disabled={reason.trim().length < BAN_REASON_MIN}
+      onConfirm={save}
+    >
+      <Field>
+        <FieldLabel htmlFor={`${id}-r`} required>
+          السبب
+        </FieldLabel>
+        <Textarea
+          id={`${id}-r`}
+          value={reason}
+          maxLength={300}
+          onChange={(e) => {
+            setReason(e.target.value);
+            setError(undefined);
+          }}
+          placeholder="مثل: إعادة توزيع خطوط مدفوعة"
+          className="min-h-20"
+        />
+        <FieldHint>يُحفظ في سجلّ النشاط للمشرفين فقط.</FieldHint>
+        <FieldError>{error}</FieldError>
+      </Field>
+    </ConfirmDialog>
   );
 }
 
@@ -187,55 +177,44 @@ function DeleteDialog({ u, onClose }: { u: AdminAccount; onClose: () => void }) 
   const [confirm, setConfirm] = useState('');
   const [error, setError] = useState<string>();
   const id = useId();
-  function save(e: React.FormEvent) {
-    e.preventDefault();
+  function save() {
     const r = removeAccount(u.id, confirm);
     if (!r.ok) return setError(r.error);
     toast({ tone: 'info', title: `حُذف حساب ${u.name}`, description: 'يمكن استرجاعه من «المحذوفة».' });
     onClose();
   }
   return (
-    <Dialog open onOpenChange={(o) => !o && onClose()}>
-      <DialogContent>
-        <div>
-          <DialogTitle>حذف حساب {u.name}؟</DialogTitle>
-          <DialogDescription className="mt-1 text-meta leading-relaxed text-muted-foreground">
-            يُغلق الحساب ويختفي من الموقع. يمكن استرجاعه لاحقاً قبل الحذف النهائي من الخادم.
-          </DialogDescription>
-        </div>
-        <form onSubmit={save} noValidate className="flex flex-col gap-4">
-          <Field>
-            <FieldLabel htmlFor={`${id}-c`}>
-              اكتب{' '}
-              <bdi dir="ltr" className="font-semibold text-foreground">
-                {u.email}
-              </bdi>{' '}
-              للتأكيد
-            </FieldLabel>
-            <Input
-              id={`${id}-c`}
-              dir="ltr"
-              value={confirm}
-              autoComplete="off"
-              onChange={(e) => {
-                setConfirm(e.target.value);
-                setError(undefined);
-              }}
-            />
-            <FieldError>{error}</FieldError>
-          </Field>
-          <div className="flex justify-end gap-2">
-            <Button type="button" variant="ghost" onClick={onClose}>
-              إلغاء
-            </Button>
-            <Button type="submit" variant="danger" disabled={confirm.trim().toLowerCase() !== u.email.toLowerCase()}>
-              <TrashIcon />
-              حذف الحساب
-            </Button>
-          </div>
-        </form>
-      </DialogContent>
-    </Dialog>
+    <ConfirmDialog
+      open
+      onOpenChange={(o) => !o && onClose()}
+      title={`حذف حساب ${u.name}؟`}
+      description="يُغلق الحساب ويختفي من الموقع. يمكن استرجاعه لاحقاً قبل الحذف النهائي من الخادم."
+      confirmLabel="حذف الحساب"
+      icon={<TrashIcon />}
+      disabled={confirm.trim().toLowerCase() !== u.email.toLowerCase()}
+      onConfirm={save}
+    >
+      <Field>
+        <FieldLabel htmlFor={`${id}-c`}>
+          اكتب{' '}
+          <bdi dir="ltr" className="font-semibold text-foreground">
+            {u.email}
+          </bdi>{' '}
+          للتأكيد
+        </FieldLabel>
+        <Input
+          id={`${id}-c`}
+          dir="ltr"
+          value={confirm}
+          autoComplete="off"
+          onChange={(e) => {
+            setConfirm(e.target.value);
+            setError(undefined);
+          }}
+        />
+        <FieldError>{error}</FieldError>
+      </Field>
+    </ConfirmDialog>
   );
 }
 
@@ -315,15 +294,28 @@ export function UsersManager({ visits }: { visits: number }) {
       <AdminPageHeader title="المستخدمون" description="الحسابات، خططها، والحظر والحذف — كل إجراء يُسجَّل." />
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <StatCard label="المسجّلون" value={fmt(live.length)} icon={<UserIcon />} hint="الحسابات النشطة والمحظورة" />
         <StatCard
+          tone="info"
+          label="المسجّلون"
+          value={fmt(live.length)}
+          icon={<UserIcon />}
+          hint="الحسابات النشطة والمحظورة"
+        />
+        <StatCard
+          tone="warn"
           label="المشتركون"
           value={fmt(subscribers)}
           icon={<CrownIcon />}
           hint={`${((subscribers / Math.max(1, live.length)) * 100).toFixed(0)}% من المسجّلين`}
         />
-        <StatCard label="الزيارات" value={fmt(visits)} icon={<GlobeIcon />} hint="آخر 30 يوماً" />
-        <StatCard label="المحظورون" value={fmt(count('banned'))} icon={<BanIcon />} hint="لا يستطيعون الدخول" />
+        <StatCard tone="ok" label="الزيارات" value={fmt(visits)} icon={<GlobeIcon />} hint="آخر 30 يوماً" />
+        <StatCard
+          tone="danger"
+          label="المحظورون"
+          value={fmt(count('banned'))}
+          icon={<BanIcon />}
+          hint="لا يستطيعون الدخول"
+        />
       </div>
 
       <div className="overflow-hidden rounded-xl border bg-card">

@@ -96,6 +96,7 @@ export function StudioOverview({ fonts, analytics: a }: { fonts: StudioFont[]; a
 
       <div className="grid grid-cols-2 gap-3 sm:gap-4 xl:grid-cols-4">
         <StatCard
+          tone="ok"
           label="التحميلات"
           value={fmt(sum(s.downloads))}
           delta={d.downloads}
@@ -103,6 +104,7 @@ export function StudioOverview({ fonts, analytics: a }: { fonts: StudioFont[]; a
           icon={<DownloadIcon />}
         />
         <StatCard
+          tone="info"
           label="المستخدمون"
           value={fmt(sum(s.users))}
           delta={d.users}
@@ -110,12 +112,14 @@ export function StudioOverview({ fonts, analytics: a }: { fonts: StudioFont[]; a
           icon={<UserIcon />}
         />
         <StatCard
+          tone="ai"
           label="خطوط منشورة"
           value={t.published}
           hint={`${t.free} مجانية · ${t.paid} مدفوعة`}
           icon={<LayersIcon />}
         />
         <StatCard
+          tone="warn"
           label="التقييم"
           value={t.rating ? `${t.rating.value.toFixed(1)} / 5` : '—'}
           hint={t.rating ? `من ${fmt(t.rating.count)} تقييماً` : 'لا تقييمات بعد'}
