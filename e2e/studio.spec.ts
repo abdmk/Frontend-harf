@@ -66,12 +66,15 @@ test.describe('الاستوديو والإدارة', () => {
     await page.getByRole('button', { name: /^حساب/ }).click();
     const menu = page.getByRole('dialog');
     await expect(menu.getByRole('link', { name: 'لوحة الإدارة' })).toHaveCount(0);
+    await expect(menu.getByRole('link', { name: 'مراجعة طلبات النشر' })).toHaveCount(0);
     await menu.getByRole('link', { name: 'رفع خط' }).click();
     await expect(page).toHaveURL(/\/studio\/publish$/);
 
     await page.goto('/?as=admin');
     await page.getByRole('button', { name: /^حساب/ }).click();
     await expect(page.getByRole('dialog').getByRole('link', { name: 'لوحة الإدارة' })).toBeVisible();
+    await page.getByRole('dialog').getByRole('link', { name: 'مراجعة طلبات النشر' }).click();
+    await expect(page).toHaveURL(/\/admin\/review$/);
   });
 
   test('صور الخط: تُرتَّب بالسحب، وبالأسهم من لوحة المفاتيح', async ({ page }) => {

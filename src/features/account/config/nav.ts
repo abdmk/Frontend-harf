@@ -3,6 +3,7 @@ import {
   AppsIcon,
   ChartHistogramIcon,
   CloudUploadIcon,
+  DocumentSignedIcon,
   CrownIcon,
   FolderIcon,
   HeartIcon,
@@ -17,8 +18,8 @@ import { paths } from '@/config/paths';
 import type { AccountSection, User } from '@/features/account/types';
 
 export type NavItem = {
-  /** قسم الحساب، أو «publish» لرفع خط (خارج صفحة الحساب) */
-  section: AccountSection | 'publish';
+  /** قسم الحساب، أو «publish» لرفع خط و«review» لمراجعة المشرف (خارج صفحة الحساب) */
+  section: AccountSection | 'publish' | 'review';
   label: string;
   Icon: (p: IconProps) => React.JSX.Element;
   meta?: (u: User) => string | undefined;
@@ -43,6 +44,17 @@ export function accountNavGroups(user: User): NavItem[][] {
               label: 'رفع خط',
               Icon: CloudUploadIcon,
               href: paths.studio.getHref('publish'),
+            } as const,
+          ]
+        : []),
+      // المشرف: طابور مراجعة الخطوط المرسلة مباشرة من القائمة
+      ...(user.role === 'admin'
+        ? [
+            {
+              section: 'review',
+              label: 'مراجعة طلبات النشر',
+              Icon: DocumentSignedIcon,
+              href: paths.admin.getHref('review'),
             } as const,
           ]
         : []),
