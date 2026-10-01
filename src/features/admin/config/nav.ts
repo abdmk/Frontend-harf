@@ -13,6 +13,13 @@ export type AdminNavItem = {
  * لوحة الإدارة: خمسة أقسام بترتيب العمل اليومي — ما يحتاج قراراً أولاً (المراجعة)، ثم ما يُدار
  * (الخطوط والمستخدمون والمحتوى)، ثم ما يُقرأ (التحليلات).
  */
+/** مجموعات القائمة الجانبية — تسمية صغيرة فوق كل مجموعة كما في لوحات العمل */
+export const ADMIN_GROUPS: { title: string; items: AdminSection[] | (AdminSection | null)[] }[] = [
+  { title: 'عام', items: [null, 'review'] },
+  { title: 'المكتبة والمحتوى', items: ['fonts', 'content'] },
+  { title: 'الناس والأرقام', items: ['users', 'analytics'] },
+];
+
 export const ADMIN_NAV: AdminNavItem[] = [
   { section: null, label: 'الرئيسية', hint: 'ما يحتاج انتباهك اليوم', Icon: HomeIcon },
   { section: 'review', label: 'المراجعة', hint: 'الخطوط المرفوعة بانتظار قرار', Icon: DocumentSignedIcon },
