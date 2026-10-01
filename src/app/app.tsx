@@ -1,7 +1,5 @@
 import { Navigate, Route, Routes } from 'react-router';
 
-import { COMING_SOON, type ComingSoonKey } from '@/config/coming-soon';
-
 import { ErrorBoundary } from './error';
 import { AdminLayout } from './layouts/admin-layout';
 import { SiteLayout } from './layouts/site-layout';
@@ -18,10 +16,11 @@ import {
   AdminHomePage,
   AdminReviewDetailPage,
   AdminReviewPage,
+  AdminUsersPage,
 } from './pages/admin';
+import { BlogPage, BlogPostPage } from './pages/blog';
 import { CartPage } from './pages/cart';
 import { CheckoutPage } from './pages/checkout';
-import { ComingSoonPage } from './pages/coming-soon';
 import { DesignSystemPage } from './pages/design-system';
 import { DesignerPage } from './pages/designer';
 import { FontPage } from './pages/font';
@@ -64,9 +63,8 @@ export function App() {
           <Route path="tools/nasaq" element={<NasaqPage />} />
           <Route path="tools/font-lab" element={<FontLabPage />} />
           <Route path="tools/font-matching" element={<FontMatchingPage />} />
-          {(Object.keys(COMING_SOON) as ComingSoonKey[]).map((k) => (
-            <Route key={k} path={COMING_SOON[k].path.slice(1)} element={<ComingSoonPage page={k} />} />
-          ))}
+          <Route path="blog" element={<BlogPage />} />
+          <Route path="blog/:slug" element={<BlogPostPage />} />
           <Route path="about" element={<AboutPage />} />
           <Route path="services" element={<ServicesPage />} />
           <Route path="help" element={<HelpPage />} />
@@ -113,6 +111,7 @@ export function App() {
           <Route path="review/:id" element={<AdminReviewDetailPage />} />
           <Route path="fonts" element={<AdminFontsPage />} />
           <Route path="fonts/:id" element={<AdminFontDetailPage />} />
+          <Route path="users" element={<AdminUsersPage />} />
           <Route path="content" element={<AdminContentPage />} />
           <Route path="analytics" element={<AdminAnalyticsPage />} />
           <Route path="*" element={<Navigate to="/admin" replace />} />

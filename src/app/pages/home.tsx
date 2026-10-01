@@ -5,6 +5,7 @@ import { Container } from '@/components/layout/container';
 import { CtaSection } from '@/components/layout/cta-section';
 import { FontGrid } from '@/components/shared/font-grid';
 import { PageMeta } from '@/components/shared/page-meta';
+import { BannerQuickEdit } from '@/features/admin/components/banner-quick-edit';
 import { getFonts } from '@/features/catalog/api/get-fonts';
 import { ActiveFilters } from '@/features/catalog/components/active-filters';
 import { CatalogProvider, CatalogResults } from '@/features/catalog/components/catalog-context';
@@ -23,7 +24,7 @@ export function HomePage() {
     <Container as="main" id="main" className="pt-6 sm:pt-12">
       <PageMeta title={heading} />
       <h1 className="sr-only">{heading}</h1>
-      <FeaturedCarousel />
+      <FeaturedCarousel overlay={<BannerQuickEdit />} />
       <CatalogProvider>
         <CatalogToolbar />
         <ActiveFilters count={fonts.length} />

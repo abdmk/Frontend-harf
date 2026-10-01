@@ -7,6 +7,7 @@ import { Field, FieldError, FieldHint, FieldLabel } from '@/components/ui/field'
 import { ArrowDownIcon, ArrowUpIcon, PictureIcon, PlusIcon, TrashIcon } from '@/components/ui/icons';
 import { Input, Textarea } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { toast } from '@/components/ui/toast';
 import { cn } from '@/lib/cn';
 import { prepareImage } from '@/lib/image-upload';
@@ -21,6 +22,7 @@ import {
 } from '@/lib/site-content';
 
 import { AdminPageHeader } from './admin-nav';
+import { BlogManager } from './blog-manager';
 import { newBannerId, saveAnnouncement, saveBanners, saveCta } from '../api/content';
 
 /** مسودّة بنر: الصورة جاهزة (مُعاد ترميزها) والنصوص قيد الكتابة — تُتحقَّق كلّها عند الحفظ */
@@ -32,7 +34,7 @@ function UnsavedBadge({ show }: { show: boolean }) {
   return show ? <Badge tone="warning">تغييرات غير محفوظة</Badge> : null;
 }
 
-function BannersEditor({ saved }: { saved: Banner[] }) {
+export function BannersEditor({ saved }: { saved: Banner[] }) {
   const [items, setItems] = useState<Draft[]>(saved);
   const [error, setError] = useState<string>();
   const [busy, setBusy] = useState(false);
@@ -335,13 +337,24 @@ export function ContentManager() {
   return (
     <div className="flex flex-col gap-5">
       <AdminPageHeader title="المحتوى" description="التغييرات تظهر في الموقع فور الحفظ، وتُسجَّل في سجلّ النشاط." />
-      {/* key: يعيد تهيئة المسودّة بعد الحفظ أو تغيّر المحفوظ من تبويب آخر */}
-      <BannersEditor
-        key={JSON.stringify(content.banners.map((b) => [b.id, b.active, b.alt, b.href]))}
-        saved={content.banners}
-      />
-      <AnnouncementEditor key={JSON.stringify(content.announcement)} saved={content.announcement} />
-      <CtaEditor key={JSON.stringify(content.cta)} saved={content.cta} />
+      <Tabs defaultValue="site">
+        <TabsList aria-label="أقسام المحتوى">
+          <TabsTrigger value="site">الصفحة الرئيسية</TabsTrigger>
+          <TabsTrigger value="blog">المدونة</TabsTrigger>
+        </TabsList>
+        <TabsContent value="site" className="flex flex-col gap-5">
+          {/* key: يعيد تهيئة المسودّة بعد الحفظ أو تغيّر المحفوظ من تبويب آخر */}
+          <BannersEditor
+            key={JSON.stringify(content.banners.map((b) => [b.id, b.active, b.alt, b.href]))}
+            saved={content.banners}
+          />
+          <AnnouncementEditor key={JSON.stringify(content.announcement)} saved={content.announcement} />
+          <CtaEditor key={JSON.stringify(content.cta)} saved={content.cta} />
+        </TabsContent>
+        <TabsContent value="blog">
+          <BlogManager />
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }

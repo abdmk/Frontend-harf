@@ -6,7 +6,13 @@ import { isExternalLink, safeContentLink, useSiteContent } from '@/lib/site-cont
 const FRAME = 'aspect-video rounded-lg sm:aspect-[1120/290]';
 
 /** الشريحة المميّزة أعلى المكتبة — بنراتها من لوحة الإدارة («المحتوى»)، وبلا بنرات مفعّلة أرضيّات هادئة */
-export function FeaturedCarousel({ count = 4 }: { count?: number }) {
+export function FeaturedCarousel({
+  count = 4,
+  overlay,
+}: {
+  count?: number;
+  /** عناصر فوق الشريحة (زرّ الإدارة) */ overlay?: React.ReactNode;
+}) {
   const banners = useSiteContent().banners.filter((b) => b.active);
   const slides = banners.length
     ? banners.map((b) => {
@@ -29,5 +35,5 @@ export function FeaturedCarousel({ count = 4 }: { count?: number }) {
         );
       })
     : Array.from({ length: count }, (_, i) => <div key={i} className="size-full bg-sunken" />);
-  return <Carousel label="المميّز" autoPlay={6000} slides={slides} className={FRAME} />;
+  return <Carousel label="المميّز" autoPlay={6000} slides={slides} className={FRAME} overlay={overlay} />;
 }

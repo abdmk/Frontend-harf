@@ -25,7 +25,13 @@ const dateLabel = (d: string) =>
   new Date(`${d}T00:00:00`).toLocaleDateString('ar', { day: 'numeric', month: 'long', year: 'numeric' });
 
 /** نافذة «أضف إيراداً»: النوع، المبلغ، العميل، التاريخ، ملاحظة — تحقّق كامل قبل الحفظ */
-function AddRevenueDialog({ onAdd }: { onAdd: (e: ManualRevenue) => void }) {
+export function AddRevenueDialog({
+  onAdd,
+  variant = 'primary',
+}: {
+  onAdd: (e: ManualRevenue) => void;
+  variant?: 'primary' | 'outline';
+}) {
   const [open, setOpen] = useState(false);
   const [category, setCategory] = useState<RevenueCategory>('font-design');
   const [state, formAction, pending] = useActionState<RevenueFormState, FormData>(createRevenue, null);
@@ -49,7 +55,7 @@ function AddRevenueDialog({ onAdd }: { onAdd: (e: ManualRevenue) => void }) {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button size="sm">
+        <Button size="sm" variant={variant}>
           <PlusIcon />
           أضف إيراداً
         </Button>

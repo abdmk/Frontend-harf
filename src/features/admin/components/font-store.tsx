@@ -23,12 +23,14 @@ import {
   TrashIcon,
 } from '@/components/ui/icons';
 import { InputGroup } from '@/components/ui/input';
-import { SegmentedControl } from '@/components/ui/segmented-control';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { toast } from '@/components/ui/toast';
 import { paths } from '@/config/paths';
+import { faceStyle } from '@/lib/font-weight';
 import { CATEGORY_LABEL, TYPE_LABEL } from '@/lib/labels';
+import type { Font } from '@/types/domain/font';
 
 import { AdminPageHeader } from './admin-nav';
 import { DeleteFontDialog, EditFontDialog } from './font-dialogs';
@@ -66,6 +68,20 @@ export function toggleFeatured(item: StoreFont) {
 export function restore(item: StoreFont) {
   const r = restoreFont(item.font.id);
   if (r.ok) toast({ tone: 'success', title: `استُرجع «${item.font.name}»`, description: 'عاد بحالته قبل الحذف.' });
+}
+
+/** مصغّرة الخط في الجدول: عيّنة بخطّه الحقيقي */
+function Thumb({ font }: { font: Font }) {
+  return (
+    <span
+      aria-hidden
+      className="grid h-11 w-16 shrink-0 place-items-center overflow-hidden rounded-md border bg-sunken"
+    >
+      <span className="text-xl leading-none" style={font.face ? faceStyle(font.face, 700) : undefined}>
+        أب
+      </span>
+    </span>
+  );
 }
 
 function RowActions({ item }: { item: StoreFont }) {
@@ -157,62 +173,75 @@ export function FontStore() {
         description={`${all.length - count('deleted')} خطاً · ${count('visible')} ظاهر · ${count('hidden')} مخفي`}
       />
 
-      <div className="flex flex-col gap-3">
-        <InputGroup
-          start={<SearchIcon />}
-          type="search"
-          value={q}
-          onChange={(e) => setQ(e.target.value)}
-          placeholder="ابحث باسم الخط أو المصمّم"
-          aria-label="بحث في الخطوط"
-          maxLength={60}
-          className="sm:max-w-sm"
-        />
-        <div className="flex flex-wrap items-center gap-3">
-          <SegmentedControl
-            label="الظهور"
-            value={vis}
-            onChange={setVis}
-            className="max-w-full overflow-x-auto"
-            options={[
-              { value: 'all', label: 'الكل' },
-              { value: 'visible', label: `ظاهر ${count('visible')}` },
-              { value: 'hidden', label: `مخفي ${count('hidden')}` },
-              { value: 'deleted', label: `المحذوفة ${count('deleted')}` },
-            ]}
-          />
-          <SegmentedControl
-            label="النوع"
-            value={type}
-            onChange={setType}
-            options={[
-              { value: 'all', label: 'الكل' },
-              { value: 'free', label: 'مجانية' },
-              { value: 'paid', label: 'مدفوعة' },
-            ]}
-          />
-          <SegmentedControl
-            label="الترتيب"
-            value={sort}
-            onChange={setSort}
-            options={[
-              { value: 'downloads', label: 'الأكثر تحميلاً' },
-              { value: 'newest', label: 'الأحدث' },
-              { value: 'name', label: 'الاسم' },
-            ]}
-          />
+      <div className="overflow-hidden rounded-xl border bg-card">
+        {/* الظهور تبويبات فوق الجدول؛ والبحث والنوع والترتيب في صفّ واحد تحتها */}
+        <div
+          role="group"
+          aria-label="الظهور"
+          className="flex [scrollbar-width:none] gap-1 overflow-x-auto border-b px-3 sm:px-5"
+        >
+          {(
+            [
+              ['all', 'الكل', all.length - count('deleted')],
+              ['visible', 'ظاهر', count('visible')],
+              ['hidden', 'مخفي', count('hidden')],
+              ['deleted', 'المحذوفة', count('deleted')],
+            ] as const
+          ).map(([v, label, n]) => (
+            <button
+              key={v}
+              type="button"
+              aria-pressed={vis === v}
+              onClick={() => setVis(v)}
+              className="relative flex h-13 shrink-0 items-center gap-2 px-3 text-control text-muted-foreground transition-colors hover:text-foreground aria-pressed:font-semibold aria-pressed:text-foreground aria-pressed:after:absolute aria-pressed:after:inset-x-2 aria-pressed:after:bottom-0 aria-pressed:after:h-0.5 aria-pressed:after:rounded-full aria-pressed:after:bg-primary-fill"
+            >
+              {label}
+              <span dir="ltr" className="rounded-full bg-sunken px-2 py-0.5 text-caption font-medium tabular-nums">
+                {n}
+              </span>
+            </button>
+          ))}
         </div>
-      </div>
+        <div className="flex flex-wrap items-center gap-3 border-b bg-sunken/40 p-3 sm:px-5 sm:py-4">
+          <InputGroup
+            start={<SearchIcon />}
+            type="search"
+            value={q}
+            onChange={(e) => setQ(e.target.value)}
+            placeholder="ابحث باسم الخط أو المصمّم"
+            aria-label="بحث في الخطوط"
+            maxLength={60}
+            className="min-w-0 flex-1 basis-60 bg-card"
+          />
+          <Select value={type} onValueChange={(v) => setType(v as typeof type)}>
+            <SelectTrigger aria-label="النوع" className="w-36 bg-card">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">كل الأنواع</SelectItem>
+              <SelectItem value="free">مجانية</SelectItem>
+              <SelectItem value="paid">مدفوعة</SelectItem>
+            </SelectContent>
+          </Select>
+          <Select value={sort} onValueChange={(v) => setSort(v as Sort)}>
+            <SelectTrigger aria-label="الترتيب" className="w-40 bg-card">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="downloads">الأكثر تحميلاً</SelectItem>
+              <SelectItem value="newest">الأحدث</SelectItem>
+              <SelectItem value="name">الاسم</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
 
-      {rows.length ? (
-        <div className="rounded-xl border bg-card">
-          <Table aria-label="خطوط المكتبة" className="min-w-190">
+        {rows.length ? (
+          <Table aria-label="خطوط المكتبة" className="min-w-170">
             <TableHeader>
               <TableRow>
                 <TableHead>الخط</TableHead>
                 <TableHead>النوع</TableHead>
                 <TableHead className="text-end">التحميلات</TableHead>
-                <TableHead className="text-end">المشاهدات</TableHead>
                 <TableHead className="text-end">الإيراد</TableHead>
                 <TableHead>الظهور</TableHead>
                 <TableHead>
@@ -226,21 +255,26 @@ export function FontStore() {
                 const deleted = i.visibility === 'deleted';
                 return (
                   <TableRow key={f.id} className={deleted ? 'opacity-60' : undefined}>
-                    <TableCell>
-                      <div className="flex items-center gap-2">
-                        <Link
-                          to={paths.admin.font.getHref(f.id)}
-                          className="font-semibold underline-offset-4 hover:text-primary hover:underline"
-                        >
-                          <bdi>{f.name}</bdi>
-                        </Link>
-                        {i.featured && <StarIcon filled className="size-3.5 text-gold-500" title="مميّز" />}
+                    <TableCell className="py-3.5">
+                      <div className="flex items-center gap-3.5">
+                        <Thumb font={f} />
+                        <div className="min-w-0">
+                          <div className="flex items-center gap-2">
+                            <Link
+                              to={paths.admin.font.getHref(f.id)}
+                              className="font-semibold underline-offset-4 hover:text-primary hover:underline"
+                            >
+                              <bdi>{f.name}</bdi>
+                            </Link>
+                            {i.featured && <StarIcon filled className="size-3.5 text-gold-500" title="مميّز" />}
+                          </div>
+                          <p className="text-caption text-muted-foreground">
+                            {[f.designers.map((d) => d.nameAr).join('، '), CATEGORY_LABEL[f.category]]
+                              .filter(Boolean)
+                              .join(' · ')}
+                          </p>
+                        </div>
                       </div>
-                      <p className="text-caption text-muted-foreground">
-                        {[f.designers.map((d) => d.nameAr).join('، '), CATEGORY_LABEL[f.category]]
-                          .filter(Boolean)
-                          .join(' · ')}
-                      </p>
                     </TableCell>
                     <TableCell>
                       <Badge tone={f.type === 'free' ? 'neutral' : f.type === 'trial' ? 'info' : 'studio'}>
@@ -250,9 +284,6 @@ export function FontStore() {
                     </TableCell>
                     <TableCell dir="ltr" className="text-end tabular-nums">
                       {fmt(i.stats.downloads)}
-                    </TableCell>
-                    <TableCell dir="ltr" className="text-end tabular-nums">
-                      {fmt(i.stats.views)}
                     </TableCell>
                     <TableCell dir="ltr" className="text-end tabular-nums">
                       {i.stats.revenue ? `$${fmt(i.stats.revenue)}` : '—'}
@@ -286,16 +317,17 @@ export function FontStore() {
               })}
             </TableBody>
           </Table>
-        </div>
-      ) : (
-        <EmptyState
-          icon={<LayersIcon />}
-          title={vis === 'deleted' && !query ? 'لا خطوط محذوفة' : 'لا خطوط تطابق البحث'}
-          description={
-            vis === 'deleted' && !query ? 'ما تحذفه يظهر هنا ويمكن استرجاعه.' : 'جرّب اسماً آخر أو غيّر التصفية.'
-          }
-        />
-      )}
+        ) : (
+          <EmptyState
+            className="rounded-none border-0"
+            icon={<LayersIcon />}
+            title={vis === 'deleted' && !query ? 'لا خطوط محذوفة' : 'لا خطوط تطابق البحث'}
+            description={
+              vis === 'deleted' && !query ? 'ما تحذفه يظهر هنا ويمكن استرجاعه.' : 'جرّب اسماً آخر أو غيّر التصفية.'
+            }
+          />
+        )}
+      </div>
     </div>
   );
 }

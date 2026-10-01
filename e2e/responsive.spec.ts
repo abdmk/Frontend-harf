@@ -29,6 +29,8 @@ const PAGES = [
   '/admin/fonts?as=admin',
   '/admin/fonts/cairo?as=admin',
   '/admin/content?as=admin',
+  '/admin/users?as=admin',
+  '/blog/kufi-from-stone-to-screen',
   '/admin/analytics?as=admin',
   '/tools/reverse-text',
   '/tools/nasaq',

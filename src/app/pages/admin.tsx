@@ -7,6 +7,7 @@ import { FontDetail } from '@/features/admin/components/font-detail';
 import { FontStore } from '@/features/admin/components/font-store';
 import { ReviewDetail } from '@/features/admin/components/review-detail';
 import { ReviewQueue } from '@/features/admin/components/review-queue';
+import { UsersManager } from '@/features/admin/components/users-manager';
 import { getAdminAnalytics } from '@/features/analytics/api/get-analytics';
 import { AdminAnalyticsView } from '@/features/analytics/components/admin-analytics';
 import { getCurrentUser } from '@/lib/auth';
@@ -57,6 +58,15 @@ export function AdminFontDetailPage() {
     <>
       <PageMeta title="خط في المخزن" noindex />
       <FontDetail id={id} />
+    </>
+  );
+}
+
+export function AdminUsersPage() {
+  return (
+    <>
+      <PageMeta title="المستخدمون" noindex />
+      <UsersManager visits={getAdminAnalytics('30').kpis.visitors.value} />
     </>
   );
 }

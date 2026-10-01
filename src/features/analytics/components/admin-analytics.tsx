@@ -16,7 +16,7 @@ import { cn } from '@/lib/cn';
 import { formatMoney } from '@/lib/format';
 import type { AdminAnalytics, Range } from '@/types/domain/analytics';
 
-import { ManualRevenueSection } from './manual-revenue';
+import { AddRevenueDialog, ManualRevenueSection } from './manual-revenue';
 import { TransactionsLog } from './transactions-log';
 import { UsersRegistry } from './users-registry';
 import { downloadAnalyticsCsv } from '../api/export-csv';
@@ -81,6 +81,19 @@ export function AdminAnalyticsView({ data: d, range }: { data: AdminAnalytics; r
   // الإيرادات اليدوية لهذا الشهر تُضاف إلى إيراد الشهر، وكل القيود تظهر في سجلّ العمليات
   const month = localToday().slice(0, 7);
   const manualMonth = manual.items.filter((e) => e.date.startsWith(month)).reduce((n, e) => n + e.amount.cents, 0);
+  // «مصادر أخرى» لكل شهر من الأشهر الستّة (آخرها الشهر الحالي) — من الإيرادات اليدوية
+  const monthKeys = Array.from({ length: d.months.length }, (_, k) => {
+    const dt = new Date();
+    dt.setDate(1);
+    dt.setMonth(dt.getMonth() - (d.months.length - 1 - k));
+    return `${dt.getFullYear()}-${String(dt.getMonth() + 1).padStart(2, '0')}`;
+  });
+  const monthLabels = monthKeys.map((key) =>
+    new Date(`${key}-01T00:00:00`).toLocaleDateString('ar-IQ', { month: 'long' }),
+  );
+  const otherByMonth = monthKeys.map((key) =>
+    Math.round(manual.items.filter((e) => e.date.startsWith(key)).reduce((n, e) => n + e.amount.cents, 0) / 100),
+  );
   const log = [
     ...manual.items.map((e) => ({
       id: e.id,
@@ -206,19 +219,30 @@ export function AdminAnalyticsView({ data: d, range }: { data: AdminAnalytics; r
           </div>
 
           <ChartCard
-            title="المصدران عبر ستّة أشهر"
-            subtitle="بيع الأعمال مقابل الاشتراكات · بالدولار"
-            action={<Badge>لا يُجمعان</Badge>}
+            title="مصادر الإيراد عبر ستّة أشهر"
+            subtitle="بيع الأعمال، الاشتراكات، ومصادر أخرى (تطوير خط، استشارة، تصميم مخطوطة…) · بالدولار"
+            action={
+              <div className="flex flex-wrap items-center justify-end gap-2">
+                <Badge>لا تُجمع</Badge>
+                <AddRevenueDialog onAdd={manual.add} variant="outline" />
+              </div>
+            }
           >
             <ColumnChart
-              categories={d.months}
+              categories={monthLabels}
               series={[
                 { label: 'المبيعات', values: d.salesByMonth },
                 { label: 'الاشتراكات', values: d.subsByMonth },
+                { label: 'مصادر أخرى', values: otherByMonth },
               ]}
               unit="usd"
-              caption="إيراد المبيعات والاشتراكات شهرياً خلال ستّة أشهر"
+              caption="إيراد المبيعات والاشتراكات والمصادر الأخرى شهرياً خلال ستّة أشهر"
             />
+            {!otherByMonth.some(Boolean) && (
+              <p className="text-caption text-muted-foreground">
+                «مصادر أخرى» يُدخل يدوياً — أضف إيراد تطوير خط أو استشارة أو تصميم مخطوطة ليظهر في شهره.
+              </p>
+            )}
           </ChartCard>
 
           <div className="grid grid-cols-[minmax(0,1fr)] gap-4 lg:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)]">
@@ -255,6 +279,59 @@ export function AdminAnalyticsView({ data: d, range }: { data: AdminAnalytics; r
         </TabsContent>
 
         <TabsContent value="users" className="flex flex-col gap-6">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+            <StatCard
+              label="المسجّلون"
+              value={k.accounts.value.toLocaleString('en-US')}
+              delta={k.accounts.delta}
+              deltaSuffix=""
+              hint="كل الحسابات"
+              icon={<UserIcon />}
+              trend={k.accounts.trend}
+              trendColor="var(--chart-1)"
+            />
+            <StatCard
+              label="المشتركون"
+              value={k.subscribers.value.toLocaleString('en-US')}
+              hint={`${((k.subscribers.value / Math.max(1, k.accounts.value)) * 100).toFixed(1)}% من المسجّلين`}
+              icon={<CrownIcon />}
+              trend={k.subscribers.trend}
+              trendColor="var(--chart-3)"
+            />
+            <StatCard
+              label="الزيارات"
+              value={k.visitors.value.toLocaleString('en-US')}
+              hint={k.visitors.hint}
+              icon={<GlobeIcon />}
+              trend={k.visitors.trend}
+              trendColor="var(--chart-2)"
+            />
+            <StatCard
+              label="تسجيلات جديدة"
+              value={d.signupsByDay.reduce((a, b) => a + b, 0).toLocaleString('en-US')}
+              hint={`خلال ${RANGE_LABEL[range]}`}
+              icon={<UserIcon />}
+              trend={d.signupsByDay.slice(-12)}
+              trendColor="var(--chart-4)"
+            />
+          </div>
+          <div className="grid grid-cols-[minmax(0,1fr)] gap-4 lg:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)]">
+            <ChartCard title="المستخدمون الجدد" subtitle="حسابات أُنشئت يومياً">
+              <AreaChart
+                labels={d.days}
+                values={d.signupsByDay}
+                label="التسجيلات"
+                color="var(--chart-1)"
+                caption="التسجيلات اليومية"
+              />
+            </ChartCard>
+            <ChartCard
+              title="توزيع الخطط"
+              subtitle={`${k.subscribers.value} مشترك من ${k.accounts.value.toLocaleString('en-US')}`}
+            >
+              <DonutChart slices={d.plans} totalLabel="حساب" caption="توزيع الحسابات على الخطط" />
+            </ChartCard>
+          </div>
           <ChartCard title="تغطية بيانات الملفّات" subtitle="النسب أدناه محسوبة على من أفصح عن بياناته وحده.">
             <UsageMeter
               label={`ملفات مكتملة — ${d.coverage.complete.toLocaleString('en-US')} من ${d.coverage.total.toLocaleString('en-US')}`}

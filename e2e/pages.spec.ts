@@ -32,7 +32,9 @@ test('روابط التذييل تفتح صفحاتها، والوثائق ال�
   );
 });
 
-test('صفحة «قريباً»: من الترويسة، و«نبّهني» يبقى بعد إعادة التحميل', async ({ page }) => {
+test('المدونة بلا مقالات منشورة تبقى «قريباً»، و«نبّهني» يبقى بعد إعادة التحميل', async ({ page }) => {
+  // لا مقالات منشورة (كلّها مسحوبة من الإدارة)
+  await page.addInitScript(() => localStorage.setItem('harf_blog', '[]'));
   await page.goto('/');
   await page.locator('footer').getByRole('link', { name: 'المدونة' }).click();
   await expect(page).toHaveURL(/\/blog$/);

@@ -1,6 +1,7 @@
 import type { IconProps } from '@/components/ui/icons';
 import {
   AppsIcon,
+  ChartHistogramIcon,
   CloudUploadIcon,
   CrownIcon,
   FolderIcon,
@@ -54,7 +55,10 @@ export function accountNavGroups(user: User): NavItem[][] {
       { section: 'subscription', label: 'الاشتراك', Icon: CrownIcon, meta: (u) => PLAN_LABEL[u.plan] },
     ],
   ];
-  if (user.plan === 'studio')
+  // مساحة العمل: المشرف يرى «لوحة الإدارة» مكان «الاستوديو»
+  if (user.role === 'admin')
+    groups.push([{ section: 'foundry', label: 'لوحة الإدارة', Icon: ChartHistogramIcon, href: paths.admin.getHref() }]);
+  else if (user.plan === 'studio')
     groups.push([{ section: 'foundry', label: 'الاستوديو', Icon: AppsIcon, href: paths.studio.getHref() }]);
   groups.push([
     { section: 'preferences', label: 'التفضيلات', Icon: SlidersIcon },

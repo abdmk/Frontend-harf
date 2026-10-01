@@ -188,6 +188,7 @@ const SOLID = new Set([
   'document-signed',
   'picture',
   'star',
+  'chart-histogram',
 ]);
 // نسخة مصمتة من ملف باسم مختلف عن الخطّية (حين لا يطابق fi-sr اسم fi-rr)
 const SOLID_FILE: Record<string, string> = { usage: 'fi-sr-signal-alt-2' };

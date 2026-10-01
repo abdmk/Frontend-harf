@@ -149,4 +149,60 @@ test.describe('لوحة الإدارة', () => {
     await expect(img).toBeVisible();
     expect(await img.getAttribute('src')).toMatch(/^data:image\/jpeg;base64,/);
   });
+
+  test('المستخدمون: منح خطة يُطبَّق على الحساب، والحظر يُنهي جلسته', async ({ page }) => {
+    await page.goto('/admin/users?as=admin');
+    await page.getByRole('button', { name: 'إجراءات هبة عبدالحميد' }).click();
+    await page.getByRole('menuitem', { name: 'تغيير الخطة' }).click();
+    const dlg = page.getByRole('dialog', { name: /خطة هبة/ });
+    await dlg.getByRole('radio', { name: /الاستوديو/ }).click();
+    await dlg.getByRole('button', { name: /امنح الاستوديو/ }).click();
+    await expect(page.getByRole('row', { name: /هبة عبدالحميد/ }).getByText('من الإدارة')).toBeVisible();
+
+    // الحساب نفسه (المجاني التجريبي) صار استوديو
+    await page.goto('/studio?as=free');
+    await expect(page.getByRole('navigation', { name: 'أقسام الاستوديو' }).first()).toBeVisible();
+
+    // الحظر: السبب إلزامي، ثم لا جلسة
+    await page.goto('/admin/users?as=admin');
+    await page.getByRole('button', { name: 'إجراءات هبة عبدالحميد' }).click();
+    await page.getByRole('menuitem', { name: 'حظر' }).click();
+    const ban = page.getByRole('dialog', { name: /حظر هبة/ });
+    await expect(ban.getByRole('button', { name: 'حظر الحساب' })).toBeDisabled();
+    await ban.getByLabel('السبب').fill('إعادة توزيع خطوط مدفوعة');
+    await ban.getByRole('button', { name: 'حظر الحساب' }).click();
+    await page.goto('/account?as=free');
+    await expect(page).toHaveURL(/\/login/);
+
+    // المشرف لا يُدار من هنا
+    await page.goto('/admin/users?as=admin');
+    await expect(page.getByRole('button', { name: 'إجراءات فريق حرف' })).toHaveCount(0);
+  });
+
+  test('المدونة: نشر مقال قيد المراجعة يظهر في /blog، وإلغاء النشر يخفيه', async ({ page }) => {
+    await page.goto('/admin/content?as=admin');
+    await page.getByRole('tab', { name: 'المدونة' }).click();
+    const item = page.getByRole('listitem').filter({ hasText: 'الخطوط المتغيّرة في العربية' });
+    await item.getByRole('button', { name: 'نشر' }).click();
+    await page.goto('/blog');
+    await page.getByRole('link', { name: /الخطوط المتغيّرة في العربية/ }).click();
+    await expect(page).toHaveURL(/\/blog\/variable-arabic-fonts$/);
+    await expect(page.getByRole('heading', { level: 1 })).toContainText('الخطوط المتغيّرة');
+
+    await page.goto('/admin/content');
+    await page.getByRole('tab', { name: 'المدونة' }).click();
+    await item.getByRole('button', { name: 'إلغاء النشر' }).click();
+    await page.goto('/blog/variable-arabic-fonts');
+    await expect(page).toHaveURL(/\/blog$/);
+  });
+
+  test('الصفحة الرئيسية: زرّ «إدارة البنرات» للمشرف وحده', async ({ page }) => {
+    await page.goto('/?as=free');
+    await expect(page.getByRole('button', { name: 'إدارة البنرات' })).toHaveCount(0);
+    await page.goto('/?as=admin');
+    await page.getByRole('button', { name: 'إدارة البنرات' }).click();
+    await expect(
+      page.getByRole('dialog', { name: 'بنرات الصفحة الرئيسية' }).getByRole('button', { name: 'إضافة بنر' }),
+    ).toBeVisible();
+  });
 });

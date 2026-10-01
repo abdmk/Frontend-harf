@@ -1,6 +1,9 @@
+import { useSyncExternalStore } from 'react';
+
 import { MOCK_USERS } from '@/mocks/users';
 import type { User } from '@/types/domain/user';
 
+import { type AccountOverrides, getAccountOverrides, subscribeAccountOverrides } from './account-overrides';
 import { createLocalStoreSignal } from './local-store-signal';
 
 export { safeNext } from './safe-next';
@@ -12,20 +15,56 @@ export type DemoAccount = (typeof DEMO_ACCOUNTS)[number];
 
 const sessionSignal = createLocalStoreSignal();
 /** يشترك عنصر دائم في التخطيط (كالترويسة) بتغيّر الجلسة التجريبية — استخدمه عبر useCurrentUser */
-export const subscribeSession = sessionSignal.subscribe;
+/** الجلسة تتغيّر بتبديل الحساب أو بقرار إداري عليه (خطة/حظر/حذف) */
+export const subscribeSession = (cb: () => void) => {
+  const a = sessionSignal.subscribe(cb);
+  const b = subscribeAccountOverrides(cb);
+  return () => {
+    a();
+    b();
+  };
+};
+
+/** هل الزائر الحالي مشرف؟ — لإظهار أدوات الإدارة السريعة في الموقع (الخادم يتحقّق في كل طلب) */
+export function useIsAdmin(): boolean {
+  return useSyncExternalStore(
+    subscribeSession,
+    () => getCurrentUser()?.role === 'admin',
+    () => false,
+  );
+}
 
 /**
  * ⚠️ مؤقّت للعرض: لا توجد مصادقة حقيقية بعد.
  * عند الربط بالـBackend يُستبدل باستدعاء API للتحقّق من الجلسة، بالواجهة نفسها.
  * بلا قيمة يُعرض الحساب المجاني لتسهيل العرض؛ «out» = مسجّل الخروج.
  */
-export function getCurrentUser(): User | null {
+function baseUser(): User | null {
   const as = getDemoSession();
   if (as === 'out') return null;
   if (as === 'studio') return MOCK_USERS.studio;
   if (as === 'admin') return MOCK_USERS.admin;
   if (as === 'basic') return MOCK_USERS.basic;
   return MOCK_USERS.free;
+}
+
+// نسخة ثابتة المرجع ما لم يتغيّر الحساب أو قرار الإدارة عليه (يتطلّبه useSyncExternalStore)
+let userCache: { base: User | null; o: AccountOverrides | null; value: User | null } = {
+  base: null,
+  o: null,
+  value: null,
+};
+
+export function getCurrentUser(): User | null {
+  const base = baseUser();
+  const o = getAccountOverrides();
+  if (userCache.base === base && userCache.o === o) return userCache.value;
+  let value: User | null = base;
+  // المحظور والمحذوف بلا جلسة؛ والخطة الممنوحة من الإدارة تغلب خطّته
+  if (base && (o.deleted.includes(base.id) || o.banned[base.id])) value = null;
+  else if (base && o.plans[base.id] && o.plans[base.id] !== base.plan) value = { ...base, plan: o.plans[base.id]! };
+  userCache = { base, o, value };
+  return value;
 }
 
 /** للصفحات المحمية: بلا جلسة ← إرجاع null (المكوّن يوجّه للدخول) */

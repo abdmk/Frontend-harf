@@ -3,7 +3,7 @@ export type StudioSection =
   'fonts' | 'analytics' | 'finance' | 'finance/sales' | 'finance/payouts' | 'profile' | 'publish';
 
 /** أقسام لوحة الإدارة */
-export type AdminSection = 'review' | 'fonts' | 'content' | 'analytics';
+export type AdminSection = 'review' | 'fonts' | 'users' | 'content' | 'analytics';
 
 /** كل روابط التطبيق في مكان واحد — لا روابط نصّية متفرّقة في المكوّنات */
 export const paths = {

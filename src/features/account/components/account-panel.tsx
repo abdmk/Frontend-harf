@@ -2,7 +2,7 @@ import { Fragment } from 'react';
 import { Link, useNavigate } from 'react-router';
 
 import { sideNavIcon, sideNavRow } from '@/components/shared/side-nav';
-import { ChartHistogramIcon, CrownIcon, LayersIcon, SignOutIcon } from '@/components/ui/icons';
+import { CrownIcon, LayersIcon, SignOutIcon } from '@/components/ui/icons';
 import { paths } from '@/config/paths';
 import { signOut } from '@/features/account/api/sign-out';
 import { accountNavGroups, PLAN_TITLE } from '@/features/account/config/nav';
@@ -133,19 +133,6 @@ export function AccountPanel({
             </ul>
           </Fragment>
         ))}
-        {user.role === 'admin' && (
-          <>
-            <hr className={cn('border-border', s.hr)} />
-            <Link
-              to={paths.admin.getHref()}
-              onClick={onNavigate}
-              className={cn('flex items-center rounded-sm transition-colors hover:bg-sunken', s.row)}
-            >
-              <ChartHistogramIcon className={cn('text-foreground/80', s.icon)} />
-              لوحة الإدارة
-            </Link>
-          </>
-        )}
       </nav>
 
       <div className={cn('flex flex-col', menu ? 'gap-2' : 'mt-auto gap-5 pt-8')}>

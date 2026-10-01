@@ -63,10 +63,49 @@ function Specimen({ s }: { s: ReviewItem }) {
   );
 }
 
-const DECISIONS: { value: Decision; label: string; Icon: typeof CheckIcon; hint: string }[] = [
-  { value: 'approved', label: 'قبول ونشر', Icon: CheckIcon, hint: 'يُنشر الخط في المكتبة ويُبلَّغ الاستوديو.' },
-  { value: 'changes', label: 'طلب تعديلات', Icon: PencilIcon, hint: 'يعود للاستوديو ليصلح ويعيد الإرسال.' },
-  { value: 'rejected', label: 'رفض', Icon: CrossIcon, hint: 'لا يُنشر. السبب يصل للاستوديو كما تكتبه.' },
+/**
+ * لكل قرار لونه الدلالي: القبول أخضر، التعديلات كهرماني، الرفض أحمر — الأيقونة في دائرة بلونه،
+ * والاختيار يلوّن البطاقة وزرّ التأكيد. اللون ليس وحده: الأيقونة والنص يحملان المعنى أيضاً.
+ */
+const DECISIONS: {
+  value: Decision;
+  label: string;
+  Icon: typeof CheckIcon;
+  hint: string;
+  /** دائرة الأيقونة */
+  dot: string;
+  /** البطاقة حين تُختار */
+  on: string;
+  /** زرّ التأكيد */
+  cta: string;
+}[] = [
+  {
+    value: 'approved',
+    label: 'قبول ونشر',
+    Icon: CheckIcon,
+    hint: 'يُنشر الخط في المكتبة ويُبلَّغ الاستوديو.',
+    dot: 'bg-tint-ok text-ok-text',
+    on: 'border-ok-500 bg-tint-ok/60 shadow-[0_0_0_1px_var(--color-ok-500)]',
+    cta: 'bg-ok-700 text-white hover:bg-ok-600',
+  },
+  {
+    value: 'changes',
+    label: 'طلب تعديلات',
+    Icon: PencilIcon,
+    hint: 'يعود للاستوديو ليصلح ويعيد الإرسال.',
+    dot: 'bg-tint-warn text-warn-text',
+    on: 'border-warn-500 bg-tint-warn/60 shadow-[0_0_0_1px_var(--color-warn-500)]',
+    cta: 'bg-warn-700 text-white hover:bg-warn-600',
+  },
+  {
+    value: 'rejected',
+    label: 'رفض',
+    Icon: CrossIcon,
+    hint: 'لا يُنشر. السبب يصل للاستوديو كما تكتبه.',
+    dot: 'bg-tint-dgr text-dgr-text',
+    on: 'border-dgr-500 bg-tint-dgr/60 shadow-[0_0_0_1px_var(--color-dgr-500)]',
+    cta: 'bg-dgr-600 text-white hover:bg-dgr-700',
+  },
 ];
 
 function DecisionPanel({ s, onDone }: { s: ReviewItem; onDone: () => void }) {
@@ -140,14 +179,32 @@ function DecisionPanel({ s, onDone }: { s: ReviewItem; onDone: () => void }) {
                   setError(undefined);
                 }}
                 className={cn(
-                  'flex items-start gap-3 rounded-md border p-3 text-start transition-colors hover:border-strong',
-                  on && 'border-primary bg-tint-brand/50',
+                  'group flex items-center gap-3 rounded-lg border bg-card p-3.5 text-start transition-[border-color,background-color,box-shadow] duration-(--dur-base) hover:border-strong',
+                  on && d.on,
                 )}
               >
-                <d.Icon className={cn('mt-0.5 size-4.5 shrink-0', on ? 'text-primary' : 'text-muted-foreground')} />
-                <span>
-                  <span className="block text-control font-medium">{d.label}</span>
+                <span
+                  className={cn(
+                    'grid size-10 shrink-0 place-items-center rounded-full transition-transform duration-(--dur-base) ease-pop group-hover:scale-105',
+                    d.dot,
+                  )}
+                >
+                  <d.Icon filled={on} className="size-4.5" />
+                </span>
+                <span className="min-w-0 flex-1">
+                  <span className="block text-control font-semibold">{d.label}</span>
                   <span className="block text-caption text-muted-foreground">{d.hint}</span>
+                </span>
+                {/* مؤشّر الاختيار كزرّ راديو */}
+                <span
+                  aria-hidden
+                  className={cn(
+                    'grid size-5 shrink-0 place-items-center rounded-full border-[1.5px] border-strong transition-colors',
+                    on && 'border-transparent',
+                    on && d.cta.split(' ')[0],
+                  )}
+                >
+                  {on && <CheckIcon className="size-3 animate-pop-in text-white" />}
                 </span>
               </button>
             );
@@ -192,9 +249,9 @@ function DecisionPanel({ s, onDone }: { s: ReviewItem; onDone: () => void }) {
 
         <Button
           disabled={!choice}
-          variant={choice === 'rejected' ? 'danger' : 'primary'}
+          variant={choice ? undefined : 'secondary'}
           onClick={submit}
-          className="w-full"
+          className={cn('w-full', choice && DECISIONS.find((d) => d.value === choice)!.cta)}
         >
           {choice ? `تأكيد: ${DECISIONS.find((d) => d.value === choice)!.label}` : 'اختر قراراً'}
         </Button>
