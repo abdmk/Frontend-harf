@@ -8,7 +8,7 @@ import { extendTailwindMerge } from 'tailwind-merge';
 const twMerge = extendTailwindMerge({
   extend: {
     theme: {
-      text: ['3xs', '2xs', 'micro', 'caption', 'meta', 'control', 'lead', 'specimen', 'title', 'display'],
+      text: ['3xs', '2xs', 'micro', 'caption', 'meta', 'control', 'lead', 'specimen', 'title', 'display', 'hero'],
       shadow: ['soft', 'float', 'overlay', 'focus'],
       ease: ['out-quint', 'pop', 'in-out-strong'],
       breakpoint: ['xs'],
