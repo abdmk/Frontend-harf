@@ -251,4 +251,39 @@ test.describe('لوحة الإدارة', () => {
     await dlg.getByRole('button', { name: 'إلغاء' }).click();
     await expect(page.getByText('دليل مختصر لتراخيص الخطوط')).toBeVisible();
   });
+  test('الخطط والأسعار: تعديل السعر والمزايا يظهر في «اختر خطتك»، والقيم غير الصالحة تُرفض', async ({ page }) => {
+    await page.goto('/admin/plans?as=admin');
+    await expect(page.getByRole('heading', { level: 1, name: 'الخطط والأسعار' })).toBeVisible();
+    const save = page.getByRole('button', { name: 'حفظ الخطة' });
+    await expect(save).toBeDisabled();
+
+    // السنوي أعلى من الشهري ← يُرفض
+    await page.getByLabel('الشهر في الدفع السنوي').fill('12');
+    await save.click();
+    await expect(page.getByRole('alert')).toContainText('لا يزيد على الشهري');
+
+    await page.getByLabel('الدفع الشهري').fill('12.5');
+    await page.getByLabel('الشهر في الدفع السنوي').fill('9');
+    await page.getByLabel('نصّ الميزة 1').fill('تحميل بلا حدود');
+    await page.getByRole('button', { name: 'إضافة ميزة' }).click();
+    await page.getByLabel('نصّ الميزة 7').fill('ميزة تجريبية جديدة');
+    await save.click();
+    await expect(page.getByText('حُفظت خطة «الأساسية»')).toBeVisible();
+    await expect(save).toBeDisabled();
+
+    // نافذة الخطط تقرأ التعديل
+    await page.goto('/?as=free');
+    await page.locator('button[aria-label^="حساب"]').click();
+    await page.getByRole('button', { name: 'إدارة الخطة' }).click();
+    const dialog = page.getByRole('dialog', { name: 'اختر خطتك' });
+    await expect(dialog.getByText('$12.50')).toBeVisible();
+    await expect(dialog.getByText('ميزة تجريبية جديدة')).toBeVisible();
+    await expect(dialog.getByText('تحميل بلا حدود')).toBeVisible();
+
+    // الاستعادة بنافذة تأكيد
+    await page.goto('/admin/plans?as=admin');
+    await page.getByRole('button', { name: 'استعادة الافتراضي' }).click();
+    await page.getByRole('dialog').getByRole('button', { name: 'استعادة الافتراضي' }).click();
+    await expect(page.getByLabel('الدفع الشهري')).toHaveValue('10');
+  });
 });

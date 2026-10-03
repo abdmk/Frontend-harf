@@ -20,18 +20,19 @@ import { getFonts } from '@/features/catalog/api/get-fonts';
 import { DEFAULT_QUERY } from '@/features/catalog/types/catalog-query';
 import { FavoritesGrid } from '@/features/favorites/components/favorites-grid';
 import { changePlan } from '@/features/subscriptions/api/actions';
-import { getInvoices, getPlans, getSubscription } from '@/features/subscriptions/api/get-subscription';
+import { getInvoices, getPlans, getSubscription, usePlans } from '@/features/subscriptions/api/get-subscription';
 import { PlansDialog } from '@/features/subscriptions/components/plans-dialog';
 import { SubscriptionSection } from '@/features/subscriptions/components/subscription-section';
 
 /** «إدارة الخطة» و«ترقية الخطة» في حالة الاستخدام تفتحان نافذة الخطط نفسها */
 function UsageWithPlans({ user }: { user: User }) {
   const [plansOpen, setPlansOpen] = useState(false);
+  const plans = usePlans();
   return (
     <>
       <UsageSection user={user} onManagePlan={() => setPlansOpen(true)} />
       <PlansDialog
-        plans={getPlans()}
+        plans={plans}
         current={user.plan}
         onChange={changePlan}
         open={plansOpen}

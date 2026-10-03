@@ -1,21 +1,13 @@
-import { useActionState } from 'react';
+import { useActionState, useState } from 'react';
 
+import { ConfirmDialog } from '@/components/shared/confirm-dialog';
 import { SectionCard } from '@/components/shared/section-card';
 import { Alert } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/dialog';
 import { Field, FieldError, FieldLabel } from '@/components/ui/field';
 import { LaptopIcon, TrashIcon } from '@/components/ui/icons';
+import { toast } from '@/components/ui/toast';
 import type { User } from '@/features/account/types';
 
 import { PasswordField } from './password-field';
@@ -29,6 +21,7 @@ export function SecuritySection({
   user: User;
   action: (prev: FormState, form: FormData) => FormState | Promise<FormState>;
 }) {
+  const [confirmDelete, setConfirmDelete] = useState(false);
   const [state, formAction, pending] = useActionState(action, null);
   const f = state?.fields ?? {};
   return (
@@ -85,30 +78,22 @@ export function SecuritySection({
         title="حذف الحساب"
         description="يُحذف حسابك وبياناتك. تبقى إيصالات مشترياتك محفوظة كما يقتضي القانون."
       >
-        <Dialog>
-          <DialogTrigger asChild>
-            <Button variant="danger">
-              <TrashIcon />
-              حذف الحساب
-            </Button>
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>حذف حسابك نهائياً؟</DialogTitle>
-              <DialogDescription>
-                لا يمكن التراجع عن هذا الإجراء. سنرسل رابط تأكيد إلى بريدك قبل الحذف.
-              </DialogDescription>
-            </DialogHeader>
-            <DialogFooter>
-              <DialogClose asChild>
-                <Button variant="secondary">إلغاء</Button>
-              </DialogClose>
-              <DialogClose asChild>
-                <Button variant="danger">أرسل رابط التأكيد</Button>
-              </DialogClose>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
+        <Button variant="danger" onClick={() => setConfirmDelete(true)}>
+          <TrashIcon />
+          حذف الحساب
+        </Button>
+        <ConfirmDialog
+          open={confirmDelete}
+          onOpenChange={setConfirmDelete}
+          title="حذف حسابك نهائياً؟"
+          description="لا يمكن التراجع عن هذا الإجراء. سنرسل رابط تأكيد إلى بريدك قبل الحذف."
+          confirmLabel="أرسل رابط التأكيد"
+          icon={<TrashIcon />}
+          onConfirm={() => {
+            setConfirmDelete(false);
+            toast({ title: 'أرسلنا رابط التأكيد إلى بريدك', description: 'لن يُحذف الحساب قبل فتح الرابط.' });
+          }}
+        />
       </SectionCard>
     </div>
   );

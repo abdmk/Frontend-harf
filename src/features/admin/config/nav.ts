@@ -1,5 +1,13 @@
 import type { IconProps } from '@/components/ui/icons';
-import { DocumentSignedIcon, HomeIcon, LayersIcon, PictureIcon, StatsIcon, UserIcon } from '@/components/ui/icons';
+import {
+  DiamondIcon,
+  DocumentSignedIcon,
+  HomeIcon,
+  LayersIcon,
+  PictureIcon,
+  StatsIcon,
+  UserIcon,
+} from '@/components/ui/icons';
 import type { AdminSection } from '@/config/paths';
 
 export type AdminNavItem = {
@@ -17,7 +25,7 @@ export type AdminNavItem = {
 export const ADMIN_GROUPS: { title: string; items: AdminSection[] | (AdminSection | null)[] }[] = [
   { title: 'عام', items: [null, 'review'] },
   { title: 'المكتبة والمحتوى', items: ['fonts', 'content'] },
-  { title: 'الناس والأرقام', items: ['users', 'analytics'] },
+  { title: 'الناس والأرقام', items: ['users', 'plans', 'analytics'] },
 ];
 
 export const ADMIN_NAV: AdminNavItem[] = [
@@ -25,6 +33,7 @@ export const ADMIN_NAV: AdminNavItem[] = [
   { section: 'review', label: 'المراجعة', hint: 'الخطوط المرفوعة بانتظار قرار', Icon: DocumentSignedIcon },
   { section: 'fonts', label: 'مخزن الخطوط', hint: 'كل خطوط المكتبة وظهورها', Icon: LayersIcon },
   { section: 'users', label: 'المستخدمون', hint: 'الحسابات وخططها والحظر', Icon: UserIcon },
+  { section: 'plans', label: 'الخطط والأسعار', hint: 'أسعار الاشتراكات وما تتضمّنه', Icon: DiamondIcon },
   { section: 'content', label: 'المحتوى', hint: 'البنرات والنصوص الظاهرة في الموقع', Icon: PictureIcon },
   { section: 'analytics', label: 'التحليلات', hint: 'الزيارات والمستخدمون والإيرادات', Icon: StatsIcon },
 ];

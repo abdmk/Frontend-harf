@@ -5,6 +5,7 @@ import { AdminOverview } from '@/features/admin/components/admin-overview';
 import { ContentManager } from '@/features/admin/components/content-manager';
 import { FontDetail } from '@/features/admin/components/font-detail';
 import { FontStore } from '@/features/admin/components/font-store';
+import { PlansManager } from '@/features/admin/components/plans-manager';
 import { ReviewDetail } from '@/features/admin/components/review-detail';
 import { ReviewQueue } from '@/features/admin/components/review-queue';
 import { UsersManager } from '@/features/admin/components/users-manager';
@@ -89,6 +90,15 @@ export function AdminAnalyticsPage() {
     <>
       <PageMeta title="التحليلات" noindex />
       <AdminAnalyticsView data={getAdminAnalytics(range)} range={range} />
+    </>
+  );
+}
+
+export function AdminPlansPage() {
+  return (
+    <>
+      <PageMeta title="الخطط والأسعار" noindex />
+      <PlansManager />
     </>
   );
 }

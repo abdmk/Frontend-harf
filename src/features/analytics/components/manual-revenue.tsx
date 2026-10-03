@@ -1,5 +1,6 @@
 import { useActionState, useEffect, useRef, useState } from 'react';
 
+import { ConfirmDialog } from '@/components/shared/confirm-dialog';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Chip, ChipGroup } from '@/components/ui/chip-group';
@@ -186,7 +187,9 @@ export function ManualRevenueSection({
     cents: items.filter((e) => e.category === c).reduce((n, e) => n + e.amount.cents, 0),
   })).filter((x) => x.cents > 0);
 
+  const [removing, setRemoving] = useState<ManualRevenue | null>(null);
   const remove = (e: ManualRevenue) => {
+    setRemoving(null);
     onRemove(e.id);
     toast({ title: 'حُذف الإيراد', description: e.client, action: { label: 'تراجع', onClick: () => onRestore(e) } });
   };
@@ -249,7 +252,12 @@ export function ManualRevenueSection({
                   {formatMoney(e.amount)}
                 </TableCell>
                 <TableCell>
-                  <Button variant="ghost" size="icon-sm" aria-label={`حذف إيراد ${e.client}`} onClick={() => remove(e)}>
+                  <Button
+                    variant="ghost"
+                    size="icon-sm"
+                    aria-label={`حذف إيراد ${e.client}`}
+                    onClick={() => setRemoving(e)}
+                  >
                     <TrashIcon />
                   </Button>
                 </TableCell>
@@ -262,6 +270,17 @@ export function ManualRevenueSection({
           لا إيرادات يدوية بعد — أضف أول مشروع: تصميم خط، تطوير خط، أو تصميم مخطوطة.
         </p>
       )}
+      <ConfirmDialog
+        open={!!removing}
+        onOpenChange={(o) => !o && setRemoving(null)}
+        title="حذف هذا الإيراد؟"
+        description={
+          removing ? `«${removing.client}» بمبلغ ${formatMoney(removing.amount)} — يُستبعد من مجاميع التحليلات.` : ''
+        }
+        confirmLabel="حذف الإيراد"
+        icon={<TrashIcon />}
+        onConfirm={() => removing && remove(removing)}
+      />
     </section>
   );
 }

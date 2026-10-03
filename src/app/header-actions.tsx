@@ -9,7 +9,7 @@ import { CartMenu } from '@/features/cart/components/cart-menu';
 import { getNotifications } from '@/features/notifications/api/get-notifications';
 import { NotificationsMenu } from '@/features/notifications/components/notifications-menu';
 import { changePlan } from '@/features/subscriptions/api/actions';
-import { getPlans } from '@/features/subscriptions/api/get-subscription';
+import { usePlans } from '@/features/subscriptions/api/get-subscription';
 import { PlansDialog } from '@/features/subscriptions/components/plans-dialog';
 import { useCart } from '@/hooks/use-cart';
 import { useCurrentUser } from '@/hooks/use-current-user';
@@ -18,6 +18,7 @@ import { clearWelcome, isWelcomePending } from '@/lib/auth';
 export function HeaderActions() {
   const user = useCurrentUser();
   const cart = useCart();
+  const plans = usePlans();
   // نافذة الخطط خارج قائمة الحساب: إغلاق القائمة لا يُسقطها
   // أول دخول بعد إنشاء الحساب: نافذة الخطط تُفتح مرّة واحدة بوضع الترحيب («تابع مجاناً»)
   const [welcome, setWelcome] = useState(() => !!user && isWelcomePending());
@@ -31,7 +32,7 @@ export function HeaderActions() {
           <NotificationsMenu initial={getNotifications(user)} allHref={paths.notifications.getHref()} />
           <AccountMenu user={user} onManagePlan={() => setPlansOpen(true)} triggerRef={avatarRef} />
           <PlansDialog
-            plans={getPlans()}
+            plans={plans}
             current={user.plan}
             onChange={changePlan}
             open={plansOpen}

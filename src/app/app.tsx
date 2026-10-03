@@ -11,6 +11,7 @@ import { AccountSectionPage } from './pages/account-section';
 import {
   AdminAnalyticsPage,
   AdminContentPage,
+  AdminPlansPage,
   AdminFontDetailPage,
   AdminFontsPage,
   AdminHomePage,
@@ -112,6 +113,7 @@ export function App() {
           <Route path="fonts" element={<AdminFontsPage />} />
           <Route path="fonts/:id" element={<AdminFontDetailPage />} />
           <Route path="users" element={<AdminUsersPage />} />
+          <Route path="plans" element={<AdminPlansPage />} />
           <Route path="content" element={<AdminContentPage />} />
           <Route path="analytics" element={<AdminAnalyticsPage />} />
           <Route path="*" element={<Navigate to="/admin" replace />} />

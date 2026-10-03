@@ -90,6 +90,9 @@ function PostEditor({ post, onClose }: { post?: BlogPost; onClose: () => void })
     setBlocks((xs) => [...xs, keyed({ t: 'video', media: r.id })]);
   }
 
+  // فيديوهات أُزيلت من المسودّة — تُحذف من التخزين عند الحفظ لا قبله
+  const [droppedVideos, setDroppedVideos] = useState<string[]>([]);
+
   function save(e: React.FormEvent) {
     e.preventDefault();
     const body = blocks.map((b) => {
@@ -99,6 +102,7 @@ function PostEditor({ post, onClose }: { post?: BlogPost; onClose: () => void })
     });
     const r = savePost({ id: post?.id, ...v, cover, body });
     if (!r.ok) return setError({ field: 'field' in r ? r.field : '', message: r.error });
+    for (const id of droppedVideos) void deleteVideo(id);
     toast({ tone: 'success', title: post ? 'حُفظ المقال' : 'أُنشئ المقال كمسودّة' });
     onClose();
   }
@@ -263,7 +267,8 @@ function PostEditor({ post, onClose }: { post?: BlogPost; onClose: () => void })
                         variant="ghost"
                         aria-label="حذف الكتلة"
                         onClick={() => {
-                          if (b.t === 'video') void deleteVideo(b.media);
+                          // الملف يُحذف بعد الحفظ فقط — «إلغاء» يُبقي المقال المحفوظ سليماً
+                          if (b.t === 'video') setDroppedVideos((xs) => [...xs, b.media]);
                           setBlocks((xs) => xs.filter((_, k) => k !== i));
                         }}
                       >
