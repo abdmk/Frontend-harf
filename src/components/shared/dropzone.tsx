@@ -5,8 +5,10 @@ import { CloudUploadIcon } from '@/components/ui/icons';
 import { cn } from '@/lib/cn';
 
 /**
- * منطقة الإفلات (مرجع «Group 953»): إطار متقطّع، سحابة، عنوان، سطر الصيغ، وزرّ «استعراض».
- * مشتركة بين نافذة الرفع و«عين» و«مختبر الخط». التحقّق من الملفات مسؤولية المستدعي.
+ * منطقة الإفلات. مشتركة بين نافذة الرفع و«عين» و«مختبر الخط». التحقّق من الملفات مسؤولية المستدعي.
+ * - العادية (مرجع «Group 953»): إطار متقطّع، سحابة، عنوان، سطر الصيغ، وزرّ «استعراض».
+ * - feature: بطاقة بداية الأداة — سطح هادئ بحدّ متّصل يصير متقطّعاً بلون العلامة عند السحب فوقه،
+ *   دائرة أيقونة فاتحة، زرّ أساسي، وشرائح الصيغ المقبولة.
  */
 export function Dropzone({
   onFiles,
@@ -17,6 +19,7 @@ export function Dropzone({
   browseLabel = 'استعراض الملفات',
   actions,
   feature = false,
+  formats,
   className,
 }: {
   onFiles: (files: FileList) => void;
@@ -27,12 +30,16 @@ export function Dropzone({
   browseLabel?: string;
   /** أزرار إضافية بجانب «استعراض» (مثل «اختر مجلّداً») */
   actions?: ReactNode;
-  /** بداية أداة (عين، مختبر الخط): دائرة بلون العلامة وزرّ أساسي — الرفع هو الفعل الأول في الصفحة */
+  /** بداية أداة (عين، مختبر الخط) — الرفع هو الفعل الأول في الصفحة */
   feature?: boolean;
+  /** الصيغ المقبولة كشرائح تحت الأزرار (feature فقط) */
+  formats?: readonly string[];
   className?: string;
 }) {
   const input = useRef<HTMLInputElement>(null);
   const [over, setOver] = useState(false);
+  const browse = () => input.current?.click();
+
   return (
     <div
       onDragEnter={(e) => {
@@ -43,15 +50,21 @@ export function Dropzone({
         e.preventDefault();
         setOver(true);
       }}
-      onDragLeave={() => setOver(false)}
+      onDragLeave={(e) => {
+        // مغادرة إلى عنصر داخلي ليست مغادرة للمنطقة
+        if (!e.currentTarget.contains(e.relatedTarget as Node | null)) setOver(false);
+      }}
       onDrop={(e) => {
         e.preventDefault();
         setOver(false);
         if (e.dataTransfer.files.length) onFiles(e.dataTransfer.files);
       }}
       className={cn(
-        'flex flex-col items-center gap-2 rounded-md border-[1.5px] border-dashed border-strong px-6 py-12 text-center transition-[border-color,background-color,transform] duration-(--dur-base)',
-        over && 'scale-[1.01] border-primary bg-tint-brand',
+        'flex flex-col items-center text-center transition-[border-color,background-color,transform] duration-(--dur-base)',
+        feature
+          ? 'gap-1.5 rounded-2xl border-[1.5px] bg-sunken/50 px-6 py-14 sm:py-20'
+          : 'gap-2 rounded-md border-[1.5px] border-dashed border-strong px-6 py-12',
+        over && 'scale-[1.01] border-dashed border-primary bg-tint-brand',
         className,
       )}
     >
@@ -59,11 +72,11 @@ export function Dropzone({
         <span
           aria-hidden
           className={cn(
-            'mb-3 grid size-14 place-items-center rounded-full bg-primary-fill text-primary-foreground transition-transform duration-(--dur-slow) ease-pop',
-            over && '-translate-y-1 scale-110',
+            'mb-4 grid size-16 place-items-center rounded-full bg-tint-brand text-primary transition-transform duration-(--dur-slow) ease-pop',
+            over && '-translate-y-1 scale-110 bg-card',
           )}
         >
-          <CloudUploadIcon className="size-6" />
+          <CloudUploadIcon className="size-7" />
         </span>
       ) : (
         <CloudUploadIcon
@@ -73,20 +86,34 @@ export function Dropzone({
           )}
         />
       )}
-      <p className={cn('font-semibold', feature ? 'text-lead' : 'text-base')}>{title}</p>
-      <p className="text-sm text-muted-foreground">{hint}</p>
-      <div className="mt-5 flex flex-wrap justify-center gap-2">
+      <p className={cn('font-semibold', feature ? 'text-xl sm:text-2xl' : 'text-base')}>{title}</p>
+      <p className={cn('text-muted-foreground', feature ? 'text-lead' : 'text-sm')}>{hint}</p>
+      <div className={cn('flex flex-wrap justify-center gap-2', feature ? 'mt-6 gap-3' : 'mt-5')}>
         {feature ? (
-          <Button size="lg" onClick={() => input.current?.click()}>
+          <Button size="lg" shape="pill" onClick={browse}>
+            <CloudUploadIcon />
             {browseLabel}
           </Button>
         ) : (
-          <Button variant="outline" size="md" className="text-muted-foreground" onClick={() => input.current?.click()}>
+          <Button variant="outline" size="md" className="text-muted-foreground" onClick={browse}>
             {browseLabel}
           </Button>
         )}
         {actions}
       </div>
+      {feature && formats && formats.length > 0 && (
+        <ul aria-label="الصيغ المقبولة" className="mt-5 flex flex-wrap justify-center gap-2">
+          {formats.map((f) => (
+            <li
+              key={f}
+              dir="ltr"
+              className="rounded-full bg-card px-3 py-1 text-caption font-medium text-muted-foreground ring-1 ring-border"
+            >
+              {f}
+            </li>
+          ))}
+        </ul>
+      )}
       <input
         ref={input}
         type="file"

@@ -49,7 +49,7 @@ test.describe('عين (مطابقة الخطوط)', () => {
     await expect(results.getByText('في صورتك فقط')).toBeVisible();
 
     await results.getByRole('button', { name: 'صورة جديدة' }).click();
-    await expect(page.getByText('اختر صورة أو اسحبها وأفلتها هنا.')).toBeVisible();
+    await expect(page.getByText('ارفع صورة الخط', { exact: true })).toBeVisible();
   });
 
   test('كتابة فاتحة على خلفية داكنة تُكتشف تلقائياً', async ({ page }) => {

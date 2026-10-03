@@ -3,6 +3,8 @@ import { Container } from '@/components/layout/container';
 import { ToolHero } from '@/components/layout/tool-hero';
 import { PageMeta } from '@/components/shared/page-meta';
 import { Button } from '@/components/ui/button';
+import { MagicWandIcon } from '@/components/ui/icons';
+import { countCandidates } from '@/features/font-matching/api/candidates';
 import { FontMatchingTool, type ResultCardProps } from '@/features/font-matching/components/font-matching-tool';
 
 /** بطاقة النتيجة = بطاقة الخط نفسها بنصّ المستخدم، مع التشابه وزرّ «قارن» */
@@ -62,10 +64,11 @@ export function FontMatchingPage() {
         description="ارفع صورة فيها كتابة عربية، ونقارن شكل حروفها بخطوط مكتبة حرف — في متصفّحك."
       />
       <ToolHero
-        badge="في متصفّحك — لا تُرفع صورتك إلى أي خادم"
+        badgeIcon={<MagicWandIcon />}
+        badge="مطابقة بصرية داخل متصفّحك"
         title="عين"
-        highlight="اعرف الخطّ من صورته"
-        lead="ارفع صورة فيها كتابة عربية واكتب ما فيها، ونقارن شكل الحروف بخطوط مكتبة حرف ونرتّبها بحسب التشابه."
+        highlight="لمطابقة الخطوط العربية"
+        lead={`ارفع صورة فيها كتابة عربية، ونقارن شكل حروفها بـ${countCandidates()} خطاً من مكتبة حرف ونرتّبها بحسب التشابه — ولا تُرفع صورتك إلى أي خادم.`}
       />
       <FontMatchingTool renderResult={(p) => <ResultCard {...p} />} />
     </Container>

@@ -9,6 +9,7 @@ import { cn } from '@/lib/cn';
  */
 export function ToolHero({
   badge,
+  badgeIcon,
   title,
   highlight,
   lead,
@@ -16,6 +17,8 @@ export function ToolHero({
 }: {
   /** شارة فوق العنوان — حقيقة عن الأداة، لا شعار تسويقي */
   badge: ReactNode;
+  /** أيقونة صغيرة داخل الشارة — بدلها نقطة */
+  badgeIcon?: ReactNode;
   title: string;
   /** السطر الثاني من العنوان — بلون العلامة */
   highlight: string;
@@ -23,16 +26,22 @@ export function ToolHero({
   className?: string;
 }) {
   return (
-    <header className={cn('mx-auto mb-8 max-w-3xl text-center sm:mb-10', className)}>
-      <p className="inline-flex animate-fade-up items-center gap-2 rounded-full border bg-card px-3.5 py-1.5 text-caption font-medium text-muted-foreground">
-        <span aria-hidden className="size-1.5 rounded-full bg-primary-fill" />
+    <header className={cn('mx-auto mb-10 max-w-4xl text-center sm:mb-14', className)}>
+      <p className="inline-flex animate-fade-up items-center gap-2 rounded-full bg-tint-brand px-4 py-1.5 text-meta font-medium text-primary">
+        {badgeIcon ? (
+          <span aria-hidden className="[&_svg]:size-4">
+            {badgeIcon}
+          </span>
+        ) : (
+          <span aria-hidden className="size-1.5 rounded-full bg-primary-fill" />
+        )}
         {badge}
       </p>
-      <h1 className="mt-5 animate-fade-up text-hero leading-[1.2] font-bold tracking-tight text-balance">
+      <h1 className="mt-6 animate-fade-up text-hero leading-[1.2] font-bold tracking-tight text-balance">
         {title}
         <span className="block text-primary">{highlight}</span>
       </h1>
-      <p className="mx-auto mt-4 max-w-[56ch] animate-fade-up text-lead leading-relaxed text-pretty text-muted-foreground">
+      <p className="mx-auto mt-5 max-w-[60ch] animate-fade-up text-lead leading-relaxed text-pretty text-muted-foreground">
         {lead}
       </p>
     </header>

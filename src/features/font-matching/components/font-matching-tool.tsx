@@ -4,10 +4,21 @@ import { Dropzone } from '@/components/shared/dropzone';
 import { Alert } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Field, FieldHint, FieldLabel } from '@/components/ui/field';
-import { CheckIcon, CrossIcon, MagicWandIcon, PictureIcon, RefreshIcon } from '@/components/ui/icons';
+import {
+  AlignJustifyIcon,
+  CheckIcon,
+  CopyIcon,
+  CrossIcon,
+  ExpandIcon,
+  MagicWandIcon,
+  PictureIcon,
+  RefreshIcon,
+  TextIcon,
+} from '@/components/ui/icons';
 import { Input } from '@/components/ui/input';
 import { SegmentedControl } from '@/components/ui/segmented-control';
 import { Switch } from '@/components/ui/switch';
+import { toast } from '@/components/ui/toast';
 import { cn } from '@/lib/cn';
 
 import { CompareView } from './compare-view';
@@ -26,6 +37,15 @@ const POLARITY = [
 ] as const satisfies readonly { value: Polarity; label: string }[];
 
 const STAGES = ['الصورة', 'النص والتحديد', 'النتائج'] as const;
+
+/** نصائح ما قبل الرفع — كل واحدة تعالج سبباً حقيقياً لضعف المطابقة في المحرّك */
+const TIPS = [
+  { icon: PictureIcon, title: 'صورة أوضح، نتيجة أدق', text: 'صورة عالية الدقة يظهر فيها النص بوضوح ومن دون تشويش.' },
+  { icon: TextIcon, title: 'ركّز على خط واحد', text: 'إذا احتوت الصورة أكثر من خط، حدّد الجزء الذي تبحث عنه فقط.' },
+  { icon: MagicWandIcon, title: 'تجنّب المؤثرات القوية', text: 'الظلال والزخارف والخلفيات المعقّدة تربك المقارنة.' },
+  { icon: ExpandIcon, title: 'حجم نص مناسب', text: 'كلما زادت الحروف وكبر حجمها في الصورة كانت النتيجة أدق.' },
+  { icon: AlignJustifyIcon, title: 'صورة غير مائلة', text: 'التقط الكتابة مستقيمة قدر الإمكان، لا بزاوية أو منظور.' },
+] as const;
 
 export type ResultCardProps = { match: Match; text: string; selected: boolean; onCompare: () => void; rank: number };
 
@@ -74,14 +94,29 @@ export function FontMatchingTool({ renderResult }: { renderResult: (p: ResultCar
   const activeRect = rect ?? (state.phase === 'empty' ? null : state.auto);
   const onFiles = (files: FileList) => files[0] && void open(files[0]);
 
+  // زرّ «لصق من الحافظة»: يقرأ أول صورة في الحافظة؛ والمتصفّحات التي لا تتيح القراءة تُرشد إلى Ctrl+V
+  const pasteImage = async () => {
+    const fallback = 'اضغط Ctrl+V (أو ⌘V) للصق الصورة';
+    if (!navigator.clipboard?.read) return toast({ title: fallback });
+    try {
+      for (const item of await navigator.clipboard.read()) {
+        const type = item.types.find((t) => t.startsWith('image/'));
+        if (!type) continue;
+        const blob = await item.getType(type);
+        return void open(new File([blob], `clipboard.${type.split('/')[1] ?? 'png'}`, { type }));
+      }
+      toast({ title: 'لا توجد صورة في الحافظة', description: 'انسخ صورة أولاً ثم جرّب مرة أخرى.' });
+    } catch {
+      toast({ title: fallback });
+    }
+  };
+
   return (
     <div className="flex flex-col gap-8">
       <section
         aria-label="أداة المطابقة"
-        className={cn(
-          'rounded-xl border bg-card',
-          stage === 0 ? 'mx-auto w-full max-w-4xl p-3 shadow-soft sm:p-4' : 'p-5 sm:p-8',
-        )}
+        // قبل الرفع: بطاقة الرفع ونصائحها وحدها بلا إطار حولها؛ بعده تصير الأداة بطاقة واحدة
+        className={stage === 0 ? undefined : 'rounded-xl border bg-card p-5 sm:p-8'}
       >
         {/* المراحل تظهر بعد الرفع — قبله بطاقة الرفع وحدها، فالخطوة الأولى واضحة بلا شرح */}
         {stage > 0 && (
@@ -111,36 +146,47 @@ export function FontMatchingTool({ renderResult }: { renderResult: (p: ResultCar
         )}
 
         {state.phase === 'empty' ? (
-          <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-6">
             <Dropzone
               feature
               onFiles={onFiles}
               accept={ACCEPTED.join(',')}
-              title="اختر صورة أو اسحبها وأفلتها هنا."
-              hint={
-                <>
-                  PNG · JPG · WEBP، حتى 10 ميغابايت — أو الصقها بـ{' '}
-                  <kbd dir="ltr" className="rounded-xs border bg-sunken px-1.5 py-0.5 font-sans text-caption">
-                    Ctrl+V
-                  </kbd>
-                </>
+              title="ارفع صورة الخط"
+              hint="أو اسحب الصورة وأفلتها هنا — حتى 10 ميغابايت"
+              browseLabel="تصفّح الملفات"
+              formats={['PNG', 'JPG', 'WEBP']}
+              actions={
+                <Button variant="outline" size="lg" shape="pill" onClick={() => void pasteImage()}>
+                  <CopyIcon />
+                  لصق من الحافظة
+                </Button>
               }
-              browseLabel="اختر صورة"
-              className="bg-sunken/40 py-14 sm:py-20"
             />
             {state.error && <Alert tone="danger" title={state.error} />}
-            <ul className="grid gap-3 text-caption text-muted-foreground sm:grid-cols-3">
-              {[
-                'أفضل النتائج: كتابة واضحة بخط واحد، بلا زخارف أو ظلال.',
-                'قصّ الصورة حول الكلمات، أو حدّدها بعد الرفع.',
-                'كلما زادت الحروف في الصورة كانت المطابقة أدقّ.',
-              ].map((t) => (
-                <li key={t} className="flex gap-2 rounded-md bg-sunken p-3">
-                  <CheckIcon className="mt-0.5 size-3.5 shrink-0 text-ok-text" />
-                  {t}
-                </li>
-              ))}
-            </ul>
+            <section aria-labelledby={`${textId}-tips`}>
+              <h2 id={`${textId}-tips`} className="sr-only">
+                نصائح لنتيجة أدق
+              </h2>
+              <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
+                {TIPS.map(({ icon: Icon, title, text }) => (
+                  <li
+                    key={title}
+                    className="flex items-start gap-3.5 rounded-xl border bg-card p-4 sm:flex-col sm:items-center sm:gap-0 sm:p-5 sm:text-center"
+                  >
+                    <span
+                      aria-hidden
+                      className="grid size-12 place-items-center rounded-full bg-tint-brand text-primary"
+                    >
+                      <Icon className="size-5" />
+                    </span>
+                    <div className="min-w-0">
+                      <h3 className="text-control font-semibold sm:mt-4">{title}</h3>
+                      <p className="mt-1 text-caption leading-relaxed text-muted-foreground sm:mt-1.5">{text}</p>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </section>
           </div>
         ) : (
           <div className="mt-6 grid gap-6 lg:grid-cols-[minmax(0,1.35fr)_minmax(0,1fr)] lg:gap-8">

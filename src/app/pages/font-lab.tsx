@@ -1,6 +1,7 @@
 import { Container } from '@/components/layout/container';
 import { ToolHero } from '@/components/layout/tool-hero';
 import { PageMeta } from '@/components/shared/page-meta';
+import { ShieldCheckIcon } from '@/components/ui/icons';
 import { FontLab } from '@/features/font-lab/components/font-lab';
 
 /** «مختبر الخط» — يُحمَّل كسولاً: قارئ الملفات (fontkit) لا يثقل باقي الموقع */
@@ -12,6 +13,7 @@ export function FontLabPage() {
         description="افحص خطّك قبل أن تستخدمه: اللغات، ميزات OpenType، أشكال الحروف، التشكيل والمحارف — في متصفّحك."
       />
       <ToolHero
+        badgeIcon={<ShieldCheckIcon />}
         badge="في متصفّحك — لا تُرفع ملفاتك إلى أي خادم"
         title="مختبر الخط"
         highlight="افحص خطّك قبل أن تستخدمه"

@@ -62,22 +62,22 @@ function Empty() {
 
   return (
     <div className="mx-auto flex max-w-4xl flex-col gap-8">
-      <div className="relative rounded-xl border bg-card p-3 shadow-soft sm:p-4">
+      <div className="relative">
         <Dropzone
           feature
+          formats={['OTF', 'TTF', 'TTC', 'WOFF', 'WOFF2', 'ZIP']}
           onFiles={(f) => void add(f)}
           accept={ACCEPT}
           multiple
           title="أفلت ملفات الخطوط هنا"
-          hint="ملف واحد، عائلة كاملة، أو ملف ZIP — OTF · TTF · TTC · WOFF · WOFF2"
+          hint="ملف واحد، عائلة كاملة، أو ملف ZIP"
           browseLabel="اختر ملفات"
           actions={
-            <Button variant="ghost" size="md" onClick={() => folder.current?.click()}>
+            <Button variant="outline" size="lg" shape="pill" onClick={() => folder.current?.click()}>
               <FolderIcon />
               اختر مجلّداً
             </Button>
           }
-          className="bg-sunken/40 py-14 sm:py-20"
         />
         <input
           ref={folder}
@@ -94,7 +94,7 @@ function Empty() {
         {busy && (
           <div
             role="status"
-            className="absolute inset-0 grid place-items-center rounded-xl bg-card/85 text-control font-medium"
+            className="absolute inset-0 grid place-items-center rounded-2xl bg-card/85 text-control font-medium"
           >
             <span className="flex items-center gap-2">
               <Spinner /> جارٍ قراءة الملفات…
