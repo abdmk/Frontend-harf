@@ -23,11 +23,11 @@ export function ToolTips({
         {tips.map(({ icon: Icon, title: t, text }) => (
           <li
             key={t}
-            className="flex items-start gap-3.5 rounded-xl border bg-card p-4 sm:flex-col sm:items-center sm:gap-0 sm:p-5 sm:text-center"
+            className="group flex items-start gap-3.5 rounded-xl border bg-card p-4 transition-[border-color,transform] duration-(--dur-base) ease-out-quint hover:-translate-y-0.5 hover:border-strong sm:flex-col sm:items-center sm:gap-0 sm:p-5 sm:text-center"
           >
             <span
               aria-hidden
-              className="grid size-10 shrink-0 place-items-center rounded-full bg-tint-brand text-primary sm:size-12"
+              className="grid size-10 shrink-0 place-items-center rounded-full bg-tint-brand text-primary transition-transform duration-(--dur-slow) ease-pop group-hover:scale-110 sm:size-12"
             >
               <Icon className="size-5" />
             </span>

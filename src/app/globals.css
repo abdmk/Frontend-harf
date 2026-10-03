@@ -155,6 +155,21 @@ html.theme-anim *::after {
     fill var(--dur-slow) var(--ease-out-quint) !important;
 }
 
+/* الأقسام القابلة للطيّ (<details>): تنفتح وتنطوي بانسياب حيث يدعم المتصفّح ذلك، وفوراً في غيره */
+:root {
+  interpolate-size: allow-keywords;
+}
+details::details-content {
+  block-size: 0;
+  overflow-y: clip;
+  transition:
+    block-size var(--dur-slow) var(--ease-out-quint),
+    content-visibility var(--dur-slow) allow-discrete;
+}
+details[open]::details-content {
+  block-size: auto;
+}
+
 /* انتقالات View Transitions (نافذة الترخيص): انسياب هادئ بمنحنى الموقع، وتلاشٍ قصير لما حوله */
 ::view-transition-group(*) {
   animation-duration: var(--dur-slow);

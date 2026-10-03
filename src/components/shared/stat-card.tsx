@@ -4,6 +4,7 @@ import { ArrowDownIcon, ArrowUpIcon } from '@/components/ui/icons';
 import { cn } from '@/lib/cn';
 
 import { Sparkline } from './charts/sparkline';
+import { CountUp } from './count-up';
 
 const ICON_TONE = {
   brand: 'text-primary',
@@ -50,8 +51,8 @@ export function StatCard({
         {icon && <span className={cn('[&_svg]:size-4.5', tone ? ICON_TONE[tone] : 'text-tertiary')}>{icon}</span>}
       </div>
       <div className="flex items-end justify-between gap-3">
-        <span dir="ltr" className="text-2xl font-semibold tracking-tight">
-          {value}
+        <span dir="ltr" className="text-2xl font-semibold tracking-tight tabular-nums">
+          {typeof value === 'string' || typeof value === 'number' ? <CountUp value={String(value)} /> : value}
         </span>
         {delta !== undefined && (
           <span

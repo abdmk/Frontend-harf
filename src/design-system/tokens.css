@@ -328,6 +328,8 @@
   /* أشرطة القياس: تمتدّ من بدايتها مرّة واحدة عند الظهور */
   --animate-grow-x: grow-x 700ms var(--ease-out-quint) both;
   --animate-page-in: page-in var(--dur-base) var(--ease-out-quint);
+  /* خروج الإشعار: ينزل قليلاً ويتلاشى — أسرع من دخوله */
+  --animate-toast-out: toast-out 180ms var(--ease-in-soft) both;
   --animate-chip-in: chip-in var(--dur-slow) var(--ease-out-quint) both;
   /* القوائم المنبثقة: دخول هادئ يستقرّ بلا ارتداد، وخروج سريع لا يؤخّر الصفحة */
   --animate-menu-in: menu-in var(--dur-slow) var(--ease-menu) both;
@@ -376,6 +378,12 @@
     }
   }
   /* انتقال الصفحات: تلاشٍ قصير بلا إزاحة — لا يؤخّر القراءة */
+  @keyframes toast-out {
+    to {
+      opacity: 0;
+      transform: translateY(6px) scale(0.98);
+    }
+  }
   @keyframes page-in {
     from {
       opacity: 0;

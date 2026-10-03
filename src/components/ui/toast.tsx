@@ -14,7 +14,10 @@ type ToastInput = Pick<AlertProps, 'tone' | 'title' | 'description'> & {
   action?: { label: string; onClick: () => void };
   duration?: number;
 };
-type ToastItem = ToastInput & { id: number };
+type ToastItem = ToastInput & { id: number; leaving?: boolean };
+
+/** مدّة حركة الخروج — يُحذف الإشعار بعدها كي لا يختفي فجأة */
+const EXIT_MS = 180;
 
 let items: ToastItem[] = [];
 let nextId = 1;
@@ -29,8 +32,13 @@ export function toast(input: ToastInput) {
 }
 
 export function dismissToast(id: number) {
-  items = items.filter((t) => t.id !== id);
+  if (!items.some((t) => t.id === id && !t.leaving)) return;
+  items = items.map((t) => (t.id === id ? { ...t, leaving: true } : t));
   emit();
+  setTimeout(() => {
+    items = items.filter((t) => t.id !== id);
+    emit();
+  }, EXIT_MS);
 }
 
 const subscribe = (l: () => void) => {
@@ -78,7 +86,7 @@ function ToastCard({ item }: { item: ToastItem }) {
 
   return (
     <div
-      className="pointer-events-auto w-full animate-fade-up"
+      className={cn('pointer-events-auto w-full', item.leaving ? 'animate-toast-out' : 'animate-fade-up')}
       onMouseEnter={stop}
       onMouseLeave={start}
       onFocus={stop}
