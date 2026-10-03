@@ -1,4 +1,5 @@
 import { type ReactElement, useMemo, useState, useTransition } from 'react';
+import { flushSync } from 'react-dom';
 import { useNavigate } from 'react-router';
 
 import { PanelSheetContent } from '@/components/shared/panel-sheet';
@@ -15,6 +16,16 @@ import { formatMoney, weightsLabel } from '@/lib/format';
 import { cents } from '@/types/domain/commerce';
 import type { LiveFace } from '@/types/domain/font';
 import { LICENSE_USES, type LicensePricing, type LicenseSelection, type LicenseUse } from '@/types/domain/license';
+
+/**
+ * انتقال سلس بين حالتين (View Transitions): البطاقة المختارة تنساب إلى مكانها في الملخّص بدل
+ * الاستبدال المفاجئ. المتصفّحات التي لا تدعمه، و«تقليل الحركة»، تحصل على التغيير فوراً.
+ */
+function morph(update: () => void) {
+  const doc = document as Document & { startViewTransition?: (cb: () => void) => unknown };
+  if (!doc.startViewTransition || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return update();
+  doc.startViewTransition(() => flushSync(update));
+}
 
 export type SubmitResult = { ok: true } | { ok: false; error: string };
 
@@ -101,9 +112,9 @@ export function LicenseSheet({
 
   const setUse = (use: LicenseUse, tier: string | undefined) =>
     setSel((s) => ({ ...s, uses: { ...s.uses, [use]: tier } }));
-  /** الاختيار الأوّل يستبدل؛ ما بعده يُضاف من «أحتاج أيضاً» */
+  /** الاختيار الأوّل يستبدل؛ ما بعده يُضاف من «أحتاج أيضاً» — والبطاقة المختارة تنساب إلى سطر الملخّص */
   const pickPrimary = (use: LicenseUse) =>
-    setSel((s) => ({ ...s, uses: { [use]: s.uses[use] ?? pricing.uses[use][0]?.id } }));
+    morph(() => setSel((s) => ({ ...s, uses: { [use]: s.uses[use] ?? pricing.uses[use][0]?.id } })));
 
   function submit(mode: 'cart' | 'buy') {
     if (!q) return;
@@ -168,7 +179,8 @@ export function LicenseSheet({
                       <button
                         type="button"
                         onClick={() => pickPrimary(use)}
-                        className="group flex w-full items-center gap-4 rounded-lg border bg-card p-4 text-start transition-[border-color,background-color] duration-(--dur-base) outline-none hover:border-primary hover:bg-tint-brand/30 focus-visible:ring-2 focus-visible:ring-ring"
+                        style={{ viewTransitionName: `lic-${use}` }}
+                        className="group flex w-full items-center gap-4 rounded-lg border bg-card p-4 text-start transition-[border-color,background-color,transform] duration-(--dur-base) ease-out-quint outline-none hover:border-primary hover:bg-tint-brand/30 focus-visible:ring-2 focus-visible:ring-ring active:scale-[0.98]"
                       >
                         <span className="grid size-10 shrink-0 place-items-center rounded-full bg-tint-brand text-primary transition-colors group-hover:bg-primary-fill group-hover:text-primary-foreground">
                           <Icon className="size-4.5" />
@@ -196,9 +208,11 @@ export function LicenseSheet({
                   const key = `use-${use}`;
                   const { Icon, title, scope } = USES[use];
                   return (
-                    <li key={use} className="p-4">
+                    <li key={use} className="p-4" style={{ viewTransitionName: `lic-${use}` }}>
                       <div className="flex items-center gap-3">
-                        <Icon className="size-4.5 shrink-0 text-muted-foreground" />
+                        <span className="grid size-9 shrink-0 animate-pop-in place-items-center rounded-full bg-primary-fill text-primary-foreground">
+                          <Icon className="size-4" />
+                        </span>
                         <span className="min-w-0 flex-1">
                           <span className="block text-control font-semibold">{title}</span>
                           <span className="block text-meta text-muted-foreground">{tier?.label}</span>
@@ -216,10 +230,12 @@ export function LicenseSheet({
                           <button
                             type="button"
                             aria-label={`إزالة ${title}`}
-                            onClick={() => {
-                              setUse(use, undefined);
-                              setEditing(null);
-                            }}
+                            onClick={() =>
+                              morph(() => {
+                                setUse(use, undefined);
+                                setEditing(null);
+                              })
+                            }
                             className="grid size-7 place-items-center rounded-full text-tertiary hover:bg-sunken hover:text-foreground"
                           >
                             <CrossIcon className="size-3.5" />
@@ -254,14 +270,17 @@ export function LicenseSheet({
               </ul>
             )}
             {chosen.length > 0 && others.length > 0 && (
-              <div className="mt-2 flex flex-wrap items-center gap-x-1 gap-y-1 text-meta text-muted-foreground">
+              <div
+                className="mt-2 flex animate-fade-up flex-wrap items-center gap-x-1 gap-y-1 text-meta text-muted-foreground"
+                style={{ animationDelay: '60ms' }}
+              >
                 <PlusIcon className="size-3.5" />
                 أحتاج أيضاً:
                 {others.map((u) => (
                   <button
                     key={u}
                     type="button"
-                    onClick={() => setUse(u, pricing.uses[u][0]?.id)}
+                    onClick={() => morph(() => setUse(u, pricing.uses[u][0]?.id))}
                     className="rounded-full px-2 py-0.5 font-medium text-foreground hover:bg-sunken"
                   >
                     {USES[u].title}
@@ -273,7 +292,7 @@ export function LicenseSheet({
 
           {/* بعد الاختيار: الأوزان بافتراض العائلة — سطر واحد مع «تغيير» */}
           {chosen.length > 0 && (
-            <section aria-labelledby="lic-weights" className="animate-fade-up">
+            <section aria-labelledby="lic-weights" className="animate-fade-up" style={{ animationDelay: '120ms' }}>
               <h3 id="lic-weights" className="sr-only">
                 الأوزان
               </h3>
@@ -392,7 +411,12 @@ export function LicenseSheet({
         <footer className="border-t px-6 py-4">
           <div className="mb-3 flex items-baseline justify-between gap-4" aria-live="polite">
             <span className="text-meta text-muted-foreground">{q ? 'الإجمالي' : 'يبدأ من'}</span>
-            <span dir="ltr" className="text-3xl font-semibold tracking-tight tabular-nums">
+            {/* المبلغ يتجدّد بحركة قصيرة كلما تغيّر — يلفت إلى أثر الاختيار */}
+            <span
+              key={q ? q.cents : 'from'}
+              dir="ltr"
+              className="animate-fade-up text-3xl font-semibold tracking-tight tabular-nums"
+            >
               {formatMoney(cents(q ? q.cents : lowest))}
             </span>
           </div>

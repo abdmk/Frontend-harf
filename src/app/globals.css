@@ -155,6 +155,16 @@ html.theme-anim *::after {
     fill var(--dur-slow) var(--ease-out-quint) !important;
 }
 
+/* انتقالات View Transitions (نافذة الترخيص): انسياب هادئ بمنحنى الموقع، وتلاشٍ قصير لما حوله */
+::view-transition-group(*) {
+  animation-duration: var(--dur-slow);
+  animation-timing-function: var(--ease-out-quint);
+}
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: var(--dur-base);
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

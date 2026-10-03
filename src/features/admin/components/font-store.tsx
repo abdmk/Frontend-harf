@@ -37,6 +37,13 @@ import {
 } from '../api/fonts-store';
 import { fmt } from '../utils';
 
+/** «عبدالملك جاسم» · «أ وب» · «أ و4 آخرون» — سطر قصير ثابت مهما كثر المصمّمون */
+function designersShort(names: string[]) {
+  if (names.length <= 1) return names[0] ?? '';
+  if (names.length === 2) return `${names[0]} و${names[1]}`;
+  return `${names[0]} و${names.length - 1} آخرون`;
+}
+
 type VisFilter = 'all' | Visibility;
 type Sort = 'downloads' | 'newest' | 'name';
 
@@ -267,10 +274,16 @@ export function FontStore() {
                             </Link>
                             {i.featured && <StarIcon filled className="size-3.5 text-gold-500" title="مميّز" />}
                           </div>
-                          <p className="text-caption text-muted-foreground">
-                            {[f.designers.map((d) => d.nameAr).join('، '), CATEGORY_LABEL[f.category]]
-                              .filter(Boolean)
-                              .join(' · ')}
+                          {/* التصنيف شارة، والمصمّمون مختصرون (الأول + العدد) — القائمة كاملة عند التمرير */}
+                          <p className="mt-1 flex min-w-0 items-center gap-2 text-caption text-muted-foreground">
+                            <span className="shrink-0 rounded-full bg-sunken px-2 py-0.5 font-medium">
+                              {CATEGORY_LABEL[f.category]}
+                            </span>
+                            {f.designers.length > 0 && (
+                              <span className="truncate" title={f.designers.map((d) => d.nameAr).join('، ')}>
+                                {designersShort(f.designers.map((d) => d.nameAr))}
+                              </span>
+                            )}
                           </p>
                         </div>
                       </div>
