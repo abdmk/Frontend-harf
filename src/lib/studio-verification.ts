@@ -262,7 +262,7 @@ function editable(): VerificationRecord | { error: string } {
   if (!user || user.plan !== 'studio') return { error: 'التوثيق لحسابات الاستوديو.' };
   const r = getVerification(user.id);
   if (r.status === 'pending') return { error: 'طلبك قيد المراجعة — لا يمكن تعديله الآن.' };
-  if (r.status === 'approved') return { error: 'استوديوك موثّق. لتغيير البيانات تواصل مع الدعم.' };
+  if (r.status === 'approved') return { error: 'حسابك موثّق. لتغيير البيانات تواصل مع الدعم.' };
   return r;
 }
 
@@ -321,4 +321,10 @@ export function decideVerification(userId: string, decision: 'approved' | 'rejec
   })
     ? { ok: true }
     : FULL;
+}
+
+/** حساب موثّق (اعتمدته الإدارة) — تظهر علامة التوثيق بجانب اسمه في كل مكان */
+export function useIsVerified(userId: string | undefined): boolean {
+  const all = useAllVerifications();
+  return !!userId && all[userId]?.status === 'approved';
 }

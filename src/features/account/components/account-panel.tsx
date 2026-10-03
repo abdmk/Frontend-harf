@@ -2,6 +2,7 @@ import { Fragment } from 'react';
 import { Link, useNavigate } from 'react-router';
 
 import { sideNavIcon, sideNavRow } from '@/components/shared/side-nav';
+import { UserVerifiedBadge } from '@/components/shared/verified-badge';
 import { CrownIcon, LayersIcon, SignOutIcon } from '@/components/ui/icons';
 import { paths } from '@/config/paths';
 import { signOut } from '@/features/account/api/sign-out';
@@ -77,7 +78,10 @@ export function AccountPanel({
       <div className={cn('flex items-center bg-sunken', s.card)}>
         <UserAvatar user={user} className={s.avatar} />
         <div className="min-w-0 flex-1">
-          <p className={cn('truncate font-semibold', s.name)}>{user.name}</p>
+          <p className={cn('flex items-center gap-1.5 font-semibold', s.name)}>
+            <span className="truncate">{user.name}</span>
+            <UserVerifiedBadge userId={user.id} />
+          </p>
           <p className={cn('truncate text-right text-muted-foreground', s.email)} dir="ltr">
             {user.email}
           </p>

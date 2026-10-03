@@ -84,10 +84,9 @@ export function App() {
         <Route errorElement={<ErrorBoundary />} element={<WideLayout />}>
           <Route path="account" element={<AccountIndexPage />} />
           <Route path="account/:section" element={<AccountSectionPage />} />
+          {/* توثيق الحساب — شريط الموقع العلوي، بلا عمود الاستوديو الجانبي */}
+          <Route path="studio/verify" element={<StudioVerifyPage />} />
         </Route>
-
-        {/* توثيق الاستوديو — صفحة مركّزة خارج تخطيط الاستوديو */}
-        <Route path="studio/verify" errorElement={<ErrorBoundary />} element={<StudioVerifyPage />} />
 
         {/* الاستوديو — مساحة مستقلّة بعمودها الجانبي */}
         <Route path="studio" errorElement={<ErrorBoundary />} element={<StudioLayout />}>

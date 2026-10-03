@@ -15,10 +15,14 @@ import { getFoundry, getFoundryDesigners } from '@/features/studio/api/get-studi
 import { FoundryProfile } from '@/features/studio/components/foundry-profile';
 import { getCurrentUser } from '@/lib/auth';
 import { getPublicProfile, markOf, type SocialKey, socialUrl } from '@/lib/public-profile';
+import { useIsVerified } from '@/lib/studio-verification';
 
 export function FoundryPage() {
   const { id } = useParams<{ id: string }>();
   const found = getFoundry(id!);
+  // صفحة الاستوديو نفسه: علامة التوثيق تتبع اعتماد حسابه، لا البيانات التجريبية
+  const me = getCurrentUser();
+  const ownVerified = useIsVerified(me?.plan === 'studio' ? me.id : undefined);
   if (!found) return <Navigate to="/" replace />;
   // ⚠️ عرض: الملف العام المحفوظ في هذا المتصفّح يظهر لصاحب الاستوديو؛ مع الخادم يأتي من قاعدة البيانات
   const own = getCurrentUser()?.plan === 'studio' ? getPublicProfile() : null;
@@ -27,6 +31,7 @@ export function FoundryPage() {
         ...found,
         foundry: {
           ...found.foundry,
+          verified: ownVerified,
           name: own.name || found.foundry.name,
           nameEn: own.nameEn || found.foundry.nameEn,
           location: own.location || found.foundry.location,

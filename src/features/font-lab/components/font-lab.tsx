@@ -3,8 +3,18 @@ import { useSearchParams } from 'react-router';
 
 import { Dropzone } from '@/components/shared/dropzone';
 import { LoadingState } from '@/components/shared/loading-state';
+import { ToolTips } from '@/components/shared/tool-tips';
 import { Button } from '@/components/ui/button';
-import { CheckIcon, CrossSmallIcon, FolderIcon, PlusIcon } from '@/components/ui/icons';
+import {
+  CrossSmallIcon,
+  FolderIcon,
+  GlobeIcon,
+  LayersIcon,
+  PlusIcon,
+  ShieldCheckIcon,
+  SlidersIcon,
+  TextIcon,
+} from '@/components/ui/icons';
 import { Spinner } from '@/components/ui/spinner';
 import { cn } from '@/lib/cn';
 
@@ -56,12 +66,21 @@ function LabBody() {
 
 /* ───────────────────────── الحالة الأولى ───────────────────────── */
 
+/** ما يكشفه المختبر — كل بطاقة أداة حقيقية فيه */
+const LAB_TIPS = [
+  { icon: LayersIcon, title: 'العائلة كاملة', text: 'حمّل كل الأوزان لترى الحقيقية منها وتقارن بينها.' },
+  { icon: TextIcon, title: 'اختبر بنصّك', text: 'اكتب نصّك وشاهده بكل وزن وحجم قبل أن تشتري أو تستخدم.' },
+  { icon: GlobeIcon, title: 'اللغات والحروف', text: 'أي لغات يدعمها الخط، وما الحروف الناقصة منها.' },
+  { icon: SlidersIcon, title: 'المحاور المتغيّرة', text: 'يقرأ الخطوط المتغيّرة ويتيح تحريك محاورها مباشرة.' },
+  { icon: ShieldCheckIcon, title: 'ملفاتك في جهازك', text: 'القراءة والتحليل داخل المتصفّح، لا تُرفع إلى أي خادم.' },
+] as const;
+
 function Empty() {
   const { add, busy } = useLab();
   const folder = useRef<HTMLInputElement>(null);
 
   return (
-    <div className="mx-auto flex max-w-4xl flex-col gap-8">
+    <div className="flex flex-col gap-6">
       <div className="relative">
         <Dropzone
           feature
@@ -103,18 +122,7 @@ function Empty() {
         )}
       </div>
 
-      <ul className="grid gap-3 text-caption text-muted-foreground sm:grid-cols-3">
-        {[
-          'يقرأ الخطوط المتغيّرة ويتيح تحريك محاورها.',
-          'حمّل العائلة كاملة لترى الأوزان الحقيقية وتقارن بينها.',
-          'اثنا عشر فحصاً: اللغات، الميزات، الأشكال، التشكيل، المحارف وغيرها.',
-        ].map((t) => (
-          <li key={t} className="flex gap-2 rounded-md bg-sunken p-3">
-            <CheckIcon className="mt-0.5 size-3.5 shrink-0 text-ok-text" />
-            {t}
-          </li>
-        ))}
-      </ul>
+      <ToolTips id="lab-tips" title="ما يكشفه المختبر" tips={LAB_TIPS} />
     </div>
   );
 }

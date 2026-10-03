@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
-import { Link } from 'react-router';
 
-import { HarfLockup } from '@/components/shared/harf-logo';
+import { PageIntro } from '@/components/layout/page-intro';
 import { Button } from '@/components/ui/button';
 import { FieldError } from '@/components/ui/field';
 import {
@@ -12,11 +11,9 @@ import {
   DocumentSignedIcon,
   FingerprintIcon,
   ShieldCheckIcon,
-  SignOutIcon,
   UserIcon,
 } from '@/components/ui/icons';
 import { toast } from '@/components/ui/toast';
-import { paths } from '@/config/paths';
 import { cn } from '@/lib/cn';
 import { deleteDoc, storeDoc } from '@/lib/media-store';
 import type { MaskedPayout } from '@/lib/payout';
@@ -54,7 +51,7 @@ const STEPS = [
 type Step = 0 | 1 | 2 | 3 | 4 | 5;
 
 const WHAT_YOU_NEED = [
-  { Icon: UserIcon, title: 'بيانات الاستوديو', text: 'الاسم القانوني، اسم الاستوديو، والدولة.' },
+  { Icon: UserIcon, title: 'بياناتك', text: 'الاسم القانوني، الاسم الذي تنشر به، والدولة.' },
   { Icon: FingerprintIcon, title: 'وثيقة هوية سارية', text: 'البطاقة الوطنية أو الجواز أو الإقامة — صورة واضحة.' },
   { Icon: BankIcon, title: 'وسيلة استلام', text: 'حساب بنكي (IBAN) باسمك — أو بطاقة كي كارد في العراق.' },
   { Icon: DocumentSignedIcon, title: 'توقيع الاتفاقية', text: 'حصّة حرف وحقوقك على خطوطك، بوضوح.' },
@@ -62,44 +59,46 @@ const WHAT_YOU_NEED = [
 
 function Welcome({ onStart, rejected }: { onStart: () => void; rejected?: string }) {
   return (
-    <div className="flex flex-col items-center text-center">
-      <span className="grid size-16 animate-pop-in place-items-center rounded-2xl bg-tint-brand text-primary [&_svg]:size-7">
-        <ShieldCheckIcon />
-      </span>
-      <h1 className="mt-6 text-3xl font-bold tracking-tight sm:text-4xl">وثّق استوديوك</h1>
-      <p className="mt-3 max-w-md text-lead leading-relaxed text-muted-foreground">
-        قبل أوّل نشر، نتعرّف عليك ونتّفق على الشروط. خطوة واحدة تحمي خطوطك ومشتريها — وتفتح لك البيع.
-      </p>
+    <div>
+      {/* شريط البداية نفسه في كل الموقع (PageIntro) — والبدء فعل الصفحة الأول على طرفه */}
+      <PageIntro
+        eyebrow="توثيق الحساب"
+        title="وثّق حسابك"
+        lead="قبل أوّل نشر، نتعرّف عليك ونتّفق على الشروط. خطوة واحدة تحمي خطوطك ومشتريها، وتفتح لك البيع — وتظهر علامة التوثيق بجانب اسمك."
+        aside={
+          <Button size="xl" variant="primary" className="w-full sm:w-auto" onClick={onStart}>
+            ابدأ التوثيق
+            <ChevronLeftIcon />
+          </Button>
+        }
+      />
       {rejected && (
-        <p role="alert" className="mt-6 w-full rounded-xl bg-tint-dgr p-4 text-start text-meta text-dgr-text">
+        <p role="alert" className="mb-6 rounded-xl bg-tint-dgr p-4 text-meta text-dgr-text">
           <span className="font-semibold">سبب عدم الاعتماد:</span> {rejected}
         </p>
       )}
-      <ol className="mt-10 grid w-full gap-3 text-start sm:grid-cols-2">
+      <h2 className="text-lead font-semibold">ما تحتاجه</h2>
+      <ol className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         {WHAT_YOU_NEED.map(({ Icon, title, text }, i) => (
           <li
             key={title}
-            className="flex animate-fade-up gap-3 rounded-xl border bg-card p-4"
+            className="flex animate-fade-up flex-col gap-3 rounded-xl border bg-card p-5"
             style={{ animationDelay: `${i * 60}ms` }}
           >
-            <span className="grid size-9 shrink-0 place-items-center rounded-full bg-tint-brand text-primary [&_svg]:size-4.5">
+            <span className="grid size-10 shrink-0 place-items-center rounded-full bg-tint-brand text-primary [&_svg]:size-5">
               <Icon />
             </span>
             <span>
               <span className="block text-control font-semibold">{title}</span>
-              <span className="mt-0.5 block text-meta leading-relaxed text-muted-foreground">{text}</span>
+              <span className="mt-1 block text-meta leading-relaxed text-muted-foreground">{text}</span>
             </span>
           </li>
         ))}
       </ol>
       <p className="mt-6 flex items-center gap-2 text-meta text-muted-foreground">
-        <ClockIcon className="size-4" />
+        <ClockIcon className="size-4 shrink-0" />
         نحو 5 دقائق · نحفظ تقدّمك تلقائياً · المراجعة خلال يومي عمل عادةً
       </p>
-      <Button size="xl" variant="primary" className="mt-8 w-full sm:w-80" onClick={onStart}>
-        ابدأ التوثيق
-        <ChevronLeftIcon />
-      </Button>
     </div>
   );
 }
@@ -135,7 +134,7 @@ const infoOf = (r: VerificationRecord, user: User): InfoValues => ({
 });
 
 /**
- * مرحلة توثيق الاستوديو: ترحيب، خمس خطوات (الخطوة X من 5)، ثم شاشة الحالة.
+ * مرحلة توثيق الحساب: ترحيب، خمس خطوات (الخطوة X من 5)، ثم شاشة الحالة.
  * كل «التالي» يتحقّق من الخطوة ويحفظها — يمكن الخروج والعودة دون فقدان شيء.
  */
 export function VerifyFlow({ user, record }: { user: User; record: VerificationRecord | null }) {
@@ -248,39 +247,15 @@ export function VerifyFlow({ user, record }: { user: User; record: VerificationR
   const missing = missingOf(current);
 
   return (
-    <div className="flex min-h-dvh flex-col bg-background">
-      {/* شريط علوي ثابت بعرض الموقع: الشعار واسم الخطوة على جهة، والخروج على الأخرى — ظاهران دائماً */}
-      <header className="sticky top-0 z-30 border-b bg-background/90 backdrop-blur-md">
-        <div className="container-page flex h-16 items-center justify-between gap-4">
-          <div className="flex min-w-0 items-center gap-3">
-            <Link
-              to={paths.home.getHref()}
-              aria-label="حرف — الرئيسية"
-              className="shrink-0 rounded-sm outline-none focus-visible:ring-2 focus-visible:ring-ring"
-            >
-              <HarfLockup className="h-8 w-auto" />
-            </Link>
-            <span aria-hidden className="h-6 w-px bg-border max-sm:hidden" />
-            <span className="truncate text-control font-medium text-muted-foreground max-sm:hidden">
-              توثيق الاستوديو
-            </span>
-          </div>
-          <Button asChild variant="outline" size="sm" shape="pill">
-            <Link to={paths.studio.getHref()}>
-              {step === 0 ? (
-                'لاحقاً'
-              ) : (
-                <>
-                  <SignOutIcon />
-                  حفظ والخروج
-                </>
-              )}
-            </Link>
-          </Button>
-        </div>
-      </header>
+    <div className="flex flex-col">
 
-      <main className="mx-auto w-full max-w-xl flex-1 px-4 pt-8 pb-36 sm:pt-12">
+      <main
+        id="main"
+        className={cn(
+          'flex-1',
+          step === 0 ? 'container-page pt-6 pb-16 sm:pt-8' : 'mx-auto w-full max-w-xl px-4 pt-8 pb-36 sm:pt-12',
+        )}
+      >
         {step === 0 ? (
           <Welcome onStart={() => go(1)} rejected={status === 'rejected' ? rec.reason : undefined} />
         ) : (

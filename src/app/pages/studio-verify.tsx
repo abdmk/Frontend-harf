@@ -6,7 +6,7 @@ import { VerifyFlow } from '@/features/verification/components/verify-flow';
 import { useCurrentUser } from '@/hooks/use-current-user';
 import { useMyVerification } from '@/lib/studio-verification';
 
-/** توثيق الاستوديو — صفحة مركّزة بلا عمود جانبي (كمراحل التسجيل)، للاستوديو وحده */
+/** توثيق الحساب — تحت شريط الموقع، بلا عمود جانبي (كمراحل التسجيل)، لحسابات الاستوديو */
 export function StudioVerifyPage() {
   const user = useCurrentUser();
   const record = useMyVerification();
@@ -14,7 +14,7 @@ export function StudioVerifyPage() {
   if (user.plan !== 'studio') return <Navigate to={paths.account.getHref('subscription')} replace />;
   return (
     <>
-      <PageMeta title="توثيق الاستوديو" noindex />
+      <PageMeta title="توثيق الحساب" noindex />
       <VerifyFlow key={user.id} user={user} record={record} />
     </>
   );

@@ -16,10 +16,10 @@ async function pngFile(page: Page) {
   return { name: 'id.png', mimeType: 'image/png', buffer: Buffer.from(b64, 'base64') };
 }
 
-test.describe('توثيق الاستوديو', () => {
+test.describe('توثيق الحساب', () => {
   test('ناشر جديد: لا نشر قبل التوثيق، ثم الخطوات الخمس، ثم المجاني فقط حتى الاعتماد', async ({ page }) => {
     await page.goto('/studio/publish?as=newstudio');
-    await expect(page.getByRole('heading', { name: 'قبل أوّل نشر: وثّق استوديوك' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'قبل أوّل نشر: وثّق حسابك' })).toBeVisible();
     await page.getByRole('link', { name: 'ابدأ التوثيق' }).click();
     await expect(page).toHaveURL(/\/studio\/verify$/);
     await page.getByRole('button', { name: 'ابدأ التوثيق' }).click();
@@ -90,7 +90,7 @@ test.describe('توثيق الاستوديو', () => {
 
     // قيد المراجعة: النشر متاح للمجاني فقط
     await page.goto('/studio/publish');
-    await expect(page.getByRole('heading', { name: 'قبل أوّل نشر: وثّق استوديوك' })).toHaveCount(0);
+    await expect(page.getByRole('heading', { name: 'قبل أوّل نشر: وثّق حسابك' })).toHaveCount(0);
   });
 
   test('الإدارة: الرفض يتطلّب سبباً يصل للناشر، والاعتماد يفتح البيع', async ({ page }) => {

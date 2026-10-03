@@ -1,6 +1,7 @@
 import { type ReactNode, useEffect, useId, useRef, useState } from 'react';
 
 import { Dropzone } from '@/components/shared/dropzone';
+import { ToolTips } from '@/components/shared/tool-tips';
 import { Alert } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Field, FieldHint, FieldLabel } from '@/components/ui/field';
@@ -163,30 +164,7 @@ export function FontMatchingTool({ renderResult }: { renderResult: (p: ResultCar
               }
             />
             {state.error && <Alert tone="danger" title={state.error} />}
-            <section aria-labelledby={`${textId}-tips`}>
-              <h2 id={`${textId}-tips`} className="sr-only">
-                نصائح لنتيجة أدق
-              </h2>
-              <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
-                {TIPS.map(({ icon: Icon, title, text }) => (
-                  <li
-                    key={title}
-                    className="flex items-start gap-3.5 rounded-xl border bg-card p-4 sm:flex-col sm:items-center sm:gap-0 sm:p-5 sm:text-center"
-                  >
-                    <span
-                      aria-hidden
-                      className="grid size-12 place-items-center rounded-full bg-tint-brand text-primary"
-                    >
-                      <Icon className="size-5" />
-                    </span>
-                    <div className="min-w-0">
-                      <h3 className="text-control font-semibold sm:mt-4">{title}</h3>
-                      <p className="mt-1 text-caption leading-relaxed text-muted-foreground sm:mt-1.5">{text}</p>
-                    </div>
-                  </li>
-                ))}
-              </ul>
-            </section>
+            <ToolTips id={`${textId}-tips`} title="نصائح لنتيجة أدق" tips={TIPS} />
           </div>
         ) : (
           <div className="mt-6 grid gap-6 lg:grid-cols-[minmax(0,1.35fr)_minmax(0,1fr)] lg:gap-8">

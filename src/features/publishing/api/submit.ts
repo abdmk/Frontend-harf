@@ -25,11 +25,11 @@ export function submitForReview(input: unknown): SubmitResult {
   if (user.role !== 'admin') {
     const status = statusOf(user.id);
     if (status !== 'pending' && status !== 'approved')
-      return { ok: false, errors: [{ path: 'auth', message: 'وثّق استوديوك أولاً لتنشر.' }] };
+      return { ok: false, errors: [{ path: 'auth', message: 'وثّق حسابك أولاً لتنشر.' }] };
     if (parsed.data.mode === 'studio' && parsed.data.availability === 'paid' && !canSell(user.id))
       return {
         ok: false,
-        errors: [{ path: 'availability', message: 'الخطوط المدفوعة تُفتح بعد اعتماد استوديوك.' }],
+        errors: [{ path: 'availability', message: 'الخطوط المدفوعة تُفتح بعد توثيق حسابك.' }],
       };
   }
   if (parsed.data.mode === 'admin' && user.role !== 'admin')

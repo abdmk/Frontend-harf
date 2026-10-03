@@ -480,7 +480,7 @@ export function PricingStep({
         <p className="flex items-start gap-2 rounded-lg bg-tint-warn px-4 py-3 text-meta leading-relaxed text-warn-text">
           <LockIcon className="mt-0.5 size-4 shrink-0" />
           <span>
-            الخطوط المدفوعة تُفتح بعد اعتماد استوديوك.{' '}
+            الخطوط المدفوعة تُفتح بعد توثيق حسابك.{' '}
             <Link to={paths.studio.getHref('verify')} className="font-medium underline underline-offset-4">
               حالة التوثيق
             </Link>

@@ -63,7 +63,7 @@ export function VerificationStatusScreen({ record, onEdit }: { record: Verificat
     approved: {
       tone: 'bg-tint-ok text-ok-text',
       Icon: ShieldCheckIcon,
-      title: 'استوديوك موثّق',
+      title: 'حسابك موثّق',
       lead: 'يمكنك الآن نشر الخطوط المدفوعة واستقبال المبيعات. أرباحك تُحوَّل إلى الوسيلة التي اخترتها.',
       stages: [
         { title: 'أُرسل الطلب', text: sent, state: 'done' },

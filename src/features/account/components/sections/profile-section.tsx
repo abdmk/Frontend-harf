@@ -3,6 +3,7 @@ import { Link } from 'react-router';
 
 import { SectionCard } from '@/components/shared/section-card';
 import { UsageMeter } from '@/components/shared/usage-meter';
+import { UserVerifiedBadge } from '@/components/shared/verified-badge';
 import { Button } from '@/components/ui/button';
 import { Field, FieldError, FieldLabel } from '@/components/ui/field';
 import {
@@ -49,7 +50,10 @@ export function ProfileSection({
           <UserAvatar user={user} className="size-18 text-xl" />
           <div className="min-w-40 flex-1">
             <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5">
-              <p className="text-xl font-semibold">{user.name}</p>
+              <p className="flex items-center gap-2 text-xl font-semibold">
+                {user.name}
+                <UserVerifiedBadge userId={user.id} className="size-5" />
+              </p>
               <PlanBadge plan={user.plan} />
             </div>
             {user.profession && <p className="mt-1 text-meta text-muted-foreground">{user.profession}</p>}

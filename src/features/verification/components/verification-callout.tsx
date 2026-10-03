@@ -13,14 +13,14 @@ const VIEW: Record<
   none: {
     tone: 'bg-tint-brand text-primary',
     Icon: ShieldCheckIcon,
-    title: 'وثّق استوديوك لتبدأ البيع',
+    title: 'وثّق حسابك لتبدأ البيع',
     text: 'خمس خطوات قصيرة: بياناتك، وثيقة الهوية، وسيلة استلام الأرباح، وتوقيع الاتفاقية.',
     cta: 'ابدأ التوثيق',
   },
   draft: {
     tone: 'bg-tint-brand text-primary',
     Icon: ShieldCheckIcon,
-    title: 'أكمل توثيق استوديوك',
+    title: 'أكمل توثيق حسابك',
     text: 'حفظنا ما أدخلته — أكمل الخطوات المتبقية وأرسل الطلب للمراجعة.',
     cta: 'أكمل التوثيق',
   },
@@ -48,7 +48,7 @@ export function VerificationCallout({ className }: { className?: string }) {
   const v = VIEW[status];
   return (
     <section
-      aria-label="توثيق الاستوديو"
+      aria-label="توثيق الحساب"
       className={cn(
         'flex animate-fade-up flex-col gap-4 rounded-xl border bg-card p-5 sm:flex-row sm:items-center',
         className,
@@ -89,7 +89,7 @@ export function VerificationGate() {
         {rejected ? <ExclamationIcon /> : <ShieldCheckIcon />}
       </span>
       <h1 id="gate-title" className="mt-6 text-3xl font-bold tracking-tight">
-        {rejected ? 'عدّل طلب التوثيق لتنشر' : 'قبل أوّل نشر: وثّق استوديوك'}
+        {rejected ? 'عدّل طلب التوثيق لتنشر' : 'قبل أوّل نشر: وثّق حسابك'}
       </h1>
       <p className="mt-3 max-w-md text-control leading-relaxed text-muted-foreground">
         {rejected

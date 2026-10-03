@@ -2,6 +2,7 @@ import { Fragment } from 'react';
 import { Link, useLocation } from 'react-router';
 
 import { sideNavIcon, sideNavRow } from '@/components/shared/side-nav';
+import { MyVerifiedBadge } from '@/components/shared/verified-badge';
 import { Button } from '@/components/ui/button';
 import { ArrowLeftIcon, ChevronRightIcon, CloudUploadIcon, ShieldCheckIcon } from '@/components/ui/icons';
 import { paths, type StudioSection } from '@/config/paths';
@@ -40,7 +41,7 @@ function VerifyLink() {
   return (
     <Link to={paths.studio.getHref('verify')} className={sideNavRow(false)}>
       <ShieldCheckIcon className={sideNavIcon(false)} />
-      <span className="flex-1">توثيق الاستوديو</span>
+      <span className="flex-1">توثيق الحساب</span>
       <span className={cn('rounded-full px-2.5 py-0.5 text-xs font-medium', b.cls)}>{b.text}</span>
     </Link>
   );
@@ -87,7 +88,10 @@ export function StudioSidebar({ foundry }: { foundry: Foundry }) {
         <StudioMark foundry={foundry} className="size-14 text-2xl" />
         <div className="min-w-0 flex-1">
           <p className="text-caption text-tertiary">الاستوديو</p>
-          <p className="truncate text-base font-semibold">{name}</p>
+          <p className="flex items-center gap-1.5 text-base font-semibold">
+            <span className="truncate">{name}</span>
+            <MyVerifiedBadge />
+          </p>
           <Link
             to={paths.foundry.getHref(foundry.id)}
             className="mt-0.5 inline-flex items-center gap-1 text-meta text-muted-foreground hover:text-primary"
@@ -179,7 +183,10 @@ export function StudioTabs({ foundry }: { foundry: Foundry }) {
     <div className="flex flex-col gap-3 lg:hidden">
       <div className="flex items-center gap-3">
         <StudioMark foundry={foundry} className="size-10 bg-sunken text-lg" />
-        <p className="min-w-0 flex-1 truncate font-semibold">{name}</p>
+        <p className="flex min-w-0 flex-1 items-center gap-1.5 font-semibold">
+          <span className="truncate">{name}</span>
+          <MyVerifiedBadge />
+        </p>
         <Button asChild size="sm">
           <Link to={paths.studio.getHref('publish')}>
             <CloudUploadIcon />

@@ -69,7 +69,7 @@ export function StudioRequests({ embedded = false }: { embedded?: boolean }) {
     <div className="flex flex-col gap-6">
       {!embedded && (
         <AdminPageHeader
-          title="توثيق الاستوديوهات"
+          title="توثيق الحسابات"
           description="طلبات الناشرين قبل البيع: الهوية، وسيلة الاستلام، والاتفاقية الموقّعة. لا مبيعات قبل اعتمادك."
         />
       )}
@@ -120,7 +120,7 @@ export function StudioRequests({ embedded = false }: { embedded?: boolean }) {
         <EmptyState
           icon={<ShieldCheckIcon />}
           title="لا طلبات بانتظارك"
-          description="ستظهر هنا طلبات توثيق الاستوديوهات الجديدة فور إرسالها."
+          description="ستظهر هنا طلبات توثيق الحسابات الجديدة فور إرسالها."
         />
       )}
     </div>

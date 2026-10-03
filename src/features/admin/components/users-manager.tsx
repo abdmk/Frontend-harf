@@ -4,6 +4,7 @@ import { Avatar } from '@/components/shared/avatar';
 import { ConfirmDialog } from '@/components/shared/confirm-dialog';
 import { EmptyState } from '@/components/shared/empty-state';
 import { StatCard } from '@/components/shared/stat-card';
+import { UserVerifiedBadge } from '@/components/shared/verified-badge';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from '@/components/ui/dialog';
@@ -392,7 +393,10 @@ export function UsersManager({ visits }: { visits: number }) {
                     <div className="flex items-center gap-3">
                       <Avatar initials={u.name.slice(0, 2).toUpperCase()} seed={u.id} size="md" />
                       <div className="min-w-0">
-                        <p className="font-semibold">{u.name}</p>
+                        <p className="flex items-center gap-1.5 font-semibold">
+                          {u.name}
+                          <UserVerifiedBadge userId={u.id} />
+                        </p>
                         <p dir="ltr" className="text-end text-caption text-muted-foreground">
                           {u.email}
                         </p>

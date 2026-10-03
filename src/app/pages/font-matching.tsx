@@ -4,7 +4,6 @@ import { ToolHero } from '@/components/layout/tool-hero';
 import { PageMeta } from '@/components/shared/page-meta';
 import { Button } from '@/components/ui/button';
 import { MagicWandIcon } from '@/components/ui/icons';
-import { countCandidates } from '@/features/font-matching/api/candidates';
 import { FontMatchingTool, type ResultCardProps } from '@/features/font-matching/components/font-matching-tool';
 
 /** بطاقة النتيجة = بطاقة الخط نفسها بنصّ المستخدم، مع التشابه وزرّ «قارن» */
@@ -68,7 +67,7 @@ export function FontMatchingPage() {
         badge="مطابقة بصرية داخل متصفّحك"
         title="أفضل أداة AI!"
         highlight="لمطابقة الخطوط العربية"
-        lead={`ارفع صورة فيها كتابة عربية، ونقارن شكل حروفها بـ${countCandidates()} خطاً من مكتبة حرف ونرتّبها بحسب التشابه — ولا تُرفع صورتك إلى أي خادم.`}
+        lead="ارفع الصورة واكتشف أي خط في ثوانٍ معدودة، يحلل ويطابق مع أكثر من 20,000 خط عربي"
       />
       <FontMatchingTool renderResult={(p) => <ResultCard {...p} />} />
     </Container>
