@@ -28,7 +28,7 @@ const upload = (page: Page) => page.locator('input[type=file]').first();
 test.describe('عين (مطابقة الخطوط)', () => {
   test('صورة بخط القاهرة ← القاهرة ضمن أقرب ثلاث نتائج، والمقارنة تعمل', async ({ page }) => {
     await page.goto('/tools/font-matching');
-    await expect(page.getByRole('heading', { level: 1, name: /^عين/ })).toBeVisible();
+    await expect(page.getByRole('heading', { level: 1, name: /لمطابقة الخطوط العربية/ })).toBeVisible();
     await upload(page).setInputFiles(await specimen(page));
 
     await expect(page.getByRole('img', { name: /منطقة الكتابة المحدّدة/ })).toBeVisible();

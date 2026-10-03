@@ -66,7 +66,7 @@ export function FontMatchingPage() {
       <ToolHero
         badgeIcon={<MagicWandIcon />}
         badge="مطابقة بصرية داخل متصفّحك"
-        title="عين"
+        title="أفضل أداة AI!"
         highlight="لمطابقة الخطوط العربية"
         lead={`ارفع صورة فيها كتابة عربية، ونقارن شكل حروفها بـ${countCandidates()} خطاً من مكتبة حرف ونرتّبها بحسب التشابه — ولا تُرفع صورتك إلى أي خادم.`}
       />
