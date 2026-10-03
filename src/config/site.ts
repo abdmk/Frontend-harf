@@ -10,7 +10,7 @@ export const mainNav = [
   { label: 'خطوط مجانية', href: '/' },
   { label: 'خطوط مدفوعة', href: '/?license=paid' },
   { label: 'مخطوطات', href: '/manuscripts' },
-  { label: 'مطابقة الخطوط', href: '/tools/font-matching' },
+  { label: 'عين', href: '/tools/font-matching' },
   { label: 'نسق', href: '/tools/nasaq' },
   { label: 'مختبر الخط', href: '/tools/font-lab' },
   { label: 'عكس النص', href: '/tools/reverse-text' },

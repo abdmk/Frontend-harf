@@ -61,3 +61,10 @@ export const MOCK_USERS = {
     usage: { downloads: { used: 0, limit: null }, matching: { used: 0, limit: null }, resetsInHours: 3 },
   },
 } as const satisfies Record<string, User>;
+
+/** الحساب المجاني نفسه بعد ترقيته إلى الاستوديو: ناشر جديد لم يوثّق استوديوه ولم ينشر بعد */
+export const MOCK_NEW_STUDIO = {
+  ...MOCK_USERS.free,
+  plan: 'studio',
+  usage: { downloads: { used: 5, limit: null }, matching: { used: 2, limit: null }, resetsInHours: 3 },
+} as const satisfies User;

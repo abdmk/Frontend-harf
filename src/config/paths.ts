@@ -1,9 +1,9 @@
 /** أقسام مساحة الاستوديو — قائمة مغلقة (لا مسارات حرّة) */
 export type StudioSection =
-  'fonts' | 'analytics' | 'finance' | 'finance/sales' | 'finance/payouts' | 'profile' | 'publish';
+  'fonts' | 'analytics' | 'finance' | 'finance/sales' | 'finance/payouts' | 'profile' | 'publish' | 'verify';
 
 /** أقسام لوحة الإدارة */
-export type AdminSection = 'review' | 'fonts' | 'users' | 'plans' | 'content' | 'analytics';
+export type AdminSection = 'review' | 'studios' | 'fonts' | 'users' | 'plans' | 'content' | 'analytics';
 
 /** كل روابط التطبيق في مكان واحد — لا روابط نصّية متفرّقة في المكوّنات */
 export const paths = {
@@ -31,6 +31,7 @@ export const paths = {
     getHref: (section?: AdminSection) => (section ? `/admin/${section}` : '/admin'),
     review: { getHref: (id: string) => `/admin/review/${encodeURIComponent(id)}` },
     font: { getHref: (id: string) => `/admin/fonts/${encodeURIComponent(id)}` },
+    studio: { getHref: (id: string) => `/admin/studios/${encodeURIComponent(id)}` },
   },
   tools: { reverseText: { getHref: () => '/tools/reverse-text' } },
   designSystem: { getHref: () => '/design-system' },

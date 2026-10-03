@@ -12,6 +12,8 @@ import {
   AdminAnalyticsPage,
   AdminContentPage,
   AdminPlansPage,
+  AdminStudioDetailPage,
+  AdminStudiosPage,
   AdminFontDetailPage,
   AdminFontsPage,
   AdminHomePage,
@@ -42,6 +44,7 @@ import {
   StudioOverviewPage,
   StudioProfilePage,
 } from './pages/studio';
+import { StudioVerifyPage } from './pages/studio-verify';
 import { AppProviders } from './providers';
 import { ScrollToTop } from './scroll-to-top';
 
@@ -85,6 +88,9 @@ export function App() {
           <Route path="account/:section" element={<AccountSectionPage />} />
         </Route>
 
+        {/* توثيق الاستوديو — صفحة مركّزة خارج تخطيط الاستوديو */}
+        <Route path="studio/verify" errorElement={<ErrorBoundary />} element={<StudioVerifyPage />} />
+
         {/* الاستوديو — مساحة مستقلّة بعمودها الجانبي */}
         <Route path="studio" errorElement={<ErrorBoundary />} element={<StudioLayout />}>
           <Route index element={<StudioOverviewPage />} />
@@ -110,6 +116,8 @@ export function App() {
           <Route index element={<AdminHomePage />} />
           <Route path="review" element={<AdminReviewPage />} />
           <Route path="review/:id" element={<AdminReviewDetailPage />} />
+          <Route path="studios" element={<AdminStudiosPage />} />
+          <Route path="studios/:id" element={<AdminStudioDetailPage />} />
           <Route path="fonts" element={<AdminFontsPage />} />
           <Route path="fonts/:id" element={<AdminFontDetailPage />} />
           <Route path="users" element={<AdminUsersPage />} />

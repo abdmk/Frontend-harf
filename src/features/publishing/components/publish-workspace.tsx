@@ -33,12 +33,17 @@ const STORAGE = 'harf-publish-draft';
  */
 export function PublishWorkspace({
   isAdmin,
+  canSell = true,
   onSubmit,
 }: {
   isAdmin: boolean;
+  /** قبل اعتماد الاستوديو: المجاني وحده — الخيار المدفوع معطّل والخادم يرفضه */
+  canSell?: boolean;
   onSubmit: (d: unknown) => SubmitResult | Promise<SubmitResult>;
 }) {
-  const [draft, setDraft] = useState<WorkDraft>(EMPTY_DRAFT);
+  const [draft, setDraft] = useState<WorkDraft>(() =>
+    canSell ? EMPTY_DRAFT : { ...EMPTY_DRAFT, availability: 'free' },
+  );
   const [images, setImages] = useState<{ url: string; name: string }[]>([]);
   const [step, setStep] = useState(0);
   const [saved, setSaved] = useState<'idle' | 'saved'>('saved');
@@ -53,13 +58,14 @@ export function PublishWorkspace({
       const raw = localStorage.getItem(STORAGE);
       if (raw) {
         const saved = { ...EMPTY_DRAFT, ...restoreDraft(JSON.parse(raw)), files: [], consent: false } as WorkDraft;
+        const restored = isAdmin ? saved : { ...saved, mode: 'studio' as const };
         // eslint-disable-next-line react-hooks/set-state-in-effect -- قراءة التخزين بعد الترطيب
-        setDraft(isAdmin ? saved : { ...saved, mode: 'studio' });
+        setDraft(canSell ? restored : { ...restored, availability: 'free' });
       }
     } catch {
       /* مسودّة تالفة ← نبدأ من جديد */
     }
-  }, [isAdmin]);
+  }, [isAdmin, canSell]);
 
   useEffect(() => {
     const t = window.setTimeout(() => {
@@ -236,7 +242,7 @@ export function PublishWorkspace({
         {step === 0 && <FilesStep draft={draft} set={set} errors={errors} />}
         {step === 1 && <ImagesStep images={images} setImages={setImages} errors={errors} />}
         {step === 2 && <InfoStep draft={draft} set={set} errors={errors} />}
-        {step === 3 && <PricingStep draft={draft} set={set} errors={errors} />}
+        {step === 3 && <PricingStep draft={draft} set={set} errors={errors} canSell={canSell || isAdmin} />}
         {step === LAST && (
           <ReviewStep
             draft={draft}

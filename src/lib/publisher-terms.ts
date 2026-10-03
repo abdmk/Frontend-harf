@@ -1,3 +1,4 @@
+import { PLATFORM_SHARE_PCT } from '@/lib/studio-verification';
 import { cents } from '@/types/domain/commerce';
 
 /**
@@ -6,7 +7,7 @@ import { cents } from '@/types/domain/commerce';
  */
 export const PUBLISHER_TERMS = {
   /** حصّة حرف من سعر البيع (تشمل رسوم معالجة الدفع) */
-  platformPct: 30,
+  platformPct: PLATFORM_SHARE_PCT,
   /** الأرباح تصير قابلة للسحب بعد انتهاء مدّة الاسترجاع */
   holdDays: 14,
   /** دورية التحويل التلقائي */

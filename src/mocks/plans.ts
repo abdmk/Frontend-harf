@@ -16,7 +16,7 @@ export const MOCK_PLANS: PlanOffer[] = [
       { label: 'الخطوط والمخطوطات المجانية', included: true },
       { label: 'الخطوط الكردية', included: true },
       { label: 'عكس النص ومختبر الخط', included: true },
-      { label: 'مطابقة الخطوط — 3 مرّات يومياً', included: true },
+      { label: '«عين» لمطابقة الخطوط — 3 مرّات يومياً', included: true },
       { label: 'بلا إعلانات', included: false },
       { label: 'تحميل غير محدود', included: false },
     ],
@@ -32,7 +32,7 @@ export const MOCK_PLANS: PlanOffer[] = [
     inherits: 'كل ما في المجانية، وإضافةً إليها',
     features: [
       { label: 'تحميل غير محدود من المكتبة', included: true },
-      { label: 'مطابقة غير محدودة', included: true },
+      { label: '«عين» بلا حدود', included: true },
       { label: 'بلا إعلانات', included: true },
       { label: 'المخطوطات الجاهزة كاملة', included: true },
       { label: 'أولوية في الدعم', included: true },

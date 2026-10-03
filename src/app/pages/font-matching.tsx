@@ -53,17 +53,17 @@ function ResultCard({ match, text, selected, onCompare }: ResultCardProps) {
   );
 }
 
-/** «مطابقة الخطوط» — تُحمَّل كسولاً: المحرّك ومعالجة الصور لا تثقل باقي الموقع */
+/** «عين» (مطابقة الخطوط) — تُحمَّل كسولاً: المحرّك ومعالجة الصور لا تثقل باقي الموقع */
 export function FontMatchingPage() {
   return (
     <Container as="main" id="main" className="py-10 sm:py-14">
       <PageMeta
-        title="مطابقة الخطوط"
+        title="عين — مطابقة الخطوط"
         description="ارفع صورة فيها كتابة عربية، ونقارن شكل حروفها بخطوط مكتبة حرف — في متصفّحك."
       />
       <PageIntro
-        eyebrow="أدوات حرف"
-        title="مطابقة الخطوط"
+        eyebrow="أدوات حرف · مطابقة الخطوط"
+        title="عين"
         lead="ارفع صورة فيها كتابة عربية واكتب ما فيها، ونقارن شكل الحروف بخطوط مكتبة حرف — في متصفّحك، ولا تُرفع صورتك إلى أي خادم."
       />
       <FontMatchingTool renderResult={(p) => <ResultCard {...p} />} />

@@ -6,10 +6,10 @@ import { CheckIcon, ChevronLeftIcon, ClockIcon, DollarIcon, RefreshIcon } from '
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { paths } from '@/config/paths';
 import { formatDateAr, formatMoney } from '@/lib/format';
+import { PUBLISHER_TERMS } from '@/lib/publisher-terms';
 import { cents } from '@/types/domain/commerce';
 
 import { getSales, useEarnings } from '../../api/earnings';
-import { PUBLISHER_TERMS } from '../../config/publisher-terms';
 
 /** للاستوديو الذي لا يبيع: شرح واحد بدل أرقام صفرية */
 export function FinanceEmpty() {

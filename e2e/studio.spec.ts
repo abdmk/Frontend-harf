@@ -230,17 +230,24 @@ test.describe('السحوبات', () => {
     await expect(page.getByText('$1,184.50').first()).toBeVisible();
     await expect(page.getByRole('table', { name: 'سجلّ التحويلات' }).getByText('قيد المعالجة')).toBeVisible();
 
-    await page.getByRole('button', { name: 'تغيير', exact: true }).click();
-    const acc = page.getByRole('dialog', { name: 'تغيير حساب التحويل' });
+    await page.getByRole('button', { name: 'تحديث', exact: true }).click();
+    const acc = page.getByRole('dialog', { name: 'وسيلة استلام الأرباح' });
     await acc.getByLabel('اسم صاحب الحساب').fill('مسبك تجاريب');
     await acc.getByLabel('رقم الحساب الدولي (IBAN)').fill('IQ98 NBIQ 8501 2345 6789 013');
     await acc.getByRole('checkbox').click();
-    await acc.getByRole('button', { name: 'حفظ الحساب' }).click();
+    await acc.getByRole('button', { name: 'متابعة' }).click();
     await expect(acc.getByText('رقم IBAN غير صحيح — راجِع الأرقام.')).toBeVisible();
     await acc.getByLabel('رقم الحساب الدولي (IBAN)').fill('IQ98 NBIQ 8501 2345 6789 012');
-    await acc.getByRole('button', { name: 'حفظ الحساب' }).click();
-    await expect(acc).toBeHidden();
-    await expect(page.getByText('•••• 9012').first()).toBeVisible();
+    await acc.getByRole('button', { name: 'متابعة' }).click();
+    // رمز التأكيد: الخطأ مرفوض، الصحيح يحفظ
+    const otp = page.getByRole('dialog', { name: 'تأكيد أنه أنت' });
+    await otp.getByLabel('الرقم 1 من 6').fill('111111');
+    await otp.getByRole('button', { name: 'تأكيد وحفظ' }).click();
+    await expect(otp.getByText(/الرمز غير صحيح/)).toBeVisible();
+    await otp.getByLabel('الرقم 1 من 6').fill('246810');
+    await otp.getByRole('button', { name: 'تأكيد وحفظ' }).click();
+    await expect(otp).toBeHidden();
+    await expect(page.getByText('IBAN •••• 9012').first()).toBeVisible();
     await expect(page.getByRole('button', { name: 'اطلب سحباً' })).toBeDisabled();
     // الرقم الكامل لا يُحفظ في المتصفّح
     expect(await page.evaluate(() => localStorage.getItem('harf_payouts'))).not.toContain('NBIQ');

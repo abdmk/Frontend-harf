@@ -24,7 +24,7 @@ const LIMITS = [
   },
   {
     key: 'matching',
-    label: 'مطابقة الخطوط',
+    label: 'عين',
     Icon: MagicWandIcon,
     forms: { one: 'مطابقة واحدة', two: 'مطابقتان', few: 'مطابقات', many: 'مطابقة' },
     spent: 'اكتملت المطابقات المتاحة',
@@ -72,7 +72,7 @@ export function UsageSection({ user, onManagePlan }: { user: User; onManagePlan?
             <p className="text-meta text-muted-foreground">{availableLabel(available, limited.length)}</p>
           </div>
         ) : (
-          <p className="px-1 text-meta text-muted-foreground">لا حدود على التحميل والمطابقة في خطتك.</p>
+          <p className="px-1 text-meta text-muted-foreground">لا حدود على التحميل و«عين» في خطتك.</p>
         )}
       </div>
 

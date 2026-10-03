@@ -1,4 +1,5 @@
 import { getCurrentUser } from '@/lib/auth';
+import { canSell, statusOf } from '@/lib/studio-verification';
 
 import { isKnownFoundry, isKnownPerson, personById } from './directory';
 import { draftSchema } from '../types/draft';
@@ -20,6 +21,17 @@ export function submitForReview(input: unknown): SubmitResult {
       ok: false,
       errors: parsed.error.issues.map((i) => ({ path: String(i.path[0] ?? ''), message: i.message })),
     };
+  // أوّل نشر بعد التوثيق؛ والمدفوع بعد اعتماد الإدارة فقط — الخادم يكرّر الفحص نفسه
+  if (user.role !== 'admin') {
+    const status = statusOf(user.id);
+    if (status !== 'pending' && status !== 'approved')
+      return { ok: false, errors: [{ path: 'auth', message: 'وثّق استوديوك أولاً لتنشر.' }] };
+    if (parsed.data.mode === 'studio' && parsed.data.availability === 'paid' && !canSell(user.id))
+      return {
+        ok: false,
+        errors: [{ path: 'availability', message: 'الخطوط المدفوعة تُفتح بعد اعتماد استوديوك.' }],
+      };
+  }
   if (parsed.data.mode === 'admin' && user.role !== 'admin')
     return { ok: false, errors: [{ path: 'mode', message: 'وضع المشرف غير متاح لحسابك.' }] };
   // الحسابات والمسابك المُشار إليها يجب أن تكون موجودة — لا إشارة إلى معرّف مختلَق

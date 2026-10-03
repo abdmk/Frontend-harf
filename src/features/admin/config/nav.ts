@@ -5,6 +5,7 @@ import {
   HomeIcon,
   LayersIcon,
   PictureIcon,
+  ShieldCheckIcon,
   StatsIcon,
   UserIcon,
 } from '@/components/ui/icons';
@@ -23,7 +24,7 @@ export type AdminNavItem = {
  */
 /** مجموعات القائمة الجانبية — تسمية صغيرة فوق كل مجموعة كما في لوحات العمل */
 export const ADMIN_GROUPS: { title: string; items: AdminSection[] | (AdminSection | null)[] }[] = [
-  { title: 'عام', items: [null, 'review'] },
+  { title: 'عام', items: [null, 'review', 'studios'] },
   { title: 'المكتبة والمحتوى', items: ['fonts', 'content'] },
   { title: 'الناس والأرقام', items: ['users', 'plans', 'analytics'] },
 ];
@@ -31,6 +32,7 @@ export const ADMIN_GROUPS: { title: string; items: AdminSection[] | (AdminSectio
 export const ADMIN_NAV: AdminNavItem[] = [
   { section: null, label: 'الرئيسية', hint: 'ما يحتاج انتباهك اليوم', Icon: HomeIcon },
   { section: 'review', label: 'المراجعة', hint: 'الخطوط المرفوعة بانتظار قرار', Icon: DocumentSignedIcon },
+  { section: 'studios', label: 'توثيق الاستوديوهات', hint: 'الهوية والاتفاقية ووسيلة الاستلام', Icon: ShieldCheckIcon },
   { section: 'fonts', label: 'مخزن الخطوط', hint: 'كل خطوط المكتبة وظهورها', Icon: LayersIcon },
   { section: 'users', label: 'المستخدمون', hint: 'الحسابات وخططها والحظر', Icon: UserIcon },
   { section: 'plans', label: 'الخطط والأسعار', hint: 'أسعار الاشتراكات وما تتضمّنه', Icon: DiamondIcon },

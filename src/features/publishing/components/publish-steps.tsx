@@ -1,15 +1,25 @@
 import { RadioGroup as RadioGroupPrimitive } from 'radix-ui';
 import { useRef, useState } from 'react';
+import { Link } from 'react-router';
 
 import { FileIcon } from '@/components/shared/file-icon';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Chip, ChipGroup } from '@/components/ui/chip-group';
 import { Field, FieldError, FieldHint, FieldLabel } from '@/components/ui/field';
-import { CheckIcon, CloudUploadIcon, DollarIcon, GiftIcon, PictureIcon, TrashIcon } from '@/components/ui/icons';
+import {
+  CheckIcon,
+  CloudUploadIcon,
+  DollarIcon,
+  GiftIcon,
+  LockIcon,
+  PictureIcon,
+  TrashIcon,
+} from '@/components/ui/icons';
 import { Input, Textarea } from '@/components/ui/input';
 import { RadioGroup, RadioOption } from '@/components/ui/radio-group';
 import { Switch } from '@/components/ui/switch';
+import { paths } from '@/config/paths';
 import { cn } from '@/lib/cn';
 import { formatBytesAr } from '@/lib/format';
 import { CATEGORY_LABEL, LANG_LABEL } from '@/lib/labels';
@@ -367,7 +377,15 @@ export function InfoStep({ draft, set, errors }: StepProps) {
   );
 }
 
-export function PricingStep({ draft, set, errors }: StepProps) {
+export function PricingStep({
+  draft,
+  set,
+  errors,
+  canSell = true,
+}: StepProps & {
+  /** الخطوط المدفوعة بعد اعتماد الإدارة لحساب الاستوديو وحده */
+  canSell?: boolean;
+}) {
   if (draft.mode === 'admin')
     return (
       <div className="grid gap-5">
@@ -441,7 +459,8 @@ export function PricingStep({ draft, set, errors }: StepProps) {
           <RadioGroupPrimitive.Item
             key={value}
             value={value}
-            className="group/opt flex items-start gap-3 rounded-lg border bg-card p-4 text-start transition-[border-color,box-shadow] duration-(--dur-base) hover:border-strong data-[state=checked]:border-primary data-[state=checked]:shadow-[0_0_0_1px_var(--color-primary)]"
+            disabled={value === 'paid' && !canSell}
+            className="group/opt flex items-start gap-3 rounded-lg border bg-card p-4 text-start transition-[border-color,box-shadow] duration-(--dur-base) hover:border-strong disabled:cursor-not-allowed disabled:opacity-55 disabled:hover:border-border data-[state=checked]:border-primary data-[state=checked]:shadow-[0_0_0_1px_var(--color-primary)]"
           >
             <span className="grid size-10 shrink-0 place-items-center rounded-full bg-sunken text-muted-foreground transition-colors group-data-[state=checked]/opt:bg-tint-brand group-data-[state=checked]/opt:text-primary [&_svg]:size-4.5">
               <Icon filled={draft.availability === value} />
@@ -456,6 +475,18 @@ export function PricingStep({ draft, set, errors }: StepProps) {
           </RadioGroupPrimitive.Item>
         ))}
       </RadioGroupPrimitive.Root>
+
+      {!canSell && (
+        <p className="flex items-start gap-2 rounded-lg bg-tint-warn px-4 py-3 text-meta leading-relaxed text-warn-text">
+          <LockIcon className="mt-0.5 size-4 shrink-0" />
+          <span>
+            الخطوط المدفوعة تُفتح بعد اعتماد استوديوك.{' '}
+            <Link to={paths.studio.getHref('verify')} className="font-medium underline underline-offset-4">
+              حالة التوثيق
+            </Link>
+          </span>
+        </p>
+      )}
 
       {draft.availability === 'paid' && (
         <div className="grid animate-fade-up gap-5">

@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
-import { netOf } from '../../config/publisher-terms';
+import { netOf } from '@/lib/publisher-terms';
+
 import { isValidIban } from '../earnings';
 
 describe('earnings', () => {
@@ -13,7 +14,7 @@ describe('earnings', () => {
   });
 
   it('حصّة المنصّة بالسنتات الصحيحة', () => {
-    expect(netOf(26000)).toEqual({ fee: 7800, net: 18200 });
-    expect(netOf(4999)).toEqual({ fee: 1499, net: 3500 });
+    expect(netOf(26000)).toEqual({ fee: 9100, net: 16900 });
+    expect(netOf(4999)).toEqual({ fee: 1749, net: 3250 });
   });
 });

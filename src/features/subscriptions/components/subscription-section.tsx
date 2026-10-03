@@ -101,7 +101,7 @@ export function SubscriptionSection({
 
       <Card title="الاستخدام هذه الدورة" icon={<ReceiptIcon />}>
         <UsageMeter label="تحميل الخطوط" icon={<DownloadIcon />} meter={user.usage.downloads} />
-        <UsageMeter label="مطابقة الخطوط" icon={<MagicWandIcon />} meter={user.usage.matching} />
+        <UsageMeter label="عين" icon={<MagicWandIcon />} meter={user.usage.matching} />
         <p className="text-caption text-tertiary">الحدود أمثلة تجريبية.</p>
       </Card>
 

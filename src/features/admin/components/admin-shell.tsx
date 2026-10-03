@@ -12,12 +12,14 @@ import { cn } from '@/lib/cn';
 
 import { useAdminSection } from './admin-nav';
 import { usePendingCount } from '../api/review';
+import { usePendingStudios } from '../api/studios';
 import { ADMIN_GROUPS, ADMIN_NAV } from '../config/nav';
 
 /** القائمة الجانبية الكاملة: الهوية، مجموعات الأقسام بعناوينها، ثم بطاقة المشرف في الأسفل */
 function SideNav({ onNavigate }: { onNavigate?: () => void }) {
   const current = useAdminSection();
   const pending = usePendingCount();
+  const pendingStudios = usePendingStudios();
   const user = useCurrentUser();
   return (
     <div className="flex h-full flex-col">
@@ -67,6 +69,15 @@ function SideNav({ onNavigate }: { onNavigate?: () => void }) {
                           className="grid h-5.5 min-w-5.5 place-items-center rounded-full bg-primary-fill px-1.5 text-caption font-semibold text-primary-foreground tabular-nums"
                         >
                           {pending}
+                        </span>
+                      )}
+                      {section === 'studios' && pendingStudios > 0 && (
+                        <span
+                          dir="ltr"
+                          aria-label={`${pendingStudios} طلبات توثيق`}
+                          className="grid h-5.5 min-w-5.5 place-items-center rounded-full bg-primary-fill px-1.5 text-caption font-semibold text-primary-foreground tabular-nums"
+                        >
+                          {pendingStudios}
                         </span>
                       )}
                     </Link>

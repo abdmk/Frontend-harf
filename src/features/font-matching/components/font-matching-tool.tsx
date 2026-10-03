@@ -30,7 +30,7 @@ const STAGES = ['الصورة', 'النص والتحديد', 'النتائج'] a
 export type ResultCardProps = { match: Match; text: string; selected: boolean; onCompare: () => void; rank: number };
 
 /**
- * «مطابقة الخطوط»: ارفع صورة ← حدّد الكتابة واكتب نصّها ← نقارن شكلها بخطوط المكتبة.
+ * «عين» (مطابقة الخطوط): ارفع صورة ← حدّد الكتابة واكتب نصّها ← نقارن شكلها بخطوط المكتبة.
  * بطاقة النتيجة تأتي من طبقة التطبيق (بطاقة الخط نفسها بالمفضّلة والشراء).
  */
 export function FontMatchingTool({ renderResult }: { renderResult: (p: ResultCardProps) => ReactNode }) {

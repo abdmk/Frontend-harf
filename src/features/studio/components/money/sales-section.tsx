@@ -9,10 +9,10 @@ import { SegmentedControl } from '@/components/ui/segmented-control';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { paths } from '@/config/paths';
 import { formatDateAr, formatMoney } from '@/lib/format';
+import { PUBLISHER_TERMS } from '@/lib/publisher-terms';
 import { cents } from '@/types/domain/commerce';
 
 import { getSales, type Sale } from '../../api/earnings';
-import { PUBLISHER_TERMS } from '../../config/publisher-terms';
 
 const STATUS: Record<Sale['status'], { label: string; tone: 'success' | 'info' | 'danger'; Icon: typeof CheckIcon }> = {
   completed: { label: 'مكتملة', tone: 'success', Icon: CheckIcon },

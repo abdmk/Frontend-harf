@@ -8,6 +8,7 @@ import { StudioAnalyticsView } from '@/features/studio/components/studio-analyti
 import { StudioFonts } from '@/features/studio/components/studio-fonts';
 import { StudioOverview } from '@/features/studio/components/studio-overview';
 import { StudioPageHeader } from '@/features/studio/components/studio-page-header';
+import { VerificationCallout } from '@/features/verification/components/verification-callout';
 
 import { useStudio } from '../layouts/studio-layout';
 
@@ -18,6 +19,7 @@ export function StudioOverviewPage() {
   return (
     <>
       <PageMeta title="الاستوديو" noindex />
+      <VerificationCallout className="mb-6" />
       <StudioOverview fonts={fonts} analytics={analytics} />
     </>
   );
@@ -66,6 +68,7 @@ export function StudioFinancePage({ page }: { page: keyof typeof FINANCE }) {
     <>
       <PageMeta title={meta.title} noindex />
       <StudioPageHeader title={meta.title} description={meta.description} />
+      <VerificationCallout className="mb-6" />
       {body}
     </>
   );

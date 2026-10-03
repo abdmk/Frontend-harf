@@ -16,6 +16,8 @@ export async function changePlan(raw: unknown): Promise<ChangePlanResult> {
   if (!parsed.success) return { ok: false, error: 'خطة غير صالحة.' };
   if (!getCurrentUser()) return { ok: false, error: 'سجّل الدخول أوّلاً.' };
   await new Promise((r) => setTimeout(r, 900));
-  setDemoSession(parsed.data.plan);
+  // الترقية إلى الاستوديو تبقي الشخص نفسه: ناشر جديد يبدأ بتوثيق استوديوه قبل أوّل نشر
+  const current = getCurrentUser();
+  setDemoSession(parsed.data.plan === 'studio' && current?.plan !== 'studio' ? 'newstudio' : parsed.data.plan);
   return { ok: true };
 }

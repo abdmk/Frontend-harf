@@ -8,6 +8,9 @@ import { useEffect, useState } from 'react';
 export const VIDEO_MAX_BYTES = 50 * 1024 * 1024;
 const DB = 'harf-media';
 const STORE = 'videos';
+/** وثائق التوثيق (صور الهوية والتوقيع) — مخزن منفصل كي لا تختلط بوسائط المقالات */
+const DOCS = 'docs';
+type StoreName = typeof STORE | typeof DOCS;
 
 export type VideoKind = 'mp4' | 'webm';
 
@@ -20,18 +23,25 @@ export function sniffVideo(b: Uint8Array): VideoKind | null {
 
 function open(): Promise<IDBDatabase> {
   return new Promise((resolve, reject) => {
-    const req = indexedDB.open(DB, 1);
-    req.onupgradeneeded = () => req.result.createObjectStore(STORE);
+    const req = indexedDB.open(DB, 2);
+    req.onupgradeneeded = () => {
+      for (const name of [STORE, DOCS])
+        if (!req.result.objectStoreNames.contains(name)) req.result.createObjectStore(name);
+    };
     req.onsuccess = () => resolve(req.result);
     req.onerror = () => reject(req.error);
   });
 }
 
-async function tx<T>(mode: IDBTransactionMode, fn: (s: IDBObjectStore) => IDBRequest<T>): Promise<T> {
+async function tx<T>(
+  mode: IDBTransactionMode,
+  fn: (s: IDBObjectStore) => IDBRequest<T>,
+  store: StoreName = STORE,
+): Promise<T> {
   const db = await open();
   try {
     return await new Promise<T>((resolve, reject) => {
-      const req = fn(db.transaction(STORE, mode).objectStore(STORE));
+      const req = fn(db.transaction(store, mode).objectStore(store));
       req.onsuccess = () => resolve(req.result);
       req.onerror = () => reject(req.error);
     });
@@ -63,12 +73,16 @@ export function deleteVideo(id: string) {
 
 /** رابط blob: للعرض، يُحرَّر عند الإزالة؛ null أثناء التحميل أو إن لم يوجد */
 export function useVideoUrl(id: string | undefined): string | null {
+  return useBlobUrl(id, STORE);
+}
+
+function useBlobUrl(id: string | undefined, store: StoreName): string | null {
   const [url, setUrl] = useState<string | null>(null);
   useEffect(() => {
     if (!id) return;
     let alive = true;
     let made: string | null = null;
-    tx<Blob | undefined>('readonly', (s) => s.get(id) as IDBRequest<Blob | undefined>)
+    tx<Blob | undefined>('readonly', (s) => s.get(id) as IDBRequest<Blob | undefined>, store)
       .then((blob) => {
         if (!alive || !blob) return;
         made = URL.createObjectURL(blob);
@@ -80,6 +94,34 @@ export function useVideoUrl(id: string | undefined): string | null {
       if (made) URL.revokeObjectURL(made);
       setUrl(null);
     };
-  }, [id]);
+  }, [id, store]);
   return url;
+}
+
+/* ── وثائق التوثيق ─────────────────────────────────────────────────────────
+ * الصورة تصل هنا بعد prepareImage (فحص البايتات + إعادة ترميز JPEG تُزيل EXIF وموقع GPS).
+ * ⚠️ عرض: في المنتج تُرفع إلى تخزين خاصّ غير عامّ (لا رابط مباشر)، مشفّرة، ولا يراها إلا المشرف
+ * عبر رابط موقّع قصير العمر يُسجَّل فتحه، وتُحذف بعد مدّة الاحتفاظ المذكورة في سياسة الخصوصية.
+ */
+const DOC_ID = /^d-[a-z0-9]{6,24}$/;
+export const isDocId = (id: unknown): id is string => typeof id === 'string' && DOC_ID.test(id);
+
+export async function storeDoc(dataUrl: string): Promise<{ ok: true; id: string } | { ok: false; error: string }> {
+  if (!dataUrl.startsWith('data:image/jpeg;base64,')) return { ok: false, error: 'صيغة غير مقبولة.' };
+  const blob = await (await fetch(dataUrl)).blob();
+  const id = `d-${Date.now().toString(36)}${Math.random().toString(36).slice(2, 8)}`;
+  try {
+    await tx('readwrite', (s) => s.put(blob, id), DOCS);
+  } catch {
+    return { ok: false, error: 'تعذّر حفظ الملف — قد تكون مساحة المتصفّح ممتلئة.' };
+  }
+  return { ok: true, id };
+}
+
+export function deleteDoc(id: string) {
+  return tx('readwrite', (s) => s.delete(id), DOCS).catch(() => undefined);
+}
+
+export function useDocUrl(id: string | undefined): string | null {
+  return useBlobUrl(isDocId(id) ? id : undefined, DOCS);
 }

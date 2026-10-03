@@ -8,6 +8,7 @@ import { FontStore } from '@/features/admin/components/font-store';
 import { PlansManager } from '@/features/admin/components/plans-manager';
 import { ReviewDetail } from '@/features/admin/components/review-detail';
 import { ReviewQueue } from '@/features/admin/components/review-queue';
+import { StudioRequestDetail, StudioRequests } from '@/features/admin/components/studio-verifications';
 import { UsersManager } from '@/features/admin/components/users-manager';
 import { getAdminAnalytics } from '@/features/analytics/api/get-analytics';
 import { AdminAnalyticsView } from '@/features/analytics/components/admin-analytics';
@@ -99,6 +100,25 @@ export function AdminPlansPage() {
     <>
       <PageMeta title="الخطط والأسعار" noindex />
       <PlansManager />
+    </>
+  );
+}
+
+export function AdminStudiosPage() {
+  return (
+    <>
+      <PageMeta title="توثيق الاستوديوهات" noindex />
+      <StudioRequests />
+    </>
+  );
+}
+
+export function AdminStudioDetailPage() {
+  const { id = '' } = useParams();
+  return (
+    <>
+      <PageMeta title="طلب توثيق" noindex />
+      <StudioRequestDetail id={id} />
     </>
   );
 }

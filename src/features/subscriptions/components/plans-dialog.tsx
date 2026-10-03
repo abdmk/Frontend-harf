@@ -49,6 +49,13 @@ export function PlansDialog({
   /** أول دخول بعد إنشاء الحساب: المجانية زرّها «تابع مجاناً» (يغلق النافذة) بدل «خطتك الحالية» */
   welcome?: boolean;
 }) {
+  // أكبر توفير سنوي فعلي بين الخطط المدفوعة — الأسعار تعدّلها الإدارة، فلا رقم ثابت هنا
+  const maxSaving = Math.max(
+    0,
+    ...plans
+      .filter((p) => p.monthly.cents > 0)
+      .map((p) => Math.round((1 - p.yearlyPerMonth.cents / p.monthly.cents) * 100)),
+  );
   const [openState, setOpenState] = useState(false);
   const open = openProp ?? openState;
   const setOpen = (v: boolean) => {
@@ -137,7 +144,7 @@ export function PlansDialog({
                 onChange={setCycle}
                 options={[
                   { value: 'monthly', label: 'شهري' },
-                  { value: 'yearly', label: 'سنوي · وفّر 30%' },
+                  { value: 'yearly', label: maxSaving > 0 ? `سنوي · وفّر ${maxSaving}%` : 'سنوي' },
                 ]}
               />
               <ul className="grid w-full grid-cols-1 gap-4 md:grid-cols-3">

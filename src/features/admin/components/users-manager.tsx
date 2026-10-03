@@ -54,7 +54,7 @@ import { fmt } from '../utils';
 const PLAN_TONE: Record<Plan, 'neutral' | 'studio' | 'info'> = { free: 'neutral', basic: 'studio', studio: 'info' };
 const PLAN_HINT: Record<Plan, string> = {
   free: 'تحميل الخطوط المجانية بحدود يومية.',
-  basic: 'تحميل غير محدود ومطابقة غير محدودة.',
+  basic: 'تحميل غير محدود و«عين» بلا حدود.',
   studio: 'كل ما سبق مع نشر الخطوط وبيعها.',
 };
 

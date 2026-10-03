@@ -1,6 +1,6 @@
 import { useSyncExternalStore } from 'react';
 
-import { MOCK_USERS } from '@/mocks/users';
+import { MOCK_NEW_STUDIO, MOCK_USERS } from '@/mocks/users';
 import type { User } from '@/types/domain/user';
 
 import { type AccountOverrides, getAccountOverrides, subscribeAccountOverrides } from './account-overrides';
@@ -10,7 +10,7 @@ export { safeNext } from './safe-next';
 
 /** اسم مفتاح التخزين المحلي للحساب التجريبي */
 const DEMO_STORAGE_KEY = 'harf_demo_as';
-export const DEMO_ACCOUNTS = ['free', 'basic', 'studio', 'admin', 'out'] as const;
+export const DEMO_ACCOUNTS = ['free', 'basic', 'studio', 'newstudio', 'admin', 'out'] as const;
 export type DemoAccount = (typeof DEMO_ACCOUNTS)[number];
 
 const sessionSignal = createLocalStoreSignal();
@@ -26,6 +26,11 @@ export const subscribeSession = (cb: () => void) => {
 };
 
 /** هل الزائر الحالي مشرف؟ — لإظهار أدوات الإدارة السريعة في الموقع (الخادم يتحقّق في كل طلب) */
+/** المستخدم الحالي — يتحدّث مع تغيّر الجلسة أو قرار الإدارة على الحساب */
+export function useCurrentUser(): User | null {
+  return useSyncExternalStore(subscribeSession, getCurrentUser, () => null);
+}
+
 export function useIsAdmin(): boolean {
   return useSyncExternalStore(
     subscribeSession,
@@ -43,6 +48,8 @@ function baseUser(): User | null {
   const as = getDemoSession();
   if (as === 'out') return null;
   if (as === 'studio') return MOCK_USERS.studio;
+  // ناشر جديد (المجاني بعد الترقية): لم يوثّق استوديوه بعد
+  if (as === 'newstudio') return MOCK_NEW_STUDIO;
   if (as === 'admin') return MOCK_USERS.admin;
   if (as === 'basic') return MOCK_USERS.basic;
   return MOCK_USERS.free;

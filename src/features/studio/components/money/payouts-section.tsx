@@ -1,20 +1,32 @@
 import { useActionState, useEffect, useRef, useState } from 'react';
 
+import { ConfirmDialog } from '@/components/shared/confirm-dialog';
+import { PayoutCard, SecureNote } from '@/components/shared/payout-card';
+import { PayoutDialog } from '@/components/shared/payout-dialog';
 import { SectionCard } from '@/components/shared/section-card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Checkbox } from '@/components/ui/checkbox';
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from '@/components/ui/dialog';
-import { Field, FieldError, FieldHint, FieldLabel } from '@/components/ui/field';
-import { BankIcon, CheckIcon, ClockIcon, CrossIcon, DollarIcon, ShieldCheckIcon } from '@/components/ui/icons';
+import { Field, FieldError, FieldLabel } from '@/components/ui/field';
+import { CheckIcon, ClockIcon, CrossIcon, DollarIcon, PlusIcon, TrashIcon } from '@/components/ui/icons';
 import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { toast } from '@/components/ui/toast';
+import { getCurrentUser } from '@/lib/auth';
 import { formatDateAr, formatMoney } from '@/lib/format';
+import type { MaskedPayout } from '@/lib/payout';
+import { PUBLISHER_TERMS } from '@/lib/publisher-terms';
 import { cents } from '@/types/domain/commerce';
 
-import { changePayoutAccount, type FormState, type Payout, requestPayout, useEarnings } from '../../api/earnings';
-import { PUBLISHER_TERMS } from '../../config/publisher-terms';
+import {
+  type FormState,
+  type Payout,
+  type PayoutAccount,
+  removePayoutAccount,
+  requestPayout,
+  savePayoutAccount,
+  useEarnings,
+} from '../../api/earnings';
 
 const STATUS: Record<
   Payout['status'],
@@ -89,85 +101,71 @@ function RequestPayoutDialog({ available, disabled }: { available: number; disab
   );
 }
 
-function ChangeAccountDialog() {
-  const [open, setOpen] = useState(false);
-  const [state, action, pending] = useActionState(changePayoutAccount, null);
-  useOnSuccess(state, () => {
-    setOpen(false);
+/** حساب التحويل: بطاقة مقنّعة مع «تحديث» و«إزالة»، والتغيير يمرّ برمز تأكيد */
+function PayoutAccountPanel({ account, holdUntil }: { account: PayoutAccount | null; holdUntil?: string }) {
+  const [editing, setEditing] = useState(false);
+  const [removing, setRemoving] = useState(false);
+  const email = getCurrentUser()?.email ?? '';
+
+  function saved(p: MaskedPayout) {
+    const r = savePayoutAccount(p);
+    if (!r.ok) return toast({ tone: 'danger', title: r.error });
     toast({
       tone: 'success',
-      title: 'غُيّر حساب التحويل',
-      description: `أرسلنا تأكيداً إلى بريدك. التحويلات معلّقة ${PUBLISHER_TERMS.accountChangeHoldHours} ساعة للحماية.`,
+      title: 'حُفظت وسيلة الاستلام',
+      description: `للحماية تُعلَّق التحويلات ${PUBLISHER_TERMS.accountChangeHoldHours} ساعة.`,
     });
-  });
-  const f = state?.fields ?? {};
+  }
+
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <Button variant="outline" size="sm" onClick={() => setOpen(true)}>
-        تغيير
-      </Button>
-      <DialogContent className="sm:max-w-dialog-md">
-        <div>
-          <DialogTitle>تغيير حساب التحويل</DialogTitle>
-          <DialogDescription className="mt-1 text-meta leading-relaxed text-muted-foreground">
-            للحماية: نرسل تأكيداً إلى بريدك، وتُعلَّق التحويلات {PUBLISHER_TERMS.accountChangeHoldHours} ساعة بعد
-            التغيير.
-          </DialogDescription>
-        </div>
-        <form key={JSON.stringify(state?.values ?? {})} action={action} noValidate className="flex flex-col gap-5">
-          <Field>
-            <FieldLabel htmlFor="po-holder" required>
-              اسم صاحب الحساب
-            </FieldLabel>
-            <Input
-              id="po-holder"
-              name="holder"
-              defaultValue={state?.values?.holder}
-              maxLength={80}
-              autoComplete="name"
-              aria-invalid={!!f.holder}
-              aria-describedby="po-holder-err"
-            />
-            <FieldError id="po-holder-err">{f.holder}</FieldError>
-          </Field>
-          <Field>
-            <FieldLabel htmlFor="po-iban" required>
-              رقم الحساب الدولي (IBAN)
-            </FieldLabel>
-            <Input
-              id="po-iban"
-              name="iban"
-              defaultValue={state?.values?.iban}
-              dir="ltr"
-              maxLength={42}
-              autoComplete="off"
-              spellCheck={false}
-              placeholder="IQ98 NBIQ 8501 2345 6789 012"
-              aria-invalid={!!f.iban}
-              aria-describedby="po-iban-hint po-iban-err"
-            />
-            <FieldHint id="po-iban-hint">
-              نحفظ آخر 4 أرقام فقط للعرض؛ الرقم الكامل يُرسل مشفّراً إلى مزوّد الدفع.
-            </FieldHint>
-            <FieldError id="po-iban-err">{f.iban}</FieldError>
-          </Field>
-          <label className="flex items-start gap-3 text-meta leading-relaxed">
-            <Checkbox
-              name="confirm"
-              defaultChecked={state?.values?.confirm === 'on'}
-              className="mt-0.5"
-              aria-invalid={!!f.confirm}
-            />
-            الحساب باسمي أو باسم مسبكي، وأنا مخوّل باستلام الأرباح عليه.
-          </label>
-          {f.confirm && <FieldError>{f.confirm}</FieldError>}
-          {state?.message && !state.ok && <FieldError>{state.message}</FieldError>}
-          <Button type="submit" loading={pending}>
-            حفظ الحساب
-          </Button>
-        </form>
-      </DialogContent>
-    </Dialog>
+    <section className="flex animate-fade-up flex-col gap-4 rounded-xl border bg-card p-6">
+      <div>
+        <h2 className="text-lead font-semibold">وسيلة الاستلام</h2>
+        <p className="mt-1 text-meta text-muted-foreground">إلى أين نحوّل أرباحك.</p>
+      </div>
+      {account ? (
+        <PayoutCard
+          payout={account}
+          actions={
+            <>
+              <Button variant="secondary" size="lg" onClick={() => setEditing(true)}>
+                تحديث
+              </Button>
+              <Button variant="danger" size="lg" onClick={() => setRemoving(true)}>
+                إزالة
+              </Button>
+            </>
+          }
+        />
+      ) : (
+        <Button variant="outline" size="lg" onClick={() => setEditing(true)}>
+          <PlusIcon />
+          أضف وسيلة استلام
+        </Button>
+      )}
+      {holdUntil ? (
+        <p className="flex gap-2 rounded-md bg-tint-warn px-3 py-2.5 text-meta text-warn-text">
+          <ClockIcon className="mt-0.5 size-4 shrink-0" />
+          غُيّرت الوسيلة مؤخراً — التحويلات معلّقة حتى {formatDateAr(holdUntil.slice(0, 10))}.
+        </p>
+      ) : (
+        <SecureNote className="justify-start" />
+      )}
+      <PayoutDialog open={editing} onOpenChange={setEditing} email={email} onSaved={saved} />
+      <ConfirmDialog
+        open={removing}
+        onOpenChange={setRemoving}
+        title="إزالة وسيلة الاستلام؟"
+        description="تتوقّف التحويلات حتى تضيف وسيلة جديدة. يبقى رصيدك محفوظاً."
+        confirmLabel="إزالة"
+        icon={<TrashIcon />}
+        onConfirm={() => {
+          setRemoving(false);
+          removePayoutAccount();
+          toast({ title: 'أُزيلت وسيلة الاستلام' });
+        }}
+      />
+    </section>
   );
 }
 
@@ -189,38 +187,11 @@ export function PayoutsSection() {
             </p>
           </div>
           <div>
-            <RequestPayoutDialog available={e.available} disabled={!!e.holdUntil} />
+            <RequestPayoutDialog available={e.available} disabled={!!e.holdUntil || !e.account} />
           </div>
         </section>
 
-        <section className="flex animate-fade-up flex-col gap-4 rounded-xl border bg-card p-6">
-          <div className="flex items-start justify-between gap-4">
-            <p className="text-control text-muted-foreground">حساب التحويل</p>
-            <ChangeAccountDialog />
-          </div>
-          <div className="flex items-center gap-4">
-            <span className="grid size-11 shrink-0 place-items-center rounded-sm bg-sunken">
-              <BankIcon className="size-5" />
-            </span>
-            <div className="min-w-0">
-              <p className="truncate font-medium">{e.account.holder}</p>
-              <p dir="ltr" className="text-right text-meta text-muted-foreground tabular-nums">
-                {e.account.country}•• •••• {e.account.last4}
-              </p>
-            </div>
-          </div>
-          {e.holdUntil ? (
-            <p className="flex gap-2 rounded-md bg-tint-warn px-3 py-2.5 text-meta text-warn-text">
-              <ClockIcon className="mt-0.5 size-4 shrink-0" />
-              غُيّر الحساب مؤخراً — التحويلات معلّقة حتى {formatDateAr(e.holdUntil.slice(0, 10))}.
-            </p>
-          ) : (
-            <p className="flex gap-2 text-caption text-tertiary">
-              <ShieldCheckIcon className="size-3.5 shrink-0" />
-              تغيير الحساب يتطلّب تأكيداً من بريدك.
-            </p>
-          )}
-        </section>
+        <PayoutAccountPanel account={e.account} holdUntil={e.holdUntil} />
       </div>
 
       <SectionCard title="سجلّ التحويلات" bodyClassName="p-4 sm:p-6">

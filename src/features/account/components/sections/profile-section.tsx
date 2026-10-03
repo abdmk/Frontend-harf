@@ -97,7 +97,7 @@ export function ProfileSection({
       >
         <div className="grid gap-6 sm:grid-cols-2">
           <UsageMeter label="تحميل الخطوط" icon={<DownloadIcon />} meter={user.usage.downloads} />
-          <UsageMeter label="مطابقة الخطوط" icon={<MagicWandIcon />} meter={user.usage.matching} />
+          <UsageMeter label="عين" icon={<MagicWandIcon />} meter={user.usage.matching} />
         </div>
       </SectionCard>
 

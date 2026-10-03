@@ -3,10 +3,11 @@ import { Link, useLocation } from 'react-router';
 
 import { sideNavIcon, sideNavRow } from '@/components/shared/side-nav';
 import { Button } from '@/components/ui/button';
-import { ArrowLeftIcon, ChevronRightIcon, CloudUploadIcon } from '@/components/ui/icons';
+import { ArrowLeftIcon, ChevronRightIcon, CloudUploadIcon, ShieldCheckIcon } from '@/components/ui/icons';
 import { paths, type StudioSection } from '@/config/paths';
 import { cn } from '@/lib/cn';
 import { useProfileIncomplete, usePublicProfile } from '@/lib/public-profile';
+import { type PublicStatus, useMyVerification } from '@/lib/studio-verification';
 import type { Foundry } from '@/types/domain/foundry';
 
 import { STUDIO_NAV, STUDIO_PROFILE_ITEM } from '../config/nav';
@@ -23,6 +24,27 @@ const isOn = (current: string, section: StudioSection | null, exact = false) =>
     : exact
       ? current === section
       : current === section || current.startsWith(`${section}/`);
+
+/** حالة التوثيق على عنصر القائمة — لون ونصّ معاً، لا لون وحده */
+const VERIFY_BADGE: Record<PublicStatus, { text: string; cls: string }> = {
+  none: { text: 'غير موثّق', cls: 'bg-tint-warn text-warn-text' },
+  draft: { text: 'غير مكتمل', cls: 'bg-tint-warn text-warn-text' },
+  pending: { text: 'قيد المراجعة', cls: 'bg-tint-info text-info-text' },
+  rejected: { text: 'يحتاج تعديلاً', cls: 'bg-tint-dgr text-dgr-text' },
+  approved: { text: 'موثّق', cls: 'bg-tint-ok text-ok-text' },
+};
+
+function VerifyLink() {
+  const rec = useMyVerification();
+  const b = VERIFY_BADGE[rec?.status ?? 'none'];
+  return (
+    <Link to={paths.studio.getHref('verify')} className={sideNavRow(false)}>
+      <ShieldCheckIcon className={sideNavIcon(false)} />
+      <span className="flex-1">توثيق الاستوديو</span>
+      <span className={cn('rounded-full px-2.5 py-0.5 text-xs font-medium', b.cls)}>{b.text}</span>
+    </Link>
+  );
+}
 
 function IncompleteBadge() {
   return <span className="rounded-full bg-tint-warn px-2.5 py-0.5 text-xs font-medium text-warn-text">غير مكتمل</span>;
@@ -125,6 +147,7 @@ export function StudioSidebar({ foundry }: { foundry: Foundry }) {
           <span className="flex-1">{STUDIO_PROFILE_ITEM.label}</span>
           {incomplete && <IncompleteBadge />}
         </Link>
+        <VerifyLink />
         <Link
           to={paths.account.getHref('')}
           className="mt-0.5 flex h-11 items-center gap-4 rounded-sm px-4 text-lead text-muted-foreground transition-colors hover:bg-sunken hover:text-foreground"

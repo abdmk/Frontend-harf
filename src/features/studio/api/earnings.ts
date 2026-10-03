@@ -3,9 +3,9 @@ import { z } from 'zod';
 
 import { requireStudio } from '@/lib/auth';
 import { createLocalStoreSignal } from '@/lib/local-store-signal';
+import { type MaskedPayout, maskedPayoutSchema } from '@/lib/payout';
+import { netOf, PUBLISHER_TERMS } from '@/lib/publisher-terms';
 import { MOCK_PAYOUTS, MOCK_SALES, MOCK_STUDIO_ANALYTICS, type MockPayout, type MockSale } from '@/mocks/studio';
-
-import { netOf, PUBLISHER_TERMS } from '../config/publisher-terms';
 
 /*
  * أرباح الناشر وسحبها. ⚠️ عرض: في الإنتاج كل ما هنا طلبات للخادم — هو وحده يحسب الرصيد من
@@ -15,7 +15,7 @@ import { netOf, PUBLISHER_TERMS } from '../config/publisher-terms';
 
 export type Sale = MockSale & { feeCents: number; netCents: number };
 export type Payout = MockPayout & { last4: string };
-export type PayoutAccount = { holder: string; last4: string; country: string; changedAt?: string };
+export type PayoutAccount = MaskedPayout & { changedAt?: string };
 
 export function getSales(): Sale[] {
   return MOCK_SALES.map((s) => {
@@ -26,7 +26,8 @@ export function getSales(): Sale[] {
 
 /* ── ما يضيفه الناشر في هذه الجلسة (طلبات سحب، تغيير الحساب) ─────────────── */
 
-type Local = { requests: MockPayout[]; account?: PayoutAccount };
+/** account: undefined = الافتراضي التجريبي، null = أزاله الناشر */
+type Local = { requests: MockPayout[]; account?: PayoutAccount | null };
 const KEY = 'harf_payouts';
 const signal = createLocalStoreSignal();
 let cache: { raw: string | null; value: Local } = { raw: null, value: { requests: [] } };
@@ -54,9 +55,13 @@ function readLocal(): Local {
             (r as MockPayout).status === 'processing',
         )
         .slice(0, 50);
-    const a = x.account as PayoutAccount | undefined;
-    if (a && typeof a.holder === 'string' && /^\d{4}$/.test(a.last4) && /^[A-Z]{2}$/.test(a.country))
-      value.account = { holder: a.holder.slice(0, 80), last4: a.last4, country: a.country, changedAt: a.changedAt };
+    if (x.account === null) value.account = null;
+    else {
+      const a = maskedPayoutSchema.safeParse(x.account);
+      const changedAt = (x.account as { changedAt?: unknown } | undefined)?.changedAt;
+      if (a.success)
+        value.account = { ...a.data, changedAt: typeof changedAt === 'string' ? changedAt.slice(0, 40) : undefined };
+    }
   } catch {
     /* تالف ← لا شيء محلّي */
   }
@@ -74,6 +79,7 @@ function writeLocal(next: Local) {
 }
 
 const DEFAULT_ACCOUNT: PayoutAccount = {
+  method: 'bank',
   holder: 'مسبك تجاريب',
   last4: MOCK_STUDIO_ANALYTICS.earnings.bankLast4,
   country: 'IQ',
@@ -82,8 +88,8 @@ const DEFAULT_ACCOUNT: PayoutAccount = {
 function snapshot(local: Local) {
   const e = MOCK_STUDIO_ANALYTICS.earnings;
   const requested = local.requests.reduce((n, r) => n + r.amountCents, 0);
-  const account = local.account ?? DEFAULT_ACCOUNT;
-  const holdUntil = account.changedAt
+  const account = local.account === undefined ? DEFAULT_ACCOUNT : local.account;
+  const holdUntil = account?.changedAt
     ? Date.parse(account.changedAt) + PUBLISHER_TERMS.accountChangeHoldHours * 3_600_000
     : 0;
   const sales = getSales();
@@ -99,7 +105,7 @@ function snapshot(local: Local) {
     /** تغيير حديث للحساب يعلّق التحويلات حتى هذا الوقت */
     holdUntil: holdUntil > Date.now() ? new Date(holdUntil).toISOString() : undefined,
     payouts: [
-      ...local.requests.map((r) => ({ ...r, last4: account.last4 })),
+      ...local.requests.map((r) => ({ ...r, last4: account?.last4 ?? '' })),
       ...MOCK_PAYOUTS.map((p) => ({ ...p, last4: DEFAULT_ACCOUNT.last4 })),
     ] as Payout[],
   };
@@ -136,6 +142,7 @@ export function requestPayout(_prev: FormState, form: FormData): FormState {
   if (!requireStudio()) return { ok: false, message: 'السحب لحسابات الاستوديو وحدها.' };
   const snap = getSnapshot();
   if (snap.holdUntil) return { ok: false, message: 'التحويلات معلّقة مؤقتاً بعد تغيير حساب التحويل.' };
+  if (!snap.account) return { ok: false, message: 'أضف وسيلة استلام أولاً.' };
   const raw = String(form.get('amount') ?? '').slice(0, 20);
   const fail = (amount?: string) => ({ ok: false, fields: { amount }, values: { amount: raw } });
   const parsed = amountSchema.safeParse(raw);
@@ -162,47 +169,23 @@ export function requestPayout(_prev: FormState, form: FormData): FormState {
 
 /* ── تغيير حساب التحويل ──────────────────────────────────────────────────── */
 
-/** IBAN صالح: الشكل + خوارزمية mod-97 (ISO 13616) — يُعاد التحقّق نفسه على الخادم */
-export function isValidIban(input: string): boolean {
-  const iban = input.replace(/\s+/g, '').toUpperCase();
-  if (!/^[A-Z]{2}\d{2}[A-Z0-9]{11,30}$/.test(iban)) return false;
-  const moved = iban.slice(4) + iban.slice(0, 4);
-  let rem = 0;
-  for (const ch of moved) {
-    const d = ch >= 'A' ? String(ch.charCodeAt(0) - 55) : ch;
-    for (const digit of d) rem = (rem * 10 + Number(digit)) % 97;
-  }
-  return rem === 1;
+export { isValidIban } from '@/lib/payout';
+
+/**
+ * حفظ وسيلة الاستلام بعد تأكيدها برمز (PayoutDialog) — لا يصل هنا إلا المقنّع.
+ * ⚠️ عرض: في المنتج يصل الرقم الكامل إلى الخادم مشفّراً ويُرسل منه إلى مزوّد الدفع.
+ */
+export function savePayoutAccount(input: unknown): { ok: true } | { ok: false; error: string } {
+  if (!requireStudio()) return { ok: false, error: 'هذه العملية لحسابات الاستوديو وحدها.' };
+  const r = maskedPayoutSchema.safeParse(input);
+  if (!r.success) return { ok: false, error: 'بيانات غير صالحة.' };
+  // تعليق التحويلات بعد التغيير: حماية إن سُرق الحساب وغُيّرت الوسيلة
+  writeLocal({ ...readLocal(), account: { ...r.data, changedAt: new Date().toISOString() } });
+  return { ok: true };
 }
 
-const accountSchema = z.object({
-  holder: z.string().trim().min(2, 'اكتب اسم صاحب الحساب كما في البنك.').max(80, 'أقصر من 80 حرفاً.'),
-  iban: z.string().refine(isValidIban, 'رقم IBAN غير صحيح — راجِع الأرقام.'),
-  confirm: z.literal('on', { message: 'أكّد أن الحساب باسمك أو باسم مسبكك.' }),
-});
-
-export function changePayoutAccount(_prev: FormState, form: FormData): FormState {
-  if (!requireStudio()) return { ok: false, message: 'هذه العملية لحسابات الاستوديو وحدها.' };
-  const values = {
-    holder: String(form.get('holder') ?? '').slice(0, 120),
-    iban: String(form.get('iban') ?? '').slice(0, 64),
-    confirm: form.get('confirm') === 'on' ? 'on' : '',
-  };
-  const parsed = accountSchema.safeParse({ ...values, confirm: values.confirm || undefined });
-  if (!parsed.success) {
-    const f = parsed.error.flatten().fieldErrors;
-    return { ok: false, fields: Object.fromEntries(Object.entries(f).map(([k, v]) => [k, v?.[0]])), values };
-  }
-  const iban = parsed.data.iban.replace(/\s+/g, '').toUpperCase();
-  // الرقم الكامل لا يُحفظ هنا — يذهب إلى الخادم (ومنه إلى مزوّد الدفع) مشفّراً، ويبقى للعرض آخر 4 أرقام
-  writeLocal({
-    ...readLocal(),
-    account: {
-      holder: parsed.data.holder,
-      last4: iban.slice(-4),
-      country: iban.slice(0, 2),
-      changedAt: new Date().toISOString(),
-    },
-  });
+export function removePayoutAccount(): { ok: true } | { ok: false; error: string } {
+  if (!requireStudio()) return { ok: false, error: 'هذه العملية لحسابات الاستوديو وحدها.' };
+  writeLocal({ ...readLocal(), account: null });
   return { ok: true };
 }
