@@ -56,7 +56,7 @@ export function ProfileHeader({
     links.behance && {
       href: links.behance,
       label: 'Behance',
-      icon: <span className="text-caption font-bold">Bē</span>,
+      icon: <SocialIcon label="Behance" className="h-4.5 w-auto" />,
     },
     links.x && { href: links.x, label: 'X', icon: <SocialIcon label="X" className="size-4" /> },
     links.linkedin && {

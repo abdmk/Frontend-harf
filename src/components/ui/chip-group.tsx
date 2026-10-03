@@ -5,7 +5,8 @@ import { CheckIcon } from '@/components/ui/icons';
 import { cn } from '@/lib/cn';
 
 /**
- * مجموعة شرائح اختيار (دليل التصميم 2.5 «الشرائح»): حدّ رفيع، وتمتلئ بالأحمر مع ✓ حين تُختار.
+ * مجموعة شرائح اختيار (دليل التصميم 2.5 «الشرائح»): حدّ رفيع، والمختارة بلون العلامة الفاتح وحدّها مع ✓ —
+ * هادئة بجانب زرّ التطبيق الأحمر.
  * type="single" أو "multiple" كما في Radix ToggleGroup — التنقّل بالأسهم مدعوم.
  */
 function ChipGroup({ className, ...props }: React.ComponentProps<typeof ToggleGroupPrimitive.Root>) {
@@ -30,7 +31,7 @@ function Chip({
       className={cn(
         'group/chip inline-flex flex-none items-center justify-center gap-0 rounded-full border border-border bg-transparent font-normal whitespace-nowrap text-muted-foreground',
         'transition-[background-color,border-color,color,gap] duration-(--dur-base) hover:border-strong hover:text-foreground',
-        'data-[state=on]:gap-1.5 data-[state=on]:border-primary data-[state=on]:bg-primary-fill data-[state=on]:text-primary-foreground',
+        'data-[state=on]:gap-1.5 data-[state=on]:border-primary data-[state=on]:bg-tint-brand data-[state=on]:font-medium data-[state=on]:text-primary',
         'disabled:pointer-events-none disabled:opacity-40',
         size === 'sm' ? 'h-8 px-4 text-meta' : 'h-10 px-5 text-control',
         className,

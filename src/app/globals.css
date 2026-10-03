@@ -51,6 +51,14 @@
   scrollbar-color: var(--strong) transparent;
 }
 
+/* بلا شريط ظاهر — المحتوى يتمرّر بالعجلة واللمس ولوحة المفاتيح كالعادة (النوافذ واللوحات) */
+@utility scroll-none {
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
 /* لحظة لونية «فجر» — للأماكن المعتمدة فقط (انظر design-system/gradients.css) */
 @utility moment {
   background: var(--grad-sheen), var(--grad-dawn);

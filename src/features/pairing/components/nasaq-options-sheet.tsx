@@ -85,7 +85,7 @@ export function NasaqOptionsSheet({
           </SheetClose>
         </div>
 
-        <div className="flex-1 divide-y overflow-y-auto overscroll-contain px-5">
+        <div className="scroll-none flex-1 divide-y overflow-y-auto overscroll-contain px-5">
           <Section title="الاستخدام" hint="نختار خطوطاً تناسب طبيعة التصميم">
             <ChipGroup
               type="single"

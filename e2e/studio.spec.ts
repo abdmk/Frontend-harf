@@ -74,7 +74,7 @@ test.describe('الاستوديو والإدارة', () => {
     await page.getByRole('button', { name: /^حساب/ }).click();
     await expect(page.getByRole('dialog').getByRole('link', { name: 'لوحة الإدارة' })).toBeVisible();
     await page.getByRole('dialog').getByRole('link', { name: 'مراجعة طلبات النشر' }).click();
-    await expect(page).toHaveURL(/\/admin\/review$/);
+    await expect(page).toHaveURL(/\/admin\/requests$/);
   });
 
   test('صور الخط: تُرتَّب بالسحب، وبالأسهم من لوحة المفاتيح', async ({ page }) => {

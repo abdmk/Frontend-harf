@@ -153,7 +153,7 @@ export function LicenseSheet({
           </SheetDescription>
         </header>
 
-        <div className="flex flex-1 scroll-thin flex-col gap-6 overflow-y-auto overscroll-contain px-6 pb-6">
+        <div className="scroll-none flex flex-1 flex-col gap-6 overflow-y-auto overscroll-contain px-6 pb-6">
           {/* القرار الوحيد المطلوب */}
           <section aria-labelledby="lic-use">
             <h3 id="lic-use" className="mb-3 text-lead font-semibold">

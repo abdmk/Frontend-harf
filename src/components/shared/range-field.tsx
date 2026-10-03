@@ -1,8 +1,6 @@
 import { Slider as SliderPrimitive } from 'radix-ui';
 
-import { cn } from '@/lib/cn';
-
-/** مدى بمقبضين على مسار عريض بنقاط لكل خطوة — القيمة null تعني «بلا فلتر» */
+/** مدى بمقبضين على مسار رفيع، والقيمتان نصّاً هادئاً تحته — القيمة undefined تعني «بلا فلتر» */
 export function RangeField({
   stops,
   value,
@@ -28,43 +26,24 @@ export function RangeField({
         minStepsBetweenThumbs={0}
         value={idx}
         onValueChange={([a = 0, b = max]) => onChange(a === 0 && b === max ? undefined : [stops[a]!, stops[b]!])}
-        className="relative flex h-5 w-full touch-none items-center select-none"
+        className="relative flex h-6 w-full touch-none items-center select-none"
       >
-        <SliderPrimitive.Track className="relative h-5 w-full overflow-hidden rounded-full bg-sunken">
+        <SliderPrimitive.Track className="relative h-1.5 w-full overflow-hidden rounded-full bg-inset">
           <SliderPrimitive.Range className="absolute h-full rounded-full bg-primary-fill" />
-          <span
-            aria-hidden
-            className="pointer-events-none absolute inset-0 flex items-center justify-between px-[7.5px]"
-          >
-            {stops.map((_, i) => (
-              <i
-                key={i}
-                className={cn('size-1.25 rounded-full', i >= idx[0] && i <= idx[1] ? 'bg-white/55' : 'bg-strong')}
-              />
-            ))}
-          </span>
         </SliderPrimitive.Track>
         {idx.map((v, i) => (
           <SliderPrimitive.Thumb
             key={i}
             aria-label={labels[i]}
             aria-valuetext={format(stops[v]!)}
-            className="grid size-5 cursor-grab place-items-center rounded-full outline-none active:cursor-grabbing"
-          >
-            <span className="size-2 rounded-full bg-white transition-transform duration-(--dur-base) ease-pop in-focus-visible:scale-150 in-active:scale-150" />
-          </SliderPrimitive.Thumb>
+            className="block size-6 cursor-grab rounded-full border bg-card shadow-soft transition-transform duration-(--dur-base) ease-pop outline-none hover:scale-110 focus-visible:ring-4 focus-visible:ring-ring/25 active:scale-110 active:cursor-grabbing"
+          />
         ))}
       </SliderPrimitive.Root>
-      <div className="mt-4 flex justify-between gap-3">
-        {idx.map((v, i) => (
-          <span
-            key={i}
-            className="inline-flex h-10 min-w-21 items-center justify-center rounded-full border px-5 text-sm text-muted-foreground"
-            dir="rtl"
-          >
-            {format(stops[v]!)}
-          </span>
-        ))}
+      <div className="mt-3 flex justify-between gap-3 text-meta text-muted-foreground tabular-nums">
+        {/* المسار من اليسار (الأدنى) — والقيمتان تحت مقبضيهما */}
+        <span>{format(stops[idx[0]]!)}</span>
+        <span>{format(stops[idx[1]]!)}</span>
       </div>
     </div>
   );

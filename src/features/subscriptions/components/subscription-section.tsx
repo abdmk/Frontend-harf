@@ -1,7 +1,9 @@
-import type { ReactNode } from 'react';
+import { type ReactNode, useState } from 'react';
 
 import { UsageMeter } from '@/components/shared/usage-meter';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Dialog, DialogContent, DialogDescription, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import {
   CalendarIcon,
   CheckIcon,
@@ -14,6 +16,7 @@ import {
   ReceiptIcon,
 } from '@/components/ui/icons';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { toast } from '@/components/ui/toast';
 import { formatDateAr, formatMoney } from '@/lib/format';
 import type { Invoice, PlanOffer, Subscription } from '@/types/domain/subscription';
 import type { User } from '@/types/domain/user';
@@ -46,6 +49,55 @@ function Card({
       </header>
       {children}
     </section>
+  );
+}
+
+/**
+ * تغيير البطاقة: لا تمرّ أرقام البطاقة بموقع حرف أبداً — التحديث في صفحة Stripe الآمنة.
+ * ⚠️ عرض: في المنتج يطلب الزرّ من الخادم جلسة Stripe Customer Portal وينقل المستخدم إليها.
+ */
+function ChangeCardDialog() {
+  const [open, setOpen] = useState(false);
+  return (
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger asChild>
+        <Button variant="outline" size="sm">
+          تغيير
+        </Button>
+      </DialogTrigger>
+      <DialogContent className="sm:max-w-dialog-sm">
+        <div className="flex flex-col items-center gap-4 text-center">
+          <span className="grid size-14 place-items-center rounded-full bg-tint-info text-info-text [&_svg]:size-6">
+            <LockIcon />
+          </span>
+          <div>
+            <DialogTitle className="text-lg font-bold">تغيير البطاقة</DialogTitle>
+            <DialogDescription className="mt-2 text-control leading-relaxed text-muted-foreground">
+              ننقلك إلى صفحة Stripe الآمنة لتضيف بطاقة جديدة. لا تمرّ أرقام بطاقتك بموقع حرف، والاشتراك يستمرّ دون
+              انقطاع.
+            </DialogDescription>
+          </div>
+          <div className="flex w-full flex-col gap-2.5">
+            <Button
+              size="lg"
+              onClick={() => {
+                setOpen(false);
+                toast({
+                  tone: 'info',
+                  title: 'نسخة تجريبية',
+                  description: 'في المنتج تُفتح صفحة Stripe لتحديث البطاقة.',
+                });
+              }}
+            >
+              متابعة إلى Stripe
+            </Button>
+            <Button size="lg" variant="outline" onClick={() => setOpen(false)}>
+              إلغاء
+            </Button>
+          </div>
+        </div>
+      </DialogContent>
+    </Dialog>
   );
 }
 
@@ -121,7 +173,11 @@ export function SubscriptionSection({
         </ul>
       </Card>
 
-      <Card title="طريقة الدفع" icon={<CreditCardIcon />}>
+      <Card
+        title="طريقة الدفع"
+        icon={<CreditCardIcon />}
+        action={subscription.paymentMethod ? <ChangeCardDialog /> : undefined}
+      >
         {subscription.paymentMethod ? (
           <div className="flex items-center gap-4 rounded-md border p-4">
             <span className="rounded-[4px] border px-1.5 text-micro font-bold font-medium text-visa uppercase">

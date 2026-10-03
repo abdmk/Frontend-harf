@@ -92,7 +92,7 @@ export function FilterSheet({ trigger }: { trigger: ReactElement }) {
           </SheetClose>
         </div>
 
-        <div className="flex-1 divide-y overflow-y-auto overscroll-contain px-5">
+        <div className="scroll-none flex-1 divide-y overflow-y-auto overscroll-contain px-5">
           <FilterSection title="الرخصة" onReset={draft.license !== 'all' ? () => patch({ license: 'all' }) : undefined}>
             <ToggleGroupPrimitive.Root
               type="single"
