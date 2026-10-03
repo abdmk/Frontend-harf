@@ -248,7 +248,6 @@ export function VerifyFlow({ user, record }: { user: User; record: VerificationR
 
   return (
     <div className="flex flex-col">
-
       <main
         id="main"
         className={cn(
