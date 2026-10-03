@@ -26,11 +26,6 @@ export const subscribeSession = (cb: () => void) => {
 };
 
 /** هل الزائر الحالي مشرف؟ — لإظهار أدوات الإدارة السريعة في الموقع (الخادم يتحقّق في كل طلب) */
-/** المستخدم الحالي — يتحدّث مع تغيّر الجلسة أو قرار الإدارة على الحساب */
-export function useCurrentUser(): User | null {
-  return useSyncExternalStore(subscribeSession, getCurrentUser, () => null);
-}
-
 export function useIsAdmin(): boolean {
   return useSyncExternalStore(
     subscribeSession,

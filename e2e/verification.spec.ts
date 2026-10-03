@@ -92,10 +92,10 @@ test.describe('توثيق الاستوديو', () => {
   });
 
   test('الإدارة: الرفض يتطلّب سبباً يصل للناشر، والاعتماد يفتح البيع', async ({ page }) => {
-    await page.goto('/admin/studios?as=admin');
+    await page.goto('/admin/requests?type=studios&as=admin');
     const nav = page.getByRole('navigation', { name: 'أقسام الإدارة' }).first();
-    await expect(nav.getByLabel('2 طلبات توثيق')).toBeVisible();
-    await page.getByRole('link', { name: 'راجع الطلب' }).first().click();
+    await expect(nav.getByLabel('7 بانتظار قرارك')).toBeVisible();
+    await page.getByRole('list', { name: 'طلبات التوثيق' }).getByRole('link', { name: 'راجِع' }).first().click();
     await expect(page.getByRole('heading', { level: 1, name: 'استوديو نون' })).toBeVisible();
     await expect(page.getByText('زين كاش •••• 4410')).toBeVisible();
 
@@ -106,10 +106,10 @@ test.describe('توثيق الاستوديو', () => {
     await dlg.getByRole('button', { name: 'رفض الطلب' }).click();
     await expect(page.getByText(/سبب الرفض:/)).toBeVisible();
 
-    await page.goto('/admin/studios');
-    await page.getByRole('link', { name: 'راجع الطلب' }).first().click();
+    await page.goto('/admin/requests?type=studios');
+    await page.getByRole('list', { name: 'طلبات التوثيق' }).getByRole('link', { name: 'راجِع' }).first().click();
     await page.getByRole('button', { name: 'اعتماد الاستوديو' }).click();
     await expect(page.getByText(/اعتُمد «Raqam Type»/)).toBeVisible();
-    await expect(nav.getByLabel(/طلبات توثيق/)).toHaveCount(0);
+    await expect(nav.getByLabel('5 بانتظار قرارك')).toBeVisible();
   });
 });

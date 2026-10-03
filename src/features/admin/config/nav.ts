@@ -1,41 +1,28 @@
 import type { IconProps } from '@/components/ui/icons';
-import {
-  DiamondIcon,
-  DocumentSignedIcon,
-  HomeIcon,
-  LayersIcon,
-  PictureIcon,
-  ShieldCheckIcon,
-  StatsIcon,
-  UserIcon,
-} from '@/components/ui/icons';
+import { DocumentSignedIcon, HomeIcon, LayersIcon, PictureIcon, StatsIcon, UserIcon } from '@/components/ui/icons';
 import type { AdminSection } from '@/config/paths';
 
 export type AdminNavItem = {
   section: AdminSection | null;
   label: string;
-  hint: string;
   Icon: (p: IconProps) => React.JSX.Element;
+  /** مسارات قديمة أو فرعية تُحسب ضمن هذا القسم (تفاصيل طلب، تفاصيل استوديو…) */
+  also?: readonly string[];
 };
 
 /**
- * لوحة الإدارة: خمسة أقسام بترتيب العمل اليومي — ما يحتاج قراراً أولاً (المراجعة)، ثم ما يُدار
- * (الخطوط والمستخدمون والمحتوى)، ثم ما يُقرأ (التحليلات).
+ * ستّة أقسام بلا مجموعات، بترتيب العمل: ما ينتظر قراراً (الطلبات) ثم ما يُدار ثم ما يُقرأ.
+ * الطلبات تجمع مراجعة الخطوط وتوثيق الاستوديوهات — كلاهما قرار قبول أو رفض.
+ * والمحتوى يجمع ما يراه الزائر: الواجهة والمدونة والخطط وأسعارها.
  */
-/** مجموعات القائمة الجانبية — تسمية صغيرة فوق كل مجموعة كما في لوحات العمل */
-export const ADMIN_GROUPS: { title: string; items: AdminSection[] | (AdminSection | null)[] }[] = [
-  { title: 'عام', items: [null, 'review', 'studios'] },
-  { title: 'المكتبة والمحتوى', items: ['fonts', 'content'] },
-  { title: 'الناس والأرقام', items: ['users', 'plans', 'analytics'] },
+export const ADMIN_NAV: AdminNavItem[] = [
+  { section: null, label: 'الرئيسية', Icon: HomeIcon },
+  { section: 'requests', label: 'الطلبات', Icon: DocumentSignedIcon, also: ['review', 'studios'] },
+  { section: 'fonts', label: 'الخطوط', Icon: LayersIcon },
+  { section: 'users', label: 'المستخدمون', Icon: UserIcon },
+  { section: 'content', label: 'المحتوى', Icon: PictureIcon, also: ['plans'] },
+  { section: 'analytics', label: 'التحليلات', Icon: StatsIcon },
 ];
 
-export const ADMIN_NAV: AdminNavItem[] = [
-  { section: null, label: 'الرئيسية', hint: 'ما يحتاج انتباهك اليوم', Icon: HomeIcon },
-  { section: 'review', label: 'المراجعة', hint: 'الخطوط المرفوعة بانتظار قرار', Icon: DocumentSignedIcon },
-  { section: 'studios', label: 'توثيق الاستوديوهات', hint: 'الهوية والاتفاقية ووسيلة الاستلام', Icon: ShieldCheckIcon },
-  { section: 'fonts', label: 'مخزن الخطوط', hint: 'كل خطوط المكتبة وظهورها', Icon: LayersIcon },
-  { section: 'users', label: 'المستخدمون', hint: 'الحسابات وخططها والحظر', Icon: UserIcon },
-  { section: 'plans', label: 'الخطط والأسعار', hint: 'أسعار الاشتراكات وما تتضمّنه', Icon: DiamondIcon },
-  { section: 'content', label: 'المحتوى', hint: 'البنرات والنصوص الظاهرة في الموقع', Icon: PictureIcon },
-  { section: 'analytics', label: 'التحليلات', hint: 'الزيارات والمستخدمون والإيرادات', Icon: StatsIcon },
-];
+export const isAdminNavOn = (item: AdminNavItem, current: string) =>
+  item.section === null ? current === '' : current === item.section || !!item.also?.includes(current);

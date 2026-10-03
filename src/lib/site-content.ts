@@ -31,13 +31,28 @@ const link = z
   .max(LIMITS.href)
   .refine((v) => !v || !!safeContentLink(v), 'رابط داخلي يبدأ بـ«/» أو رابط https فقط.');
 
-export const bannerSchema = z.object({
-  id: z.string().regex(/^[a-z0-9-]{1,40}$/),
-  image: z.string().refine(isSafeImageUrl, 'الصورة مطلوبة.'),
-  alt: z.string().trim().min(3, 'صف الصورة لقارئ الشاشة (3 أحرف على الأقل).').max(LIMITS.alt),
-  href: link,
-  active: z.boolean(),
-});
+/** أرضيّات البنر النصّي — من رموز التدرّج في نظام التصميم */
+export const BANNER_TONES = ['dawn', 'brand', 'gold', 'trial'] as const;
+export type BannerTone = (typeof BANNER_TONES)[number];
+
+/** بنر بصورة، أو بنر نصّي (عنوان وسطر) على أرضيّة لونية — الصورة اختيارية */
+export const bannerSchema = z
+  .object({
+    id: z.string().regex(/^[a-z0-9-]{1,40}$/),
+    image: z.string().refine((v) => v === '' || isSafeImageUrl(v), 'صورة غير صالحة.'),
+    alt: z.string().trim().max(LIMITS.alt).default(''),
+    title: z.string().trim().max(LIMITS.title).default(''),
+    text: z.string().trim().max(LIMITS.text).default(''),
+    tone: z.enum(BANNER_TONES).default('dawn'),
+    href: link,
+    active: z.boolean(),
+  })
+  .superRefine((b, ctx) => {
+    if (b.image && b.alt.length < 3)
+      ctx.addIssue({ code: 'custom', path: ['alt'], message: 'صف الصورة لقارئ الشاشة (3 أحرف على الأقل).' });
+    if (!b.image && b.title.length < 2)
+      ctx.addIssue({ code: 'custom', path: ['title'], message: 'اكتب عنوان البنر النصّي.' });
+  });
 export const announcementSchema = z.object({
   active: z.boolean(),
   text: z.string().trim().max(LIMITS.text),

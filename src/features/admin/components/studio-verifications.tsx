@@ -61,16 +61,18 @@ function StateBadge({ r }: { r: VerificationRecord }) {
 
 /* ══ القائمة ══════════════════════════════════════════════════════════════ */
 
-export function StudioRequests() {
+export function StudioRequests({ embedded = false }: { embedded?: boolean }) {
   const all = useStudioRequests();
   const [filter, setFilter] = useState<'pending' | 'all'>('pending');
   const list = filter === 'pending' ? all.filter((r) => r.status === 'pending') : all;
   return (
     <div className="flex flex-col gap-6">
-      <AdminPageHeader
-        title="توثيق الاستوديوهات"
-        description="طلبات الناشرين قبل البيع: الهوية، وسيلة الاستلام، والاتفاقية الموقّعة. لا مبيعات قبل اعتمادك."
-      />
+      {!embedded && (
+        <AdminPageHeader
+          title="توثيق الاستوديوهات"
+          description="طلبات الناشرين قبل البيع: الهوية، وسيلة الاستلام، والاتفاقية الموقّعة. لا مبيعات قبل اعتمادك."
+        />
+      )}
       <SegmentedControl
         label="عرض الطلبات"
         value={filter}
@@ -82,27 +84,24 @@ export function StudioRequests() {
         className="self-start"
       />
       {list.length ? (
-        <ul className="flex flex-col gap-3">
+        <ul aria-label="طلبات التوثيق" className="divide-y rounded-xl border bg-card">
           {list.map((r) => {
             const late = r.status === 'pending' && r.submittedAt && isOverdue(r.submittedAt);
             const Icon = r.info.entity === 'company' ? BuildingIcon : UserIcon;
             return (
-              <li
-                key={r.userId}
-                className="flex animate-fade-up flex-col gap-4 rounded-xl border bg-card p-5 sm:flex-row sm:items-center"
-              >
-                <span className="grid size-12 shrink-0 place-items-center rounded-xl bg-sunken text-muted-foreground [&_svg]:size-5">
+              <li key={r.userId} className="flex animate-fade-up items-center gap-4 px-4 py-4 sm:px-5">
+                <span className="hidden size-11 shrink-0 place-items-center rounded-full bg-sunken text-muted-foreground sm:grid [&_svg]:size-5">
                   <Icon />
                 </span>
                 <div className="min-w-0 flex-1">
                   <div className="flex flex-wrap items-center gap-2">
                     <Link
                       to={paths.admin.studio.getHref(r.userId)}
-                      className="text-lead font-semibold underline-offset-4 hover:text-primary hover:underline"
+                      className="text-control font-semibold underline-offset-4 hover:text-primary hover:underline"
                     >
                       <bdi>{r.info.studioName}</bdi>
                     </Link>
-                    <StateBadge r={r} />
+                    {r.status !== 'pending' && <StateBadge r={r} />}
                     {late && <Badge tone="warning">متأخّر</Badge>}
                   </div>
                   <p className="mt-1 text-meta text-muted-foreground">
@@ -110,10 +109,8 @@ export function StudioRequests() {
                     {r.submittedAt ? timeAgo(r.submittedAt) : ''}
                   </p>
                 </div>
-                <Button asChild variant={r.status === 'pending' ? 'ink' : 'outline'}>
-                  <Link to={paths.admin.studio.getHref(r.userId)}>
-                    {r.status === 'pending' ? 'راجع الطلب' : 'التفاصيل'}
-                  </Link>
+                <Button asChild size="sm" variant={r.status === 'pending' ? 'ink' : 'outline'}>
+                  <Link to={paths.admin.studio.getHref(r.userId)}>{r.status === 'pending' ? 'راجِع' : 'التفاصيل'}</Link>
                 </Button>
               </li>
             );
@@ -189,7 +186,7 @@ export function StudioRequestDetail({ id }: { id: string }) {
         description="ربما سُحب أو لم يُرسل بعد."
         action={
           <Button asChild variant="outline">
-            <Link to={paths.admin.getHref('studios')}>كل الطلبات</Link>
+            <Link to={`${paths.admin.getHref('requests')}?type=studios`}>كل الطلبات</Link>
           </Button>
         }
       />
@@ -214,7 +211,7 @@ export function StudioRequestDetail({ id }: { id: string }) {
   return (
     <div className="flex flex-col gap-6">
       <Link
-        to={paths.admin.getHref('studios')}
+        to={`${paths.admin.getHref('requests')}?type=studios`}
         className="inline-flex items-center gap-1.5 self-start text-meta text-muted-foreground hover:text-foreground"
       >
         <ArrowRightIcon className="size-4" />

@@ -427,15 +427,19 @@ function PlanEditor({ saved }: { saved: PlanEdit }) {
 }
 
 /** «الخطط والأسعار»: تعديل كل خطة — الاسم والسعر والمزايا — مع معاينة حيّة لبطاقتها */
-export function PlansManager() {
+export function PlansManager({ embedded = false }: { embedded?: boolean }) {
   const plans = usePlanOffers();
   const [tab, setTab] = useState<Plan>('basic');
   return (
     <div className="flex flex-col gap-5">
-      <AdminPageHeader
-        title="الخطط والأسعار"
-        description="ما يراه الزائر في «اختر خطتك» وصفحة الاشتراك. كل حفظ يُسجَّل في سجلّ النشاط."
-      />
+      {embedded ? (
+        <p className="text-meta text-muted-foreground">ما يراه الزائر في «اختر خطتك» وصفحة الاشتراك.</p>
+      ) : (
+        <AdminPageHeader
+          title="الخطط والأسعار"
+          description="ما يراه الزائر في «اختر خطتك» وصفحة الاشتراك. كل حفظ يُسجَّل في سجلّ النشاط."
+        />
+      )}
       <Tabs value={tab} onValueChange={(v) => setTab(v as Plan)}>
         <TabsList aria-label="الخطط">
           {plans.map((p) => {

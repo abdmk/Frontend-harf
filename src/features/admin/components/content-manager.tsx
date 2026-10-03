@@ -1,10 +1,12 @@
 import { useId, useRef, useState } from 'react';
+import { useSearchParams } from 'react-router';
 
+import { BANNER_TONE_CLASS, BANNER_TONE_LABEL, BannerSlide } from '@/components/shared/banner-slide';
 import { SectionCard } from '@/components/shared/section-card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Field, FieldError, FieldHint, FieldLabel } from '@/components/ui/field';
-import { ArrowDownIcon, ArrowUpIcon, PictureIcon, PlusIcon, TrashIcon } from '@/components/ui/icons';
+import { ArrowDownIcon, ArrowUpIcon, PictureIcon, TextIcon, TrashIcon } from '@/components/ui/icons';
 import { Input, Textarea } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -14,6 +16,7 @@ import { prepareImage } from '@/lib/image-upload';
 import {
   type Announcement,
   type Banner,
+  BANNER_TONES,
   BANNERS_MAX,
   type Cta,
   DEFAULT_CTA,
@@ -23,6 +26,7 @@ import {
 
 import { AdminPageHeader } from './admin-nav';
 import { BlogManager } from './blog-manager';
+import { PlansManager } from './plans-manager';
 import { newBannerId, saveAnnouncement, saveBanners, saveCta } from '../api/content';
 
 /** مسودّة بنر: الصورة جاهزة (مُعاد ترميزها) والنصوص قيد الكتابة — تُتحقَّق كلّها عند الحفظ */
@@ -34,7 +38,32 @@ function UnsavedBadge({ show }: { show: boolean }) {
   return show ? <Badge tone="warning">تغييرات غير محفوظة</Badge> : null;
 }
 
-export function BannersEditor({ saved }: { saved: Banner[] }) {
+const BLANK_BANNER: Omit<Banner, 'id'> = {
+  image: '',
+  alt: '',
+  title: '',
+  text: '',
+  tone: 'dawn',
+  href: '',
+  active: true,
+};
+
+/** bare: بلا رأس البطاقة — داخل نافذة لها عنوانها (لا يتكرّر العنوان) */
+function Frame({
+  bare,
+  children,
+  ...card
+}: {
+  bare: boolean;
+  title: string;
+  description: string;
+  action: React.ReactNode;
+  children: React.ReactNode;
+}) {
+  return bare ? <div className="flex flex-col gap-3">{children}</div> : <SectionCard {...card}>{children}</SectionCard>;
+}
+
+export function BannersEditor({ saved, bare = false }: { saved: Banner[]; bare?: boolean }) {
   const [items, setItems] = useState<Draft[]>(saved);
   const [error, setError] = useState<string>();
   const [busy, setBusy] = useState(false);
@@ -52,7 +81,7 @@ export function BannersEditor({ saved }: { saved: Banner[] }) {
     setBusy(false);
     if (!r.ok) return setError(r.error);
     setError(undefined);
-    setItems((xs) => [...xs, { id: newBannerId(), image: r.url, alt: '', href: '', active: true }]);
+    setItems((xs) => [...xs, { ...BLANK_BANNER, id: newBannerId(), image: r.url }]);
   }
 
   const patch = (i: number, p: Partial<Draft>) => setItems((xs) => xs.map((x, k) => (k === i ? { ...x, ...p } : x)));
@@ -71,7 +100,8 @@ export function BannersEditor({ saved }: { saved: Banner[] }) {
   }
 
   return (
-    <SectionCard
+    <Frame
+      bare={bare}
       title="بنرات الصفحة الرئيسية"
       description={`الشريحة أعلى المكتبة · حتى ${BANNERS_MAX} بنرات · المقاس المقترح 2240×580`}
       action={<UnsavedBadge show={dirty} />}
@@ -82,31 +112,79 @@ export function BannersEditor({ saved }: { saved: Banner[] }) {
             {items.map((b, i) => (
               <li key={b.id} className="flex flex-col gap-4 rounded-lg border p-4 lg:flex-row">
                 <div className="relative shrink-0 lg:w-72">
-                  <img
-                    src={b.image}
-                    alt=""
+                  <div
+                    aria-hidden
                     className={cn(
-                      'aspect-[1120/290] w-full rounded-md border object-cover',
+                      'aspect-[1120/290] w-full overflow-hidden rounded-md border',
                       !b.active && 'opacity-50 grayscale',
                     )}
-                  />
+                  >
+                    <BannerSlide banner={{ ...b, alt: '' }} compact />
+                  </div>
                   <span className="absolute start-2 top-2 rounded-full bg-paper/90 px-2 py-0.5 text-caption font-medium text-paper-foreground">
                     {i + 1}
                   </span>
                 </div>
                 <div className="grid min-w-0 flex-1 gap-3 sm:grid-cols-2">
-                  <Field className="sm:col-span-2">
-                    <FieldLabel htmlFor={`${id}-alt-${b.id}`} required>
-                      وصف الصورة
-                    </FieldLabel>
-                    <Input
-                      id={`${id}-alt-${b.id}`}
-                      value={b.alt}
-                      maxLength={LIMITS.alt}
-                      placeholder="ما الذي يظهر في البنر؟ (لقارئ الشاشة)"
-                      onChange={(e) => patch(i, { alt: e.target.value })}
-                    />
-                  </Field>
+                  {b.image ? (
+                    <Field className="sm:col-span-2">
+                      <FieldLabel htmlFor={`${id}-alt-${b.id}`} required>
+                        وصف الصورة
+                      </FieldLabel>
+                      <Input
+                        id={`${id}-alt-${b.id}`}
+                        value={b.alt}
+                        maxLength={LIMITS.alt}
+                        placeholder="ما الذي يظهر في البنر؟ (لقارئ الشاشة)"
+                        onChange={(e) => patch(i, { alt: e.target.value })}
+                      />
+                    </Field>
+                  ) : (
+                    <>
+                      <Field className="sm:col-span-2">
+                        <FieldLabel htmlFor={`${id}-t-${b.id}`} required>
+                          العنوان
+                        </FieldLabel>
+                        <Input
+                          id={`${id}-t-${b.id}`}
+                          value={b.title}
+                          maxLength={LIMITS.title}
+                          placeholder="مثال: خطوط جديدة كل أسبوع"
+                          onChange={(e) => patch(i, { title: e.target.value })}
+                        />
+                      </Field>
+                      <Field className="sm:col-span-2">
+                        <FieldLabel htmlFor={`${id}-x-${b.id}`}>سطر تحت العنوان</FieldLabel>
+                        <Input
+                          id={`${id}-x-${b.id}`}
+                          value={b.text}
+                          maxLength={LIMITS.text}
+                          onChange={(e) => patch(i, { text: e.target.value })}
+                        />
+                      </Field>
+                      <Field className="sm:col-span-2">
+                        <FieldLabel id={`${id}-tone-${b.id}`}>الأرضيّة</FieldLabel>
+                        <div role="radiogroup" aria-labelledby={`${id}-tone-${b.id}`} className="flex flex-wrap gap-2">
+                          {BANNER_TONES.map((t) => (
+                            <button
+                              key={t}
+                              type="button"
+                              role="radio"
+                              aria-checked={b.tone === t}
+                              onClick={() => patch(i, { tone: t })}
+                              className={cn(
+                                'flex items-center gap-2 rounded-full border py-1 ps-1 pe-3 text-meta transition-colors outline-none focus-visible:ring-2 focus-visible:ring-ring',
+                                b.tone === t ? 'border-foreground font-medium' : 'hover:border-strong',
+                              )}
+                            >
+                              <span className={cn('size-6 rounded-full border', BANNER_TONE_CLASS[t])} />
+                              {BANNER_TONE_LABEL[t]}
+                            </button>
+                          ))}
+                        </div>
+                      </Field>
+                    </>
+                  )}
                   <Field className="sm:col-span-2">
                     <FieldLabel htmlFor={`${id}-href-${b.id}`}>الرابط</FieldLabel>
                     <Input
@@ -160,7 +238,9 @@ export function BannersEditor({ saved }: { saved: Banner[] }) {
           <div className="flex flex-col items-center gap-2 rounded-lg border border-dashed px-6 py-10 text-center">
             <PictureIcon className="size-6 text-tertiary" />
             <p className="text-control font-medium">لا بنرات بعد</p>
-            <p className="text-meta text-muted-foreground">تظهر الشريحة بأرضيات هادئة حتى تضيف بنراً مفعّلاً.</p>
+            <p className="text-meta text-muted-foreground">
+              أضف بنراً بصورة أو بنراً نصّياً — حتى ذلك تظهر الشريحة بأرضيّات هادئة.
+            </p>
           </div>
         )}
 
@@ -175,15 +255,25 @@ export function BannersEditor({ saved }: { saved: Banner[] }) {
         />
         <FieldError>{error}</FieldError>
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <Button
-            variant="outline"
-            loading={busy}
-            disabled={items.length >= BANNERS_MAX}
-            onClick={() => fileRef.current?.click()}
-          >
-            <PlusIcon />
-            إضافة بنر
-          </Button>
+          <div className="flex flex-wrap gap-2">
+            <Button
+              variant="outline"
+              loading={busy}
+              disabled={items.length >= BANNERS_MAX}
+              onClick={() => fileRef.current?.click()}
+            >
+              <PictureIcon />
+              بنر بصورة
+            </Button>
+            <Button
+              variant="outline"
+              disabled={items.length >= BANNERS_MAX}
+              onClick={() => setItems((xs) => [...xs, { ...BLANK_BANNER, id: newBannerId() }])}
+            >
+              <TextIcon />
+              بنر نصّي
+            </Button>
+          </div>
           <div className="flex gap-2">
             {dirty && (
               <Button variant="ghost" onClick={() => setItems(saved)}>
@@ -195,9 +285,12 @@ export function BannersEditor({ saved }: { saved: Banner[] }) {
             </Button>
           </div>
         </div>
-        <FieldHint>PNG أو JPG أو WebP حتى 5 ميغابايت. تُعاد معالجة الصورة وتُزال بياناتها الوصفية قبل الحفظ.</FieldHint>
+        <FieldHint>
+          الصورة اختيارية: PNG أو JPG أو WebP حتى 5 ميغابايت (تُعاد معالجتها وتُزال بياناتها الوصفية)، أو بنر نصّي
+          بعنوان وأرضيّة لونية.
+        </FieldHint>
       </div>
-    </SectionCard>
+    </Frame>
   );
 }
 
@@ -332,15 +425,20 @@ function CtaEditor({ saved }: { saved: Cta }) {
 }
 
 /** «المحتوى»: ما يظهر للزوّار ويتغيّر دون نشر نسخة جديدة — البنرات، شريط الإعلان، ودعوة التواصل */
+const CONTENT_TABS = ['site', 'blog', 'plans'] as const;
+
 export function ContentManager() {
   const content = useSiteContent();
+  const [params, setParams] = useSearchParams();
+  const tab = (CONTENT_TABS as readonly string[]).includes(params.get('tab') ?? '') ? params.get('tab')! : 'site';
   return (
     <div className="flex flex-col gap-5">
-      <AdminPageHeader title="المحتوى" description="التغييرات تظهر في الموقع فور الحفظ، وتُسجَّل في سجلّ النشاط." />
-      <Tabs defaultValue="site">
+      <AdminPageHeader title="المحتوى" description="ما يراه الزائر — يظهر فور الحفظ ويُسجَّل في سجلّ النشاط." />
+      <Tabs value={tab} onValueChange={(v) => setParams(v === 'site' ? {} : { tab: v }, { replace: true })}>
         <TabsList aria-label="أقسام المحتوى">
           <TabsTrigger value="site">الصفحة الرئيسية</TabsTrigger>
           <TabsTrigger value="blog">المدونة</TabsTrigger>
+          <TabsTrigger value="plans">الخطط والأسعار</TabsTrigger>
         </TabsList>
         <TabsContent value="site" className="flex flex-col gap-5">
           {/* key: يعيد تهيئة المسودّة بعد الحفظ أو تغيّر المحفوظ من تبويب آخر */}
@@ -353,6 +451,9 @@ export function ContentManager() {
         </TabsContent>
         <TabsContent value="blog">
           <BlogManager />
+        </TabsContent>
+        <TabsContent value="plans">
+          <PlansManager embedded />
         </TabsContent>
       </Tabs>
     </div>

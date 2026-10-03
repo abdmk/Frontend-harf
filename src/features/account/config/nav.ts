@@ -33,50 +33,45 @@ export const PLAN_TITLE = { free: 'الخطة المجانية', basic: 'الخ�
 
 /** مجموعات القائمة كما في التصميم — «الاستوديو» لحساب الاستوديو وحده */
 export function accountNavGroups(user: User): NavItem[][] {
-  const groups: NavItem[][] = [
+  const groups = (
     [
-      { section: 'profile', label: 'الملف الشخصي', Icon: UserIcon },
-      // الاستوديو وحده ينشر خطوطه على حرف — الوجهة محميّة بـrequireStudio أيضاً
-      ...(user.plan === 'studio'
-        ? [
-            {
-              section: 'publish',
-              label: 'رفع خط',
-              Icon: CloudUploadIcon,
-              href: paths.studio.getHref('publish'),
-            } as const,
-          ]
-        : []),
-      // المشرف: طابور مراجعة الخطوط المرسلة مباشرة من القائمة
-      ...(user.role === 'admin'
-        ? [
-            {
-              section: 'review',
-              label: 'مراجعة طلبات النشر',
-              Icon: DocumentSignedIcon,
-              href: paths.admin.getHref('review'),
-            } as const,
-          ]
-        : []),
-      { section: 'library', label: 'مكتبتي', Icon: FolderIcon, meta: (u) => String(u.stats.library) },
-      { section: 'favorites', label: 'المفضلة', Icon: HeartIcon, meta: (u) => String(u.stats.favorites) },
-      { section: 'purchases', label: 'المشتريات', Icon: ReceiptIcon, meta: (u) => String(u.stats.purchases) },
-    ],
-    [
-      { section: 'usage', label: 'الاستخدام', Icon: UsageIcon, meta: (u) => `${u.stats.usagePct}%` },
-      // المشرف بلا خطة اشتراك
-      ...(user.role === 'admin'
+      [
+        { section: 'profile', label: 'الملف الشخصي', Icon: UserIcon },
+        // الاستوديو وحده ينشر خطوطه على حرف — الوجهة محميّة بـrequireStudio أيضاً
+        ...(user.plan === 'studio'
+          ? [
+              {
+                section: 'publish',
+                label: 'رفع خط',
+                Icon: CloudUploadIcon,
+                href: paths.studio.getHref('publish'),
+              } as const,
+            ]
+          : []),
+        // المشرف: طابور مراجعة الخطوط المرسلة مباشرة من القائمة
+        ...(user.role === 'admin'
+          ? [
+              {
+                section: 'review',
+                label: 'مراجعة طلبات النشر',
+                Icon: DocumentSignedIcon,
+                href: paths.admin.getHref('requests'),
+              } as const,
+            ]
+          : []),
+        { section: 'library', label: 'مكتبتي', Icon: FolderIcon, meta: (u) => String(u.stats.library) },
+        { section: 'favorites', label: 'المفضلة', Icon: HeartIcon, meta: (u) => String(u.stats.favorites) },
+        { section: 'purchases', label: 'المشتريات', Icon: ReceiptIcon, meta: (u) => String(u.stats.purchases) },
+      ],
+      // المشرف بلا خطة ولا حدود استخدام — لا «الاستخدام» ولا «الاشتراك»
+      user.role === 'admin'
         ? []
         : [
-            {
-              section: 'subscription',
-              label: 'الاشتراك',
-              Icon: CrownIcon,
-              meta: (u: User) => PLAN_LABEL[u.plan],
-            } as const,
-          ]),
-    ],
-  ];
+            { section: 'usage', label: 'الاستخدام', Icon: UsageIcon, meta: (u) => `${u.stats.usagePct}%` },
+            { section: 'subscription', label: 'الاشتراك', Icon: CrownIcon, meta: (u: User) => PLAN_LABEL[u.plan] },
+          ],
+    ] as NavItem[][]
+  ).filter((g) => g.length > 0);
   // مساحة العمل: المشرف يرى «لوحة الإدارة» مكان «الاستوديو»
   if (user.role === 'admin')
     groups.push([{ section: 'foundry', label: 'لوحة الإدارة', Icon: ChartHistogramIcon, href: paths.admin.getHref() }]);

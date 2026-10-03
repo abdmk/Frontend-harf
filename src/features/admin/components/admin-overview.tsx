@@ -1,17 +1,15 @@
 import { Link } from 'react-router';
 
-import { AreaChart } from '@/components/shared/charts/area-chart';
-import { BarList } from '@/components/shared/charts/bar-list';
-import { ChartCard } from '@/components/shared/charts/chart-frame';
 import { StatCard } from '@/components/shared/stat-card';
-import { Button } from '@/components/ui/button';
 import {
   ArrowLeftIcon,
   CartIcon,
+  CheckIcon,
   DocumentSignedIcon,
   DownloadIcon,
   EyeOffIcon,
   PictureIcon,
+  ShieldCheckIcon,
   TimePastIcon,
   UserIcon,
 } from '@/components/ui/icons';
@@ -22,145 +20,150 @@ import { useSiteContent } from '@/lib/site-content';
 import type { AdminAnalytics } from '@/types/domain/analytics';
 
 import { AdminPageHeader } from './admin-nav';
-import { ReviewCard } from './review-queue';
 import { useAuditLog } from '../api/audit';
 import { useStoreFonts } from '../api/fonts-store';
 import { useReviewItems } from '../api/review';
+import { useStudioRequests } from '../api/studios';
 import { fmt, isOverdue, timeAgo } from '../utils';
 
-/** بطاقة «يحتاج انتباهك» — رقم وسطر واحد ورابط للإجراء؛ تهدأ حين لا شيء */
-function Attention({
-  icon,
-  title,
-  count,
-  line,
-  to,
-  cta,
-  tone = 'neutral',
-}: {
-  icon: React.ReactNode;
+type Task = {
+  key: string;
+  Icon: (p: { className?: string }) => React.JSX.Element;
   title: string;
-  count: number;
   line: string;
   to: string;
   cta: string;
-  tone?: 'brand' | 'warn' | 'neutral';
-}) {
-  const quiet = count === 0;
+  urgent?: boolean;
+};
+
+/** صفّ مهمّة: أيقونة، ما المطلوب ولماذا، وزرّ الانتقال — القائمة كلها رابط واحد لكل صفّ */
+function TaskRow({ t }: { t: Task }) {
   return (
-    <Link
-      to={to}
-      className={cn(
-        'group flex flex-col gap-3 rounded-xl border bg-card p-5 transition-colors hover:border-strong',
-        !quiet && tone === 'brand' && 'moment',
-      )}
-    >
-      <span className="flex items-center justify-between gap-3 text-meta text-muted-foreground">
-        {title}
+    <li>
+      <Link to={t.to} className="group flex items-center gap-4 px-4 py-4 transition-colors hover:bg-sunken/60 sm:px-5">
         <span
           className={cn(
-            'grid size-9 place-items-center rounded-full [&_svg]:size-4.5',
-            quiet
-              ? 'bg-sunken text-tertiary'
-              : tone === 'warn'
-                ? 'bg-tint-warn text-warn-text'
-                : 'bg-tint-brand text-primary',
+            'grid size-10 shrink-0 place-items-center rounded-full [&_svg]:size-4.5',
+            t.urgent ? 'bg-tint-brand text-primary' : 'bg-sunken text-muted-foreground',
           )}
         >
-          {icon}
+          <t.Icon />
         </span>
-      </span>
-      <span dir="ltr" className={cn('text-end text-3xl font-semibold tabular-nums', quiet && 'text-tertiary')}>
-        {count}
-      </span>
-      <span className="text-meta text-muted-foreground">{line}</span>
-      <span className="mt-auto inline-flex items-center gap-1 text-meta font-medium text-foreground group-hover:text-primary">
-        {cta}
-        <ArrowLeftIcon className="size-3.5 transition-transform group-hover:-translate-x-0.5" />
-      </span>
-    </Link>
+        <span className="min-w-0 flex-1">
+          <span className="block text-control font-semibold">{t.title}</span>
+          <span className="mt-0.5 block text-meta text-muted-foreground">{t.line}</span>
+        </span>
+        <span className="hidden items-center gap-1 text-meta font-medium text-foreground group-hover:text-primary sm:inline-flex">
+          {t.cta}
+          <ArrowLeftIcon className="size-3.5 transition-transform group-hover:-translate-x-0.5" />
+        </span>
+      </Link>
+    </li>
   );
 }
 
 /**
- * الرئيسية: ما يحتاج قراراً أولاً (المراجعة، الخطوط المخفية، المحتوى)، ثم نبض المنصّة بأرقام قليلة،
- * ثم آخر ما فعله المشرفون. التفاصيل الكاملة في التحليلات.
+ * الرئيسية: سؤال واحد — «ما الذي ينتظرني؟» — بقائمة مهام مرتّبة بالأهمّية، ثم أربعة أرقام
+ * للاطمئنان على المنصّة، ثم آخر النشاط. الرسوم والتفاصيل في «التحليلات» وحدها.
  */
 export function AdminOverview({ analytics: d, adminName }: { analytics: AdminAnalytics; adminName: string }) {
   const reviews = useReviewItems();
+  const studios = useStudioRequests();
   const fonts = useStoreFonts();
   const content = useSiteContent();
   const log = useAuditLog();
 
-  const pending = reviews
+  const pendingFonts = reviews
     .filter((r) => r.state === 'pending')
     .sort((a, b) => a.submittedAt.localeCompare(b.submittedAt));
-  const overdue = pending.filter((r) => isOverdue(r.submittedAt)).length;
+  const overdue = pendingFonts.filter((r) => isOverdue(r.submittedAt)).length;
+  const pendingStudios = studios.filter((r) => r.status === 'pending');
   const hidden = fonts.filter((f) => f.visibility === 'hidden').length;
   const activeBanners = content.banners.filter((b) => b.active).length;
-  const top = fonts
-    .filter((f) => f.visibility === 'visible')
-    .sort((a, b) => b.stats.downloads - a.stats.downloads)
-    .slice(0, 6)
-    .map((f) => ({ label: f.font.name, value: f.stats.downloads }));
+
+  const tasks: Task[] = [];
+  if (pendingFonts.length)
+    tasks.push({
+      key: 'fonts',
+      Icon: DocumentSignedIcon,
+      title: `${pendingFonts.length} خطوط بانتظار المراجعة`,
+      line: overdue
+        ? `${overdue} منها تجاوز يومين — ابدأ بالأقدم`
+        : `أقدمها وصل ${timeAgo(pendingFonts[0]!.submittedAt)}`,
+      to: paths.admin.review.getHref(pendingFonts[0]!.id),
+      cta: 'ابدأ بالأقدم',
+      urgent: true,
+    });
+  if (pendingStudios.length)
+    tasks.push({
+      key: 'studios',
+      Icon: ShieldCheckIcon,
+      title: `${pendingStudios.length} استوديوهات تطلب التوثيق`,
+      line: 'لا يستطيعون البيع قبل اعتمادك',
+      to: `${paths.admin.getHref('requests')}?type=studios`,
+      cta: 'راجِع',
+      urgent: true,
+    });
+  if (hidden)
+    tasks.push({
+      key: 'hidden',
+      Icon: EyeOffIcon,
+      title: `${hidden} خطوط مخفية`,
+      line: 'لا يراها الزوّار — تأكّد أن الإخفاء ما زال مقصوداً',
+      to: paths.admin.getHref('fonts'),
+      cta: 'الخطوط',
+    });
+  if (!activeBanners)
+    tasks.push({
+      key: 'banners',
+      Icon: PictureIcon,
+      title: 'الشريحة الرئيسية بلا بنرات',
+      line: 'أضف بنراً — صورة أو نصّاً — ليظهر أعلى المكتبة',
+      to: paths.admin.getHref('content'),
+      cta: 'المحتوى',
+    });
+
   const k = d.kpis;
   const hour = new Date().getHours();
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-8">
       <AdminPageHeader
         title={`${hour < 12 ? 'صباح الخير' : 'مساء الخير'}، ${adminName}`}
         description={new Date().toLocaleDateString('ar', { weekday: 'long', day: 'numeric', month: 'long' })}
       />
 
-      <section aria-labelledby="att-title" className="flex flex-col gap-3">
-        <h2 id="att-title" className="text-lg font-semibold">
-          يحتاج انتباهك
+      <section aria-labelledby="tasks-title" className="flex flex-col gap-3">
+        <h2 id="tasks-title" className="text-lead font-semibold">
+          ما ينتظرك
         </h2>
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-          <Attention
-            icon={<DocumentSignedIcon />}
-            title="بانتظار المراجعة"
-            count={pending.length}
-            line={
-              pending.length
-                ? overdue
-                  ? `${overdue} منها تجاوز يومين`
-                  : `أقدمها وصل ${timeAgo(pending[0]!.submittedAt)}`
-                : 'الطابور فارغ'
-            }
-            to={pending[0] ? paths.admin.review.getHref(pending[0].id) : paths.admin.getHref('review')}
-            cta={pending.length ? 'ابدأ بالأقدم' : 'سجلّ المراجعات'}
-            tone="brand"
-          />
-          <Attention
-            icon={<EyeOffIcon />}
-            title="خطوط مخفية"
-            count={hidden}
-            line={hidden ? 'لا يراها الزوّار — راجع إن كان الإخفاء مؤقتاً' : 'كل الخطوط ظاهرة'}
-            to={paths.admin.getHref('fonts')}
-            cta="مخزن الخطوط"
-            tone="warn"
-          />
-          <Attention
-            icon={<PictureIcon />}
-            title="بنرات مفعّلة"
-            count={activeBanners}
-            line={activeBanners ? `من ${content.banners.length} في الشريحة الرئيسية` : 'الشريحة الرئيسية بلا بنرات'}
-            to={paths.admin.getHref('content')}
-            cta="إدارة المحتوى"
-            tone="warn"
-          />
-        </div>
+        {tasks.length ? (
+          <ul className="divide-y overflow-hidden rounded-xl border bg-card">
+            {tasks.map((t) => (
+              <TaskRow key={t.key} t={t} />
+            ))}
+          </ul>
+        ) : (
+          <p className="flex items-center gap-3 rounded-xl border bg-card p-5 text-control text-muted-foreground">
+            <span className="grid size-10 place-items-center rounded-full bg-tint-ok text-ok-text">
+              <CheckIcon className="size-4.5" />
+            </span>
+            لا شيء ينتظرك — كل الطلبات محسومة والمكتبة كما ينبغي.
+          </p>
+        )}
       </section>
 
       <section aria-labelledby="pulse-title" className="flex flex-col gap-3">
         <div className="flex items-end justify-between gap-3">
-          <h2 id="pulse-title" className="text-lg font-semibold">
-            نبض المنصّة
+          <h2 id="pulse-title" className="text-lead font-semibold">
+            المنصّة هذا الشهر
           </h2>
-          <Link to={paths.admin.getHref('analytics')} className="text-meta text-muted-foreground hover:text-primary">
-            التحليلات الكاملة
+          <Link
+            to={paths.admin.getHref('analytics')}
+            className="inline-flex items-center gap-1 text-meta text-muted-foreground hover:text-primary"
+          >
+            التحليلات
+            <ArrowLeftIcon className="size-3.5" />
           </Link>
         </div>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
@@ -195,74 +198,32 @@ export function AdminOverview({ analytics: d, adminName }: { analytics: AdminAna
             hint={`${k.subscribers.value} مشترك`}
           />
         </div>
-        <div className="grid grid-cols-[minmax(0,1fr)] gap-4 lg:grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)]">
-          <ChartCard title="الزيارات" subtitle="يومياً · آخر 30 يوماً">
-            <AreaChart
-              labels={d.days}
-              values={d.visitsByDay}
-              label="الزيارات"
-              caption="الزيارات اليومية خلال آخر 30 يوماً"
-            />
-          </ChartCard>
-          <ChartCard title="الأكثر تحميلاً" subtitle="من الخطوط الظاهرة">
-            <BarList items={top} />
-          </ChartCard>
-        </div>
       </section>
 
-      <div className="grid grid-cols-[minmax(0,1fr)] gap-4 lg:grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)]">
-        <section aria-labelledby="q-title" className="flex flex-col gap-3">
-          <div className="flex items-end justify-between gap-3">
-            <h2 id="q-title" className="text-lg font-semibold">
-              التالي في الطابور
-            </h2>
-            {pending.length > 3 && (
-              <Button asChild variant="ghost" size="sm">
-                <Link to={paths.admin.getHref('review')}>الكل ({pending.length})</Link>
-              </Button>
-            )}
-          </div>
-          {pending.length ? (
-            <ul className="flex flex-col gap-3">
-              {pending.slice(0, 3).map((s) => (
-                <ReviewCard key={s.id} s={s} compact />
-              ))}
-            </ul>
-          ) : (
-            <p className="rounded-xl border bg-card p-6 text-meta text-muted-foreground">
-              لا شيء بانتظارك — راجعت كل ما وصل.
-            </p>
-          )}
-        </section>
-
-        <section aria-labelledby="log-title" className="flex flex-col gap-3">
-          <h2 id="log-title" className="text-lg font-semibold">
-            آخر النشاط
-          </h2>
-          <div className="rounded-xl border bg-card p-5">
-            {log.length ? (
-              <ol className="flex flex-col gap-4">
-                {log.slice(0, 6).map((e) => (
-                  <li key={e.id} className="flex gap-3 text-meta">
-                    <TimePastIcon className="mt-0.5 size-4 shrink-0 text-tertiary" />
-                    <span className="min-w-0">
-                      <span className="text-foreground">{e.action}</span>{' '}
-                      <bdi className="font-medium">«{e.target}»</bdi>
-                      <span className="block text-caption text-muted-foreground">
-                        {e.actor} · {timeAgo(e.at)}
-                      </span>
-                    </span>
-                  </li>
-                ))}
-              </ol>
-            ) : (
-              <p className="text-meta text-muted-foreground">
-                ستظهر هنا قرارات المراجعة وتعديلات الخطوط والمحتوى — من فعلها ومتى.
-              </p>
-            )}
-          </div>
-        </section>
-      </div>
+      <section aria-labelledby="log-title" className="flex flex-col gap-3">
+        <h2 id="log-title" className="text-lead font-semibold">
+          آخر النشاط
+        </h2>
+        {log.length ? (
+          <ol className="divide-y rounded-xl border bg-card">
+            {log.slice(0, 5).map((e) => (
+              <li key={e.id} className="flex items-center gap-3 px-4 py-3 text-meta sm:px-5">
+                <TimePastIcon className="size-4 shrink-0 text-tertiary" />
+                <span className="min-w-0 flex-1">
+                  {e.action} <bdi className="font-medium">«{e.target}»</bdi>
+                </span>
+                <span className="shrink-0 text-caption text-muted-foreground">
+                  {e.actor} · {timeAgo(e.at)}
+                </span>
+              </li>
+            ))}
+          </ol>
+        ) : (
+          <p className="rounded-xl border bg-card p-5 text-meta text-muted-foreground">
+            ستظهر هنا القرارات والتعديلات — من فعلها ومتى.
+          </p>
+        )}
+      </section>
     </div>
   );
 }

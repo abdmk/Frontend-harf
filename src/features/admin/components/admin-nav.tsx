@@ -8,7 +8,7 @@ export function useAdminSection(): string {
   return pathname.replace(/^\/admin\/?/, '').split('/')[0] ?? '';
 }
 
-/** رأس صفحة داخل الإدارة */
+/** رأس صفحة داخل الإدارة — بمقاسات رأس الاستوديو نفسها: عنوان، سطر وصف، وإجراء على الطرف الآخر */
 export function AdminPageHeader({
   title,
   description,
@@ -21,7 +21,7 @@ export function AdminPageHeader({
   back?: { to: string; label: string };
 }) {
   return (
-    <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
+    <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
       <div className="min-w-0">
         {back && (
           <Link
@@ -32,8 +32,8 @@ export function AdminPageHeader({
             {back.label}
           </Link>
         )}
-        <h1 className="animate-fade-up text-3xl leading-tight font-bold">{title}</h1>
-        {description && <div className="mt-2 text-control text-muted-foreground">{description}</div>}
+        <h1 className="animate-fade-up text-2xl font-semibold">{title}</h1>
+        {description && <div className="mt-1 text-meta text-muted-foreground">{description}</div>}
       </div>
       {action}
     </div>

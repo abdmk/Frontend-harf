@@ -3,7 +3,7 @@ import { Navigate } from 'react-router';
 import { PageMeta } from '@/components/shared/page-meta';
 import { paths } from '@/config/paths';
 import { VerifyFlow } from '@/features/verification/components/verify-flow';
-import { useCurrentUser } from '@/lib/auth';
+import { useCurrentUser } from '@/hooks/use-current-user';
 import { useMyVerification } from '@/lib/studio-verification';
 
 /** توثيق الاستوديو — صفحة مركّزة بلا عمود جانبي (كمراحل التسجيل)، للاستوديو وحده */

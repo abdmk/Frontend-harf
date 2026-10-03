@@ -11,14 +11,12 @@ import { AccountSectionPage } from './pages/account-section';
 import {
   AdminAnalyticsPage,
   AdminContentPage,
-  AdminPlansPage,
   AdminStudioDetailPage,
-  AdminStudiosPage,
   AdminFontDetailPage,
   AdminFontsPage,
   AdminHomePage,
+  AdminRequestsPage,
   AdminReviewDetailPage,
-  AdminReviewPage,
   AdminUsersPage,
 } from './pages/admin';
 import { BlogPage, BlogPostPage } from './pages/blog';
@@ -114,16 +112,18 @@ export function App() {
         {/* لوحة الإدارة — مساحة مستقلّة بعمود جانبي وحارس واحد */}
         <Route path="admin" errorElement={<ErrorBoundary />} element={<AdminLayout />}>
           <Route index element={<AdminHomePage />} />
-          <Route path="review" element={<AdminReviewPage />} />
+          <Route path="requests" element={<AdminRequestsPage />} />
           <Route path="review/:id" element={<AdminReviewDetailPage />} />
-          <Route path="studios" element={<AdminStudiosPage />} />
           <Route path="studios/:id" element={<AdminStudioDetailPage />} />
           <Route path="fonts" element={<AdminFontsPage />} />
           <Route path="fonts/:id" element={<AdminFontDetailPage />} />
           <Route path="users" element={<AdminUsersPage />} />
-          <Route path="plans" element={<AdminPlansPage />} />
           <Route path="content" element={<AdminContentPage />} />
           <Route path="analytics" element={<AdminAnalyticsPage />} />
+          {/* عناوين قديمة: المراجعة والتوثيق صارا «الطلبات»، والخطط تبويباً في «المحتوى» */}
+          <Route path="review" element={<Navigate to="/admin/requests" replace />} />
+          <Route path="studios" element={<Navigate to="/admin/requests?type=studios" replace />} />
+          <Route path="plans" element={<Navigate to="/admin/content?tab=plans" replace />} />
           <Route path="*" element={<Navigate to="/admin" replace />} />
         </Route>
 

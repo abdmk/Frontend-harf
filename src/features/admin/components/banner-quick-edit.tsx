@@ -4,6 +4,7 @@ import { Link } from 'react-router';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from '@/components/ui/dialog';
 import { PencilIcon, ShieldCheckIcon } from '@/components/ui/icons';
+import { focusPanel } from '@/components/ui/popover';
 import { Spinner } from '@/components/ui/spinner';
 import { paths } from '@/config/paths';
 import { useIsAdmin } from '@/lib/auth';
@@ -38,7 +39,11 @@ export function BannerQuickEdit() {
         </Button>
       </div>
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="max-h-[90dvh] overflow-y-auto sm:max-w-dialog-lg">
+        <DialogContent
+          tabIndex={-1}
+          onOpenAutoFocus={focusPanel}
+          className="max-h-[90dvh] overflow-y-auto sm:max-w-dialog-lg"
+        >
           <div>
             <DialogTitle>بنرات الصفحة الرئيسية</DialogTitle>
             <DialogDescription className="mt-1 text-meta text-muted-foreground">
@@ -52,7 +57,7 @@ export function BannerQuickEdit() {
             </DialogDescription>
           </div>
           <Suspense fallback={<Spinner className="mx-auto my-10" />}>
-            <BannersEditor key={banners.map((b) => b.id).join()} saved={banners} />
+            <BannersEditor key={banners.map((b) => b.id).join()} saved={banners} bare />
           </Suspense>
         </DialogContent>
       </Dialog>

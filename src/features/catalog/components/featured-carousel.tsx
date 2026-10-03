@@ -1,5 +1,6 @@
 import { Link } from 'react-router';
 
+import { BannerSlide } from '@/components/shared/banner-slide';
 import { Carousel } from '@/components/shared/carousel';
 import { isExternalLink, safeContentLink, useSiteContent } from '@/lib/site-content';
 
@@ -24,8 +25,8 @@ export function FeaturedCarousel({
   const banners = useSiteContent().banners.filter((b) => b.active);
   const slides = banners.length
     ? banners.map((b) => {
-        const img = <img src={b.image} alt={b.alt} className="size-full object-cover" draggable={false} />;
         const href = safeContentLink(b.href);
+        const img = <BannerSlide banner={b} linked={!!href} />;
         if (!href)
           return (
             <div key={b.id} className="size-full">

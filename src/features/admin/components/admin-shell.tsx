@@ -1,11 +1,7 @@
-import { type ReactNode, useState } from 'react';
 import { Link } from 'react-router';
 
-import { Avatar } from '@/components/shared/avatar';
-import { HarfMark } from '@/components/shared/harf-logo';
-import { Button } from '@/components/ui/button';
-import { ArrowLeftIcon, MenuIcon } from '@/components/ui/icons';
-import { Sheet, SheetContent, SheetTitle } from '@/components/ui/sheet';
+import { sideNavIcon, sideNavRow } from '@/components/shared/side-nav';
+import { ChevronRightIcon, ShieldCheckIcon } from '@/components/ui/icons';
 import { paths } from '@/config/paths';
 import { useCurrentUser } from '@/hooks/use-current-user';
 import { cn } from '@/lib/cn';
@@ -13,151 +9,106 @@ import { cn } from '@/lib/cn';
 import { useAdminSection } from './admin-nav';
 import { usePendingCount } from '../api/review';
 import { usePendingStudios } from '../api/studios';
-import { ADMIN_GROUPS, ADMIN_NAV } from '../config/nav';
+import { ADMIN_NAV, isAdminNavOn } from '../config/nav';
 
-/** القائمة الجانبية الكاملة: الهوية، مجموعات الأقسام بعناوينها، ثم بطاقة المشرف في الأسفل */
-function SideNav({ onNavigate }: { onNavigate?: () => void }) {
-  const current = useAdminSection();
-  const pending = usePendingCount();
-  const pendingStudios = usePendingStudios();
-  const user = useCurrentUser();
+/** كل ما ينتظر قراراً: خطوط بانتظار المراجعة + استوديوهات بانتظار التوثيق */
+function usePendingRequests() {
+  return usePendingCount() + usePendingStudios();
+}
+
+function CountBadge({ n }: { n: number }) {
+  if (!n) return null;
   return (
-    <div className="flex h-full flex-col">
-      <div className="flex items-center gap-3 px-5 pt-6 pb-5">
-        <span className="grid size-10 place-items-center rounded-lg border bg-card text-primary shadow-soft">
-          <HarfMark className="size-6" />
-        </span>
-        <div className="min-w-0">
-          <p className="text-control font-bold">مكتبة حرف</p>
-          <p className="text-caption text-muted-foreground">لوحة الإدارة</p>
-        </div>
-      </div>
-
-      <nav aria-label="أقسام الإدارة" className="flex flex-1 flex-col gap-6 overflow-y-auto px-3 py-2">
-        {ADMIN_GROUPS.map((g) => (
-          <div key={g.title}>
-            <p className="mb-1.5 px-3 text-caption font-medium text-tertiary">{g.title}</p>
-            <ul className="flex flex-col gap-0.5">
-              {g.items.map((section) => {
-                const item = ADMIN_NAV.find((n) => n.section === section)!;
-                const on = (section ?? '') === current;
-                return (
-                  <li key={item.label}>
-                    <Link
-                      to={paths.admin.getHref(section ?? undefined)}
-                      onClick={onNavigate}
-                      aria-current={on ? 'page' : undefined}
-                      className={cn(
-                        'group/it flex h-11 items-center gap-3 rounded-md px-3 text-control transition-colors duration-(--dur-fast)',
-                        on
-                          ? 'border bg-card font-semibold text-foreground shadow-soft'
-                          : 'text-muted-foreground hover:bg-card/70 hover:text-foreground',
-                      )}
-                    >
-                      <item.Icon
-                        filled={on}
-                        className={cn(
-                          'size-5 shrink-0 transition-transform duration-(--dur-base) ease-pop group-hover/it:scale-110',
-                          on && 'text-primary',
-                        )}
-                      />
-                      <span className="flex-1">{item.label}</span>
-                      {section === 'review' && pending > 0 && (
-                        <span
-                          dir="ltr"
-                          aria-label={`${pending} بانتظار المراجعة`}
-                          className="grid h-5.5 min-w-5.5 place-items-center rounded-full bg-primary-fill px-1.5 text-caption font-semibold text-primary-foreground tabular-nums"
-                        >
-                          {pending}
-                        </span>
-                      )}
-                      {section === 'studios' && pendingStudios > 0 && (
-                        <span
-                          dir="ltr"
-                          aria-label={`${pendingStudios} طلبات توثيق`}
-                          className="grid h-5.5 min-w-5.5 place-items-center rounded-full bg-primary-fill px-1.5 text-caption font-semibold text-primary-foreground tabular-nums"
-                        >
-                          {pendingStudios}
-                        </span>
-                      )}
-                    </Link>
-                  </li>
-                );
-              })}
-            </ul>
-          </div>
-        ))}
-      </nav>
-
-      <div className="flex flex-col gap-2 border-t p-3">
-        <Link
-          to={paths.home.getHref()}
-          onClick={onNavigate}
-          className="flex h-10 items-center gap-3 rounded-md px-3 text-control text-muted-foreground transition-colors hover:bg-card/70 hover:text-foreground"
-        >
-          <ArrowLeftIcon className="size-4.5 rotate-180" />
-          العودة إلى الموقع
-        </Link>
-        {user && (
-          <Link
-            to={paths.account.getHref('')}
-            onClick={onNavigate}
-            className="flex items-center gap-3 rounded-lg border bg-card p-2.5 transition-colors hover:border-strong"
-          >
-            <Avatar initials={user.initials} seed={user.id} size="md" />
-            <span className="min-w-0 flex-1">
-              <span className="block truncate text-control font-semibold">{user.name}</span>
-              <span dir="ltr" className="block truncate text-end text-caption text-muted-foreground">
-                {user.email}
-              </span>
-            </span>
-          </Link>
-        )}
-      </div>
-    </div>
+    <span
+      dir="ltr"
+      aria-label={`${n} بانتظار قرارك`}
+      className="grid h-5.5 min-w-5.5 place-items-center rounded-full bg-primary-fill px-1.5 text-caption font-semibold text-primary-foreground tabular-nums"
+    >
+      {n}
+    </span>
   );
 }
 
 /**
- * غلاف لوحة الإدارة كتطبيق مستقلّ: عمود جانبي بطول الشاشة، وشريط علوي داخل منطقة المحتوى،
- * ومحتوى على أرضية رمادية هادئة تبرز فوقها البطاقات — بمساحات أوسع من صفحات الموقع.
+ * العمود الجانبي للإدارة — بنمط الحساب والاستوديو نفسه (صفوف sideNavRow) لتبقى جزءاً من حرف:
+ * بطاقة «لوحة الإدارة»، ستّة أقسام، ثم العودة إلى الحساب.
  */
-export function AdminShell({ actions, children }: { actions: ReactNode; children: ReactNode }) {
-  const [menu, setMenu] = useState(false);
+export function AdminSidebar() {
+  const current = useAdminSection();
+  const pending = usePendingRequests();
+  const user = useCurrentUser();
   return (
-    <div className="min-h-dvh bg-sunken/60 lg:grid lg:grid-cols-[17rem_minmax(0,1fr)]">
-      <aside className="sticky top-0 hidden h-dvh border-e bg-sunken lg:block">
-        <SideNav />
-      </aside>
-
-      <div className="flex min-w-0 flex-col">
-        <header className="sticky top-0 z-40 flex h-16 items-center gap-3 border-b bg-background/85 px-4 backdrop-blur-lg sm:px-6 lg:px-10">
-          <Button
-            variant="ghost"
-            size="icon"
-            className="lg:hidden"
-            aria-label="قائمة الإدارة"
-            onClick={() => setMenu(true)}
-          >
-            <MenuIcon className="size-5" />
-          </Button>
-          <Link to={paths.admin.getHref()} className="flex items-center gap-2 font-bold lg:hidden">
-            <HarfMark className="size-6 text-primary" />
-            الإدارة
-          </Link>
-          <div className="ms-auto flex items-center gap-1">{actions}</div>
-        </header>
-        <main id="main" className="mx-auto w-full max-w-[90rem] flex-1 px-4 py-6 sm:px-6 sm:py-8 lg:px-10 lg:py-10">
-          {children}
-        </main>
+    <div className="flex flex-col gap-5">
+      <div className="flex items-center gap-4 rounded-lg bg-sunken p-5">
+        <span className="grid size-14 shrink-0 place-items-center rounded-md bg-card text-primary [&_svg]:size-6">
+          <ShieldCheckIcon filled />
+        </span>
+        <div className="min-w-0">
+          <p className="text-caption text-tertiary">لوحة الإدارة</p>
+          <p className="truncate text-base font-semibold">{user?.name}</p>
+        </div>
       </div>
 
-      <Sheet open={menu} onOpenChange={setMenu}>
-        <SheetContent side="right" className="w-72 bg-sunken p-0">
-          <SheetTitle className="sr-only">قائمة الإدارة</SheetTitle>
-          <SideNav onNavigate={() => setMenu(false)} />
-        </SheetContent>
-      </Sheet>
+      <nav aria-label="أقسام الإدارة">
+        <ul className="flex flex-col gap-0.5">
+          {ADMIN_NAV.map((item) => {
+            const on = isAdminNavOn(item, current);
+            return (
+              <li key={item.label}>
+                <Link
+                  to={paths.admin.getHref(item.section ?? undefined)}
+                  aria-current={on ? 'page' : undefined}
+                  className={sideNavRow(on)}
+                >
+                  <item.Icon filled={on} className={sideNavIcon(on)} />
+                  <span className="flex-1">{item.label}</span>
+                  {item.section === 'requests' && <CountBadge n={pending} />}
+                </Link>
+              </li>
+            );
+          })}
+        </ul>
+        <hr className="my-4 border-border" />
+        <Link
+          to={paths.account.getHref('')}
+          className="flex h-11 items-center gap-4 rounded-sm px-4 text-lead text-muted-foreground transition-colors hover:bg-sunken hover:text-foreground"
+        >
+          <ChevronRightIcon className="size-5" />
+          حسابك الشخصي
+        </Link>
+      </nav>
     </div>
+  );
+}
+
+/** على الشاشات الصغيرة: صفّ أقسام يتمرّر أفقياً — كما في الاستوديو */
+export function AdminTabs() {
+  const current = useAdminSection();
+  const pending = usePendingRequests();
+  return (
+    <nav
+      aria-label="أقسام الإدارة"
+      className="-mx-4 flex [scrollbar-width:none] gap-1 overflow-x-auto px-4 lg:hidden [&::-webkit-scrollbar]:hidden"
+    >
+      {ADMIN_NAV.map((item) => {
+        const on = isAdminNavOn(item, current);
+        return (
+          <Link
+            key={item.label}
+            to={paths.admin.getHref(item.section ?? undefined)}
+            aria-current={on ? 'page' : undefined}
+            className={cn(
+              'inline-flex h-9 shrink-0 items-center gap-1.5 rounded-full px-4 text-control whitespace-nowrap text-muted-foreground transition-colors hover:text-foreground',
+              on && 'bg-foreground font-medium text-background hover:text-background',
+            )}
+          >
+            {item.label}
+            {item.section === 'requests' && pending > 0 && (
+              <span className="size-1.5 rounded-full bg-primary-fill" aria-label={`${pending} بانتظار قرارك`} />
+            )}
+          </Link>
+        );
+      })}
+    </nav>
   );
 }

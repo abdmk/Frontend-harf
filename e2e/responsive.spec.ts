@@ -24,7 +24,7 @@ const PAGES = [
   '/studio/publish',
   '/foundries/tajarib',
   '/admin?as=admin',
-  '/admin/review?as=admin',
+  '/admin/requests?as=admin',
   '/admin/review/REV-4830?as=admin',
   '/admin/fonts?as=admin',
   '/admin/fonts/cairo?as=admin',

@@ -8,7 +8,6 @@ import {
   CheckIcon,
   ClockIcon,
   CrossIcon,
-  CrownIcon,
   DocumentSignedIcon,
   ExclamationIcon,
   PencilIcon,
@@ -35,68 +34,61 @@ export const STATE: Record<
 
 export const failedChecks = (s: ReviewItem) => s.checks.filter((c) => !c.ok).length;
 
-export function ReviewCard({ s, compact }: { s: ReviewItem; compact?: boolean }) {
+/**
+ * صفّ طلب في قائمة واحدة (لا بطاقة لكل طلب): معاينة الخط، الاسم، سطر وصفي، وشارة فقط لما يستحق
+ * الانتباه (فحص لم يمرّ، تأخّر، إعادة إرسال). الإجراء زرّ هادئ — لا أزرار حمراء متكرّرة.
+ */
+export function ReviewCard({ s }: { s: ReviewItem; compact?: boolean }) {
   const st = STATE[s.state];
   const failed = failedChecks(s);
   const late = s.state === 'pending' && isOverdue(s.submittedAt);
   return (
-    <li className="flex animate-fade-up flex-col gap-4 rounded-xl border bg-card p-5 sm:flex-row sm:items-center">
+    <li className="flex animate-fade-up items-center gap-4 px-4 py-4 sm:px-5">
       <p
         aria-hidden
-        className="grid h-20 shrink-0 place-items-center overflow-hidden rounded-lg bg-sunken px-4 text-3xl sm:w-40"
+        className="hidden h-14 w-24 shrink-0 place-items-center overflow-hidden rounded-md bg-sunken px-2 text-xl whitespace-nowrap sm:grid"
         style={faceStyle(s.preview, 700)}
       >
         {s.nameAr ?? 'أبجد'}
       </p>
       <div className="min-w-0 flex-1">
-        <div className="flex flex-wrap items-center gap-2">
+        <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
           <Link
             to={paths.admin.review.getHref(s.id)}
-            className="text-lead font-semibold underline-offset-4 hover:text-primary hover:underline"
+            className="text-control font-semibold underline-offset-4 hover:text-primary hover:underline"
           >
             <bdi>{s.nameLatin}</bdi>
             {s.nameAr && <span className="font-normal text-muted-foreground"> · {s.nameAr}</span>}
           </Link>
-          <Badge tone={st.tone} icon={<st.Icon />}>
-            {st.label}
-          </Badge>
+          {s.state !== 'pending' && (
+            <Badge tone={st.tone} icon={<st.Icon />}>
+              {st.label}
+            </Badge>
+          )}
+          {failed > 0 && (
+            <Badge tone="warning" icon={<ExclamationIcon />}>
+              {failed === 1 ? 'فحص لم يمرّ' : `${failed} فحوص لم تمرّ`}
+            </Badge>
+          )}
           {s.resubmission && (
             <Badge tone="neutral" icon={<RefreshIcon />}>
               إعادة إرسال
             </Badge>
           )}
         </div>
-        <p className="mt-1 text-caption text-muted-foreground">
+        <p className="mt-1 text-meta text-muted-foreground">
           {s.foundry.name} · {CATEGORY_LABEL[s.category]} · {s.weights.length} أوزان ·{' '}
-          <span className={late ? 'font-medium text-warn-text' : undefined}>{timeAgo(s.submittedAt)}</span>
+          {s.type === 'paid' ? (
+            <>
+              مدفوع <bdi dir="ltr">${s.price}</bdi>
+            </>
+          ) : (
+            'مجاني'
+          )}{' '}
+          · <span className={late ? 'font-medium text-warn-text' : undefined}>{timeAgo(s.submittedAt)}</span>
         </p>
-        {!compact && (
-          <div className="mt-3 flex flex-wrap items-center gap-2">
-            {s.type === 'paid' ? (
-              <Badge tone="studio" icon={<CrownIcon />}>
-                مدفوع · <bdi dir="ltr">${s.price}</bdi>
-              </Badge>
-            ) : (
-              <Badge tone="neutral">مجاني · {s.license}</Badge>
-            )}
-            {failed ? (
-              <Badge tone="warning" icon={<ExclamationIcon />}>
-                {failed === 1 ? 'فحص واحد لم يمرّ' : `${failed} فحوص لم تمرّ`}
-              </Badge>
-            ) : (
-              <Badge tone="success" icon={<CheckIcon />}>
-                الفحوص الآلية سليمة
-              </Badge>
-            )}
-          </div>
-        )}
       </div>
-      <Button
-        asChild
-        size="sm"
-        variant={s.state === 'pending' ? 'primary' : 'outline'}
-        className="self-start sm:self-center"
-      >
+      <Button asChild size="sm" variant={s.state === 'pending' ? 'ink' : 'outline'}>
         <Link to={paths.admin.review.getHref(s.id)}>{s.state === 'pending' ? 'راجِع' : 'التفاصيل'}</Link>
       </Button>
     </li>
@@ -106,7 +98,7 @@ export function ReviewCard({ s, compact }: { s: ReviewItem; compact?: boolean })
 type Filter = ReviewState | 'all';
 
 /** طابور المراجعة: الأقدم أولاً (من انتظر أكثر يُراجَع أولاً)، والقرارات السابقة في تبويباتها */
-export function ReviewQueue() {
+export function ReviewQueue({ embedded = false }: { embedded?: boolean }) {
   const items = useReviewItems();
   const [filter, setFilter] = useState<Filter>('pending');
   const count = (st: ReviewState) => items.filter((i) => i.state === st).length;
@@ -117,12 +109,16 @@ export function ReviewQueue() {
 
   return (
     <div className="flex flex-col gap-5">
-      <AdminPageHeader
-        title="المراجعة"
-        description={
-          pending ? `${pending} خطوط بانتظار قرار · الأقدم أولاً · هدف المراجعة 3 أيام عمل` : 'لا خطوط بانتظار المراجعة'
-        }
-      />
+      {!embedded && (
+        <AdminPageHeader
+          title="المراجعة"
+          description={
+            pending
+              ? `${pending} خطوط بانتظار قرار · الأقدم أولاً · هدف المراجعة 3 أيام عمل`
+              : 'لا خطوط بانتظار المراجعة'
+          }
+        />
+      )}
       <SegmentedControl
         label="حالة الطلب"
         value={filter}
@@ -137,7 +133,7 @@ export function ReviewQueue() {
         ]}
       />
       {rows.length ? (
-        <ul aria-label="طلبات المراجعة" className="flex flex-col gap-3">
+        <ul aria-label="طلبات المراجعة" className="divide-y rounded-xl border bg-card">
           {rows.map((s) => (
             <ReviewCard key={s.id} s={s} />
           ))}

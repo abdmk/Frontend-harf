@@ -48,7 +48,7 @@ function DialogContent({
       <DialogPrimitive.Content
         data-slot="dialog-content"
         className={cn(
-          'fixed top-[50%] left-[50%] z-50 grid max-h-[calc(100dvh-2rem)] w-full max-w-[calc(100%-2rem)] translate-x-[-50%] translate-y-[-50%] grid-cols-[minmax(0,1fr)] gap-4 overflow-y-auto rounded-xl border bg-background p-6 shadow-overlay duration-(--dur-slow) ease-out-quint outline-none data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95 sm:max-w-dialog-sm',
+          'fixed top-[50%] left-[50%] z-50 grid max-h-[calc(100dvh-2rem)] w-full max-w-[calc(100%-2rem)] translate-x-[-50%] translate-y-[-50%] [scrollbar-width:none] grid-cols-[minmax(0,1fr)] gap-4 overflow-y-auto rounded-xl border bg-background p-6 shadow-overlay duration-(--dur-slow) ease-out-quint outline-none data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95 sm:max-w-dialog-sm [&::-webkit-scrollbar]:hidden',
           className,
         )}
         {...props}
@@ -57,7 +57,7 @@ function DialogContent({
         {showCloseButton && (
           <DialogPrimitive.Close
             data-slot="dialog-close"
-            className="absolute end-5 top-5 grid size-9 place-items-center rounded-full text-muted-foreground transition-colors hover:bg-sunken hover:text-foreground"
+            className="absolute end-5 top-5 grid size-9 place-items-center rounded-full text-muted-foreground transition-colors outline-none hover:bg-sunken hover:text-foreground focus-visible:bg-sunken focus-visible:text-foreground focus-visible:ring-2 focus-visible:ring-foreground/15"
           >
             <CrossSmallIcon className="size-5" />
             <span className="sr-only">إغلاق</span>

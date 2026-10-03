@@ -5,17 +5,9 @@ import { EmptyState } from '@/components/shared/empty-state';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import {
   EyeIcon,
   EyeOffIcon,
   LayersIcon,
-  MenuDotsIcon,
   PencilIcon,
   RefreshIcon,
   SearchIcon,
@@ -24,10 +16,10 @@ import {
 } from '@/components/ui/icons';
 import { InputGroup } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Switch } from '@/components/ui/switch';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { toast } from '@/components/ui/toast';
 import { paths } from '@/config/paths';
+import { cn } from '@/lib/cn';
 import { faceStyle } from '@/lib/font-weight';
 import { CATEGORY_LABEL, TYPE_LABEL } from '@/lib/labels';
 import type { Font } from '@/types/domain/font';
@@ -84,60 +76,67 @@ function Thumb({ font }: { font: Font }) {
   );
 }
 
+/**
+ * إجراءات الصفّ ظاهرة مباشرة (لا قائمة مخفية): تعديل، إخفاء/إظهار، تمييز، حذف.
+ * النصّ يختفي تحت xl ويبقى الاسم في aria-label وtitle.
+ */
 function RowActions({ item }: { item: StoreFont }) {
   const [edit, setEdit] = useState(false);
   const [del, setDel] = useState(false);
-  const deleted = item.visibility === 'deleted';
+  const name = item.font.name;
+  if (item.visibility === 'deleted')
+    return (
+      <Button variant="outline" size="sm" onClick={() => restore(item)}>
+        <RefreshIcon />
+        استرجاع
+      </Button>
+    );
+  const hidden = item.visibility === 'hidden';
+  // «تعديل» بنصّه، والبقية أزرار أيقونات بأسماء كاملة (aria-label) وتلميح — كلها ظاهرة على الصفّ
   return (
-    <>
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button variant="ghost" size="icon-sm" aria-label={`إجراءات ${item.font.name}`}>
-            <MenuDotsIcon className="size-4" />
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end">
-          {deleted ? (
-            <DropdownMenuItem onSelect={() => restore(item)}>
-              <RefreshIcon />
-              استرجاع
-            </DropdownMenuItem>
-          ) : (
-            <>
-              <DropdownMenuItem onSelect={() => setEdit(true)}>
-                <PencilIcon />
-                تعديل
-              </DropdownMenuItem>
-              <DropdownMenuItem onSelect={() => toggleFeatured(item)}>
-                <StarIcon filled={item.featured} />
-                {item.featured ? 'إلغاء التمييز' : 'تمييز'}
-              </DropdownMenuItem>
-              {item.visibility === 'visible' && (
-                <DropdownMenuItem asChild>
-                  <Link to={paths.font.getHref(item.font.id)}>
-                    <EyeIcon />
-                    عرض في الموقع
-                  </Link>
-                </DropdownMenuItem>
-              )}
-              <DropdownMenuSeparator />
-              <DropdownMenuItem variant="destructive" onSelect={() => setDel(true)}>
-                <TrashIcon />
-                حذف
-              </DropdownMenuItem>
-            </>
-          )}
-        </DropdownMenuContent>
-      </DropdownMenu>
+    <div className="flex items-center justify-end gap-1">
+      <Button variant="outline" size="sm" onClick={() => setEdit(true)} aria-label={`تعديل ${name}`}>
+        <PencilIcon />
+        تعديل
+      </Button>
+      <Button
+        variant="ghost"
+        size="icon-sm"
+        onClick={() => toggleHidden(item)}
+        aria-label={`${hidden ? 'إظهار' : 'إخفاء'} ${name}`}
+        title={hidden ? 'إظهار' : 'إخفاء'}
+      >
+        {hidden ? <EyeIcon className="size-4" /> : <EyeOffIcon className="size-4" />}
+      </Button>
+      <Button
+        variant="ghost"
+        size="icon-sm"
+        onClick={() => toggleFeatured(item)}
+        aria-label={`${item.featured ? 'إلغاء تمييز' : 'تمييز'} ${name}`}
+        aria-pressed={item.featured}
+        title={item.featured ? 'إلغاء التمييز' : 'تمييز'}
+      >
+        <StarIcon filled={item.featured} className={cn('size-4', item.featured && 'text-gold-500')} />
+      </Button>
+      <Button
+        variant="ghost"
+        size="icon-sm"
+        onClick={() => setDel(true)}
+        aria-label={`حذف ${name}`}
+        title="حذف"
+        className="text-dgr-text hover:bg-tint-dgr hover:text-dgr-text"
+      >
+        <TrashIcon className="size-4" />
+      </Button>
       {edit && <EditFontDialog item={item} open={edit} onOpenChange={setEdit} />}
       {del && <DeleteFontDialog item={item} open={del} onOpenChange={setDel} />}
-    </>
+    </div>
   );
 }
 
 /**
  * «مخزن الخطوط»: كل خطوط المكتبة في جدول واحد — بحث، تصفية بالظهور والنوع، ترتيب،
- * ومفتاح ظهور مباشر لكل خط. التفاصيل والإحصاءات الكاملة في صفحة الخط داخل الإدارة.
+ * وإجراءات كل خط ظاهرة على صفّه. التفاصيل والإحصاءات الكاملة في صفحة الخط داخل الإدارة.
  */
 export function FontStore() {
   const all = useStoreFonts();
@@ -169,7 +168,7 @@ export function FontStore() {
   return (
     <div className="flex flex-col gap-5">
       <AdminPageHeader
-        title="مخزن الخطوط"
+        title="الخطوط"
         description={`${all.length - count('deleted')} خطاً · ${count('visible')} ظاهر · ${count('hidden')} مخفي`}
       />
 
@@ -242,8 +241,7 @@ export function FontStore() {
                 <TableHead>الخط</TableHead>
                 <TableHead>النوع</TableHead>
                 <TableHead className="text-end">التحميلات</TableHead>
-                <TableHead className="text-end">الإيراد</TableHead>
-                <TableHead>الظهور</TableHead>
+                <TableHead>الحالة</TableHead>
                 <TableHead>
                   <span className="sr-only">إجراءات</span>
                 </TableHead>
@@ -282,34 +280,26 @@ export function FontStore() {
                         {f.type !== 'free' && <bdi dir="ltr">${f.price}</bdi>}
                       </Badge>
                     </TableCell>
-                    <TableCell dir="ltr" className="text-end tabular-nums">
-                      {fmt(i.stats.downloads)}
-                    </TableCell>
-                    <TableCell dir="ltr" className="text-end tabular-nums">
-                      {i.stats.revenue ? `$${fmt(i.stats.revenue)}` : '—'}
+                    <TableCell className="text-end tabular-nums">
+                      <span dir="ltr">{fmt(i.stats.downloads)}</span>
+                      {i.stats.revenue > 0 && (
+                        <span dir="ltr" className="block text-caption text-muted-foreground">
+                          ${fmt(i.stats.revenue)}
+                        </span>
+                      )}
                     </TableCell>
                     <TableCell>
                       {deleted ? (
-                        <Badge tone="danger" icon={<TrashIcon />}>
-                          محذوف
+                        <Badge tone="danger">محذوف</Badge>
+                      ) : i.visibility === 'hidden' ? (
+                        <Badge tone="warning" icon={<EyeOffIcon />}>
+                          مخفي
                         </Badge>
                       ) : (
-                        <label className="inline-flex items-center gap-2 text-meta text-muted-foreground">
-                          <Switch
-                            checked={i.visibility === 'visible'}
-                            onCheckedChange={() => toggleHidden(i)}
-                            aria-label={`ظهور ${f.name}`}
-                          />
-                          {i.visibility === 'visible' ? (
-                            <EyeIcon className="size-4" aria-hidden />
-                          ) : (
-                            <EyeOffIcon className="size-4" aria-hidden />
-                          )}
-                          {VIS_LABEL[i.visibility]}
-                        </label>
+                        <span className="text-meta text-muted-foreground">ظاهر</span>
                       )}
                     </TableCell>
-                    <TableCell className="w-12">
+                    <TableCell className="text-end">
                       <RowActions item={i} />
                     </TableCell>
                   </TableRow>

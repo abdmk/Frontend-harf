@@ -9,20 +9,29 @@ test.describe('لوحة الإدارة', () => {
     await expect(page.getByRole('navigation', { name: 'أقسام الإدارة' })).toHaveCount(0);
   });
 
-  test('التنقّل: خمسة أقسام، وعدد المراجعة على القائمة', async ({ page }) => {
+  test('التنقّل: ستّة أقسام بترويسة الموقع، والطلبات بعدد واحد يجمع الخطوط والاستوديوهات', async ({ page }) => {
     await page.goto('/admin?as=admin');
+    // جزء من حرف: ترويسة الموقع نفسها
+    await expect(page.getByRole('banner').getByRole('link', { name: 'عين' })).toBeVisible();
     const nav = page.getByRole('navigation', { name: 'أقسام الإدارة' }).first();
-    for (const name of ['الرئيسية', 'المراجعة', 'مخزن الخطوط', 'المحتوى', 'التحليلات'])
+    for (const name of ['الرئيسية', 'الطلبات', 'الخطوط', 'المستخدمون', 'المحتوى', 'التحليلات'])
       await expect(nav.getByRole('link', { name: new RegExp(name) })).toBeVisible();
-    await expect(nav.getByLabel('5 بانتظار المراجعة')).toBeVisible();
-    await expect(page.getByRole('heading', { name: 'يحتاج انتباهك' })).toBeVisible();
-    await nav.getByRole('link', { name: /مخزن الخطوط/ }).click();
+    await expect(nav.getByLabel('7 بانتظار قرارك')).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'ما ينتظرك' })).toBeVisible();
+    await expect(page.getByRole('link', { name: /5 خطوط بانتظار المراجعة/ })).toBeVisible();
+    await expect(page.getByRole('link', { name: /2 استوديوهات تطلب التوثيق/ })).toBeVisible();
+    await nav.getByRole('link', { name: /الخطوط/ }).click();
     await expect(page).toHaveURL(/\/admin\/fonts$/);
-    await expect(page.getByRole('heading', { level: 1, name: 'مخزن الخطوط' })).toBeVisible();
+    await expect(page.getByRole('heading', { level: 1, name: 'الخطوط' })).toBeVisible();
+    // العناوين القديمة تُحوَّل
+    await page.goto('/admin/review');
+    await expect(page).toHaveURL(/\/admin\/requests$/);
+    await page.goto('/admin/plans');
+    await expect(page).toHaveURL(/\/admin\/content\?tab=plans$/);
   });
 
   test('المراجعة: الرفض يتطلّب سبباً، والقبول ينقل للطلب التالي ويُسجَّل', async ({ page }) => {
-    await page.goto('/admin/review?as=admin');
+    await page.goto('/admin/requests?as=admin');
     // الأقدم أولاً
     await expect(page.getByRole('list', { name: 'طلبات المراجعة' }).getByRole('listitem').first()).toContainText(
       'Naqsh',
@@ -40,7 +49,7 @@ test.describe('لوحة الإدارة', () => {
     await page.getByRole('button', { name: 'تأكيد: قبول ونشر' }).click();
     await expect(page).toHaveURL(/\/admin\/review\/REV-4830$/);
 
-    await page.goto('/admin/review');
+    await page.goto('/admin/requests');
     await page.getByRole('button', { name: /مرفوضة 1/ }).click();
     await expect(page.getByText('Kalima Display')).toBeVisible();
 
@@ -53,8 +62,9 @@ test.describe('لوحة الإدارة', () => {
   test('مخزن الخطوط: الإخفاء يُخرج الخط من الموقع، والحذف يتطلّب الاسم ويُسترجع', async ({ page }) => {
     await page.goto('/admin/fonts?as=admin');
     await page.getByRole('searchbox', { name: 'بحث في الخطوط' }).fill('Cairo');
-    await page.getByRole('switch', { name: 'ظهور Cairo' }).click();
-    await expect(page.getByRole('switch', { name: 'ظهور Cairo' })).not.toBeChecked();
+    // الإجراءات على الصفّ مباشرة
+    await page.getByRole('button', { name: 'إخفاء Cairo' }).click();
+    await expect(page.getByRole('button', { name: 'إظهار Cairo' })).toBeVisible();
 
     // صفحة الخط المخفي غير متاحة للزوّار: تعيد إلى المكتبة
     await page.goto('/fonts/cairo');
@@ -73,8 +83,7 @@ test.describe('لوحة الإدارة', () => {
     await page.goto('/admin/fonts');
     await page.getByRole('button', { name: /المحذوفة 1/ }).click();
     await expect(page.getByRole('link', { name: 'Cairo' })).toBeVisible();
-    await page.getByRole('button', { name: 'إجراءات Cairo' }).click();
-    await page.getByRole('menuitem', { name: 'استرجاع' }).click();
+    await page.getByRole('button', { name: 'استرجاع' }).click();
     await page.goto('/fonts/cairo');
     await expect(page.getByRole('heading', { level: 1 }).first()).toContainText('Cairo');
   });
@@ -202,8 +211,22 @@ test.describe('لوحة الإدارة', () => {
     await page.goto('/?as=admin');
     await page.getByRole('button', { name: 'إدارة البنرات' }).click();
     await expect(
-      page.getByRole('dialog', { name: 'بنرات الصفحة الرئيسية' }).getByRole('button', { name: 'إضافة بنر' }),
+      page.getByRole('dialog', { name: 'بنرات الصفحة الرئيسية' }).getByRole('button', { name: 'بنر نصّي' }),
     ).toBeVisible();
+  });
+
+  test('بنر نصّي بلا صورة: العنوان مطلوب، ثم يظهر في الشريحة', async ({ page }) => {
+    await page.goto('/admin/content?as=admin');
+    const banners = page.locator('section').filter({ hasText: 'بنرات الصفحة الرئيسية' });
+    await banners.getByRole('button', { name: 'بنر نصّي' }).click();
+    await banners.getByRole('button', { name: 'حفظ البنرات' }).click();
+    await expect(banners.getByText('اكتب عنوان البنر النصّي.')).toBeVisible();
+    await page.getByPlaceholder('مثال: خطوط جديدة كل أسبوع').fill('خطوط جديدة كل أسبوع');
+    await banners.getByRole('radio', { name: 'ذهبي' }).click();
+    await banners.getByRole('button', { name: 'حفظ البنرات' }).click();
+    await expect(page.getByText('حُفظت البنرات')).toBeVisible();
+    await page.goto('/');
+    await expect(page.getByRole('region', { name: 'المميّز' }).getByText('خطوط جديدة كل أسبوع')).toBeVisible();
   });
 
   test('المدونة: مقال جديد بغلاف وصورة داخل النصّ يظهر منشوراً', async ({ page }) => {
@@ -252,8 +275,8 @@ test.describe('لوحة الإدارة', () => {
     await expect(page.getByText('دليل مختصر لتراخيص الخطوط')).toBeVisible();
   });
   test('الخطط والأسعار: تعديل السعر والمزايا يظهر في «اختر خطتك»، والقيم غير الصالحة تُرفض', async ({ page }) => {
-    await page.goto('/admin/plans?as=admin');
-    await expect(page.getByRole('heading', { level: 1, name: 'الخطط والأسعار' })).toBeVisible();
+    await page.goto('/admin/content?tab=plans&as=admin');
+    await expect(page.getByRole('tab', { name: 'الخطط والأسعار', selected: true })).toBeVisible();
     const save = page.getByRole('button', { name: 'حفظ الخطة' });
     await expect(save).toBeDisabled();
 
@@ -281,7 +304,7 @@ test.describe('لوحة الإدارة', () => {
     await expect(dialog.getByText('تحميل بلا حدود')).toBeVisible();
 
     // الاستعادة بنافذة تأكيد
-    await page.goto('/admin/plans?as=admin');
+    await page.goto('/admin/content?tab=plans&as=admin');
     await page.getByRole('button', { name: 'استعادة الافتراضي' }).click();
     await page.getByRole('dialog').getByRole('button', { name: 'استعادة الافتراضي' }).click();
     await expect(page.getByLabel('الدفع الشهري')).toHaveValue('10');

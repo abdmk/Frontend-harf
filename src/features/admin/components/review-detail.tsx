@@ -272,7 +272,7 @@ export function ReviewDetail({ id }: { id: string }) {
         title="الطلب غير موجود"
         description="ربما حُذف أو تغيّر رقمه."
         action={
-          <Button variant="outline" onClick={() => navigate(paths.admin.getHref('review'))}>
+          <Button variant="outline" onClick={() => navigate(paths.admin.getHref('requests'))}>
             العودة إلى المراجعة
           </Button>
         }
@@ -283,7 +283,7 @@ export function ReviewDetail({ id }: { id: string }) {
   const next = items
     .filter((i) => i.state === 'pending' && i.id !== s.id)
     .sort((a, b) => a.submittedAt.localeCompare(b.submittedAt))[0];
-  const onDone = () => navigate(next ? paths.admin.review.getHref(next.id) : paths.admin.getHref('review'));
+  const onDone = () => navigate(next ? paths.admin.review.getHref(next.id) : paths.admin.getHref('requests'));
 
   const meta: [string, React.ReactNode][] = [
     ['المسبك', s.foundry.name],
@@ -308,7 +308,7 @@ export function ReviewDetail({ id }: { id: string }) {
   return (
     <div className="flex flex-col gap-5">
       <AdminPageHeader
-        back={{ to: paths.admin.getHref('review'), label: 'المراجعة' }}
+        back={{ to: paths.admin.getHref('requests'), label: 'الطلبات' }}
         title={s.nameAr ? `${s.nameLatin} · ${s.nameAr}` : s.nameLatin}
         description={s.description}
       />

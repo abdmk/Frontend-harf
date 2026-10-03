@@ -108,10 +108,10 @@ export function AdminAnalyticsView({ data: d, range }: { data: AdminAnalytics; r
   return (
     <div className="flex flex-col gap-6">
       <div className="flex flex-wrap items-end justify-between gap-4">
+        {/* بمقاسات رؤوس صفحات الإدارة الأخرى */}
         <div>
-          <p className="text-caption text-tertiary">لوحة الإدارة</p>
-          <h1 className="text-display font-semibold">التحليلات</h1>
-          <p className="text-meta text-muted-foreground">آخر تحديث قبل 4 دقائق · بيانات تجريبية</p>
+          <h1 className="animate-fade-up text-2xl font-semibold">التحليلات</h1>
+          <p className="mt-1 text-meta text-muted-foreground">آخر تحديث قبل 4 دقائق · بيانات تجريبية</p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
           <nav aria-label="المدى الزمني" className="flex rounded-full bg-sunken p-1">
