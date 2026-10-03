@@ -32,6 +32,7 @@ export function DesignerProfileHeader({
         />
       }
       name={designer.nameAr}
+      kindLabel="مصمّم"
       nameEn={designer.nameEn}
       verified={designer.verified}
       location={designer.location}

@@ -1,19 +1,27 @@
 import { ProfileHeader } from '@/components/shared/profile-header';
+import { cn } from '@/lib/cn';
 import { LANG_LABEL } from '@/lib/labels';
+import { KIND_LABEL, type ProfileKind } from '@/lib/public-profile';
 import type { Foundry } from '@/types/domain/foundry';
 
-/** رأس صفحة المسبك (تصميم 20-09 «مسبك تجاريب») — شعار مربّع، لغات الخطوط، وأرقام المسبك */
+/**
+ * رأس صفحة الاستوديو — صاحبها يختار نوعها: مسبك (شعار مربّع) أو مصمّم مستقلّ (صورة دائرية).
+ * البنية واحدة، والفرق في الشكل والتسمية فقط.
+ */
 export function FoundryProfile({
   foundry,
   stats,
   cover,
   avatar,
+  kind = 'foundry',
 }: {
   foundry: Foundry;
   stats: { fonts: number; downloads: number };
   cover?: string;
   avatar?: string;
+  kind?: ProfileKind;
 }) {
+  const shape = kind === 'designer' ? 'rounded-full' : 'rounded-lg';
   return (
     <ProfileHeader
       titleId="foundry-name"
@@ -22,19 +30,23 @@ export function FoundryProfile({
         avatar ? (
           <img
             src={avatar}
-            alt={`شعار ${foundry.name}`}
-            className="size-24 rounded-lg border-4 border-card object-cover shadow-soft sm:size-28"
+            alt={kind === 'designer' ? foundry.name : `شعار ${foundry.name}`}
+            className={cn('size-24 border-4 border-card object-cover shadow-soft sm:size-28', shape)}
           />
         ) : (
           <span
             aria-hidden
-            className="grid size-24 place-items-center rounded-lg border-4 border-card bg-sunken text-4xl font-semibold text-muted-foreground shadow-soft sm:size-28"
+            className={cn(
+              'grid size-24 place-items-center border-4 border-card bg-sunken text-4xl font-semibold text-muted-foreground shadow-soft sm:size-28',
+              shape,
+            )}
           >
             {foundry.mark}
           </span>
         )
       }
       name={foundry.name}
+      kindLabel={KIND_LABEL[kind]}
       nameEn={foundry.nameEn}
       verified={foundry.verified}
       location={foundry.location}

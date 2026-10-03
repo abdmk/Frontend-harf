@@ -286,7 +286,7 @@ test('الملف العام: صور آمنة فقط، روابط بأسماء م
   await avatarInput.setInputFiles({ name: 'tiny.png', mimeType: 'image/png', buffer: await png(40, 40) });
   await expect(page.getByRole('alert')).toContainText('الصورة صغيرة');
   await avatarInput.setInputFiles({ name: 'logo.png', mimeType: 'image/png', buffer: await png(256, 256) });
-  await expect(page.getByRole('img', { name: 'شعار الاستوديو' })).toBeVisible();
+  await expect(page.getByRole('img', { name: 'شعار المسبك' })).toBeVisible();
   await coverInput.setInputFiles({ name: 'cover.png', mimeType: 'image/png', buffer: await png(1600, 400) });
   await expect(page.getByRole('img', { name: 'غلاف الاستوديو' })).toBeVisible();
 
@@ -305,4 +305,32 @@ test('الملف العام: صور آمنة فقط، روابط بأسماء م
     'href',
     'https://instagram.com/tajarib.type',
   );
+});
+
+test('الملف العام: صاحبه يختار مسبكاً أو مصمّماً، ويغيّر اسمه — والصفحة العامة تتبعه', async ({ page }) => {
+  await page.goto('/studio/profile?as=studio');
+  await page.getByRole('radio', { name: /مصمّم مستقلّ/ }).click();
+  await page.getByLabel('اسمك').fill('عبدالملك جاسم');
+  await page.getByLabel('الاسم باللاتينية').fill('عربي');
+  await page.getByRole('button', { name: 'حفظ الملف العام' }).click();
+  await expect(page.getByText('الاسم اللاتيني بحروف لاتينية فقط.')).toBeVisible();
+  await page.getByLabel('الاسم باللاتينية').fill('Abdulmalik Jassim');
+  await page.getByRole('button', { name: 'حفظ الملف العام' }).click();
+  await expect(page.getByText('حُفظ ملفك العام')).toBeVisible();
+  // الاسم الجديد في العمود الجانبي فوراً
+  const side = page.getByRole('complementary').filter({ visible: true }).first();
+  await expect(side.getByText('عبدالملك جاسم').first()).toBeVisible();
+
+  await page.goto('/foundries/tajarib');
+  await expect(page.getByRole('heading', { level: 1, name: 'عبدالملك جاسم' })).toBeVisible();
+  await expect(page.getByText('مصمّم مستقلّ', { exact: true })).toBeVisible();
+  await expect(page.getByRole('heading', { name: /مصمّمو المسبك/ })).toHaveCount(0);
+
+  // والعودة إلى المسبك تعيد قسم المصمّمين
+  await page.goto('/studio/profile');
+  await page.getByRole('radio', { name: /^مسبك/ }).click();
+  await page.getByLabel('اسم المسبك').fill('مسبك تجاريب');
+  await page.getByRole('button', { name: 'حفظ الملف العام' }).click();
+  await page.goto('/foundries/tajarib');
+  await expect(page.getByText('مسبك', { exact: true })).toBeVisible();
 });

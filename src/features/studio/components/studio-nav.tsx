@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { ArrowLeftIcon, ChevronRightIcon, CloudUploadIcon, ShieldCheckIcon } from '@/components/ui/icons';
 import { paths, type StudioSection } from '@/config/paths';
 import { cn } from '@/lib/cn';
-import { useProfileIncomplete, usePublicProfile } from '@/lib/public-profile';
+import { markOf, useProfileIncomplete, usePublicProfile } from '@/lib/public-profile';
 import { type PublicStatus, useMyVerification } from '@/lib/studio-verification';
 import type { Foundry } from '@/types/domain/foundry';
 
@@ -50,19 +50,23 @@ function IncompleteBadge() {
   return <span className="rounded-full bg-tint-warn px-2.5 py-0.5 text-xs font-medium text-warn-text">غير مكتمل</span>;
 }
 
+/** الاسم الظاهر: ما كتبه صاحب الاستوديو في ملفه العام، وإلا اسم الاستوديو */
+function useStudioName(foundry: Foundry) {
+  return usePublicProfile().name || foundry.name;
+}
+
 function StudioMark({ foundry, className }: { foundry: Foundry; className?: string }) {
   const profile = usePublicProfile();
+  // الشكل يتبع نوع الصفحة: شعار مربّع للمسبك، صورة دائرية للمصمّم
+  const shape = profile.kind === 'designer' ? 'rounded-full' : 'rounded-md';
   return profile.avatar ? (
-    <img src={profile.avatar} alt="" className={cn('shrink-0 rounded-md object-cover', className)} />
+    <img src={profile.avatar} alt="" className={cn('shrink-0 object-cover', shape, className)} />
   ) : (
     <span
       aria-hidden
-      className={cn(
-        'grid shrink-0 place-items-center rounded-md bg-card font-semibold text-muted-foreground',
-        className,
-      )}
+      className={cn('grid shrink-0 place-items-center bg-card font-semibold text-muted-foreground', shape, className)}
     >
-      {foundry.mark}
+      {profile.name ? markOf(profile.name) : foundry.mark}
     </span>
   );
 }
@@ -72,6 +76,7 @@ function StudioMark({ foundry, className }: { foundry: Foundry; className?: stri
  * الأقسام الأربعة (والمالية تفتح أقسامها حين تكون فيها)، ثم الملف العام والعودة إلى الحساب.
  */
 export function StudioSidebar({ foundry }: { foundry: Foundry }) {
+  const name = useStudioName(foundry);
   const current = useStudioSection();
   const incomplete = useProfileIncomplete();
   const profileOn = isOn(current, STUDIO_PROFILE_ITEM.section);
@@ -82,7 +87,7 @@ export function StudioSidebar({ foundry }: { foundry: Foundry }) {
         <StudioMark foundry={foundry} className="size-14 text-2xl" />
         <div className="min-w-0 flex-1">
           <p className="text-caption text-tertiary">الاستوديو</p>
-          <p className="truncate text-base font-semibold">{foundry.name}</p>
+          <p className="truncate text-base font-semibold">{name}</p>
           <Link
             to={paths.foundry.getHref(foundry.id)}
             className="mt-0.5 inline-flex items-center gap-1 text-meta text-muted-foreground hover:text-primary"
@@ -165,6 +170,7 @@ const TAB =
 
 /** على الشاشات الصغيرة: اسم الاستوديو وصفّ أقسام يتمرّر أفقياً، وصفّ ثانٍ لأقسام المالية */
 export function StudioTabs({ foundry }: { foundry: Foundry }) {
+  const name = useStudioName(foundry);
   const current = useStudioSection();
   const incomplete = useProfileIncomplete();
   const finance = STUDIO_NAV.find((n) => n.children)!;
@@ -173,7 +179,7 @@ export function StudioTabs({ foundry }: { foundry: Foundry }) {
     <div className="flex flex-col gap-3 lg:hidden">
       <div className="flex items-center gap-3">
         <StudioMark foundry={foundry} className="size-10 bg-sunken text-lg" />
-        <p className="min-w-0 flex-1 truncate font-semibold">{foundry.name}</p>
+        <p className="min-w-0 flex-1 truncate font-semibold">{name}</p>
         <Button asChild size="sm">
           <Link to={paths.studio.getHref('publish')}>
             <CloudUploadIcon />

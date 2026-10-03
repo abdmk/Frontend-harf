@@ -14,7 +14,7 @@ import { DEFAULT_QUERY } from '@/features/catalog/types/catalog-query';
 import { getFoundry, getFoundryDesigners } from '@/features/studio/api/get-studio';
 import { FoundryProfile } from '@/features/studio/components/foundry-profile';
 import { getCurrentUser } from '@/lib/auth';
-import { getPublicProfile, type SocialKey, socialUrl } from '@/lib/public-profile';
+import { getPublicProfile, markOf, type SocialKey, socialUrl } from '@/lib/public-profile';
 
 export function FoundryPage() {
   const { id } = useParams<{ id: string }>();
@@ -27,6 +27,10 @@ export function FoundryPage() {
         ...found,
         foundry: {
           ...found.foundry,
+          name: own.name || found.foundry.name,
+          nameEn: own.nameEn || found.foundry.nameEn,
+          location: own.location || found.foundry.location,
+          mark: own.name ? markOf(own.name) : found.foundry.mark,
           bio: own.bio || found.foundry.bio,
           links: {
             website: own.website || undefined,
@@ -37,6 +41,8 @@ export function FoundryPage() {
         },
       }
     : found;
+  const kind = own?.kind ?? 'foundry';
+  const isDesigner = kind === 'designer';
   const ids = new Set(data.fonts.map((f) => f.id));
   const fonts = getFonts(DEFAULT_QUERY).filter((f) => ids.has(f.id));
   const downloads = data.fonts.reduce((sum, f) => sum + f.downloads, 0);
@@ -54,19 +60,24 @@ export function FoundryPage() {
         stats={{ fonts: data.fonts.length, downloads }}
         cover={own?.cover}
         avatar={own?.avatar}
+        kind={kind}
       />
       <section aria-labelledby="ff-title" className="mt-12">
         <SectionHeading
           id="ff-title"
           title={
             <>
-              خطوط المسبك{' '}
+              {isDesigner ? 'الخطوط' : 'خطوط المسبك'}{' '}
               <span dir="ltr" className="font-normal text-tertiary">
                 ({fonts.length})
               </span>
             </>
           }
-          description="كل خط منشور من هذا المسبك، بتراخيصه وأسعاره."
+          description={
+            isDesigner
+              ? `كل خط نشره ${data.foundry.name}، بتراخيصه وأسعاره.`
+              : 'كل خط منشور من هذا المسبك، بتراخيصه وأسعاره.'
+          }
         />
         <FontGrid
           fonts={fonts}
@@ -75,13 +86,16 @@ export function FoundryPage() {
             <EmptyState
               icon={<LayersIcon />}
               title="لا خطوط منشورة بعد"
-              description="تابع المسبك ليصلك إشعار حين ينشر أول خط."
+              description={
+                isDesigner ? 'تابعه ليصلك إشعار حين ينشر أول خط.' : 'تابع المسبك ليصلك إشعار حين ينشر أول خط.'
+              }
             />
           }
         />
       </section>
 
-      {designers.length > 0 && (
+      {/* مصمّمو المسبك — لصفحة المسبك وحدها */}
+      {!isDesigner && designers.length > 0 && (
         <section aria-labelledby="fd-title" className="mt-14">
           <SectionHeading
             id="fd-title"
