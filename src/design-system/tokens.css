@@ -325,6 +325,8 @@
   --animate-ring: ring 800ms var(--ease-out-quint);
   --animate-pop-in: pop-in var(--dur-slow) var(--ease-pop);
   --animate-fade-up: fade-up var(--dur-slow) var(--ease-out-quint);
+  /* أشرطة القياس: تمتدّ من بدايتها مرّة واحدة عند الظهور */
+  --animate-grow-x: grow-x 700ms var(--ease-out-quint) both;
   --animate-page-in: page-in var(--dur-base) var(--ease-out-quint);
   --animate-chip-in: chip-in var(--dur-slow) var(--ease-out-quint) both;
   /* القوائم المنبثقة: دخول هادئ يستقرّ بلا ارتداد، وخروج سريع لا يؤخّر الصفحة */
@@ -360,6 +362,11 @@
     from {
       opacity: 0;
       transform: scale(0.7);
+    }
+  }
+  @keyframes grow-x {
+    from {
+      transform: scaleX(0);
     }
   }
   @keyframes fade-up {

@@ -6,47 +6,51 @@ import { Button } from '@/components/ui/button';
 import { MagicWandIcon } from '@/components/ui/icons';
 import { FontMatchingTool, type ResultCardProps } from '@/features/font-matching/components/font-matching-tool';
 
-/** بطاقة النتيجة = بطاقة الخط نفسها بنصّ المستخدم، مع التشابه وزرّ «قارن» */
+/** درجة التطابق: اللون مع كلمة تصفه — لا يُقرأ المعنى من اللون وحده */
+function matchTone(score: number) {
+  if (score >= 75) return { label: 'تطابق عالٍ', bar: 'bg-ok-500', text: 'text-ok-text' };
+  if (score >= 50) return { label: 'تطابق متوسط', bar: 'bg-warn-500', text: 'text-warn-text' };
+  return { label: 'تطابق ضعيف', bar: 'bg-dgr-500', text: 'text-dgr-text' };
+}
+
+/** بطاقة النتيجة = بطاقة الخط نفسها بنصّ المستخدم، مع نسبة التطابق بارزة وشريطها الملوّن وزرّ «قارن» */
 function ResultCard({ match, text, selected, onCompare }: ResultCardProps) {
+  const tone = matchTone(match.score);
   return (
     <CatalogCard
       font={match.font}
       specimen={{ text, weight: match.weight }}
-      meta={
-        <>
-          تشابه{' '}
-          <span dir="ltr" className="font-medium text-foreground tabular-nums">
-            {match.score}٪
-          </span>
-        </>
-      }
       className={selected ? 'border-primary ring-2 ring-primary/20' : undefined}
       extra={
-        <div className="flex items-center gap-3">
+        <div className="flex flex-col gap-2.5">
+          <div className="flex items-baseline justify-between gap-3">
+            <span className={`text-caption font-medium ${tone.text}`}>{tone.label}</span>
+            <span dir="ltr" className="text-xl font-bold tabular-nums">
+              {match.score}%
+            </span>
+          </div>
           <div
             role="meter"
             aria-label={`نسبة التشابه مع ${match.font.name}`}
             aria-valuemin={0}
             aria-valuemax={100}
             aria-valuenow={match.score}
-            className="relative h-1.5 flex-1 rounded-full bg-inset"
+            aria-valuetext={`${match.score}٪ — ${tone.label}`}
+            className="h-2.5 overflow-hidden rounded-full bg-inset"
           >
-            {/* أخضر بنقطة في نهايته — التقدّم مقروء من اللون والطول معاً */}
-            <span className="absolute inset-y-0 start-0 rounded-full bg-ok-500" style={{ width: `${match.score}%` }}>
-              <span
-                aria-hidden
-                className="absolute end-0 top-1/2 size-3.5 translate-x-1/2 -translate-y-1/2 rounded-full bg-ok-500 ring-[2.5px] ring-card rtl:-translate-x-1/2"
-              />
-            </span>
+            <span
+              className={`block h-full animate-grow-x rounded-full ${tone.bar} ltr:origin-left rtl:origin-right`}
+              style={{ width: `${match.score}%` }}
+            />
           </div>
           <Button
-            variant={selected ? 'secondary' : 'ghost'}
+            variant={selected ? 'secondary' : 'outline'}
             size="sm"
             aria-pressed={selected}
             onClick={onCompare}
-            className="relative z-10 -me-2"
+            className="relative z-10 mt-1 self-start"
           >
-            {selected ? 'في المقارنة' : 'قارن'}
+            {selected ? 'في المقارنة' : 'قارن مع صورتك'}
           </Button>
         </div>
       }

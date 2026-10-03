@@ -41,6 +41,8 @@ test.describe('عين (مطابقة الخطوط)', () => {
     await expect(results).toBeVisible({ timeout: 30_000 });
     const names = await results.locator('article a[dir=ltr]').allTextContents();
     expect(names.slice(0, 3)).toContain('Cairo');
+    // النسبة ظاهرة رقماً، ودرجة التطابق مكتوبة لا ملوّنة فقط
+    await expect(results.getByRole('meter', { name: /نسبة التشابه مع/ }).first()).toHaveAttribute('aria-valuetext', /٪ — تطابق (عالٍ|متوسط|ضعيف)/);
 
     // المقارنة: الأوضاع الثلاثة
     await results.getByRole('button', { name: 'تراكب' }).click();
