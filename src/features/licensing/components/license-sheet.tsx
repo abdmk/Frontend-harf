@@ -1,43 +1,46 @@
-import { Collapsible as CollapsiblePrimitive, RadioGroup as RadioGroupPrimitive } from 'radix-ui';
 import { type ReactElement, useMemo, useState, useTransition } from 'react';
 import { useNavigate } from 'react-router';
 
 import { PanelSheetContent } from '@/components/shared/panel-sheet';
-import { PriceDisplay } from '@/components/shared/price-display';
 import { Button } from '@/components/ui/button';
-import { Checkbox } from '@/components/ui/checkbox';
 import { Chip, ChipGroup } from '@/components/ui/chip-group';
-import {
-  CartIcon,
-  CheckIcon,
-  ChevronDownIcon,
-  ComputerIcon,
-  CrossIcon,
-  GlobeIcon,
-  MobileIcon,
-} from '@/components/ui/icons';
+import { CartIcon, CheckIcon, ComputerIcon, CrossIcon, GlobeIcon, MobileIcon, PlusIcon } from '@/components/ui/icons';
 import { Sheet, SheetClose, SheetDescription, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { toast } from '@/components/ui/toast';
 import { paths } from '@/config/paths';
 import { cn } from '@/lib/cn';
-import { quote, USE_LABEL } from '@/lib/commerce/quote';
-import { weightStyle } from '@/lib/font-weight';
+import { quote } from '@/lib/commerce/quote';
+import { faceStyle, weightStyle } from '@/lib/font-weight';
 import { formatMoney, weightsLabel } from '@/lib/format';
 import { cents } from '@/types/domain/commerce';
-import {
-  LICENSE_USES,
-  type LicensePackage,
-  type LicensePricing,
-  type LicenseSelection,
-  type LicenseUse,
-} from '@/types/domain/license';
+import type { LiveFace } from '@/types/domain/font';
+import { LICENSE_USES, type LicensePricing, type LicenseSelection, type LicenseUse } from '@/types/domain/license';
 
 export type SubmitResult = { ok: true } | { ok: false; error: string };
 
-const USE_META: Record<LicenseUse, { Icon: typeof ComputerIcon; hint: string }> = {
-  desktop: { Icon: ComputerIcon, hint: 'مطبوعات وشعارات وصور تُصمّم على أجهزتك' },
-  web: { Icon: GlobeIcon, hint: 'تضمين الخط في موقع عبر ‎@font-face' },
-  app: { Icon: MobileIcon, hint: 'تضمين الخط داخل تطبيق جوال أو سطح مكتب' },
+/**
+ * الاستخدام بلغة المشتري لا بلغة التراخيص: ماذا سيفعل بالخط، وأمثلة يعرفها.
+ * «scope» يشرح النطاق الافتراضي بكلمات بسيطة.
+ */
+const USES: Record<LicenseUse, { Icon: typeof ComputerIcon; title: string; hint: string; scope: string }> = {
+  desktop: {
+    Icon: ComputerIcon,
+    title: 'تصميم ومطبوعات',
+    hint: 'شعارات، منشورات، هويّات ومطبوعات تصمّمها على جهازك',
+    scope: 'عدد الأجهزة التي يُثبَّت عليها الخط',
+  },
+  web: {
+    Icon: GlobeIcon,
+    title: 'موقع إلكتروني',
+    hint: 'يظهر الخط نفسه لزوّار موقعك',
+    scope: 'زيارات الموقع شهرياً',
+  },
+  app: {
+    Icon: MobileIcon,
+    title: 'تطبيق',
+    hint: 'داخل تطبيق جوال أو برنامج',
+    scope: 'عدد التطبيقات',
+  },
 };
 
 type Props = {
@@ -45,6 +48,8 @@ type Props = {
   foundry: string;
   pricing: LicensePricing;
   trigger: ReactElement;
+  /** خط العرض الحيّ — يُكتب به اسم الخط أعلى النافذة */
+  face?: LiveFace;
   /** اختيار سابق (عند «تعديل الترخيص» من السلة) */
   initial?: LicenseSelection;
   defaultOpen?: boolean;
@@ -53,12 +58,12 @@ type Props = {
   submitLabel?: string;
 };
 
-function defaultSelection(p: LicensePricing): LicenseSelection {
-  return { fontId: p.fontId, package: 'family', uses: { desktop: p.uses.desktop[0]?.id } };
-}
+const usesOf = (s: LicenseSelection) => LICENSE_USES.filter((u) => !!s.uses[u]);
 
 /**
- * لوحة الترخيص (دليل التصميم 5.5): سؤالان — ماذا تشتري؟ أين ستستعمله؟ — والإجمالي أمام العين.
+ * نافذة الشراء — قرار واحد مطلوب: «لِمَ تحتاج الخط؟». كل ما عداه له افتراض معقول يظهر سطراً
+ * هادئاً مع «تغيير» (النطاق، العائلة أو وزن واحد، استخدام إضافي). السعر يتحدّث أمام العين.
+ * لا نختار الاستخدام عن المشتري: ترخيص خاطئ (مطبوعات لموقع) يكلّفه لاحقاً.
  * السعر هنا للعرض؛ الخادم يعيد حسابه عند الإضافة وعند الدفع.
  */
 export function LicenseSheet({
@@ -66,32 +71,39 @@ export function LicenseSheet({
   foundry,
   pricing,
   trigger,
+  face,
   initial,
   defaultOpen,
   onSubmit,
   submitLabel,
 }: Props) {
   const [open, setOpen] = useState(!!defaultOpen);
-  const [sel, setSel] = useState<LicenseSelection>(() => initial ?? defaultSelection(pricing));
+  const [sel, setSel] = useState<LicenseSelection>(
+    () => initial ?? { fontId: pricing.fontId, package: 'family', uses: {} },
+  );
+  /** السطر المفتوح للتعديل — واحد في كل مرّة */
+  const [editing, setEditing] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
   const [intent, setIntent] = useState<'cart' | 'buy' | null>(null);
   const navigate = useNavigate();
 
   const q = useMemo(() => quote(pricing, sel), [pricing, sel]);
-  // التوفير الحقيقي للعائلة مقابل شراء كل الأوزان منفردة
+  const chosen = usesOf(sel);
+  const ratio = sel.package === 'family' ? 1 : pricing.singleCents / Math.max(1, pricing.familyCents);
   const saving = Math.round(
     (1 - pricing.familyCents / Math.max(1, pricing.singleCents * pricing.weights.length)) * 100,
   );
-  // الإضافات تُحسب على أساس الحزمة (كما في quote)
-  const ratio = sel.package === 'family' ? 1 : pricing.singleCents / Math.max(1, pricing.familyCents);
-  const setPackage = (pkg: LicensePackage) =>
-    setSel((s) => ({
-      ...s,
-      package: pkg,
-      weightId: pkg === 'single' ? (s.weightId ?? pricing.weights[0]?.id) : undefined,
-    }));
-  const toggleUse = (use: LicenseUse, on: boolean) =>
-    setSel((s) => ({ ...s, uses: { ...s.uses, [use]: on ? pricing.uses[use][0]?.id : undefined } }));
+  // «من $X» لكل استخدام: العائلة بأوّل نطاق — ما سيدفعه إن لم يغيّر شيئاً
+  const fromPrice = (use: LicenseUse) =>
+    quote(pricing, { fontId: pricing.fontId, package: 'family', uses: { [use]: pricing.uses[use][0]?.id } })?.cents ??
+    0;
+  const lowest = Math.min(...LICENSE_USES.map(fromPrice));
+
+  const setUse = (use: LicenseUse, tier: string | undefined) =>
+    setSel((s) => ({ ...s, uses: { ...s.uses, [use]: tier } }));
+  /** الاختيار الأوّل يستبدل؛ ما بعده يُضاف من «أحتاج أيضاً» */
+  const pickPrimary = (use: LicenseUse) =>
+    setSel((s) => ({ ...s, uses: { [use]: s.uses[use] ?? pricing.uses[use][0]?.id } }));
 
   function submit(mode: 'cart' | 'buy') {
     if (!q) return;
@@ -115,309 +127,291 @@ export function LicenseSheet({
     });
   }
 
+  const weight = pricing.weights.find((w) => w.id === sel.weightId);
+  const others = LICENSE_USES.filter((u) => !sel.uses[u]);
+
   return (
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>{trigger}</SheetTrigger>
-      <PanelSheetContent className="sm:max-h-[min(760px,calc(100dvh-3rem))] sm:w-[min(560px,calc(100vw-2rem))]">
-        <header className="flex items-center gap-3 border-b px-5 py-4">
-          <span
-            aria-hidden
-            className="grid size-10 shrink-0 place-items-center rounded-xs bg-ink text-control font-semibold text-ink-foreground"
-          >
-            {fontName.slice(0, 2)}
-          </span>
-          <div className="min-w-0 flex-1">
-            <SheetTitle dir="ltr" className="truncate text-right text-base font-semibold">
-              {fontName}
-            </SheetTitle>
-            {/* كل جزء معزول الاتجاه: اسم لاتيني بجانب نصّ عربي لا يقلب ترتيب السطر */}
-            <SheetDescription className="truncate text-meta text-muted-foreground">
-              <bdi>{foundry}</bdi> · {weightsLabel(pricing.weights.length)} · <bdi dir="ltr">OTF / WOFF2</bdi>
-            </SheetDescription>
-          </div>
-          <SheetClose className="-me-2 grid size-9 place-items-center rounded-full text-muted-foreground transition-colors hover:bg-sunken hover:text-foreground">
+      <PanelSheetContent className="sm:max-h-[min(760px,calc(100dvh-3rem))] sm:w-[min(520px,calc(100vw-2rem))]">
+        {/* الخط نفسه أوّلاً — بخطّه */}
+        <header className="relative px-6 pt-6 pb-5">
+          <SheetClose className="absolute end-4 top-4 grid size-9 place-items-center rounded-full text-muted-foreground transition-colors outline-none hover:bg-sunken hover:text-foreground focus-visible:ring-2 focus-visible:ring-foreground/15">
             <CrossIcon className="size-4" />
             <span className="sr-only">إغلاق</span>
           </SheetClose>
+          <p className="text-meta text-muted-foreground">ترخيص</p>
+          <SheetTitle
+            dir="ltr"
+            className="mt-1 truncate pe-10 text-right text-3xl leading-tight font-semibold"
+            style={face ? faceStyle(face, 600) : undefined}
+          >
+            {fontName}
+          </SheetTitle>
+          <SheetDescription className="mt-1 truncate text-meta text-muted-foreground">
+            <bdi>{foundry}</bdi> · {weightsLabel(pricing.weights.length)}
+          </SheetDescription>
         </header>
 
-        <div className="flex flex-1 scroll-thin flex-col gap-6 overflow-y-auto overscroll-contain px-5 py-5">
-          <section aria-labelledby="lic-q1">
-            <Step n={1} id="lic-q1">
-              ماذا تشتري؟
-            </Step>
-            <RadioGroupPrimitive.Root
-              aria-labelledby="lic-q1"
-              value={sel.package}
-              onValueChange={(v) => setPackage(v as LicensePackage)}
-              className="grid grid-cols-1 gap-3 sm:grid-cols-2"
-            >
-              <PackageOption
-                value="family"
-                title="العائلة الكاملة"
-                hint={weightsLabel(pricing.weights.length)}
-                price={pricing.familyCents}
-                compareAt={pricing.compareAtFamilyCents}
-                badge={saving >= 5 ? `وفّر ${saving}٪` : undefined}
-              />
-              <PackageOption value="single" title="وزن واحد" hint="تختاره بالأسفل" price={pricing.singleCents} />
-            </RadioGroupPrimitive.Root>
-
-            <WeightList pricing={pricing} sel={sel} onPick={(weightId) => setSel((s) => ({ ...s, weightId }))} />
-          </section>
-
-          <section aria-labelledby="lic-q2">
-            <Step n={2} id="lic-q2">
-              أين ستستعمله؟
-            </Step>
-            <p className="-mt-1.5 mb-3 text-caption text-muted-foreground">اختر كل ما ينطبق — ولكل استخدام نطاقه.</p>
-            <div className="flex flex-col gap-2">
-              {LICENSE_USES.map((use) => {
-                const tiers = pricing.uses[use];
-                const on = !!sel.uses[use];
-                const { Icon, hint } = USE_META[use];
-                const from = (use === 'desktop' ? 0 : tiers[0]?.addCents) ?? 0;
-                return (
-                  <div
-                    key={use}
-                    className={cn(
-                      'rounded-md border p-3.5 transition-colors duration-(--dur-base)',
-                      on ? 'border-primary bg-tint-brand/60' : 'bg-card hover:border-strong',
-                    )}
-                  >
-                    <label className="flex cursor-pointer items-start gap-3">
-                      <Checkbox checked={on} onCheckedChange={(v) => toggleUse(use, v === true)} className="mt-0.5" />
-                      <span className="grid size-8 shrink-0 place-items-center rounded-xs bg-sunken text-muted-foreground">
-                        <Icon filled={on} className="size-4" />
-                      </span>
-                      <span className="min-w-0 flex-1">
-                        <span className="block text-control font-medium">{USE_LABEL[use]}</span>
-                        <span className="block text-caption text-muted-foreground">{hint}</span>
-                      </span>
-                      {!on && use !== 'desktop' && (
-                        <span className="text-end text-caption text-tertiary">
-                          يبدأ من
-                          <span dir="ltr" className="block text-control font-semibold text-foreground">
-                            +{formatMoney(cents(from))}
+        <div className="flex flex-1 scroll-thin flex-col gap-6 overflow-y-auto overscroll-contain px-6 pb-6">
+          {/* القرار الوحيد المطلوب */}
+          <section aria-labelledby="lic-use">
+            <h3 id="lic-use" className="mb-3 text-lead font-semibold">
+              لِمَ تحتاج الخط؟
+            </h3>
+            {chosen.length === 0 ? (
+              <ul className="flex flex-col gap-2">
+                {LICENSE_USES.map((use) => {
+                  const { Icon, title, hint } = USES[use];
+                  return (
+                    <li key={use}>
+                      <button
+                        type="button"
+                        onClick={() => pickPrimary(use)}
+                        className="group flex w-full items-center gap-4 rounded-lg border bg-card p-4 text-start transition-[border-color,background-color] duration-(--dur-base) outline-none hover:border-foreground focus-visible:ring-2 focus-visible:ring-ring"
+                      >
+                        <span className="grid size-10 shrink-0 place-items-center rounded-full bg-sunken text-foreground transition-colors group-hover:bg-foreground group-hover:text-background">
+                          <Icon className="size-4.5" />
+                        </span>
+                        <span className="min-w-0 flex-1">
+                          <span className="block text-control font-semibold">{title}</span>
+                          <span className="mt-0.5 block text-meta text-muted-foreground">{hint}</span>
+                        </span>
+                        <span className="shrink-0 text-end text-caption text-tertiary">
+                          من
+                          <span dir="ltr" className="block text-control font-semibold text-foreground tabular-nums">
+                            {formatMoney(cents(fromPrice(use)))}
                           </span>
                         </span>
+                      </button>
+                    </li>
+                  );
+                })}
+              </ul>
+            ) : (
+              <ul className="divide-y rounded-lg border bg-card">
+                {chosen.map((use) => {
+                  const tiers = pricing.uses[use];
+                  const tier = tiers.find((t) => t.id === sel.uses[use]);
+                  const key = `use-${use}`;
+                  const { Icon, title, scope } = USES[use];
+                  return (
+                    <li key={use} className="p-4">
+                      <div className="flex items-center gap-3">
+                        <Icon className="size-4.5 shrink-0 text-muted-foreground" />
+                        <span className="min-w-0 flex-1">
+                          <span className="block text-control font-semibold">{title}</span>
+                          <span className="block text-meta text-muted-foreground">{tier?.label}</span>
+                        </span>
+                        <button
+                          type="button"
+                          aria-expanded={editing === key}
+                          onClick={() => setEditing(editing === key ? null : key)}
+                          className="text-meta font-medium text-foreground underline-offset-4 hover:underline"
+                        >
+                          {editing === key ? 'تمّ' : 'تغيير'}
+                        </button>
+                        {/* الإزالة متاحة دائماً: إزالة آخر استخدام تعيد الخيارات الثلاثة */}
+                        {
+                          <button
+                            type="button"
+                            aria-label={`إزالة ${title}`}
+                            onClick={() => {
+                              setUse(use, undefined);
+                              setEditing(null);
+                            }}
+                            className="grid size-7 place-items-center rounded-full text-tertiary hover:bg-sunken hover:text-foreground"
+                          >
+                            <CrossIcon className="size-3.5" />
+                          </button>
+                        }
+                      </div>
+                      {editing === key && (
+                        <div className="mt-3 animate-fade-up ps-7.5">
+                          <p className="mb-2 text-caption text-muted-foreground">{scope}</p>
+                          <ChipGroup
+                            type="single"
+                            aria-label={`نطاق ${title}`}
+                            value={sel.uses[use]}
+                            onValueChange={(v) => v && setUse(use, v)}
+                          >
+                            {tiers.map((t, i) => (
+                              <Chip key={t.id} value={t.id}>
+                                {t.label}
+                                {i > 0 && (
+                                  <span dir="ltr" className="ms-1.5 text-caption tabular-nums opacity-75">
+                                    +{formatMoney(cents(Math.round((t.addCents - tiers[0]!.addCents) * ratio)))}
+                                  </span>
+                                )}
+                              </Chip>
+                            ))}
+                          </ChipGroup>
+                        </div>
                       )}
-                    </label>
-                    {on && (
-                      <ChipGroup
-                        type="single"
-                        aria-label={`نطاق ${USE_LABEL[use]}`}
-                        value={sel.uses[use]}
-                        onValueChange={(v) => v && setSel((s) => ({ ...s, uses: { ...s.uses, [use]: v } }))}
-                        className="mt-3 ps-8"
-                      >
-                        {tiers.map((t, i) => (
-                          <Chip key={t.id} value={t.id}>
-                            {t.label}
-                            {/* فرق السعر عن أوّل مستوى — لا مفاجأة في الإجمالي */}
-                            {i > 0 && (
-                              <span dir="ltr" className="ms-1.5 text-caption tabular-nums opacity-75">
-                                +{formatMoney(cents(Math.round((t.addCents - tiers[0]!.addCents) * ratio)))}
-                              </span>
-                            )}
-                          </Chip>
-                        ))}
-                      </ChipGroup>
-                    )}
-                  </div>
-                );
-              })}
-              <p className="flex flex-wrap items-center justify-between gap-2 rounded-md border border-dashed px-3.5 py-2.5 text-caption text-muted-foreground">
-                استخدام أوسع؟ علامة تجارية، بثّ، أو مؤسسة كبيرة
-                <a href="mailto:abdulmalik@harflibrary.com" className="font-medium text-primary hover:underline">
-                  تواصل معنا
-                </a>
-              </p>
-            </div>
+                    </li>
+                  );
+                })}
+              </ul>
+            )}
+            {chosen.length > 0 && others.length > 0 && (
+              <div className="mt-2 flex flex-wrap items-center gap-x-1 gap-y-1 text-meta text-muted-foreground">
+                <PlusIcon className="size-3.5" />
+                أحتاج أيضاً:
+                {others.map((u) => (
+                  <button
+                    key={u}
+                    type="button"
+                    onClick={() => setUse(u, pricing.uses[u][0]?.id)}
+                    className="rounded-full px-2 py-0.5 font-medium text-foreground hover:bg-sunken"
+                  >
+                    {USES[u].title}
+                  </button>
+                ))}
+              </div>
+            )}
           </section>
 
-          <CollapsiblePrimitive.Root className="rounded-md border">
-            <CollapsiblePrimitive.Trigger className="group flex w-full items-center justify-between px-3.5 py-3 text-control font-medium">
-              ماذا يشمل الترخيص؟
-              <ChevronDownIcon className="size-4 transition-transform group-data-[state=open]:rotate-180" />
-            </CollapsiblePrimitive.Trigger>
-            <CollapsiblePrimitive.Content className="overflow-hidden data-[state=closed]:animate-collapsible-up data-[state=open]:animate-collapsible-down">
-              <ul className="flex flex-col gap-1.5 px-3.5 pb-3.5 text-meta text-muted-foreground">
-                <li>ملفات الخط بالصيغ المتاحة للحزمة المختارة.</li>
-                <li>ملف ترخيص باسم صاحب الترخيص يصلك مع الإيصال.</li>
-                <li>نصّ شروط الترخيص الكامل يُعرض هنا كما تعتمده حرف.</li>
-              </ul>
-            </CollapsiblePrimitive.Content>
-          </CollapsiblePrimitive.Root>
-        </div>
-
-        <footer className="border-t px-5 py-4">
-          <div className="mb-3 flex items-end justify-between gap-4">
-            <div className="min-w-0">
-              <p className="text-caption text-tertiary">الإجمالي</p>
-              <div aria-live="polite">
-                {q ? (
-                  <PriceDisplay price={cents(q.cents)} size="lg" />
-                ) : (
-                  <span className="text-meta text-dgr-text">اختر استخداماً واحداً على الأقل</span>
+          {/* بعد الاختيار: الأوزان بافتراض العائلة — سطر واحد مع «تغيير» */}
+          {chosen.length > 0 && (
+            <section aria-labelledby="lic-weights" className="animate-fade-up">
+              <h3 id="lic-weights" className="sr-only">
+                الأوزان
+              </h3>
+              <div className="rounded-lg border bg-card p-4">
+                <div className="flex items-center gap-3">
+                  <span className="min-w-0 flex-1">
+                    <span className="block text-control font-semibold">
+                      {sel.package === 'family' ? 'العائلة الكاملة' : `وزن واحد · ${weight?.nameAr ?? ''}`}
+                    </span>
+                    <span className="block text-meta text-muted-foreground">
+                      {sel.package === 'family'
+                        ? `${weightsLabel(pricing.weights.length)}${saving >= 5 ? ` · توفّر ${saving}٪ عن شرائها منفردة` : ''}`
+                        : 'تستطيع ترقيتها للعائلة لاحقاً'}
+                    </span>
+                  </span>
+                  <button
+                    type="button"
+                    aria-expanded={editing === 'weights'}
+                    onClick={() => setEditing(editing === 'weights' ? null : 'weights')}
+                    className="text-meta font-medium text-foreground underline-offset-4 hover:underline"
+                  >
+                    {editing === 'weights' ? 'تمّ' : 'تغيير'}
+                  </button>
+                </div>
+                {editing === 'weights' && (
+                  <div className="mt-3 flex animate-fade-up flex-col gap-3">
+                    <div role="radiogroup" aria-label="ماذا تشتري؟" className="grid grid-cols-2 gap-2">
+                      {(['family', 'single'] as const).map((p) => (
+                        <button
+                          key={p}
+                          type="button"
+                          role="radio"
+                          aria-checked={sel.package === p}
+                          onClick={() =>
+                            setSel((s) => ({
+                              ...s,
+                              package: p,
+                              weightId: p === 'single' ? (s.weightId ?? pricing.weights[0]?.id) : undefined,
+                            }))
+                          }
+                          className={cn(
+                            'rounded-md border px-3 py-2.5 text-start transition-colors outline-none focus-visible:ring-2 focus-visible:ring-ring',
+                            sel.package === p ? 'border-foreground ring-1 ring-foreground' : 'hover:border-strong',
+                          )}
+                        >
+                          <span className="block text-control font-medium">
+                            {p === 'family' ? 'العائلة الكاملة' : 'وزن واحد'}
+                          </span>
+                          <span dir="ltr" className="block text-end text-meta text-muted-foreground tabular-nums">
+                            {formatMoney(cents(p === 'family' ? pricing.familyCents : pricing.singleCents))}
+                          </span>
+                        </button>
+                      ))}
+                    </div>
+                    {sel.package === 'single' && (
+                      <ul aria-label="اختر الوزن" className="max-h-52 overflow-y-auto rounded-md border">
+                        {pricing.weights.map((w) => {
+                          const on = sel.weightId === w.id;
+                          return (
+                            <li key={w.id}>
+                              <button
+                                type="button"
+                                aria-pressed={on}
+                                onClick={() => setSel((s) => ({ ...s, weightId: w.id }))}
+                                className="flex w-full items-center gap-3 px-3 py-2 transition-colors hover:bg-sunken aria-pressed:bg-sunken"
+                              >
+                                <span
+                                  aria-hidden
+                                  className={cn(
+                                    'grid size-4.5 shrink-0 place-items-center rounded-full',
+                                    on ? 'bg-foreground text-background' : 'border border-strong',
+                                  )}
+                                >
+                                  {on && <CheckIcon className="size-3" />}
+                                </span>
+                                <span className="flex-1 text-start text-control">{w.nameAr}</span>
+                                <span
+                                  aria-hidden
+                                  className="text-lg"
+                                  style={face ? faceStyle(face, w.value) : weightStyle(w.value)}
+                                >
+                                  أبجد
+                                </span>
+                              </button>
+                            </li>
+                          );
+                        })}
+                      </ul>
+                    )}
+                  </div>
                 )}
               </div>
-            </div>
-            {q && (
-              <p className="line-clamp-2 max-w-[60%] text-end text-caption leading-relaxed text-muted-foreground">
-                {q.summary.join(' · ')}
-              </p>
-            )}
+            </section>
+          )}
+
+          <details className="group text-meta text-muted-foreground">
+            <summary className="cursor-pointer list-none font-medium text-foreground underline-offset-4 hover:underline [&::-webkit-details-marker]:hidden">
+              ماذا يشمل الترخيص؟
+            </summary>
+            <ul className="mt-2 flex list-disc flex-col gap-1 ps-5 leading-relaxed">
+              <li>ملفات الخط (OTF وWOFF2) للتحميل فوراً بعد الدفع.</li>
+              <li>ملف ترخيص باسمك يصلك مع الإيصال.</li>
+              <li>ترقية لاحقة تدفع فيها الفرق فقط.</li>
+            </ul>
+            <p className="mt-2">
+              علامة تجارية كبيرة أو بثّ تلفزيوني؟{' '}
+              <a href="mailto:abdulmalik@harflibrary.com" className="font-medium text-primary hover:underline">
+                تواصل معنا
+              </a>
+            </p>
+          </details>
+        </div>
+
+        <footer className="border-t px-6 py-4">
+          <div className="mb-3 flex items-baseline justify-between gap-4" aria-live="polite">
+            <span className="text-meta text-muted-foreground">{q ? 'الإجمالي' : 'يبدأ من'}</span>
+            <span dir="ltr" className="text-3xl font-semibold tracking-tight tabular-nums">
+              {formatMoney(cents(q ? q.cents : lowest))}
+            </span>
           </div>
-          <div className="grid grid-cols-[2fr_1fr] gap-3">
+          <div className="flex flex-col gap-2">
             <Button size="lg" disabled={!q} loading={pending && intent === 'cart'} onClick={() => submit('cart')}>
               <CartIcon />
-              {submitLabel ?? 'أضف إلى السلة'}
+              {q ? (submitLabel ?? 'أضف إلى السلة') : 'اختر الاستخدام أولاً'}
             </Button>
-            {!initial && (
+            {!initial && q && (
               <Button
-                size="lg"
-                variant="outline"
-                disabled={!q}
+                variant="ghost"
                 loading={pending && intent === 'buy'}
                 onClick={() => submit('buy')}
+                className="text-foreground"
               >
-                اشترِ الآن
+                اشترِ الآن مباشرة
               </Button>
             )}
           </div>
         </footer>
       </PanelSheetContent>
     </Sheet>
-  );
-}
-
-function Step({ n, id, children }: { n: number; id: string; children: string }) {
-  return (
-    <h3 id={id} className="mb-3 flex items-center gap-2 text-control font-semibold">
-      <span
-        dir="ltr"
-        className="grid size-6 place-items-center rounded-full bg-sunken text-caption text-muted-foreground"
-      >
-        {n}
-      </span>
-      {children}
-    </h3>
-  );
-}
-
-function PackageOption({
-  value,
-  title,
-  hint,
-  price,
-  compareAt,
-  badge,
-}: {
-  value: LicensePackage;
-  title: string;
-  hint: string;
-  price: number;
-  compareAt?: number;
-  badge?: string;
-}) {
-  return (
-    <RadioGroupPrimitive.Item
-      value={value}
-      className="group flex items-start gap-3 rounded-md border bg-card p-3.5 text-start transition-colors duration-(--dur-base) hover:border-strong data-[state=checked]:border-primary data-[state=checked]:bg-tint-brand/60"
-    >
-      <span className="mt-0.5 size-5 shrink-0 rounded-full border-[1.5px] border-strong bg-card transition-[border-width,border-color] duration-(--dur-base) ease-pop group-data-[state=checked]:border-[5px] group-data-[state=checked]:border-primary" />
-      <span className="min-w-0 flex-1">
-        <span className="block text-control font-medium">{title}</span>
-        <span className="mt-0.5 flex flex-wrap items-center gap-1.5 text-caption text-muted-foreground">
-          {hint}
-          {badge && (
-            <span className="rounded-full bg-tint-ok px-1.5 py-0.5 text-micro font-medium text-ok-text">{badge}</span>
-          )}
-        </span>
-      </span>
-      <PriceDisplay
-        price={cents(price)}
-        compareAt={compareAt ? cents(compareAt) : undefined}
-        size="sm"
-        className="flex-col items-end gap-0"
-      />
-    </RadioGroupPrimitive.Item>
-  );
-}
-
-function WeightList({
-  pricing,
-  sel,
-  onPick,
-}: {
-  pricing: LicensePricing;
-  sel: LicenseSelection;
-  onPick: (id: string) => void;
-}) {
-  // العائلة: سطر واحد يرسم مدى الأوزان بأوزانها الحقيقية (من الأخفّ إلى الأثقل) — معلومة لا اختيار،
-  // بدل قائمة شرائح ✓ تملأ المساحة وتدفع السؤال الثاني بعيداً
-  if (sel.package === 'family') {
-    const first = pricing.weights[0];
-    const last = pricing.weights.at(-1);
-    return (
-      <div className="mt-3 flex items-center gap-4 rounded-md bg-sunken px-4 py-3">
-        <p
-          aria-label={`الأوزان المشمولة: ${pricing.weights.map((w) => w.nameAr).join('، ')}`}
-          className="flex flex-1 items-baseline gap-2.5 overflow-hidden text-2xl leading-none"
-        >
-          {pricing.weights.map((w) => (
-            <span key={w.id} aria-hidden title={`${w.nameAr} ${w.value}`} style={weightStyle(w.value)}>
-              ب
-            </span>
-          ))}
-        </p>
-        {first && last && (
-          <p className="shrink-0 text-end text-caption leading-tight text-muted-foreground">
-            {first.nameAr} ← {last.nameAr}
-            <span dir="ltr" className="block text-tertiary tabular-nums">
-              {first.value}–{last.value}
-            </span>
-          </p>
-        )}
-      </div>
-    );
-  }
-
-  return (
-    <ul aria-label="اختر الوزن" className="mt-3 max-h-56 divide-y overflow-y-auto rounded-md border bg-card">
-      {pricing.weights.map((w) => {
-        const on = sel.weightId === w.id;
-        return (
-          <li key={w.id}>
-            <button
-              type="button"
-              aria-pressed={on}
-              onClick={() => onPick(w.id)}
-              className="flex w-full items-center gap-3 px-3.5 py-2.5 transition-colors hover:bg-sunken aria-pressed:bg-tint-brand/50"
-            >
-              <span
-                aria-hidden
-                className={cn(
-                  'grid size-5 shrink-0 place-items-center rounded-full transition-colors',
-                  on ? 'bg-primary-fill text-primary-foreground' : 'border border-strong',
-                )}
-              >
-                {on && <CheckIcon className="size-3" />}
-              </span>
-              <span className="min-w-0 flex-1 text-start">
-                <span className="block text-control">{w.nameAr}</span>
-                <span dir="ltr" className="block text-right text-caption text-tertiary">
-                  {w.nameEn} · {w.value}
-                </span>
-              </span>
-              <span aria-hidden className="text-lg" style={weightStyle(w.value)}>
-                أبجد هوز
-              </span>
-            </button>
-          </li>
-        );
-      })}
-    </ul>
   );
 }

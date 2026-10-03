@@ -7,12 +7,18 @@ test.describe('رحلة الشراء', () => {
     const sheet = page.getByRole('dialog', { name: 'Naskh Hadith' });
     await expect(sheet).toBeVisible();
 
-    // وزن واحد + موقع إلكتروني: الإجمالي يتغيّر أمام العين
+    // قرار واحد مطلوب: لا إضافة قبل اختيار الاستخدام
+    await expect(sheet.getByRole('button', { name: 'اختر الاستخدام أولاً' })).toBeDisabled();
+    await sheet.getByRole('button', { name: /موقع إلكتروني/ }).click();
+    // الأوزان بافتراض العائلة، ونغيّرها لوزن واحد — الإجمالي يتغيّر أمام العين
     const total = sheet.locator('footer [aria-live]');
     const before = await total.textContent();
+    await sheet.getByRole('button', { name: 'تغيير' }).last().click();
     await sheet.getByRole('radio', { name: /وزن واحد/ }).click();
-    await sheet.getByText('موقع إلكتروني').click();
     await expect(total).not.toHaveText(before ?? '');
+    // نطاق الاستخدام قابل للتغيير
+    await sheet.getByRole('button', { name: 'تغيير' }).first().click();
+    await sheet.getByRole('radio', { name: /حتى 100 ألف زيارة/ }).click();
 
     await sheet.getByRole('button', { name: 'أضف إلى السلة' }).click();
     await expect(page.getByRole('region', { name: 'الإشعارات العابرة' }).getByText('أُضيف إلى السلة')).toBeVisible();
@@ -38,7 +44,8 @@ test.describe('رحلة الشراء', () => {
   test('الرفض ثم إعادة المحاولة، والتحقّق من الاسم على الخادم', async ({ page }) => {
     await page.goto('/fonts/rawi?license=1');
     const sheet = page.getByRole('dialog', { name: 'Rawi Text' });
-    await sheet.getByRole('button', { name: 'اشترِ الآن' }).click();
+    await sheet.getByRole('button', { name: /تصميم ومطبوعات/ }).click();
+    await sheet.getByRole('button', { name: 'اشترِ الآن مباشرة' }).click();
     await page.waitForURL('**/checkout');
 
     await page.getByLabel(/الاسم الكامل/).fill('x');

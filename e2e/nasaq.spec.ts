@@ -99,6 +99,7 @@ test.describe('نسق', () => {
     await act(page, card, 'شراء');
     await expect(page).toHaveURL(/\/fonts\/[a-z-]+\?license=1$/);
     const sheet = page.getByRole('dialog');
+    await sheet.getByRole('button', { name: /تصميم ومطبوعات/ }).click();
     await sheet.getByRole('button', { name: 'أضف إلى السلة' }).click();
     await expect(page.getByRole('region', { name: 'الإشعارات العابرة' }).getByText('أُضيف إلى السلة')).toBeVisible();
   });

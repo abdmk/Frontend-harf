@@ -4,10 +4,9 @@ import { DownloadButton } from '@/components/shared/download-button';
 import { PriceDisplay } from '@/components/shared/price-display';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { CartIcon, CheckIcon } from '@/components/ui/icons';
-import { toast } from '@/components/ui/toast';
+import { CheckIcon } from '@/components/ui/icons';
 import { cents } from '@/types/domain/commerce';
-import type { LicenseType } from '@/types/domain/font';
+import type { LicenseType, LiveFace } from '@/types/domain/font';
 import type { LicensePricing, LicenseSelection, OwnershipState } from '@/types/domain/license';
 
 import { LicenseSheet, type SubmitResult } from './license-sheet';
@@ -16,6 +15,8 @@ type Props = {
   font: { id: string; name: string; type: Exclude<LicenseType, 'free'> };
   foundry: string;
   pricing: LicensePricing;
+  /** خط العرض الحيّ — لاسم الخط في نافذة الشراء */
+  face?: LiveFace;
   ownership?: OwnershipState;
   /** رقم الترخيص إن كان مملوكاً */
   licenseId?: string;
@@ -33,6 +34,7 @@ export function PurchaseActions({
   font,
   foundry,
   pricing,
+  face,
   ownership = 'none',
   licenseId,
   favorite,
@@ -44,6 +46,7 @@ export function PurchaseActions({
       fontName={font.name}
       foundry={foundry}
       pricing={pricing}
+      face={face}
       defaultOpen={defaultOpen}
       onSubmit={onSubmit}
       trigger={
@@ -73,21 +76,6 @@ export function PurchaseActions({
     );
   }
 
-  async function quickAdd() {
-    const first = pricing.uses.desktop[0];
-    if (!first) return;
-    const res = await onSubmit({ fontId: font.id, package: 'family', uses: { desktop: first.id } });
-    toast(
-      res.ok
-        ? {
-            tone: 'success',
-            title: 'أُضيفت العائلة الكاملة إلى السلة',
-            description: 'لسطح المكتب — عدّل الترخيص من السلة متى شئت.',
-          }
-        : { tone: 'danger', title: 'لم تتمّ الإضافة', description: res.error },
-    );
-  }
-
   return (
     <div className="flex flex-wrap items-center gap-3">
       <PriceDisplay
@@ -97,9 +85,6 @@ export function PurchaseActions({
         className="me-2"
       />
       {favorite}
-      <Button size="icon-lg" variant="outline" aria-label={`أضف ${font.name} إلى السلة`} onClick={quickAdd}>
-        <CartIcon />
-      </Button>
       {font.type === 'trial' && (
         <DownloadButton fontName={font.name} label="تحميل للتجربة" size="lg" variant="secondary" />
       )}

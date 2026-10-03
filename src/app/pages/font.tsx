@@ -56,6 +56,7 @@ export function FontPage() {
               font={{ id: font.id, name: font.name, type: font.type }}
               foundry={font.designerLabel ?? font.designers[0]?.nameAr ?? ''}
               pricing={pricing}
+              face={font.face}
               favorite={favorite}
               ownership={owned ? 'owned' : 'none'}
               licenseId={owned?.licenseId}
