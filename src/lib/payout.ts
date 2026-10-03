@@ -3,17 +3,22 @@ import { z } from 'zod';
 import { hit } from './sliding-window';
 
 /**
- * وسيلة استلام الأرباح: حساب بنكي (IBAN) أو محفظة إلكترونية (زين كاش).
+ * وسيلة استلام الأرباح: حساب بنكي (IBAN) في كل الدول، و«كي كارد» للناشرين في العراق فقط.
  * ⚠️ عرض: الرقم الكامل لا يُحفظ في المتصفّح أبداً — يُرسل إلى الخادم مشفّراً (TLS) ويُخزَّن هناك
  * مشفّراً، ويبقى في الواجهة آخر 4 أرقام للعرض فقط. التحقّق نفسه يُعاد على الخادم.
  */
-export const PAYOUT_METHODS = ['bank', 'wallet'] as const;
+export const PAYOUT_METHODS = ['bank', 'qicard'] as const;
 export type PayoutMethod = (typeof PAYOUT_METHODS)[number];
 
 export const PAYOUT_METHOD_LABEL: Record<PayoutMethod, string> = {
   bank: 'حساب بنكي',
-  wallet: 'زين كاش',
+  qicard: 'كي كارد',
 };
+
+/** الوسائل المتاحة لدولة الناشر: كي كارد بطاقة عراقية، فلا تُعرض إلا لمن دولته العراق */
+export function payoutMethodsFor(country?: string): readonly PayoutMethod[] {
+  return country === 'IQ' ? PAYOUT_METHODS : ['bank'];
+}
 
 /** ما يُعرض ويُحفظ محلياً: مقنّع دائماً */
 export type MaskedPayout = { method: PayoutMethod; holder: string; last4: string; country?: string };
@@ -31,16 +36,20 @@ export function isValidIban(input: string): boolean {
   return rem === 1;
 }
 
-/** رقم هاتف عراقي للمحفظة: يقبل 07XXXXXXXXX أو +9647XXXXXXXXX ويعيده بصيغة 07… — null إن لم يصحّ */
-export function normalizeIraqiMobile(input: string): string | null {
-  const d = input
-    .replace(/[\s-]/g, '')
-    .replace(/^\+?964/, '0')
-    .replace(/^00964/, '0');
-  return /^07[3-9]\d{8}$/.test(d) ? d : null;
+/** رقم بطاقة كي كارد: 16 رقماً تجتاز فحص Luhn — null إن لم يصحّ، وإلا الأرقام وحدها */
+export function normalizeCardNumber(input: string): string | null {
+  const d = input.replace(/[\s-]/g, '');
+  if (!/^\d{16}$/.test(d)) return null;
+  let sum = 0;
+  for (let i = 0; i < 16; i++) {
+    let n = Number(d[15 - i]);
+    if (i % 2 === 1) n = n * 2 > 9 ? n * 2 - 9 : n * 2;
+    sum += n;
+  }
+  return sum % 10 === 0 ? d : null;
 }
 
-const holder = z.string().trim().min(2, 'اكتب الاسم كما هو مسجّل لدى البنك أو المحفظة.').max(80);
+const holder = z.string().trim().min(2, 'اكتب الاسم كما هو مسجّل لدى البنك أو على البطاقة.').max(80);
 
 export const payoutInputSchema = z.discriminatedUnion('method', [
   z.object({
@@ -49,9 +58,11 @@ export const payoutInputSchema = z.discriminatedUnion('method', [
     iban: z.string().refine(isValidIban, 'رقم IBAN غير صحيح — راجِع الأرقام.'),
   }),
   z.object({
-    method: z.literal('wallet'),
+    method: z.literal('qicard'),
     holder,
-    phone: z.string().refine((v) => normalizeIraqiMobile(v) !== null, 'رقم هاتف عراقي، مثل 07701234567.'),
+    card: z
+      .string()
+      .refine((v) => normalizeCardNumber(v) !== null, 'رقم البطاقة 16 رقماً — راجِعه كما هو على البطاقة.'),
   }),
 ]);
 export type PayoutInput = z.infer<typeof payoutInputSchema>;
@@ -62,11 +73,12 @@ export function maskPayout(p: PayoutInput): MaskedPayout {
     const iban = p.iban.replace(/\s+/g, '').toUpperCase();
     return { method: 'bank', holder: p.holder, last4: iban.slice(-4), country: iban.slice(0, 2) };
   }
-  return { method: 'wallet', holder: p.holder, last4: normalizeIraqiMobile(p.phone)!.slice(-4) };
+  return { method: 'qicard', holder: p.holder, last4: normalizeCardNumber(p.card)!.slice(-4), country: 'IQ' };
 }
 
 export const maskedPayoutSchema = z.object({
-  method: z.enum(PAYOUT_METHODS),
+  // «wallet» (زين كاش) قيمة قديمة محفوظة — تُقرأ ككي كارد حتى يحدّثها صاحبها
+  method: z.preprocess((m) => (m === 'wallet' ? 'qicard' : m), z.enum(PAYOUT_METHODS)),
   holder: z.string().max(80),
   last4: z.string().regex(/^\d{4}$/),
   country: z
@@ -76,7 +88,7 @@ export const maskedPayoutSchema = z.object({
 });
 
 export function payoutLabel(p: MaskedPayout) {
-  return p.method === 'bank' ? `IBAN •••• ${p.last4}` : `زين كاش •••• ${p.last4}`;
+  return p.method === 'bank' ? `IBAN •••• ${p.last4}` : `كي كارد •••• ${p.last4}`;
 }
 
 /* ── رمز التأكيد لمرّة واحدة (OTP) ─────────────────────────────────────────

@@ -1,7 +1,14 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 
 import { setDemoSession } from '../auth';
-import { maskPayout, normalizeIraqiMobile, payoutInputSchema, verifyOtp } from '../payout';
+import {
+  maskedPayoutSchema,
+  maskPayout,
+  normalizeCardNumber,
+  payoutInputSchema,
+  payoutMethodsFor,
+  verifyOtp,
+} from '../payout';
 import {
   AGREEMENT_VERSION,
   canSell,
@@ -16,11 +23,19 @@ import {
 const ME = 'u-heba'; // الحساب المجاني بعد ترقيته («newstudio»)
 
 describe('وسيلة استلام الأرباح', () => {
-  it('رقم المحفظة العراقي يُوحَّد ويُرفض غيره', () => {
-    expect(normalizeIraqiMobile('+964 770 123 4567')).toBe('07701234567');
-    expect(normalizeIraqiMobile('07701234567')).toBe('07701234567');
-    expect(normalizeIraqiMobile('0770123')).toBeNull();
-    expect(normalizeIraqiMobile('07101234567')).toBeNull();
+  it('رقم كي كارد: 16 رقماً تجتاز Luhn، وغيرها مرفوض', () => {
+    expect(normalizeCardNumber('4111 1111 1111 1111')).toBe('4111111111111111');
+    expect(normalizeCardNumber('4111111111111112')).toBeNull();
+    expect(normalizeCardNumber('4111 1111 1111')).toBeNull();
+    const p = payoutInputSchema.parse({ method: 'qicard', holder: 'هبة', card: '4111-1111-1111-1111' });
+    expect(maskPayout(p)).toEqual({ method: 'qicard', holder: 'هبة', last4: '1111', country: 'IQ' });
+  });
+
+  it('كي كارد للعراق فقط، والقيمة القديمة (زين كاش) تُقرأ ككي كارد', () => {
+    expect(payoutMethodsFor('IQ')).toEqual(['bank', 'qicard']);
+    expect(payoutMethodsFor('JO')).toEqual(['bank']);
+    expect(payoutMethodsFor(undefined)).toEqual(['bank']);
+    expect(maskedPayoutSchema.parse({ method: 'wallet', holder: 'هبة', last4: '4567' }).method).toBe('qicard');
   });
 
   it('لا يبقى من الرقم إلا آخر 4 أرقام', () => {
@@ -64,10 +79,13 @@ describe('توثيق الاستوديو', () => {
         },
         docType: 'passport',
         docs: { front: 'd-abc123' },
-        payout: { method: 'wallet', holder: 'هبة', last4: '4567', verifiedAt: '2026-10-01T00:00:00Z' },
+        payout: { method: 'qicard', holder: 'هبة', last4: '4567', verifiedAt: '2026-10-01T00:00:00Z' },
       }).ok,
     ).toBe(true);
     expect(missingOf(getVerification(ME))).toEqual(['agreement']);
+    // كي كارد مع دولة غير العراق ← وسيلة الاستلام ناقصة
+    const r = getVerification(ME);
+    expect(missingOf({ ...r, info: { ...r.info, country: 'JO' } })).toContain('payout');
     saveVerificationDraft({
       agreement: { version: AGREEMENT_VERSION, signedAt: '2026-10-01T00:00:00Z', signer: 'هبة', signature: 'd-sig123' },
     });

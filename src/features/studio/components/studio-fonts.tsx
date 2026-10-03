@@ -2,17 +2,10 @@ import { useState } from 'react';
 import { Link } from 'react-router';
 
 import { EmptyState } from '@/components/shared/empty-state';
+import { FontTypeBadge } from '@/components/shared/font-type-badge';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import {
-  CheckIcon,
-  ClockIcon,
-  CloudUploadIcon,
-  CrossIcon,
-  CrownIcon,
-  LayersIcon,
-  PencilIcon,
-} from '@/components/ui/icons';
+import { CheckIcon, ClockIcon, CloudUploadIcon, CrossIcon, LayersIcon, PencilIcon } from '@/components/ui/icons';
 import { SegmentedControl } from '@/components/ui/segmented-control';
 import { paths } from '@/config/paths';
 import { formatDateAr, formatMoney } from '@/lib/format';
@@ -131,13 +124,14 @@ export function StudioFonts({ fonts }: { fonts: StudioFont[] }) {
                     <Badge tone={st.tone} icon={<st.Icon />}>
                       {st.label}
                     </Badge>
-                    {f.type === 'paid' ? (
-                      <Badge tone="studio" icon={<CrownIcon />}>
-                        مدفوع · <bdi dir="ltr">${f.price}</bdi>
-                      </Badge>
-                    ) : (
-                      <Badge tone="neutral">مجاني</Badge>
-                    )}
+                    <FontTypeBadge type={f.type}>
+                      {f.type === 'paid' && (
+                        <>
+                          {' '}
+                          · <bdi dir="ltr">${f.price}</bdi>
+                        </>
+                      )}
+                    </FontTypeBadge>
                   </div>
                   <p className="mt-1 text-caption text-muted-foreground">
                     {f.weights} أوزان · آخر تعديل {formatDateAr(f.updatedAt)}

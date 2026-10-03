@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from '@/components/ui/dialog';
 import { Field, FieldError, FieldHint, FieldLabel } from '@/components/ui/field';
-import { ArrowRightIcon, BankIcon, MobileIcon } from '@/components/ui/icons';
+import { ArrowRightIcon, BankIcon, CreditCardIcon } from '@/components/ui/icons';
 import { Input } from '@/components/ui/input';
 import { OtpInput } from '@/components/ui/otp-input';
 import { cn } from '@/lib/cn';
@@ -18,13 +18,22 @@ import {
   type PayoutInput,
   payoutInputSchema,
   type PayoutMethod,
+  payoutMethodsFor,
   verifyOtp,
 } from '@/lib/payout';
 
 import { SecureNote } from './payout-card';
 
-type Values = { method: PayoutMethod; holder: string; iban: string; phone: string; confirm: boolean };
-const EMPTY: Values = { method: 'bank', holder: '', iban: '', phone: '', confirm: false };
+type Values = { method: PayoutMethod; holder: string; iban: string; card: string; confirm: boolean };
+const EMPTY: Values = { method: 'bank', holder: '', iban: '', card: '', confirm: false };
+
+/** رقم البطاقة للعرض أثناء الكتابة: 4 مجموعات من 4 أرقام */
+const groupCard = (v: string) =>
+  v
+    .replace(/\D/g, '')
+    .slice(0, 16)
+    .replace(/(.{4})/g, '$1 ')
+    .trim();
 
 /** تنسيق IBAN للعرض أثناء الكتابة: مجموعات من 4 */
 const groupIban = (v: string) =>
@@ -34,11 +43,21 @@ const groupIban = (v: string) =>
     .replace(/(.{4})/g, '$1 ')
     .trim();
 
-function MethodChoice({ value, onChange }: { value: PayoutMethod; onChange: (m: PayoutMethod) => void }) {
-  const opts = [
-    { m: 'bank' as const, label: 'حساب بنكي', hint: 'تحويل إلى IBAN', Icon: BankIcon },
-    { m: 'wallet' as const, label: 'زين كاش', hint: 'محفظة برقم الهاتف', Icon: MobileIcon },
-  ];
+const METHOD_OPTS = {
+  bank: { label: 'حساب بنكي', hint: 'تحويل إلى IBAN', Icon: BankIcon },
+  qicard: { label: 'كي كارد', hint: 'تحويل إلى رقم البطاقة', Icon: CreditCardIcon },
+} as const satisfies Record<PayoutMethod, unknown>;
+
+function MethodChoice({
+  value,
+  methods,
+  onChange,
+}: {
+  value: PayoutMethod;
+  methods: readonly PayoutMethod[];
+  onChange: (m: PayoutMethod) => void;
+}) {
+  const opts = methods.map((m) => ({ m, ...METHOD_OPTS[m] }));
   return (
     <div role="radiogroup" aria-label="وسيلة الاستلام" className="grid grid-cols-2 gap-3">
       {opts.map(({ m, label, hint, Icon }) => (
@@ -50,13 +69,13 @@ function MethodChoice({ value, onChange }: { value: PayoutMethod; onChange: (m: 
           onClick={() => onChange(m)}
           className={cn(
             'flex flex-col items-start gap-3 rounded-lg border bg-card p-3.5 text-start transition-[border-color,box-shadow,background-color] duration-(--dur-fast) outline-none focus-visible:ring-2 focus-visible:ring-ring',
-            value === m ? 'border-foreground shadow-soft ring-1 ring-foreground' : 'hover:border-strong',
+            value === m ? 'border-primary bg-tint-brand/40 ring-1 ring-primary' : 'hover:border-strong',
           )}
         >
           <span className="text-control font-medium">{label}</span>
           <span className="flex w-full items-end justify-between gap-2">
             <span className="text-caption text-muted-foreground">{hint}</span>
-            <Icon className={cn('size-5', value === m ? 'text-foreground' : 'text-tertiary')} />
+            <Icon className={cn('size-5', value === m ? 'text-primary' : 'text-tertiary')} />
           </span>
         </button>
       ))}
@@ -70,6 +89,8 @@ type PayoutDialogProps = {
   email: string;
   title?: string;
   description?: string;
+  /** دولة الناشر — تحدّد الوسائل المتاحة (كي كارد للعراق فقط) */
+  country?: string;
   onSaved: (p: MaskedPayout) => void;
 };
 
@@ -84,6 +105,7 @@ function PayoutDialogBody({
   email,
   title = 'وسيلة استلام الأرباح',
   description = 'إلى أين نحوّل أرباحك؟ نتحقّق منك برمز قبل الحفظ.',
+  country,
   onSaved,
 }: {
   open: boolean;
@@ -91,8 +113,10 @@ function PayoutDialogBody({
   email: string;
   title?: string;
   description?: string;
+  country?: string;
   onSaved: (p: MaskedPayout) => void;
 }) {
+  const methods = payoutMethodsFor(country);
   const [v, setV] = useState<Values>(EMPTY);
   const [errors, setErrors] = useState<Partial<Record<keyof Values | 'form', string>>>({});
   const [step, setStep] = useState<'form' | 'otp'>('form');
@@ -113,7 +137,7 @@ function PayoutDialogBody({
     const r = payoutInputSchema.safeParse(
       v.method === 'bank'
         ? { method: 'bank', holder: v.holder, iban: v.iban }
-        : { method: 'wallet', holder: v.holder, phone: v.phone },
+        : { method: 'qicard', holder: v.holder, card: v.card },
     );
     const errs: typeof errors = {};
     if (!r.success) for (const i of r.error.issues) errs[i.path[0] as keyof Values] ??= i.message;
@@ -145,16 +169,19 @@ function PayoutDialogBody({
                 {description}
               </DialogDescription>
             </div>
-            <MethodChoice
-              value={v.method}
-              onChange={(method) => {
-                setV({ ...v, method });
-                setErrors({});
-              }}
-            />
+            {methods.length > 1 && (
+              <MethodChoice
+                value={v.method}
+                methods={methods}
+                onChange={(method) => {
+                  setV({ ...v, method });
+                  setErrors({});
+                }}
+              />
+            )}
             <Field>
               <FieldLabel htmlFor={`${id}-h`} required>
-                {v.method === 'bank' ? 'اسم صاحب الحساب' : 'الاسم في المحفظة'}
+                {v.method === 'bank' ? 'اسم صاحب الحساب' : 'الاسم على البطاقة'}
               </FieldLabel>
               <Input
                 id={`${id}-h`}
@@ -190,23 +217,27 @@ function PayoutDialogBody({
               </Field>
             ) : (
               <Field>
-                <FieldLabel htmlFor={`${id}-p`} required>
-                  رقم الهاتف المرتبط بالمحفظة
+                <FieldLabel htmlFor={`${id}-c`} required>
+                  رقم بطاقة كي كارد
                 </FieldLabel>
                 <Input
-                  id={`${id}-p`}
+                  id={`${id}-c`}
                   dir="ltr"
-                  type="tel"
-                  value={v.phone}
-                  maxLength={16}
-                  autoComplete="tel"
-                  placeholder="0770 123 4567"
-                  aria-invalid={!!errors.phone}
-                  aria-describedby={`${id}-pe`}
-                  onChange={(e) => setV({ ...v, phone: e.target.value })}
-                  className="tabular-nums"
+                  inputMode="numeric"
+                  value={groupCard(v.card)}
+                  maxLength={19}
+                  autoComplete="off"
+                  spellCheck={false}
+                  placeholder="0000 0000 0000 0000"
+                  aria-invalid={!!errors.card}
+                  aria-describedby={`${id}-ch ${id}-ce`}
+                  onChange={(e) => setV({ ...v, card: e.target.value.replace(/\D/g, '').slice(0, 16) })}
+                  className="tracking-wide tabular-nums"
                 />
-                <FieldError id={`${id}-pe`}>{errors.phone}</FieldError>
+                <FieldHint id={`${id}-ch`}>
+                  الأرقام الـ16 على وجه البطاقة — لا نطلب رمز CVV أو تاريخ الانتهاء أبداً.
+                </FieldHint>
+                <FieldError id={`${id}-ce`}>{errors.card}</FieldError>
               </Field>
             )}
             <label className="flex items-start gap-3 rounded-lg border p-3.5 text-meta leading-relaxed">
@@ -219,7 +250,7 @@ function PayoutDialogBody({
               الحساب باسمي أو باسم استوديوي، وأنا مخوّل باستلام الأرباح عليه.
             </label>
             <FieldError>{errors.confirm}</FieldError>
-            <Button type="submit" size="lg" variant="ink">
+            <Button type="submit" size="lg" variant="primary">
               متابعة
             </Button>
             <SecureNote />
@@ -261,7 +292,7 @@ function PayoutDialogBody({
               </span>
             </p>
             <div className="flex flex-col gap-3">
-              <Button type="submit" size="lg" variant="ink" disabled={!/^\d{6}$/.test(code)}>
+              <Button type="submit" size="lg" variant="primary" disabled={!/^\d{6}$/.test(code)}>
                 تأكيد وحفظ
               </Button>
               <p className="flex items-center justify-center gap-2 text-meta text-muted-foreground">

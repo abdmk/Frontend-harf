@@ -12,6 +12,7 @@ import {
   DocumentSignedIcon,
   FingerprintIcon,
   ShieldCheckIcon,
+  SignOutIcon,
   UserIcon,
 } from '@/components/ui/icons';
 import { toast } from '@/components/ui/toast';
@@ -55,7 +56,7 @@ type Step = 0 | 1 | 2 | 3 | 4 | 5;
 const WHAT_YOU_NEED = [
   { Icon: UserIcon, title: 'بيانات الاستوديو', text: 'الاسم القانوني، اسم الاستوديو، والدولة.' },
   { Icon: FingerprintIcon, title: 'وثيقة هوية سارية', text: 'البطاقة الوطنية أو الجواز أو الإقامة — صورة واضحة.' },
-  { Icon: BankIcon, title: 'وسيلة استلام', text: 'حساب بنكي (IBAN) أو محفظة زين كاش باسمك.' },
+  { Icon: BankIcon, title: 'وسيلة استلام', text: 'حساب بنكي (IBAN) باسمك — أو بطاقة كي كارد في العراق.' },
   { Icon: DocumentSignedIcon, title: 'توقيع الاتفاقية', text: 'حصّة حرف وحقوقك على خطوطك، بوضوح.' },
 ];
 
@@ -81,7 +82,7 @@ function Welcome({ onStart, rejected }: { onStart: () => void; rejected?: string
             className="flex animate-fade-up gap-3 rounded-xl border bg-card p-4"
             style={{ animationDelay: `${i * 60}ms` }}
           >
-            <span className="grid size-9 shrink-0 place-items-center rounded-full bg-sunken text-foreground [&_svg]:size-4.5">
+            <span className="grid size-9 shrink-0 place-items-center rounded-full bg-tint-brand text-primary [&_svg]:size-4.5">
               <Icon />
             </span>
             <span>
@@ -95,7 +96,7 @@ function Welcome({ onStart, rejected }: { onStart: () => void; rejected?: string
         <ClockIcon className="size-4" />
         نحو 5 دقائق · نحفظ تقدّمك تلقائياً · المراجعة خلال يومي عمل عادةً
       </p>
-      <Button size="xl" variant="ink" className="mt-8 w-full sm:w-80" onClick={onStart}>
+      <Button size="xl" variant="primary" className="mt-8 w-full sm:w-80" onClick={onStart}>
         ابدأ التوثيق
         <ChevronLeftIcon />
       </Button>
@@ -115,7 +116,7 @@ function Progress({ step }: { step: number }) {
             key={s.title}
             className={cn(
               'h-1 flex-1 rounded-full transition-colors duration-(--dur-slow)',
-              i < step ? 'bg-foreground' : 'bg-inset',
+              i < step ? 'bg-primary-fill' : 'bg-inset',
             )}
           />
         ))}
@@ -248,17 +249,35 @@ export function VerifyFlow({ user, record }: { user: User; record: VerificationR
 
   return (
     <div className="flex min-h-dvh flex-col bg-background">
-      <header className="flex h-16 items-center justify-between px-4 sm:px-8">
-        <Link
-          to={paths.home.getHref()}
-          aria-label="حرف — الرئيسية"
-          className="rounded-sm outline-none focus-visible:ring-2 focus-visible:ring-ring"
-        >
-          <HarfLockup className="h-7 w-auto" />
-        </Link>
-        <Button asChild variant="secondary" size="sm">
-          <Link to={paths.studio.getHref()}>{step === 0 ? 'لاحقاً' : 'حفظ والخروج'}</Link>
-        </Button>
+      {/* شريط علوي ثابت بعرض الموقع: الشعار واسم الخطوة على جهة، والخروج على الأخرى — ظاهران دائماً */}
+      <header className="sticky top-0 z-30 border-b bg-background/90 backdrop-blur-md">
+        <div className="container-page flex h-16 items-center justify-between gap-4">
+          <div className="flex min-w-0 items-center gap-3">
+            <Link
+              to={paths.home.getHref()}
+              aria-label="حرف — الرئيسية"
+              className="shrink-0 rounded-sm outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            >
+              <HarfLockup className="h-8 w-auto" />
+            </Link>
+            <span aria-hidden className="h-6 w-px bg-border max-sm:hidden" />
+            <span className="truncate text-control font-medium text-muted-foreground max-sm:hidden">
+              توثيق الاستوديو
+            </span>
+          </div>
+          <Button asChild variant="outline" size="sm" shape="pill">
+            <Link to={paths.studio.getHref()}>
+              {step === 0 ? (
+                'لاحقاً'
+              ) : (
+                <>
+                  <SignOutIcon />
+                  حفظ والخروج
+                </>
+              )}
+            </Link>
+          </Button>
+        </div>
       </header>
 
       <main className="mx-auto w-full max-w-xl flex-1 px-4 pt-8 pb-36 sm:pt-12">
@@ -291,7 +310,13 @@ export function VerifyFlow({ user, record }: { user: User; record: VerificationR
                 />
               )}
               {step === 3 && (
-                <PayoutStep payout={payout} onChange={setPayout} email={user.email} showErrors={showErrors} />
+                <PayoutStep
+                  payout={payout}
+                  onChange={setPayout}
+                  email={user.email}
+                  country={info.country}
+                  showErrors={showErrors}
+                />
               )}
               {step === 4 && (
                 <AgreementStep
@@ -317,12 +342,12 @@ export function VerifyFlow({ user, record }: { user: User; record: VerificationR
               رجوع
             </Button>
             {step < 5 ? (
-              <Button variant="ink" size="lg" className="flex-1" onClick={next}>
+              <Button variant="primary" size="lg" className="flex-1" onClick={next}>
                 {STEPS[step as number]!.title}
                 <ChevronLeftIcon />
               </Button>
             ) : (
-              <Button variant="ink" size="lg" className="flex-1" disabled={missing.length > 0} onClick={submit}>
+              <Button variant="primary" size="lg" className="flex-1" disabled={missing.length > 0} onClick={submit}>
                 <ShieldCheckIcon />
                 إرسال للمراجعة
               </Button>

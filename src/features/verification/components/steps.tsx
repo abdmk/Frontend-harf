@@ -3,6 +3,7 @@ import { useId, useState, type ReactNode } from 'react';
 import { ConfirmDialog } from '@/components/shared/confirm-dialog';
 import { PayoutCard, SecureNote } from '@/components/shared/payout-card';
 import { PayoutDialog } from '@/components/shared/payout-dialog';
+import { Alert } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Field, FieldError, FieldHint, FieldLabel } from '@/components/ui/field';
 import {
@@ -23,7 +24,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { cn } from '@/lib/cn';
 import { formatDateAr } from '@/lib/format';
 import { useDocUrl } from '@/lib/media-store';
-import { type MaskedPayout, PAYOUT_METHOD_LABEL, payoutLabel } from '@/lib/payout';
+import { type MaskedPayout, PAYOUT_METHOD_LABEL, payoutLabel, payoutMethodsFor } from '@/lib/payout';
 import { PUBLISHER_TERMS } from '@/lib/publisher-terms';
 import {
   DOC_TYPE_LABEL,
@@ -87,7 +88,9 @@ export function InfoStep({
                 onClick={() => set({ entity: e })}
                 className={cn(
                   'flex items-center gap-3 rounded-lg border bg-card p-3.5 text-start text-control transition-[border-color,box-shadow] outline-none focus-visible:ring-2 focus-visible:ring-ring',
-                  v.entity === e ? 'border-foreground font-medium ring-1 ring-foreground' : 'hover:border-strong',
+                  v.entity === e
+                    ? 'border-primary bg-tint-brand/40 font-medium ring-1 ring-primary'
+                    : 'hover:border-strong',
                 )}
               >
                 <Icon className={cn('size-5 shrink-0', v.entity === e ? 'text-foreground' : 'text-tertiary')} />
@@ -223,7 +226,7 @@ export function DocsStep({
               className={cn(
                 'rounded-full border px-4 py-2 text-control transition-colors outline-none focus-visible:ring-2 focus-visible:ring-ring',
                 v.docType === t
-                  ? 'border-foreground bg-foreground font-medium text-background'
+                  ? 'border-primary bg-primary-fill font-medium text-primary-foreground'
                   : 'bg-card text-muted-foreground hover:border-strong hover:text-foreground',
               )}
             >
@@ -293,14 +296,20 @@ export function PayoutStep({
   payout,
   onChange,
   email,
+  country,
   showErrors,
 }: {
   payout: MaskedPayout | undefined;
   onChange: (p: MaskedPayout | undefined) => void;
   email: string;
+  /** دولة الناشر من الخطوة الأولى — كي كارد للعراق فقط */
+  country: string;
   showErrors: boolean;
 }) {
   const [editing, setEditing] = useState(false);
+  const iraq = country === 'IQ';
+  // كي كارد أُضيفت ثم تغيّرت الدولة إلى غير العراق ← لا تصلح، ويُطلب حساب بنكي
+  const unsupported = !!payout && !payoutMethodsFor(country).includes(payout.method);
   const [removing, setRemoving] = useState(false);
   return (
     <div className="flex flex-col gap-6">
@@ -309,6 +318,13 @@ export function PayoutStep({
           <h2 className="text-lead font-semibold">وسيلة الاستلام</h2>
           <p className="mt-1 text-meta text-muted-foreground">إلى أين نحوّل أرباحك من المبيعات.</p>
         </div>
+        {unsupported && (
+          <Alert
+            tone="warning"
+            title="كي كارد متاحة في العراق فقط"
+            description="غيّرت الدولة في بياناتك — حدّث وسيلة الاستلام إلى حساب بنكي."
+          />
+        )}
         {payout ? (
           <PayoutCard
             payout={payout}
@@ -337,7 +353,9 @@ export function PayoutStep({
             </span>
             <span>
               <span className="block text-control font-medium">أضف وسيلة استلام</span>
-              <span className="block text-meta text-muted-foreground">حساب بنكي (IBAN) أو محفظة زين كاش</span>
+              <span className="block text-meta text-muted-foreground">
+                {iraq ? 'حساب بنكي (IBAN) أو بطاقة كي كارد' : 'حساب بنكي (IBAN) باسمك'}
+              </span>
             </span>
           </button>
         )}
@@ -350,7 +368,7 @@ export function PayoutStep({
       </Explain>
       <SecureNote />
 
-      <PayoutDialog open={editing} onOpenChange={setEditing} email={email} onSaved={onChange} />
+      <PayoutDialog open={editing} onOpenChange={setEditing} email={email} country={country} onSaved={onChange} />
       <ConfirmDialog
         open={removing}
         onOpenChange={setRemoving}
@@ -499,7 +517,7 @@ export function AgreementStep({
         <SignaturePreview signed={signed} onResign={onSign} />
       ) : (
         <div className="flex flex-col gap-2">
-          <Button size="lg" variant="ink" disabled={!ready} onClick={onSign}>
+          <Button size="lg" variant="primary" disabled={!ready} onClick={onSign}>
             <DocumentSignedIcon />
             وقّع الاتفاقية
           </Button>

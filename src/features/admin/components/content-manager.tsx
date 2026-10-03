@@ -174,7 +174,9 @@ export function BannersEditor({ saved, bare = false }: { saved: Banner[]; bare?:
                               onClick={() => patch(i, { tone: t })}
                               className={cn(
                                 'flex items-center gap-2 rounded-full border py-1 ps-1 pe-3 text-meta transition-colors outline-none focus-visible:ring-2 focus-visible:ring-ring',
-                                b.tone === t ? 'border-foreground font-medium' : 'hover:border-strong',
+                                b.tone === t
+                                  ? 'border-primary bg-tint-brand/40 font-medium text-primary'
+                                  : 'hover:border-strong',
                               )}
                             >
                               <span className={cn('size-6 rounded-full border', BANNER_TONE_CLASS[t])} />

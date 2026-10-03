@@ -1,22 +1,16 @@
 import type { ReactNode } from 'react';
 import { Link } from 'react-router';
 
-import { CheckIcon, ClockIcon, CrownIcon } from '@/components/ui/icons';
 import { paths } from '@/config/paths';
 import { cn } from '@/lib/cn';
 import { faceStyle } from '@/lib/font-weight';
 import { weightsLabel } from '@/lib/format';
-import { TYPE_LABEL, USAGE_LABEL } from '@/lib/labels';
+import { USAGE_LABEL } from '@/lib/labels';
 import type { Font } from '@/types/domain/font';
 
 import { DesignerAvatars } from './designer-avatars';
 import { DownloadButton } from './download-button';
-
-const BADGE = {
-  free: { cls: 'bg-ok-700 text-white', Icon: CheckIcon },
-  trial: { cls: 'bg-trial-600 text-white', Icon: ClockIcon },
-  paid: { cls: 'bg-gold-500 text-gold-foreground', Icon: CrownIcon },
-} as const;
+import { FontTypeBadge } from './font-type-badge';
 
 /** اسم المصمّم تحت اسم الخط — رابط لصفحته، فوق رابط البطاقة الممتدّ (z-10) */
 function Byline({ font }: { font: Font }) {
@@ -69,7 +63,6 @@ export function FontCard({
   extra?: ReactNode;
   className?: string;
 }) {
-  const badge = BADGE[font.type];
   return (
     <article
       className={cn(
@@ -90,15 +83,7 @@ export function FontCard({
           </span>
         )}
       </div>
-      <span
-        className={cn(
-          'absolute end-4 top-4 z-10 inline-flex h-6 items-center gap-1 rounded-full px-2 text-caption leading-none font-medium',
-          badge.cls,
-        )}
-      >
-        <badge.Icon className="size-3" />
-        {TYPE_LABEL[font.type]}
-      </span>
+      <FontTypeBadge type={font.type} className="absolute end-4 top-4 z-10" />
       {favorite && <div className="absolute start-4 top-4 z-10">{favorite}</div>}
       <div className="flex flex-col gap-3 p-5">
         <div className="flex items-baseline justify-between gap-3">

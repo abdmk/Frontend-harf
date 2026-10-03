@@ -1,7 +1,9 @@
+import type { Page } from '@playwright/test';
+
 import { expect, test } from './fixtures';
 
 /** صورة PNG حقيقية تُرسم في المتصفّح — كوثيقة هوية تجريبية */
-async function pngFile(page: import('@playwright/test').Page) {
+async function pngFile(page: Page) {
   const b64 = await page.evaluate(() => {
     const c = document.createElement('canvas');
     c.width = 1000;
@@ -48,17 +50,17 @@ test.describe('توثيق الاستوديو', () => {
     await expect(page.getByRole('img', { name: 'الوجه الخلفي — مرفوعة' })).toBeVisible();
     await page.getByRole('button', { name: /استلام الأرباح/ }).click();
 
-    // 3. الاستلام: زين كاش + رمز التأكيد
+    // 3. الاستلام: كي كارد (العراق) + رمز التأكيد
     await page.getByRole('button', { name: /أضف وسيلة استلام/ }).click();
     const dlg = page.getByRole('dialog', { name: 'وسيلة استلام الأرباح' });
-    await dlg.getByRole('radio', { name: /زين كاش/ }).click();
-    await dlg.getByLabel('الاسم في المحفظة').fill('هبة عبدالحميد');
-    await dlg.getByLabel('رقم الهاتف المرتبط بالمحفظة').fill('0770 123 4567');
+    await dlg.getByRole('radio', { name: /كي كارد/ }).click();
+    await dlg.getByLabel('الاسم على البطاقة').fill('هبة عبدالحميد');
+    await dlg.getByLabel('رقم بطاقة كي كارد').fill('4111 1111 1111 1111');
     await dlg.getByRole('checkbox').click();
     await dlg.getByRole('button', { name: 'متابعة' }).click();
     await page.getByLabel('الرقم 1 من 6').fill('246810');
     await page.getByRole('button', { name: 'تأكيد وحفظ' }).click();
-    await expect(page.getByText('زين كاش •••• 4567')).toBeVisible();
+    await expect(page.getByText('كي كارد •••• 1111')).toBeVisible();
     await page.getByRole('button', { name: /اتفاقية الناشر/ }).click();
 
     // 4. الاتفاقية: 35٪ واضحة، والتوقيع يتطلّب الإقرار
@@ -84,7 +86,7 @@ test.describe('توثيق الاستوديو', () => {
 
     // لا شيء حسّاس كامل في التخزين
     const stored = await page.evaluate(() => localStorage.getItem('harf_studio_verification') ?? '');
-    expect(stored).not.toContain('07701234567');
+    expect(stored).not.toContain('4111111111111111');
 
     // قيد المراجعة: النشر متاح للمجاني فقط
     await page.goto('/studio/publish');
@@ -97,7 +99,7 @@ test.describe('توثيق الاستوديو', () => {
     await expect(nav.getByLabel('7 بانتظار قرارك')).toBeVisible();
     await page.getByRole('list', { name: 'طلبات التوثيق' }).getByRole('link', { name: 'راجِع' }).first().click();
     await expect(page.getByRole('heading', { level: 1, name: 'استوديو نون' })).toBeVisible();
-    await expect(page.getByText('زين كاش •••• 4410')).toBeVisible();
+    await expect(page.getByText('كي كارد •••• 4410')).toBeVisible();
 
     await page.getByRole('button', { name: 'رفض' }).click();
     const dlg = page.getByRole('dialog', { name: /رفض توثيق/ });

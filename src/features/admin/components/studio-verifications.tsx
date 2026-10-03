@@ -109,7 +109,7 @@ export function StudioRequests({ embedded = false }: { embedded?: boolean }) {
                     {r.submittedAt ? timeAgo(r.submittedAt) : ''}
                   </p>
                 </div>
-                <Button asChild size="sm" variant={r.status === 'pending' ? 'ink' : 'outline'}>
+                <Button asChild size="sm" variant={r.status === 'pending' ? 'primary' : 'outline'}>
                   <Link to={paths.admin.studio.getHref(r.userId)}>{r.status === 'pending' ? 'راجِع' : 'التفاصيل'}</Link>
                 </Button>
               </li>

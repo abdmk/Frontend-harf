@@ -2,6 +2,7 @@ import { useDeferredValue, useState } from 'react';
 import { Link } from 'react-router';
 
 import { EmptyState } from '@/components/shared/empty-state';
+import { FontTypeBadge } from '@/components/shared/font-type-badge';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
@@ -21,7 +22,7 @@ import { toast } from '@/components/ui/toast';
 import { paths } from '@/config/paths';
 import { cn } from '@/lib/cn';
 import { faceStyle } from '@/lib/font-weight';
-import { CATEGORY_LABEL, TYPE_LABEL } from '@/lib/labels';
+import { CATEGORY_LABEL } from '@/lib/labels';
 import type { Font } from '@/types/domain/font';
 
 import { AdminPageHeader } from './admin-nav';
@@ -275,10 +276,9 @@ export function FontStore() {
                       </div>
                     </TableCell>
                     <TableCell>
-                      <Badge tone={f.type === 'free' ? 'neutral' : f.type === 'trial' ? 'info' : 'studio'}>
-                        {TYPE_LABEL[f.type]}
+                      <FontTypeBadge type={f.type}>
                         {f.type !== 'free' && <bdi dir="ltr">${f.price}</bdi>}
-                      </Badge>
+                      </FontTypeBadge>
                     </TableCell>
                     <TableCell className="text-end tabular-nums">
                       <span dir="ltr">{fmt(i.stats.downloads)}</span>

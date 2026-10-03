@@ -4,6 +4,7 @@ import { Link } from 'react-router';
 import { AreaChart } from '@/components/shared/charts/area-chart';
 import { BarList } from '@/components/shared/charts/bar-list';
 import { ChartCard } from '@/components/shared/charts/chart-frame';
+import { FontTypeBadge } from '@/components/shared/font-type-badge';
 import { StatCard } from '@/components/shared/stat-card';
 import { DownloadIcon, EyeIcon, HeartIcon, StarIcon, UserIcon } from '@/components/ui/icons';
 import { SegmentedControl } from '@/components/ui/segmented-control';
@@ -105,9 +106,7 @@ export function StudioAnalyticsView({ fonts, analytics: a }: { fonts: StudioFont
                     <Link to={paths.font.getHref(f.id)} className="font-medium hover:text-primary hover:underline">
                       {f.name}
                     </Link>
-                    <span className="block text-caption text-muted-foreground">
-                      {f.type === 'paid' ? 'مدفوع' : 'مجاني'}
-                    </span>
+                    <FontTypeBadge type={f.type} className="mt-1" />
                   </TableCell>
                   {[
                     fmt(f.visits),

@@ -61,7 +61,7 @@ export function VerificationCallout({ className }: { className?: string }) {
         <h2 className="text-control font-semibold">{v.title}</h2>
         <p className="mt-0.5 text-meta leading-relaxed text-muted-foreground">{v.text}</p>
       </div>
-      <Button asChild variant={status === 'pending' ? 'secondary' : 'ink'}>
+      <Button asChild variant={status === 'pending' ? 'secondary' : 'primary'}>
         <Link to={paths.studio.getHref('verify')}>{v.cta}</Link>
       </Button>
     </section>
@@ -106,7 +106,7 @@ export function VerificationGate() {
           </li>
         ))}
       </ol>
-      <Button asChild size="xl" variant="ink" className="mt-10 w-full sm:w-72">
+      <Button asChild size="xl" variant="primary" className="mt-10 w-full sm:w-72">
         <Link to={paths.studio.getHref('verify')}>
           {rejected ? 'عدّل الطلب' : started ? 'أكمل التوثيق' : 'ابدأ التوثيق'}
         </Link>

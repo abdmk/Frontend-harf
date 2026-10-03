@@ -16,6 +16,7 @@ import { getCurrentUser } from '@/lib/auth';
 import { formatDateAr, formatMoney } from '@/lib/format';
 import type { MaskedPayout } from '@/lib/payout';
 import { PUBLISHER_TERMS } from '@/lib/publisher-terms';
+import { useMyVerification } from '@/lib/studio-verification';
 import { cents } from '@/types/domain/commerce';
 
 import {
@@ -106,6 +107,8 @@ function PayoutAccountPanel({ account, holdUntil }: { account: PayoutAccount | n
   const [editing, setEditing] = useState(false);
   const [removing, setRemoving] = useState(false);
   const email = getCurrentUser()?.email ?? '';
+  // دولة الناشر من التوثيق — تحدّد الوسائل المتاحة (كي كارد للعراق فقط)
+  const country = useMyVerification()?.info.country;
 
   function saved(p: MaskedPayout) {
     const r = savePayoutAccount(p);
@@ -151,7 +154,7 @@ function PayoutAccountPanel({ account, holdUntil }: { account: PayoutAccount | n
       ) : (
         <SecureNote className="justify-start" />
       )}
-      <PayoutDialog open={editing} onOpenChange={setEditing} email={email} onSaved={saved} />
+      <PayoutDialog open={editing} onOpenChange={setEditing} email={email} country={country} onSaved={saved} />
       <ConfirmDialog
         open={removing}
         onOpenChange={setRemoving}

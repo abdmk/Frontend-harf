@@ -168,9 +168,9 @@ export function LicenseSheet({
                       <button
                         type="button"
                         onClick={() => pickPrimary(use)}
-                        className="group flex w-full items-center gap-4 rounded-lg border bg-card p-4 text-start transition-[border-color,background-color] duration-(--dur-base) outline-none hover:border-foreground focus-visible:ring-2 focus-visible:ring-ring"
+                        className="group flex w-full items-center gap-4 rounded-lg border bg-card p-4 text-start transition-[border-color,background-color] duration-(--dur-base) outline-none hover:border-primary hover:bg-tint-brand/30 focus-visible:ring-2 focus-visible:ring-ring"
                       >
-                        <span className="grid size-10 shrink-0 place-items-center rounded-full bg-sunken text-foreground transition-colors group-hover:bg-foreground group-hover:text-background">
+                        <span className="grid size-10 shrink-0 place-items-center rounded-full bg-tint-brand text-primary transition-colors group-hover:bg-primary-fill group-hover:text-primary-foreground">
                           <Icon className="size-4.5" />
                         </span>
                         <span className="min-w-0 flex-1">
@@ -316,7 +316,9 @@ export function LicenseSheet({
                           }
                           className={cn(
                             'rounded-md border px-3 py-2.5 text-start transition-colors outline-none focus-visible:ring-2 focus-visible:ring-ring',
-                            sel.package === p ? 'border-foreground ring-1 ring-foreground' : 'hover:border-strong',
+                            sel.package === p
+                              ? 'border-primary bg-tint-brand/40 ring-1 ring-primary'
+                              : 'hover:border-strong',
                           )}
                         >
                           <span className="block text-control font-medium">
@@ -344,7 +346,7 @@ export function LicenseSheet({
                                   aria-hidden
                                   className={cn(
                                     'grid size-4.5 shrink-0 place-items-center rounded-full',
-                                    on ? 'bg-foreground text-background' : 'border border-strong',
+                                    on ? 'bg-primary-fill text-primary-foreground' : 'border border-strong',
                                   )}
                                 >
                                   {on && <CheckIcon className="size-3" />}

@@ -204,7 +204,7 @@ function SignatureDialogBody({
           <Button variant="secondary" onClick={() => onOpenChange(false)}>
             إلغاء
           </Button>
-          <Button variant="ink" loading={busy} onClick={sign}>
+          <Button variant="primary" loading={busy} onClick={sign}>
             وقّع الاتفاقية
           </Button>
         </div>

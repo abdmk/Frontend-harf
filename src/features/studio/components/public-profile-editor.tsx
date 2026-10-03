@@ -202,7 +202,7 @@ export function PublicProfileEditor({ foundry }: { foundry: Foundry }) {
                 onClick={() => set({ kind: k })}
                 className={cn(
                   'flex items-start gap-3 rounded-lg border bg-card p-4 text-start transition-[border-color,box-shadow] outline-none focus-visible:ring-2 focus-visible:ring-ring',
-                  on ? 'border-foreground ring-1 ring-foreground' : 'hover:border-strong',
+                  on ? 'border-primary bg-tint-brand/40 ring-1 ring-primary' : 'hover:border-strong',
                 )}
               >
                 <span

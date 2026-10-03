@@ -4,7 +4,7 @@ import { z } from 'zod';
 import { getCurrentUser, subscribeSession } from './auth';
 import { asObject, createJsonStore } from './json-store';
 import { isDocId } from './media-store';
-import { maskedPayoutSchema } from './payout';
+import { maskedPayoutSchema, payoutMethodsFor } from './payout';
 
 /**
  * توثيق الاستوديو واعتماده: قبل أوّل نشر يوقّع الناشر الاتفاقية، يرفع وثائق هويته، ويضيف وسيلة
@@ -82,7 +82,8 @@ export function missingOf(r: VerificationRecord): Missing[] {
   if (!info.success || (info.data.entity === 'company' && info.data.companyName.length < 2)) out.push('info');
   const companyDoc = r.info.entity === 'company' ? !!r.docs.company : true;
   if (!r.docs.front || (needsBack(r.docType) && !r.docs.back) || !companyDoc) out.push('docs');
-  if (!r.payout) out.push('payout');
+  // كي كارد للعراق فقط — من غيّر دولته بعد إضافتها يُطلب منه حساب بنكي (يُعاد الفحص على الخادم)
+  if (!r.payout || !payoutMethodsFor(r.info.country).includes(r.payout.method)) out.push('payout');
   if (!r.agreement || r.agreement.version !== AGREEMENT_VERSION) out.push('agreement');
   return out;
 }
@@ -130,7 +131,13 @@ const SEED: Record<string, VerificationRecord> = {
     },
     docType: 'national_id',
     docs: { front: 'd-seednoorf', back: 'd-seednoorb' },
-    payout: { method: 'wallet', holder: 'نور الهدى سالم', last4: '4410', verifiedAt: '2026-09-29T08:20:00Z' },
+    payout: {
+      method: 'qicard',
+      holder: 'نور الهدى سالم',
+      last4: '4410',
+      country: 'IQ',
+      verifiedAt: '2026-09-29T08:20:00Z',
+    },
     agreement: {
       version: AGREEMENT_VERSION,
       signedAt: '2026-09-29T08:24:00Z',
