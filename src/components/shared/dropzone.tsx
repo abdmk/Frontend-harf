@@ -16,6 +16,7 @@ export function Dropzone({
   hint,
   browseLabel = 'استعراض الملفات',
   actions,
+  feature = false,
   className,
 }: {
   onFiles: (files: FileList) => void;
@@ -26,6 +27,8 @@ export function Dropzone({
   browseLabel?: string;
   /** أزرار إضافية بجانب «استعراض» (مثل «اختر مجلّداً») */
   actions?: ReactNode;
+  /** بداية أداة (عين، مختبر الخط): دائرة بلون العلامة وزرّ أساسي — الرفع هو الفعل الأول في الصفحة */
+  feature?: boolean;
   className?: string;
 }) {
   const input = useRef<HTMLInputElement>(null);
@@ -52,18 +55,36 @@ export function Dropzone({
         className,
       )}
     >
-      <CloudUploadIcon
-        className={cn(
-          'mb-3 size-7 transition-transform duration-(--dur-slow) ease-pop',
-          over && '-translate-y-1 scale-110 text-primary',
-        )}
-      />
-      <p className="text-base font-semibold">{title}</p>
+      {feature ? (
+        <span
+          aria-hidden
+          className={cn(
+            'mb-3 grid size-14 place-items-center rounded-full bg-primary-fill text-primary-foreground transition-transform duration-(--dur-slow) ease-pop',
+            over && '-translate-y-1 scale-110',
+          )}
+        >
+          <CloudUploadIcon className="size-6" />
+        </span>
+      ) : (
+        <CloudUploadIcon
+          className={cn(
+            'mb-3 size-7 transition-transform duration-(--dur-slow) ease-pop',
+            over && '-translate-y-1 scale-110 text-primary',
+          )}
+        />
+      )}
+      <p className={cn('font-semibold', feature ? 'text-lead' : 'text-base')}>{title}</p>
       <p className="text-sm text-muted-foreground">{hint}</p>
       <div className="mt-5 flex flex-wrap justify-center gap-2">
-        <Button variant="outline" size="md" className="text-muted-foreground" onClick={() => input.current?.click()}>
-          {browseLabel}
-        </Button>
+        {feature ? (
+          <Button size="lg" onClick={() => input.current?.click()}>
+            {browseLabel}
+          </Button>
+        ) : (
+          <Button variant="outline" size="md" className="text-muted-foreground" onClick={() => input.current?.click()}>
+            {browseLabel}
+          </Button>
+        )}
         {actions}
       </div>
       <input

@@ -76,34 +76,44 @@ export function FontMatchingTool({ renderResult }: { renderResult: (p: ResultCar
 
   return (
     <div className="flex flex-col gap-8">
-      <section aria-label="أداة المطابقة" className="rounded-xl border bg-card p-5 sm:p-8">
-        <nav aria-label="مراحل المطابقة">
-          <ol className="grid grid-cols-3 gap-1.5">
-            {STAGES.map((label, i) => (
-              <li key={label} aria-current={stage === i ? 'step' : undefined} className="flex flex-col gap-2">
-                <span
-                  className={cn(
-                    'h-1 rounded-full transition-colors duration-(--dur-slow)',
-                    stage === i ? 'bg-primary-fill' : i < stage ? 'bg-foreground/70' : 'bg-inset',
-                  )}
-                />
-                <span
-                  className={cn(
-                    'flex items-center gap-1 text-caption',
-                    stage === i ? 'font-medium text-foreground' : 'text-muted-foreground',
-                  )}
-                >
-                  {i < stage && <CheckIcon className="size-3 text-ok-text" />}
-                  {label}
-                </span>
-              </li>
-            ))}
-          </ol>
-        </nav>
+      <section
+        aria-label="أداة المطابقة"
+        className={cn(
+          'rounded-xl border bg-card',
+          stage === 0 ? 'mx-auto w-full max-w-4xl p-3 shadow-soft sm:p-4' : 'p-5 sm:p-8',
+        )}
+      >
+        {/* المراحل تظهر بعد الرفع — قبله بطاقة الرفع وحدها، فالخطوة الأولى واضحة بلا شرح */}
+        {stage > 0 && (
+          <nav aria-label="مراحل المطابقة">
+            <ol className="grid grid-cols-3 gap-1.5">
+              {STAGES.map((label, i) => (
+                <li key={label} aria-current={stage === i ? 'step' : undefined} className="flex flex-col gap-2">
+                  <span
+                    className={cn(
+                      'h-1 rounded-full transition-colors duration-(--dur-slow)',
+                      stage === i ? 'bg-primary-fill' : i < stage ? 'bg-foreground/70' : 'bg-inset',
+                    )}
+                  />
+                  <span
+                    className={cn(
+                      'flex items-center gap-1 text-caption',
+                      stage === i ? 'font-medium text-foreground' : 'text-muted-foreground',
+                    )}
+                  >
+                    {i < stage && <CheckIcon className="size-3 text-ok-text" />}
+                    {label}
+                  </span>
+                </li>
+              ))}
+            </ol>
+          </nav>
+        )}
 
         {state.phase === 'empty' ? (
-          <div className="mt-6 flex flex-col gap-4">
+          <div className="flex flex-col gap-4">
             <Dropzone
+              feature
               onFiles={onFiles}
               accept={ACCEPTED.join(',')}
               title="اختر صورة أو اسحبها وأفلتها هنا."
@@ -115,15 +125,15 @@ export function FontMatchingTool({ renderResult }: { renderResult: (p: ResultCar
                   </kbd>
                 </>
               }
-              browseLabel="استعراض الصور"
-              className="py-16"
+              browseLabel="اختر صورة"
+              className="bg-sunken/40 py-14 sm:py-20"
             />
             {state.error && <Alert tone="danger" title={state.error} />}
             <ul className="grid gap-3 text-caption text-muted-foreground sm:grid-cols-3">
               {[
                 'أفضل النتائج: كتابة واضحة بخط واحد، بلا زخارف أو ظلال.',
                 'قصّ الصورة حول الكلمات، أو حدّدها بعد الرفع.',
-                'صورتك تبقى في متصفّحك ولا تُرفع إلى أي خادم.',
+                'كلما زادت الحروف في الصورة كانت المطابقة أدقّ.',
               ].map((t) => (
                 <li key={t} className="flex gap-2 rounded-md bg-sunken p-3">
                   <CheckIcon className="mt-0.5 size-3.5 shrink-0 text-ok-text" />

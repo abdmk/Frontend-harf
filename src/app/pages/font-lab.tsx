@@ -1,5 +1,5 @@
 import { Container } from '@/components/layout/container';
-import { PageIntro } from '@/components/layout/page-intro';
+import { ToolHero } from '@/components/layout/tool-hero';
 import { PageMeta } from '@/components/shared/page-meta';
 import { FontLab } from '@/features/font-lab/components/font-lab';
 
@@ -11,10 +11,11 @@ export function FontLabPage() {
         title="مختبر الخط"
         description="افحص خطّك قبل أن تستخدمه: اللغات، ميزات OpenType، أشكال الحروف، التشكيل والمحارف — في متصفّحك."
       />
-      <PageIntro
-        eyebrow="أدوات حرف"
+      <ToolHero
+        badge="في متصفّحك — لا تُرفع ملفاتك إلى أي خادم"
         title="مختبر الخط"
-        lead="افحص خطّك قبل أن تستخدمه: ارفع ملفاً أو عائلة كاملة، واختبر اللغات والحروف والتشكيل وميزات OpenType والمحاور المتغيّرة. كل المعالجة داخل متصفّحك — لا تُرفع ملفاتك إلى أي خادم."
+        highlight="افحص خطّك قبل أن تستخدمه"
+        lead="ارفع ملفاً أو عائلة كاملة، واختبر اللغات والحروف والتشكيل وميزات OpenType والمحاور المتغيّرة."
       />
       <FontLab />
     </Container>

@@ -61,9 +61,10 @@ function Empty() {
   const folder = useRef<HTMLInputElement>(null);
 
   return (
-    <div className="mx-auto flex max-w-3xl flex-col gap-8">
-      <div className="relative">
+    <div className="mx-auto flex max-w-4xl flex-col gap-8">
+      <div className="relative rounded-xl border bg-card p-3 shadow-soft sm:p-4">
         <Dropzone
+          feature
           onFiles={(f) => void add(f)}
           accept={ACCEPT}
           multiple
@@ -76,7 +77,7 @@ function Empty() {
               اختر مجلّداً
             </Button>
           }
-          className="bg-card py-16"
+          className="bg-sunken/40 py-14 sm:py-20"
         />
         <input
           ref={folder}
@@ -93,7 +94,7 @@ function Empty() {
         {busy && (
           <div
             role="status"
-            className="absolute inset-0 grid place-items-center rounded-md bg-card/85 text-control font-medium"
+            className="absolute inset-0 grid place-items-center rounded-xl bg-card/85 text-control font-medium"
           >
             <span className="flex items-center gap-2">
               <Spinner /> جارٍ قراءة الملفات…
@@ -104,7 +105,7 @@ function Empty() {
 
       <ul className="grid gap-3 text-caption text-muted-foreground sm:grid-cols-3">
         {[
-          'ملفاتك لا تغادر جهازك — القراءة والتحليل في المتصفّح.',
+          'يقرأ الخطوط المتغيّرة ويتيح تحريك محاورها.',
           'حمّل العائلة كاملة لترى الأوزان الحقيقية وتقارن بينها.',
           'اثنا عشر فحصاً: اللغات، الميزات، الأشكال، التشكيل، المحارف وغيرها.',
         ].map((t) => (

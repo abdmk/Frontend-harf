@@ -1,6 +1,6 @@
 import { CatalogCard } from '@/app/_components/catalog-card';
 import { Container } from '@/components/layout/container';
-import { PageIntro } from '@/components/layout/page-intro';
+import { ToolHero } from '@/components/layout/tool-hero';
 import { PageMeta } from '@/components/shared/page-meta';
 import { Button } from '@/components/ui/button';
 import { FontMatchingTool, type ResultCardProps } from '@/features/font-matching/components/font-matching-tool';
@@ -61,10 +61,11 @@ export function FontMatchingPage() {
         title="عين — مطابقة الخطوط"
         description="ارفع صورة فيها كتابة عربية، ونقارن شكل حروفها بخطوط مكتبة حرف — في متصفّحك."
       />
-      <PageIntro
-        eyebrow="أدوات حرف · مطابقة الخطوط"
+      <ToolHero
+        badge="في متصفّحك — لا تُرفع صورتك إلى أي خادم"
         title="عين"
-        lead="ارفع صورة فيها كتابة عربية واكتب ما فيها، ونقارن شكل الحروف بخطوط مكتبة حرف — في متصفّحك، ولا تُرفع صورتك إلى أي خادم."
+        highlight="اعرف الخطّ من صورته"
+        lead="ارفع صورة فيها كتابة عربية واكتب ما فيها، ونقارن شكل الحروف بخطوط مكتبة حرف ونرتّبها بحسب التشابه."
       />
       <FontMatchingTool renderResult={(p) => <ResultCard {...p} />} />
     </Container>
