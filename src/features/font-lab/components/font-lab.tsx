@@ -1,11 +1,23 @@
-import { lazy, Suspense, useEffect, useRef } from 'react';
+import { Fragment, lazy, Suspense, useEffect, useRef } from 'react';
 import { useSearchParams } from 'react-router';
 
 import { Dropzone } from '@/components/shared/dropzone';
 import { LoadingState } from '@/components/shared/loading-state';
+import { sideNavIcon, sideNavRow } from '@/components/shared/side-nav';
 import { ToolTips } from '@/components/shared/tool-tips';
 import { Button } from '@/components/ui/button';
 import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import {
+  ChevronDownIcon,
   CrossSmallIcon,
   FolderIcon,
   GlobeIcon,
@@ -21,6 +33,7 @@ import { cn } from '@/lib/cn';
 import { libraryPackage } from '../api/library';
 import { TOOL_GROUPS, type ToolKey, toolByKey, TOOLS } from '../data/tools';
 import { LabProvider, useLab } from '../hooks/lab-context';
+import type { LabFont } from '../types';
 import { ACCEPT } from '../utils/load';
 
 const TOOL_VIEWS: Record<ToolKey, React.LazyExoticComponent<() => React.JSX.Element | null>> = {
@@ -39,15 +52,15 @@ const TOOL_VIEWS: Record<ToolKey, React.LazyExoticComponent<() => React.JSX.Elem
 };
 
 /** «مختبر الخط»: كل الملفات تُقرأ في المتصفّح — لا يُرفع شيء إلى الخادم */
-export function FontLab() {
+export function FontLab({ hero }: { hero: React.ReactNode }) {
   return (
     <LabProvider>
-      <LabBody />
+      <LabBody hero={hero} />
     </LabProvider>
   );
 }
 
-function LabBody() {
+function LabBody({ hero }: { hero: React.ReactNode }) {
   const { active, addFromLibrary, fonts } = useLab();
   const [params] = useSearchParams();
 
@@ -61,7 +74,15 @@ function LabBody() {
     if (pkg) void addFromLibrary(pkg.id, pkg.url, pkg.name);
   }, [requested, fonts.length, addFromLibrary]);
 
-  return active ? <Workbench /> : <Empty />;
+  // بعد الرفع يختفي الـHero كاملاً وتصير الصفحة مساحة عمل
+  return active ? (
+    <Workbench />
+  ) : (
+    <div className="py-10 sm:py-14">
+      {hero}
+      <Empty />
+    </div>
+  );
 }
 
 /* ───────────────────────── الحالة الأولى ───────────────────────── */
@@ -129,11 +150,15 @@ function Empty() {
 
 /* ───────────────────────── مساحة العمل ───────────────────────── */
 
+/**
+ * بعد الرفع: مساحة عمل بلغة صفحات الحساب والاستوديو — لا Hero ولا عناصر تسويقية.
+ * عمود جانبي ثابت (بطاقة الخط ثم الأقسام بصفوف القائمة نفسها)، ورأس داخلي بسيط، ثم محتوى القسم.
+ */
 function Workbench() {
   const [params, setParams] = useSearchParams();
   const tool = toolByKey(params.get('tool'));
   const View = TOOL_VIEWS[tool.key];
-  const go = (key: ToolKey) =>
+  const go = (key: ToolKey) => {
     setParams(
       (p) => {
         const n = new URLSearchParams(p);
@@ -143,105 +168,155 @@ function Workbench() {
       },
       { replace: true },
     );
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   return (
-    <div className="grid grid-cols-[minmax(0,1fr)] items-start gap-6 lg:grid-cols-[16.5rem_minmax(0,1fr)] lg:gap-8">
-      <aside className="flex min-w-0 flex-col gap-4 lg:sticky lg:top-24">
-        <FontShelf />
+    <div className="grid grid-cols-[minmax(0,1fr)] gap-6 py-6 sm:py-8 lg:grid-cols-[300px_minmax(0,1fr)] lg:gap-10 lg:py-10">
+      <aside className="flex min-w-0 flex-col gap-5 lg:sticky lg:top-26 lg:max-h-[calc(100dvh-8rem)] lg:self-start lg:overflow-y-auto">
+        <FontCard />
         <ToolNav current={tool.key} onGo={go} />
       </aside>
 
-      <div className="flex min-w-0 flex-col gap-5">
-        <header className="flex flex-col gap-1">
-          <h2 className="text-xl font-semibold">{tool.label}</h2>
-          <p className="text-meta text-muted-foreground">{tool.lead}</p>
+      <section aria-labelledby="lab-tool-title" className="flex min-w-0 flex-col">
+        <header className="mb-6">
+          <p className="text-caption text-tertiary">مختبر الخط</p>
+          <h1 id="lab-tool-title" key={tool.key} className="mt-1 animate-fade-up text-2xl font-semibold">
+            {tool.label}
+          </h1>
+          <p className="mt-1 text-meta text-muted-foreground">{tool.lead}</p>
         </header>
-        <Suspense fallback={<LoadingState label="جارٍ فتح الأداة…" />}>
+        <Suspense fallback={<LoadingState label="جارٍ فتح القسم…" />}>
           <View key={tool.key} />
         </Suspense>
-      </div>
+      </section>
     </div>
   );
 }
 
-/** رفّ الخطوط: الخط النشط، وبقية الخطوط المحمّلة، وإضافة المزيد */
-function FontShelf() {
-  const { fonts, active, setActive, remove, add, busy } = useLab();
+/** «Aa / أب» بالخط نفسه — هويّة الخط في البطاقة مكان صورة المستخدم */
+function FontMark({ font, className }: { font: LabFont; className?: string }) {
+  const { specimen } = useLab();
+  return (
+    <span
+      aria-hidden
+      style={font.previewable ? specimen(font) : undefined}
+      className={cn('grid shrink-0 place-items-center rounded-md bg-card leading-none', className)}
+    >
+      أب
+    </span>
+  );
+}
+
+/**
+ * بطاقة الخط: الخط النشط واسم عائلته وتفاصيله المختصرة، والتبديل بين الخطوط المحمّلة من قائمة
+ * (لا قائمة طويلة تدفع الأقسام للأسفل)، ثم «أضف خطوطاً» و«ابدأ من جديد».
+ */
+function FontCard() {
+  const { fonts, active, setActive, remove, clear, add, busy } = useLab();
   const input = useRef<HTMLInputElement>(null);
   if (!active) return null;
+  const family = fonts.filter((f) => f.family === active.family).length;
+  const meta = [
+    active.axes.length ? 'متغيّر' : `${active.style} ${active.weight}`,
+    active.format,
+    family > 1 ? `${family} أنماط` : null,
+  ].filter(Boolean);
+
   return (
-    <section aria-label="الخطوط المحمّلة" className="rounded-xl border bg-card p-2">
-      <ul className="flex flex-col gap-0.5">
-        {fonts.map((f) => {
-          const on = f.id === active.id;
-          return (
-            <li key={f.id} className="group/f relative">
-              <button
-                type="button"
-                aria-pressed={on}
-                onClick={() => setActive(f.id)}
-                className={cn(
-                  'flex w-full flex-col items-start rounded-lg px-3 py-2.5 pe-9 text-start transition-colors',
-                  on ? 'bg-tint-brand' : 'hover:bg-sunken',
-                )}
-              >
-                <span dir="ltr" className={cn('w-full truncate text-control font-semibold', on && 'text-primary')}>
-                  {f.fullName}
+    <section aria-label="الخط الحالي" className="flex flex-col gap-3 rounded-lg bg-sunken p-4 lg:p-5">
+      <div className="flex items-center gap-4">
+        <FontMark font={active} className="size-14 text-2xl" />
+        <div className="min-w-0 flex-1">
+          <p dir="ltr" className="truncate text-end text-base font-semibold" title={active.fullName}>
+            {active.family}
+          </p>
+          <p dir="ltr" className="mt-0.5 truncate text-end text-meta text-muted-foreground">
+            {meta.join(' · ')}
+          </p>
+          {!active.previewable && (
+            <p className="mt-1 text-caption text-warn-text">تحليل فقط — المتصفّح لا يعرض هذا الملف</p>
+          )}
+        </div>
+      </div>
+
+      <div className="flex gap-2">
+        {fonts.length > 1 && (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" size="sm" className="flex-1 justify-between bg-card">
+                <span>
+                  الخطوط المحمّلة <span className="text-tertiary tabular-nums">({fonts.length})</span>
                 </span>
-                {!f.previewable && (
-                  <span className="text-caption text-warn-text">تحليل فقط — المتصفّح لا يعرض هذا الملف</span>
-                )}
-                <span className="text-caption text-muted-foreground">
-                  {f.format} · {f.axes.length ? 'متغيّر' : `وزن ${f.weight}`} ·{' '}
-                  <span dir="ltr">{(f.bytes / 1024).toFixed(0)} KB</span>
-                </span>
-              </button>
-              <button
-                type="button"
-                aria-label={`إزالة ${f.fullName}`}
-                onClick={() => remove(f.id)}
-                className="absolute end-1.5 top-2 grid size-7 place-items-center rounded-full text-tertiary opacity-100 transition-opacity hover:bg-card hover:text-foreground sm:opacity-0 sm:group-hover/f:opacity-100 sm:focus-visible:opacity-100"
-              >
-                <CrossSmallIcon className="size-4" />
-              </button>
-            </li>
-          );
-        })}
-      </ul>
-      <Button
-        variant="ghost"
-        size="sm"
-        className="mt-1 w-full justify-center"
-        loading={busy}
-        onClick={() => input.current?.click()}
+                <ChevronDownIcon />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start" className="max-h-80 w-72 overflow-y-auto">
+              <DropdownMenuLabel>بدّل الخط</DropdownMenuLabel>
+              <DropdownMenuRadioGroup value={active.id} onValueChange={setActive}>
+                {fonts.map((f) => (
+                  <DropdownMenuRadioItem key={f.id} value={f.id} className="flex items-center gap-3">
+                    <span dir="ltr" className="min-w-0 flex-1 truncate text-end">
+                      {f.family === active.family ? f.style : f.fullName}
+                    </span>
+                    <span className="text-caption text-tertiary tabular-nums">{f.weight}</span>
+                  </DropdownMenuRadioItem>
+                ))}
+              </DropdownMenuRadioGroup>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onSelect={() => remove(active.id)}>
+                <CrossSmallIcon />
+                إزالة {active.style} من المختبر
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        )}
+        <Button
+          variant="outline"
+          size="sm"
+          className={cn('bg-card', fonts.length === 1 && 'flex-1')}
+          loading={busy}
+          onClick={() => input.current?.click()}
+        >
+          <PlusIcon />
+          أضف خطوطاً
+        </Button>
+        <input
+          ref={input}
+          type="file"
+          hidden
+          multiple
+          accept={ACCEPT}
+          onChange={(e) => {
+            if (e.target.files?.length) void add(Array.from(e.target.files));
+            e.target.value = '';
+          }}
+        />
+      </div>
+      <button
+        type="button"
+        onClick={clear}
+        className="self-start text-caption text-muted-foreground underline-offset-4 transition-colors hover:text-foreground hover:underline"
       >
-        <PlusIcon />
-        أضف خطوطاً
-      </Button>
-      <input
-        ref={input}
-        type="file"
-        hidden
-        multiple
-        accept={ACCEPT}
-        onChange={(e) => {
-          if (e.target.files?.length) void add(e.target.files);
-          e.target.value = '';
-        }}
-      />
+        ابدأ من جديد بخط آخر
+      </button>
     </section>
   );
 }
 
-/** التنقّل بين الأدوات: قائمة مجمّعة على الكمبيوتر، وشريط أفقي على الجوال */
+const TAB =
+  'inline-flex h-9 shrink-0 items-center gap-1.5 rounded-full px-4 text-control whitespace-nowrap text-muted-foreground transition-colors hover:bg-sunken hover:text-foreground aria-[current=page]:bg-foreground aria-[current=page]:font-medium aria-[current=page]:text-background';
+
+/** الأقسام: صفوف القائمة الجانبية نفسها في الحساب والاستوديو، وشريط أفقي على الجوال */
 function ToolNav({ current, onGo }: { current: ToolKey; onGo: (k: ToolKey) => void }) {
   const { active } = useLab();
   return (
     <>
-      <nav aria-label="أدوات المختبر" className="max-lg:hidden">
-        {TOOL_GROUPS.map((g) => (
-          <div key={g.label || 'top'} className="mb-3">
-            {g.label && <p className="px-3 pb-1.5 text-caption text-tertiary">{g.label}</p>}
+      <nav aria-label="أقسام المختبر" className="flex flex-col max-lg:hidden">
+        {TOOL_GROUPS.map((g, i) => (
+          <Fragment key={g.label || 'top'}>
+            {i > 0 && <hr className="my-3 border-border" />}
+            {g.label && <p className="px-4 pb-1.5 text-caption text-tertiary">{g.label}</p>}
             <ul className="flex flex-col gap-0.5">
               {g.tools.map((t) => {
                 const on = t.key === current;
@@ -252,17 +327,12 @@ function ToolNav({ current, onGo }: { current: ToolKey; onGo: (k: ToolKey) => vo
                       type="button"
                       aria-current={on ? 'page' : undefined}
                       onClick={() => onGo(t.key)}
-                      className={cn(
-                        'flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-control transition-colors',
-                        on
-                          ? 'bg-tint-brand font-medium text-primary'
-                          : 'text-muted-foreground hover:bg-sunken hover:text-foreground',
-                      )}
+                      className={cn(sideNavRow(on, 'sm'), 'w-full')}
                     >
-                      <t.icon filled={on} className="size-4 shrink-0" />
+                      <t.icon filled={on} className={sideNavIcon(on, 'sm')} />
                       <span className="flex-1 text-start">{t.label}</span>
                       {count ? (
-                        <span dir="ltr" className="text-caption text-tertiary tabular-nums">
+                        <span dir="ltr" className="text-caption text-muted-foreground tabular-nums">
                           {count}
                         </span>
                       ) : null}
@@ -271,32 +341,25 @@ function ToolNav({ current, onGo }: { current: ToolKey; onGo: (k: ToolKey) => vo
                 );
               })}
             </ul>
-          </div>
+          </Fragment>
         ))}
       </nav>
 
-      <nav aria-label="أدوات المختبر" className="-mx-4 lg:hidden">
-        <ul className="flex [scrollbar-width:none] gap-2 overflow-x-auto px-4 pb-1 [&::-webkit-scrollbar]:hidden">
-          {TOOLS.map((t) => {
-            const on = t.key === current;
-            return (
-              <li key={t.key}>
-                <button
-                  type="button"
-                  aria-current={on ? 'page' : undefined}
-                  onClick={() => onGo(t.key)}
-                  className={cn(
-                    'inline-flex h-10 items-center gap-1.5 rounded-full border px-4 text-control whitespace-nowrap',
-                    on ? 'border-primary font-medium text-primary' : 'bg-card text-muted-foreground',
-                  )}
-                >
-                  <t.icon filled={on} className="size-4" />
-                  {t.label}
-                </button>
-              </li>
-            );
-          })}
-        </ul>
+      <nav
+        aria-label="أقسام المختبر"
+        className="-mx-4 flex [scrollbar-width:none] gap-1 overflow-x-auto px-4 lg:hidden [&::-webkit-scrollbar]:hidden"
+      >
+        {TOOLS.map((t) => (
+          <button
+            key={t.key}
+            type="button"
+            aria-current={t.key === current ? 'page' : undefined}
+            onClick={() => onGo(t.key)}
+            className={TAB}
+          >
+            {t.label}
+          </button>
+        ))}
       </nav>
     </>
   );

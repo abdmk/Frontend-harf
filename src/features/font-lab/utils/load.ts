@@ -93,7 +93,9 @@ async function toLabFont(kit: fontkit.Font, name: string, bytes: number, data: U
   const axes: Axis[] = Object.entries(k.variationAxes ?? {}).map(([tag, a]) => ({ tag, ...a }));
   const weight = k['OS/2']?.usWeightClass ?? 400;
   const italic = !!k['OS/2']?.fsSelection?.italic || (kit.italicAngle ?? 0) !== 0;
-  const family = kit.familyName || name;
+  // العائلة الطباعية (name 16) أولاً: العائلات المهنية تسمّي كل وزن عائلةً «قديمة» مستقلة
+  // («Graphik Arabic Thin»)، والعائلة الحقيقية في preferredFamily — بدونها لا تُجمع الأوزان
+  const family = k.getName('preferredFamily') || kit.familyName || name;
   const familyCss = `labfam-${family.replace(/[^\w-]/g, '_')}`;
 
   // ملف لكل خط + تسجيل ضمن عائلته (بوزنه ونمطه) — فتختار CSS الوزن الحقيقي حين يوجد
@@ -122,7 +124,7 @@ async function toLabFont(kit: fontkit.Font, name: string, bytes: number, data: U
     previewable,
     familyCss,
     family,
-    style: kit.subfamilyName || 'Regular',
+    style: k.getName('preferredSubfamily') || kit.subfamilyName || 'Regular',
     fullName: kit.fullName || family,
     postscript: kit.postscriptName || '',
     version: k.getName('version') ?? '',

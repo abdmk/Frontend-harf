@@ -28,6 +28,8 @@ type Lab = {
   active: LabFont | null;
   setActive: (id: string) => void;
   remove: (id: string) => void;
+  /** إزالة كل الخطوط والعودة إلى البداية */
+  clear: () => void;
   add: (files: Iterable<File>) => Promise<void>;
   addFromLibrary: (id: string, url: string, name: string) => Promise<void>;
   busy: boolean;
@@ -57,9 +59,12 @@ export function LabProvider({ children }: { children: ReactNode }) {
   const accept = useCallback((report: Awaited<ReturnType<typeof loadFiles>>) => {
     if (report.fonts.length) {
       setFonts((prev) => [...prev, ...report.fonts]);
-      setActiveId(report.fonts[0]!.id);
+      // عائلة كاملة: نبدأ بالوزن العادي (الأقرب إلى 400) لا بأوّل ملف (غالباً Thin) — عيّنة تمثّل الخط
+      const first = report.fonts.reduce((a, b) =>
+        Math.abs(b.weight - 400) < Math.abs(a.weight - 400) || (b.weight === a.weight && a.italic && !b.italic) ? b : a,
+      );
+      setActiveId(first.id);
       // وزن المعاينة يبدأ من وزن الخط نفسه، والمحاور من قيمها الافتراضية
-      const first = report.fonts[0]!;
       setSettings((s) => ({
         ...s,
         weight: first.weight,
@@ -75,9 +80,12 @@ export function LabProvider({ children }: { children: ReactNode }) {
 
   const add = useCallback(
     async (files: Iterable<File>) => {
+      // نسخة فورية: FileList حيّة، ومنطقة الرفع تفرّغ الحقل بعد التسليم مباشرةً —
+      // فلولا النسخ لقُرئ الملف الأول وحده بعد أول await (رفع عائلة كاملة كان يحمّل وزناً واحداً)
+      const list = Array.from(files);
       setBusy(true);
       try {
-        accept(await loadFiles(files));
+        accept(await loadFiles(list));
       } finally {
         setBusy(false);
       }
@@ -101,6 +109,11 @@ export function LabProvider({ children }: { children: ReactNode }) {
 
   const remove = useCallback((id: string) => {
     setFonts((prev) => prev.filter((f) => f.id !== id));
+  }, []);
+
+  const clear = useCallback(() => {
+    setFonts([]);
+    setActiveId(null);
   }, []);
 
   const set = useCallback((patch: Partial<LabSettings>) => setSettings((s) => ({ ...s, ...patch })), []);
@@ -142,6 +155,7 @@ export function LabProvider({ children }: { children: ReactNode }) {
       active,
       setActive: setActiveId,
       remove,
+      clear,
       add,
       addFromLibrary,
       busy,
@@ -150,7 +164,7 @@ export function LabProvider({ children }: { children: ReactNode }) {
       resetSettings,
       specimen,
     }),
-    [fonts, active, remove, add, addFromLibrary, busy, settings, set, resetSettings, specimen],
+    [fonts, active, remove, clear, add, addFromLibrary, busy, settings, set, resetSettings, specimen],
   );
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
 }

@@ -73,7 +73,8 @@ export function Overview() {
     ['ميزات OpenType', active.features.length],
     ['اللغات المدعومة', `${langs.filter((x) => x.c.status === 'full').length} من ${langs.length}`],
     [active.axes.length ? 'المحاور' : 'الوزن', active.axes.length ? active.axes.map((a) => a.tag).join(' · ') : active.weight],
-    ['الصيغة', `${active.format} · ${active.outline === 'TrueType (glyf)' ? 'glyf' : active.outline}`],
+    // نوع المخطّطات (CFF/glyf) في «المعلومات» — هنا الصيغة وحدها كي لا تُقتطع
+    ['الصيغة', active.format],
   ];
 
   return (

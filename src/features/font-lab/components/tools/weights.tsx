@@ -25,6 +25,17 @@ export function Weights() {
   const axes = active.axes;
   const family = fonts.filter((f) => f.family === active.family && !f.italic);
   const real = new Set(family.map((f) => f.weight));
+  // أوزان العائلة الحقيقية بقيمها الفعلية (Graphik: 250 و270 ليست درجات قياسية)، ثم ما يصطنعه المتصفّح:
+  // مع العائلة، التسميك فقط فوق أثقل وزن حقيقي (الأخفّ يُعرض بأقرب وزن حقيقي، لا يُصطنع)؛
+  // ومع ملف واحد، كل الدرجات الأخرى
+  const maxReal = Math.max(...real);
+  const styleOf = new Map(family.map((f) => [f.weight, f.style]));
+  const rows = [
+    ...real,
+    ...WEIGHTS.filter((w) =>
+      real.size < 2 ? ![...real].some((r) => Math.abs(r - w) < 50) : w > maxReal && w - maxReal >= 50,
+    ),
+  ].sort((a, b) => a - b);
   const wght = axes.find((a) => a.tag === 'wght');
   const text = settings.text.length > 60 ? settings.text.slice(0, 60) : settings.text;
 
@@ -113,12 +124,12 @@ export function Weights() {
             />
           )}
           <Panel label="الأوزان" className="divide-y overflow-hidden">
-            {WEIGHTS.map((w) => {
+            {rows.map((w) => {
               const isReal = real.has(w);
               return (
                 <div key={w} className={cn('flex items-center gap-4 px-5 py-3.5', !isReal && 'opacity-60')}>
                   <span dir="ltr" className="w-24 shrink-0 text-caption text-muted-foreground tabular-nums">
-                    {w} · {NAMES[w]}
+                    {w} · {(isReal && styleOf.get(w)) || NAMES[w]}
                   </span>
                   <p
                     className="min-w-0 flex-1 truncate text-2xl leading-snug"

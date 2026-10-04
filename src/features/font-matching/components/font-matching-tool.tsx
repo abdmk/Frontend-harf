@@ -93,7 +93,7 @@ export function FontMatchingTool({ renderResult }: { renderResult: (p: ResultCar
   const stage = state.phase === 'empty' ? 0 : state.phase === 'done' ? 2 : 1;
   const clean = text.trim();
   const activeRect = rect ?? (state.phase === 'empty' ? null : state.auto);
-  const onFiles = (files: FileList) => files[0] && void open(files[0]);
+  const onFiles = (files: File[]) => files[0] && void open(files[0]);
 
   // زرّ «لصق من الحافظة»: يقرأ أول صورة في الحافظة؛ والمتصفّحات التي لا تتيح القراءة تُرشد إلى Ctrl+V
   const pasteImage = async () => {
@@ -192,7 +192,7 @@ export function FontMatchingTool({ renderResult }: { renderResult: (p: ResultCar
                   hidden
                   accept={ACCEPTED.join(',')}
                   onChange={(e) => {
-                    if (e.target.files?.length) onFiles(e.target.files);
+                    if (e.target.files?.length) onFiles(Array.from(e.target.files));
                     e.target.value = '';
                   }}
                 />

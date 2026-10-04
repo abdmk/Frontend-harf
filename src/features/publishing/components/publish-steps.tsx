@@ -63,7 +63,7 @@ function Drop({
   accept: string;
   label: string;
   hint: string;
-  onFiles: (f: FileList) => void;
+  onFiles: (f: File[]) => void;
 }) {
   const input = useRef<HTMLInputElement>(null);
   const [over, setOver] = useState(false);
@@ -77,7 +77,7 @@ function Drop({
       onDrop={(e) => {
         e.preventDefault();
         setOver(false);
-        if (e.dataTransfer.files.length) onFiles(e.dataTransfer.files);
+        if (e.dataTransfer.files.length) onFiles(Array.from(e.dataTransfer.files));
       }}
       className={cn(
         'flex flex-col items-center gap-2 rounded-lg border-2 border-dashed px-6 py-10 text-center transition-colors',
@@ -100,7 +100,7 @@ function Drop({
         className="sr-only"
         tabIndex={-1}
         onChange={(e) => {
-          if (e.target.files?.length) onFiles(e.target.files);
+          if (e.target.files?.length) onFiles(Array.from(e.target.files));
           e.target.value = '';
         }}
       />

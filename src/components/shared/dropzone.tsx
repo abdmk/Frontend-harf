@@ -22,7 +22,8 @@ export function Dropzone({
   formats,
   className,
 }: {
-  onFiles: (files: FileList) => void;
+  /** نسخة ثابتة من الملفات — لا FileList الحيّة التي تُفرَّغ مع تفريغ الحقل */
+  onFiles: (files: File[]) => void;
   accept: string;
   multiple?: boolean;
   title?: string;
@@ -57,7 +58,7 @@ export function Dropzone({
       onDrop={(e) => {
         e.preventDefault();
         setOver(false);
-        if (e.dataTransfer.files.length) onFiles(e.dataTransfer.files);
+        if (e.dataTransfer.files.length) onFiles(Array.from(e.dataTransfer.files));
       }}
       className={cn(
         'flex flex-col items-center text-center transition-[border-color,background-color,transform] duration-(--dur-base)',
@@ -121,7 +122,7 @@ export function Dropzone({
         hidden
         accept={accept}
         onChange={(e) => {
-          if (e.target.files?.length) onFiles(e.target.files);
+          if (e.target.files?.length) onFiles(Array.from(e.target.files));
           e.target.value = '';
         }}
       />
