@@ -51,8 +51,8 @@ test.describe('توثيق الحساب', () => {
     await page.getByRole('button', { name: /استلام الأرباح/ }).click();
 
     // 3. الاستلام: كي كارد (العراق) + رمز التأكيد
-    await page.getByRole('button', { name: /أضف وسيلة استلام/ }).click();
-    const dlg = page.getByRole('dialog', { name: 'وسيلة استلام الأرباح' });
+    // النموذج في الصفحة مباشرة — خطوة واحدة بلا نافذة
+    const dlg = page.getByRole('main');
     await dlg.getByRole('radio', { name: /كي كارد/ }).click();
     await dlg.getByLabel('الاسم على البطاقة').fill('هبة عبدالحميد');
     await dlg.getByLabel('رقم بطاقة كي كارد').fill('4111 1111 1111 1111');
