@@ -8,6 +8,7 @@ import { cn } from '@/lib/cn';
 import { libraryStarters } from '../../api/library';
 import { useLab } from '../../hooks/lab-context';
 import { Panel } from '../bits';
+import { SizeField, TextField } from '../controls';
 
 const MAX = 6;
 
@@ -31,7 +32,12 @@ export function Compare() {
   return (
     <div className="flex flex-col gap-5">
       <Panel label="اختيار الخطوط" className="flex flex-col gap-4 p-5">
-        <div className="flex flex-wrap gap-1.5">
+        <div className="grid gap-x-8 gap-y-5 border-b pb-5 sm:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)]">
+          <TextField label="نص المقارنة" />
+          <SizeField min={16} max={96} label="حجم العرض" />
+        </div>
+        <p className="text-caption font-medium">الخطوط في المقارنة</p>
+        <div className="-mt-2 flex flex-wrap gap-1.5">
           {fonts.map((f) => (
             <button
               key={f.id}

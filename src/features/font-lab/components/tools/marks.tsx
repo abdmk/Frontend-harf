@@ -5,6 +5,7 @@ import { cn } from '@/lib/cn';
 import { useLab } from '../../hooks/lab-context';
 import { hex } from '../../utils/coverage';
 import { Panel, RangeControl } from '../bits';
+import { ControlsCard } from '../controls';
 
 const MARKS: [string, string][] = [
   ['َ', 'فتحة'],
@@ -38,24 +39,31 @@ export function Marks() {
 
   return (
     <div className="flex flex-col gap-5">
-      <Panel label="الحركات" className="p-5">
-        <div className="mb-4 flex flex-wrap items-center justify-between gap-4">
-          <div role="group" aria-label="الحرف الحامل" className="flex gap-1.5">
-            {[...'بسحلعهي'].map((c) => (
-              <button
-                key={c}
-                type="button"
-                aria-pressed={base === c}
-                onClick={() => setBase(c)}
-                className="grid size-9 place-items-center rounded-full border text-lead transition-colors aria-pressed:border-primary aria-pressed:text-primary"
-                style={specimen(active)}
-              >
-                {c}
-              </button>
-            ))}
+      <ControlsCard label="إعدادات التشكيل">
+        <div className="grid items-end gap-x-8 gap-y-5 sm:grid-cols-2">
+          <div className="flex flex-col gap-2.5">
+            <span className="text-caption font-medium">الحرف الحامل</span>
+            <div role="group" aria-label="الحرف الحامل" className="flex flex-wrap gap-1.5">
+              {[...'بسحلعهي'].map((c) => (
+                <button
+                  key={c}
+                  type="button"
+                  aria-pressed={base === c}
+                  onClick={() => setBase(c)}
+                  className="grid size-9 place-items-center rounded-full border text-lead transition-colors hover:border-strong aria-pressed:border-primary aria-pressed:bg-tint-brand aria-pressed:text-primary"
+                  style={specimen(active)}
+                >
+                  {c}
+                </button>
+              ))}
+            </div>
           </div>
-          <RangeControl label="الحجم" value={size} min={24} max={96} onChange={setSize} className="w-56" />
+          <RangeControl label="الحجم" value={size} min={24} max={96} onChange={setSize} />
         </div>
+      </ControlsCard>
+
+      <Panel label="الحركات" className="p-5">
+        <h3 className="mb-4 text-control font-semibold">الحركات على «{base}»</h3>
         <ul className="grid grid-cols-[repeat(auto-fill,minmax(6rem,1fr))] gap-2">
           {MARKS.map(([m, label]) => {
             const ok = hasMark(m);

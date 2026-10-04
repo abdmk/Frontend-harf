@@ -2,6 +2,7 @@ import { useState } from 'react';
 
 import { useLab } from '../../hooks/lab-context';
 import { Panel, RangeControl, StatusPill } from '../bits';
+import { ControlsCard } from '../controls';
 
 const ROWS: [string, string][] = [
   ['الأرقام الهندية', '٠١٢٣٤٥٦٧٨٩'],
@@ -25,7 +26,9 @@ export function Numerals() {
 
   return (
     <div className="flex flex-col gap-5">
-      <RangeControl label="الحجم" value={size} min={16} max={96} onChange={setSize} className="max-w-sm" />
+      <ControlsCard label="إعدادات الأرقام">
+        <RangeControl label="الحجم" value={size} min={16} max={96} onChange={setSize} className="sm:max-w-sm" />
+      </ControlsCard>
       <Panel label="الأرقام" className="divide-y overflow-hidden">
         {ROWS.map(([label, text]) => {
           const miss = missing(text);

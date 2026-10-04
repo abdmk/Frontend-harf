@@ -1,6 +1,3 @@
-import { lazy, Suspense } from 'react';
-
-import { LoadingState } from '@/components/shared/loading-state';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -10,21 +7,18 @@ import {
   DropdownMenuRadioItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { ChevronDownIcon, CrossSmallIcon } from '@/components/ui/icons';
+import { ArrowLeftIcon, ChevronDownIcon } from '@/components/ui/icons';
 import { cn } from '@/lib/cn';
 
 import { LayoutContext, ParagraphsContext, TestsContext } from './contexts';
 import { OT_SPECIMENS } from './tools/features';
 import { PRESETS } from './tools/sample';
-import { featureInfo, featureOn } from '../data/features';
+import { featureGroup, featureInfo, featureOn } from '../data/features';
 import { type CanvasMode, CANVAS_MODES } from '../data/tools';
 import { useLab } from '../hooks/lab-context';
 import { analyzeOpenType } from '../utils/opentype';
 
-const Waterfall = lazy(() => import('./tools/waterfall').then((m) => ({ default: m.Waterfall })));
-const Weights = lazy(() => import('./tools/weights').then((m) => ({ default: m.Weights })));
-
-/** الميزات التي غيّرها المستخدم عن افتراضي الخط — تظهر شرائح فوق النص */
+/** الميزات التي غيّرها المستخدم عن افتراضي الخط */
 export function useChangedFeatures() {
   const { active, settings } = useLab();
   if (!active) return [];
@@ -34,39 +28,31 @@ export function useChangedFeatures() {
     .filter((t) => t in settings.features && featureOn(t, settings.features) !== (featureInfo(t).mode === 'on'));
 }
 
-/** «أنماط» تظهر فقط حين يكون في العائلة أكثر من نمط أو محور وزن — وإلا فلا شيء تقارنه */
-export function useModes() {
-  const { active, fonts } = useLab();
-  const many = !!active && (fonts.filter((f) => f.family === active.family).length > 1 || active.axes.length > 0);
-  return CANVAS_MODES.filter((m) => m.key !== 'styles' || many);
-}
-
 const MODE =
   'h-9 shrink-0 rounded-full px-3.5 text-control whitespace-nowrap text-muted-foreground transition-colors hover:text-foreground aria-pressed:bg-card aria-pressed:font-medium aria-pressed:text-foreground aria-pressed:shadow-soft';
 
 /**
  * لوحة الاختبار — قلب المختبر: سياق واحد في كل مرّة، وكل السياقات تتبع الإعدادات نفسها
  * (الحجم، السطر، المحاذاة، OpenType) فيظهر أثر كل تغيير حيث يهمّ:
- * اكتب (نصّك، يُحرَّر في مكانه) · اختبارات (عيوب الرسم والوصل) · فقرات (القراءة واللغات) ·
- * تخطيط (صفحة مقال) · أحجام (من 12 إلى 128) · أنماط (كل أوزان العائلة).
+ * اكتب (نصّك، يُحرَّر في مكانه) · اختبارات (عيوب الرسم والوصل) · فقرات (القراءة واللغات) · تخطيط (صفحة مقال).
+ * شريط OpenType فوقها: ميزات الملف الاختيارية تُشغَّل بنقرة دون مغادرة العيّنة.
  */
 export function TestCanvas({
   mode,
   onMode,
   compare,
   onCompare,
+  onAllFeatures,
 }: {
   mode: CanvasMode;
   onMode: (m: CanvasMode) => void;
   compare: boolean;
   onCompare: (v: boolean) => void;
+  onAllFeatures: () => void;
 }) {
-  const { active, settings: s, set } = useLab();
+  const { settings: s, set, active } = useLab();
   const changed = useChangedFeatures();
-  const modes = useModes();
   if (!active) return null;
-  const current = modes.some((m) => m.key === mode) ? mode : 'write';
-  const names = new Map(analyzeOpenType(active).features.map((f) => [f.tag, f.name]));
   const presets = [...PRESETS, ...OT_SPECIMENS.slice(1, 4)];
   const preset = presets.find(([, text]) => text === s.text)?.[0];
 
@@ -78,11 +64,11 @@ export function TestCanvas({
           aria-label="سياق الاختبار"
           className="flex max-w-full [scrollbar-width:none] gap-0.5 overflow-x-auto rounded-full bg-sunken p-1 [&::-webkit-scrollbar]:hidden"
         >
-          {modes.map((m) => (
+          {CANVAS_MODES.map((m) => (
             <button
               key={m.key}
               type="button"
-              aria-pressed={m.key === current}
+              aria-pressed={m.key === mode}
               title={m.hint}
               onClick={() => onMode(m.key)}
               className={MODE}
@@ -92,7 +78,7 @@ export function TestCanvas({
           ))}
         </div>
 
-        {current === 'write' && (
+        {mode === 'write' && (
           <div className="flex items-center gap-1.5">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -102,7 +88,7 @@ export function TestCanvas({
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-60">
-                <DropdownMenuLabel>ضع في اللوحة نصاً</DropdownMenuLabel>
+                <DropdownMenuLabel>ضع في العيّنة نصاً</DropdownMenuLabel>
                 <DropdownMenuRadioGroup value={s.text} onValueChange={(text) => set({ text })}>
                   {presets.map(([label, text]) => (
                     <DropdownMenuRadioItem key={label} value={text}>
@@ -127,44 +113,70 @@ export function TestCanvas({
         )}
       </div>
 
-      {/* الميزات المغيّرة تسري على كل السياقات — تُرى وتُزال من هنا */}
-      {changed.length > 0 && (
-        <div className="flex flex-wrap items-center gap-1.5">
-          <span className="px-1 text-caption text-tertiary">OpenType مفعّل:</span>
-          {changed.map((tag) => (
+      <OpenTypeStrip onAll={onAllFeatures} />
+
+      <div key={mode} className="animate-fade-up">
+        {mode === 'write' && <WriteContext compare={compare && changed.length > 0} />}
+        {mode === 'tests' && <TestsContext />}
+        {mode === 'paragraphs' && <ParagraphsContext />}
+        {mode === 'layout' && <LayoutContext />}
+      </div>
+    </section>
+  );
+}
+
+/**
+ * ميزات OpenType الاختيارية في الملف — شرائح تُشغَّل وتُطفأ فوق العيّنة مباشرة.
+ * المفعّلة بلون العلامة؛ والتفصيل (الأثر، الجرد، المحرّك) في أداة «ميزات OpenType».
+ */
+function OpenTypeStrip({ onAll }: { onAll: () => void }) {
+  const { active, settings, set } = useLab();
+  if (!active) return null;
+  const names = new Map(analyzeOpenType(active).features.map((f) => [f.tag, f.name]));
+  // الاختيارية فقط (مجموعات أسلوبية، بدائل، أرقام…) وما غيّره المستخدم — المفعّل افتراضياً كـkern في أداة الميزات
+  const tags = [...new Set(active.features.map((f) => f.tag))].filter(
+    (t) => featureGroup(t) !== 'engine' && (featureInfo(t).mode !== 'on' || t in settings.features),
+  );
+  // الأشكال والبدائل أولاً — هي ما يبحث عنه المصمّم — ثم الربطات، فالأرقام، فالمسافات
+  const rank = { style: 0, liga: 1, num: 2, space: 3, engine: 4 } as const;
+  tags.sort((a, b) => rank[featureGroup(a)] - rank[featureGroup(b)]);
+  return (
+    <div className="flex items-center gap-2">
+      <span className="shrink-0 text-caption font-semibold">OpenType</span>
+      <div
+        role="group"
+        aria-label="OpenType في العيّنة"
+        className="flex min-w-0 flex-1 [scrollbar-width:none] items-center gap-1.5 overflow-x-auto [mask-image:linear-gradient(to_left,black_calc(100%-2rem),transparent)] py-0.5 [&::-webkit-scrollbar]:hidden"
+      >
+        {tags.length === 0 && <span className="text-caption text-tertiary">لا ميزات اختيارية في هذا الملف</span>}
+        {tags.map((tag) => {
+          const on = featureOn(tag, settings.features);
+          const name = names.get(tag) ?? featureInfo(tag).label;
+          return (
             <button
               key={tag}
               type="button"
-              onClick={() => {
-                set({ features: Object.fromEntries(Object.entries(s.features).filter(([k]) => k !== tag)) });
-              }}
-              aria-label={`إلغاء ${tag}`}
-              title={names.get(tag) ?? featureInfo(tag).label}
-              className="group/c inline-flex h-7 items-center gap-1 rounded-full bg-tint-brand ps-2.5 pe-1 text-caption text-primary"
+              aria-pressed={on}
+              aria-label={`${tag} — ${name}`}
+              title={name}
+              onClick={() => set({ features: { ...settings.features, [tag]: !on } })}
+              className="inline-flex h-8 shrink-0 items-center gap-1.5 rounded-full border bg-card px-3 text-caption text-muted-foreground transition-colors hover:border-strong hover:text-foreground aria-pressed:border-primary/50 aria-pressed:bg-tint-brand aria-pressed:text-primary"
             >
-              <span dir="ltr" className="font-mono">
+              <span dir="ltr" className="font-mono font-medium">
                 {tag}
               </span>
-              {!featureOn(tag, s.features) && <span>مطفأة</span>}
-              <span className="grid size-5 place-items-center rounded-full transition-colors group-hover/c:bg-primary-fill group-hover/c:text-white">
-                <CrossSmallIcon className="size-3.5" />
+              <span className="max-w-28 truncate max-sm:hidden">
+                {featureInfo(tag).mode === 'on' ? featureInfo(tag).label : name}
               </span>
             </button>
-          ))}
-        </div>
-      )}
-
-      <div key={current} className="animate-fade-up">
-        {current === 'write' && <WriteContext compare={compare && changed.length > 0} />}
-        {current === 'tests' && <TestsContext />}
-        {current === 'paragraphs' && <ParagraphsContext />}
-        {current === 'layout' && <LayoutContext />}
-        <Suspense fallback={<LoadingState label="جارٍ التحضير…" />}>
-          {current === 'sizes' && <Waterfall />}
-          {current === 'styles' && <Weights />}
-        </Suspense>
+          );
+        })}
       </div>
-    </section>
+      <Button variant="ghost" size="sm" onClick={onAll} className="shrink-0">
+        كل الميزات
+        <ArrowLeftIcon />
+      </Button>
+    </div>
   );
 }
 
