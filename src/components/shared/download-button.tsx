@@ -8,7 +8,8 @@ type Props = {
   label?: string;
   size?: 'sm' | 'lg';
   /** secondary: للنسخة التجريبية بجانب زرّ الشراء */
-  variant?: 'primary' | 'secondary';
+  /** quiet: زرّ البطاقات المتكرّرة — إطار وحرف بلون العلامة، ويمتلئ عند المرور فقط */
+  variant?: 'primary' | 'secondary' | 'quiet';
   className?: string;
   /** ملف حقيقي (خطوط OFL ومخطوطات مجانية فقط) — يصير الزرّ رابط تحميل فعلياً */
   file?: { url: string; bytes: number; format?: string; name?: string };
@@ -19,6 +20,13 @@ type Props = {
  * بدونه — للعرض: يُظهر التقدّم ثم النجاح. الخطوط المدفوعة لا تُعطى مساراً ثابتاً أبداً؛ في المنتج
  * يطلب الزرّ من الخادم رابطاً موقّتاً موقّعاً بعد التحقّق من ترخيص المستخدم.
  */
+/**
+ * فعل البطاقة في الشبكات (تحميل، اختر الترخيص): عشرات البطاقات في الصفحة — لو امتلأت كلها بالأحمر
+ * ما عرفت العين أين تبدأ («5 أخطاء UX»: زرّ رئيسي واحد في الشاشة). هادئ حتى يقترب منه المستخدم.
+ */
+export const QUIET_CTA =
+  'border border-primary/35 bg-card text-primary hover:border-transparent hover:bg-primary-fill hover:text-primary-foreground focus-visible:bg-primary-fill focus-visible:text-primary-foreground';
+
 export function DownloadButton({
   fontName,
   label = 'تحميل',
@@ -46,7 +54,9 @@ export function DownloadButton({
       ? 'bg-ok-700 text-white'
       : variant === 'primary'
         ? 'bg-primary-fill text-primary-foreground hover:bg-harf-600'
-        : 'border bg-sunken text-foreground hover:bg-inset',
+        : variant === 'quiet'
+          ? QUIET_CTA
+          : 'border bg-sunken text-foreground hover:bg-inset',
     className,
   );
   const content = (

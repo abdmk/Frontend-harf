@@ -102,6 +102,7 @@ export function ManuscriptCard({
         <div className="flex items-center justify-between gap-3 pt-1">
           <span className="truncate text-sm font-medium text-lic @max-[15rem]:hidden">{USAGE_LABEL[m.license]}</span>
           <DownloadButton
+            variant="quiet"
             className="@max-[15rem]:w-full"
             fontName={m.title}
             file={{ url: m.url, bytes: m.bytes, format: 'SVG', name: fileName(m) }}
