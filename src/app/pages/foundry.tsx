@@ -11,7 +11,7 @@ import { LayersIcon } from '@/components/ui/icons';
 import { paths } from '@/config/paths';
 import { getFonts } from '@/features/catalog/api/get-fonts';
 import { DEFAULT_QUERY } from '@/features/catalog/types/catalog-query';
-import { getFoundry, getFoundryDesigners, MOCK_STUDIO_OWNER } from '@/features/studio/api/get-studio';
+import { getFoundry, getFoundryDesigners, getStudio, MOCK_STUDIO_OWNER } from '@/features/studio/api/get-studio';
 import { FoundryProfile } from '@/features/studio/components/foundry-profile';
 import { getCurrentUser } from '@/lib/auth';
 import { getPublicProfile, markOf, type SocialKey, socialUrl } from '@/lib/public-profile';
@@ -19,14 +19,20 @@ import { useIsVerified } from '@/lib/studio-verification';
 
 export function FoundryPage() {
   const { id } = useParams<{ id: string }>();
-  const found = getFoundry(id!);
-  // صفحة الاستوديو نفسه: علامة التوثيق تتبع اعتماد حسابه، لا البيانات التجريبية
-  // المسبك التجريبي ملك حساب واحد: التوثيق من اعتماد حسابه، لا من البيانات الثابتة
-  const ownerVerified = useIsVerified(MOCK_STUDIO_OWNER);
+  const me = getCurrentUser();
+  // مسبك هذا الحساب نفسه (القائم أو الجديد) — صفحته موجودة دائماً لصاحبها، ولو لم ينشر بعد
+  const mine = me?.plan === 'studio' ? getStudio(me) : null;
+  const isMine = !!mine && mine.foundry.id === id;
+  const found =
+    getFoundry(id!) ??
+    (isMine ? { foundry: mine.foundry, fonts: mine.fonts.filter((f) => f.status === 'published') } : null);
+  // علامة التوثيق من اعتماد حساب صاحب المسبك، لا من البيانات الثابتة
+  const ownerVerified = useIsVerified(
+    isMine ? me!.id : id === getFoundry(id!)?.foundry.id ? MOCK_STUDIO_OWNER : undefined,
+  );
   if (!found) return <Navigate to="/" replace />;
-  // ⚠️ عرض: الملف العام المحفوظ في هذا المتصفّح يظهر لصاحب الاستوديو؛ مع الخادم يأتي من قاعدة البيانات
-  // ملف صاحب المسبك وحده يظهر هنا — لا ملف أي استوديو آخر مسجّل في المتصفّح
-  const own = getCurrentUser()?.id === MOCK_STUDIO_OWNER ? getPublicProfile() : null;
+  // ⚠️ عرض: الملف المحفوظ في هذا المتصفّح يظهر على مسبك صاحبه وحده؛ مع الخادم يأتي من قاعدة البيانات
+  const own = isMine ? getPublicProfile() : null;
   const data = own
     ? {
         ...found,

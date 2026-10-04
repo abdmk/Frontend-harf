@@ -20,7 +20,6 @@ import {
   UserIcon,
 } from '@/components/ui/icons';
 import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { cn } from '@/lib/cn';
 import { formatDateAr } from '@/lib/format';
 import { useDocUrl } from '@/lib/media-store';
@@ -37,9 +36,10 @@ import {
   type VerificationRecord,
 } from '@/lib/studio-verification';
 
+import { CountryPicker } from './country-picker';
 import { DocSlot } from './doc-slot';
 import { AGREEMENT_CLAUSES, AGREEMENT_HIGHLIGHTS, AGREEMENT_TITLE, AGREEMENT_VERSION } from '../config/agreement';
-import { COUNTRIES, countryName } from '../config/countries';
+import { countryName } from '../config/countries';
 
 /** صندوق شرح رمادي تحت الحقل — كما في مراجع التسجيل: لماذا نطلب هذا وأين يظهر */
 export function Explain({ children, className }: { children: ReactNode; className?: string }) {
@@ -160,18 +160,13 @@ export function InfoStep({
           <FieldLabel htmlFor={`${id}-co`} required>
             الدولة
           </FieldLabel>
-          <Select value={v.country || undefined} onValueChange={(country) => set({ country })}>
-            <SelectTrigger id={`${id}-co`} aria-invalid={!!errors.country} aria-describedby={`${id}-coe`}>
-              <SelectValue placeholder="اختر الدولة" />
-            </SelectTrigger>
-            <SelectContent>
-              {COUNTRIES.map((c) => (
-                <SelectItem key={c.code} value={c.code}>
-                  {c.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          <CountryPicker
+            id={`${id}-co`}
+            value={v.country}
+            onChange={(country) => set({ country })}
+            invalid={!!errors.country}
+            describedBy={`${id}-coe`}
+          />
           <FieldError id={`${id}-coe`}>{errors.country}</FieldError>
         </Field>
         <Field>
