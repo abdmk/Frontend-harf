@@ -7,7 +7,6 @@ import { Button } from '@/components/ui/button';
 import { ArrowLeftIcon, ChevronRightIcon, CloudUploadIcon, ShieldCheckIcon } from '@/components/ui/icons';
 import { paths, type StudioSection } from '@/config/paths';
 import { useCurrentUser } from '@/hooks/use-current-user';
-import { useAccountPhoto } from '@/lib/account-photo';
 import { cn } from '@/lib/cn';
 import { markOf, useProfileIncomplete, usePublicProfile } from '@/lib/public-profile';
 import { type PublicStatus, useMyVerification } from '@/lib/studio-verification';
@@ -62,8 +61,7 @@ function StudioMark({ foundry, className }: { foundry: Foundry; className?: stri
   const profile = usePublicProfile();
   const account = useCurrentUser();
   // صورة واحدة في كل الموقع: صورة الملف الشخصي، وإلا صورة الحساب نفسها — ثم الحرف
-  const accountPhoto = useAccountPhoto(account?.id);
-  const photo = profile.avatar ?? accountPhoto ?? account?.avatarUrl;
+  const photo = profile.avatar ?? account?.avatarUrl;
   // الشكل يتبع نوع الصفحة: شعار مربّع للمسبك، صورة دائرية للمصمّم
   const shape = profile.kind === 'designer' ? 'rounded-full' : 'rounded-md';
   return photo ? (

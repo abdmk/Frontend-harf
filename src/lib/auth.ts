@@ -4,6 +4,7 @@ import { MOCK_NEW_STUDIO, MOCK_USERS } from '@/mocks/users';
 import type { User } from '@/types/domain/user';
 
 import { type AccountOverrides, getAccountOverrides, subscribeAccountOverrides } from './account-overrides';
+import { type AccountProfile, getAccountProfiles, initialsOf, subscribeAccountProfiles } from './account-profile';
 import { createLocalStoreSignal } from './local-store-signal';
 
 export { safeNext } from './safe-next';
@@ -19,9 +20,11 @@ const sessionSignal = createLocalStoreSignal();
 export const subscribeSession = (cb: () => void) => {
   const a = sessionSignal.subscribe(cb);
   const b = subscribeAccountOverrides(cb);
+  const c = subscribeAccountProfiles(cb);
   return () => {
     a();
     b();
+    c();
   };
 };
 
@@ -51,21 +54,53 @@ function baseUser(): User | null {
 }
 
 // نسخة ثابتة المرجع ما لم يتغيّر الحساب أو قرار الإدارة عليه (يتطلّبه useSyncExternalStore)
-let userCache: { base: User | null; o: AccountOverrides | null; value: User | null } = {
-  base: null,
-  o: null,
-  value: null,
-};
+let userCache: {
+  base: User | null;
+  o: AccountOverrides | null;
+  p: Record<string, AccountProfile> | null;
+  value: User | null;
+} = { base: null, o: null, p: null, value: null };
 
+/** حدود الاستخدام تتبع الخطة الفعلية: المجانية محدودة، والمدفوعة بلا حدّ */
+function usageFor(base: User, plan: User['plan']): User['usage'] {
+  if (plan === base.plan) return base.usage;
+  const free = MOCK_USERS.free.usage;
+  return {
+    ...base.usage,
+    downloads: { used: base.usage.downloads.used, limit: plan === 'free' ? free.downloads.limit : null },
+    matching: { used: base.usage.matching.used, limit: plan === 'free' ? free.matching.limit : null },
+  };
+}
+
+/**
+ * المستخدم الحالي — المصدر الوحيد لكل ما يُعرض عنه: الحساب الأساسي + ما عدّله صاحبه (الاسم، الصورة…)
+ * + خطّته الفعلية. لا يحمل أي مكوّن نسخة خاصة من هذه البيانات.
+ */
 export function getCurrentUser(): User | null {
   const base = baseUser();
   const o = getAccountOverrides();
-  if (userCache.base === base && userCache.o === o) return userCache.value;
+  const p = getAccountProfiles();
+  if (userCache.base === base && userCache.o === o && userCache.p === p) return userCache.value;
   let value: User | null = base;
-  // المحظور والمحذوف بلا جلسة؛ والخطة الممنوحة من الإدارة تغلب خطّته
+  // المحظور والمحذوف بلا جلسة
   if (base && (o.deleted.includes(base.id) || o.banned[base.id])) value = null;
-  else if (base && o.plans[base.id] && o.plans[base.id] !== base.plan) value = { ...base, plan: o.plans[base.id]! };
-  userCache = { base, o, value };
+  else if (base) {
+    const edits = p[base.id] ?? {};
+    const plan = o.plans[base.id] ?? base.plan;
+    const name = edits.name ?? base.name;
+    value = {
+      ...base,
+      name,
+      initials: edits.name ? initialsOf(name) : base.initials,
+      avatarUrl: edits.avatar ?? base.avatarUrl,
+      profession: edits.profession ?? base.profession,
+      location: edits.location ?? base.location,
+      website: edits.website ?? base.website,
+      plan,
+      usage: usageFor(base, plan),
+    };
+  }
+  userCache = { base, o, p, value };
   return value;
 }
 

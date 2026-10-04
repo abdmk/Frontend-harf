@@ -18,7 +18,7 @@ import {
 import { Input, Textarea } from '@/components/ui/input';
 import { toast } from '@/components/ui/toast';
 import { paths } from '@/config/paths';
-import { setAccountPhoto } from '@/lib/account-photo';
+import { updateAccountProfile } from '@/lib/account-profile';
 import { getCurrentUser } from '@/lib/auth';
 import { cn } from '@/lib/cn';
 import { prepareImage } from '@/lib/image-upload';
@@ -157,7 +157,7 @@ export function PublicProfileEditor({ foundry }: { foundry: Foundry }) {
     });
     // الصورة نفسها صورة الحساب في كل الموقع — مربوطة بالحساب لا بالخطة
     const me = getCurrentUser();
-    if (ok && me) setAccountPhoto(me.id, draft.avatar);
+    if (ok && me) updateAccountProfile(me.id, { avatar: draft.avatar });
     setSaving(false);
     setErrors({});
     if (ok) toast({ tone: 'success', title: 'حُفظ ملفك العام', description: 'يظهر الآن في صفحة استوديوك.' });

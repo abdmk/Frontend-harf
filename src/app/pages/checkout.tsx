@@ -7,11 +7,11 @@ import { PageMeta } from '@/components/shared/page-meta';
 import { paths } from '@/config/paths';
 import { pay } from '@/features/checkout/api/pay';
 import { CheckoutForm } from '@/features/checkout/components/checkout-form';
-import { requireUser } from '@/lib/auth';
+import { useCurrentUser } from '@/hooks/use-current-user';
 import { buildCart } from '@/lib/commerce/cart-store';
 
 export function CheckoutPage() {
-  const user = requireUser();
+  const user = useCurrentUser();
   if (!user) return <Navigate to={paths.login.getHref(paths.checkout.getHref())} replace />;
   const cart = buildCart();
 

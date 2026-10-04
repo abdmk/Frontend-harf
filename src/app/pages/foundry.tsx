@@ -13,13 +13,13 @@ import { getFonts } from '@/features/catalog/api/get-fonts';
 import { DEFAULT_QUERY } from '@/features/catalog/types/catalog-query';
 import { getFoundry, getFoundryDesigners, getStudio, MOCK_STUDIO_OWNER } from '@/features/studio/api/get-studio';
 import { FoundryProfile } from '@/features/studio/components/foundry-profile';
-import { getCurrentUser } from '@/lib/auth';
+import { useCurrentUser } from '@/hooks/use-current-user';
 import { getPublicProfile, markOf, type SocialKey, socialUrl } from '@/lib/public-profile';
 import { useIsVerified } from '@/lib/studio-verification';
 
 export function FoundryPage() {
   const { id } = useParams<{ id: string }>();
-  const me = getCurrentUser();
+  const me = useCurrentUser();
   // مسبك هذا الحساب نفسه (القائم أو الجديد) — صفحته موجودة دائماً لصاحبها، ولو لم ينشر بعد
   const mine = me?.plan === 'studio' ? getStudio(me) : null;
   const isMine = !!mine && mine.foundry.id === id;

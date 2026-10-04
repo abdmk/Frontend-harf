@@ -1,5 +1,6 @@
 import { z } from 'zod';
 
+import { updateAccountProfile } from '@/lib/account-profile';
 import { getCurrentUser } from '@/lib/auth';
 import { clientKey, hit } from '@/lib/rate-limit';
 
@@ -34,7 +35,17 @@ export function updateProfile(_prev: FormState, form: FormData): FormState {
     const f = parsed.error.flatten().fieldErrors;
     return { ok: false, values, fields: Object.fromEntries(Object.entries(f).map(([k, v]) => [k, v?.[0]])) };
   }
-  return { ok: true, values, message: 'حُفظت معلوماتك (عرض — لا تُخزَّن بعد).' };
+  const me = getCurrentUser()!;
+  const d = parsed.data as Record<string, string | undefined>;
+  // تُحفظ في مصدر بيانات الحساب الواحد — فيتحدّث الاسم في الترويسة والقائمة وكل مكان فوراً
+  const ok = updateAccountProfile(me.id, {
+    name: d.name,
+    profession: d.profession || undefined,
+    location: d.location || undefined,
+    website: d.website || undefined,
+  });
+  if (!ok) return { ok: false, values, message: 'تعذّر الحفظ — مساحة التخزين ممتلئة.' };
+  return { ok: true, values, message: 'حُفظت معلوماتك.' };
 }
 
 const passwordSchema = z

@@ -6,10 +6,10 @@ import { PageMeta } from '@/components/shared/page-meta';
 import { paths } from '@/config/paths';
 import { getNotifications } from '@/features/notifications/api/get-notifications';
 import { NotificationsPanel } from '@/features/notifications/components/notifications-panel';
-import { requireUser } from '@/lib/auth';
+import { useCurrentUser } from '@/hooks/use-current-user';
 
 export function NotificationsPage() {
-  const user = requireUser();
+  const user = useCurrentUser();
   if (!user) return <Navigate to={paths.login.getHref(paths.notifications.getHref())} replace />;
   const items = getNotifications(user);
   return (

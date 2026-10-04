@@ -11,7 +11,7 @@ import { StudioFonts } from '@/features/studio/components/studio-fonts';
 import { StudioOverview } from '@/features/studio/components/studio-overview';
 import { StudioPageHeader } from '@/features/studio/components/studio-page-header';
 import { VerificationCallout } from '@/features/verification/components/verification-callout';
-import { requireUser } from '@/lib/auth';
+import { useCurrentUser } from '@/hooks/use-current-user';
 
 import { useStudio } from '../layouts/studio-layout';
 
@@ -80,7 +80,7 @@ export function StudioFinancePage({ page }: { page: keyof typeof FINANCE }) {
 /** «الملف الشخصي» للاستوديو: الحساب والصفحة العامة في صفحة واحدة — لا ملفّان منفصلان */
 export function StudioProfilePage() {
   const { foundry } = useStudio();
-  const user = requireUser();
+  const user = useCurrentUser();
   return (
     <>
       <PageMeta title="الملف الشخصي" noindex />

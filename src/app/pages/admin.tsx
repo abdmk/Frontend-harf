@@ -11,16 +11,17 @@ import { StudioRequestDetail } from '@/features/admin/components/studio-verifica
 import { UsersManager } from '@/features/admin/components/users-manager';
 import { getAdminAnalytics } from '@/features/analytics/api/get-analytics';
 import { AdminAnalyticsView } from '@/features/analytics/components/admin-analytics';
-import { getCurrentUser } from '@/lib/auth';
+import { useCurrentUser } from '@/hooks/use-current-user';
 import type { Range } from '@/types/domain/analytics';
 
 /* صفحات لوحة الإدارة — الحارس في AdminLayout، وكل إجراء يتحقّق من الدور مجدّداً (features/admin/api) */
 
 export function AdminHomePage() {
+  const admin = useCurrentUser();
   return (
     <>
       <PageMeta title="لوحة الإدارة" noindex />
-      <AdminOverview analytics={getAdminAnalytics('30')} adminName={getCurrentUser()?.name ?? ''} />
+      <AdminOverview analytics={getAdminAnalytics('30')} adminName={admin?.name ?? ''} />
     </>
   );
 }

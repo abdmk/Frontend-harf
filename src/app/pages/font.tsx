@@ -18,16 +18,16 @@ import { FontHeader } from '@/features/font-details/components/font-header';
 import { WeightWaterfall } from '@/features/font-details/components/weight-waterfall';
 import { FontTester } from '@/features/font-tester/components/font-tester';
 import { PurchaseActions } from '@/features/licensing/components/purchase-actions';
-import { getCurrentUser } from '@/lib/auth';
+import { useCurrentUser } from '@/hooks/use-current-user';
 import { getPricing } from '@/lib/commerce/cart-store';
 
 export function FontPage() {
   const { id } = useParams<{ id: string }>();
   const [searchParams] = useSearchParams();
   const font = getFont(id!);
+  const user = useCurrentUser();
   if (!font) return <Navigate to="/" replace />;
 
-  const user = getCurrentUser();
   const pricing = getPricing(font.id);
   const owned = getOwnedLicense(user, font.id);
   const openLicense = searchParams.get('license') === '1';

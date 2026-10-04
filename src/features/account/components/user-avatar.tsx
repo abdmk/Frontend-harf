@@ -1,5 +1,4 @@
 import type { User } from '@/features/account/types';
-import { useAccountPhoto } from '@/lib/account-photo';
 import { cn } from '@/lib/cn';
 
 /**
@@ -13,7 +12,8 @@ export function UserAvatar({
   user: Pick<User, 'id' | 'initials' | 'name' | 'avatarUrl'>;
   className?: string;
 }) {
-  const src = useAccountPhoto(user.id) ?? user.avatarUrl;
+  // الصورة من مصدر الحساب الواحد (getCurrentUser يدمج ما رفعه صاحبه)
+  const src = user.avatarUrl;
   return (
     <span
       aria-hidden

@@ -1,10 +1,11 @@
 import { z } from 'zod';
 
-import { getCurrentUser, setDemoSession } from '@/lib/auth';
+import { setAccountPlan } from '@/lib/account-overrides';
+import { getCurrentUser } from '@/lib/auth';
 import { PLANS } from '@/types/domain/user';
 
 /**
- * تغيير الخطة — ⚠️ محاكاة: يبدّل الحساب التجريبي فقط.
+ * تغيير الخطة — ⚠️ محاكاة: تُحفظ خطة الحساب نفسه في المتصفّح (الشخص لا يتغيّر).
  * في المنتج: جلسة Stripe Checkout/Billing تُنشأ عبر الـAPI، والتفعيل يتمّ من webhook موقّع.
  */
 export type ChangePlanResult = { ok: true } | { ok: false; error: string };
@@ -16,8 +17,8 @@ export async function changePlan(raw: unknown): Promise<ChangePlanResult> {
   if (!parsed.success) return { ok: false, error: 'خطة غير صالحة.' };
   if (!getCurrentUser()) return { ok: false, error: 'سجّل الدخول أوّلاً.' };
   await new Promise((r) => setTimeout(r, 900));
-  // الترقية إلى الاستوديو تبقي الشخص نفسه: ناشر جديد يبدأ بتوثيق استوديوه قبل أوّل نشر
+  // الشخص نفسه يبقى (الاسم، الصورة، البريد) — تتغيّر خطّته فقط؛ والناشر الجديد يبدأ بتوثيق حسابه
   const current = getCurrentUser();
-  setDemoSession(parsed.data.plan === 'studio' && current?.plan !== 'studio' ? 'newstudio' : parsed.data.plan);
+  if (!current || !setAccountPlan(current.id, parsed.data.plan)) return { ok: false, error: 'تعذّر الحفظ.' };
   return { ok: true };
 }

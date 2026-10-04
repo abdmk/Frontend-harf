@@ -3,7 +3,7 @@ import { Navigate, Outlet, useLocation } from 'react-router';
 import { SiteHeader } from '@/components/layout/site-header';
 import { paths } from '@/config/paths';
 import { AdminSidebar, AdminTabs } from '@/features/admin/components/admin-shell';
-import { getCurrentUser } from '@/lib/auth';
+import { useCurrentUser } from '@/hooks/use-current-user';
 
 import { HeaderActions } from '../header-actions';
 import { preloadPage } from '../lazy-pages';
@@ -18,7 +18,7 @@ import { NotFoundPage } from '../pages/not-found';
  */
 export function AdminLayout() {
   const { pathname, search } = useLocation();
-  const user = getCurrentUser();
+  const user = useCurrentUser();
   if (!user) return <Navigate to={paths.login.getHref(pathname + search)} replace />;
   if (user.role !== 'admin') return <NotFoundPage />;
   return (

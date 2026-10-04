@@ -4,7 +4,7 @@ import { SiteHeader } from '@/components/layout/site-header';
 import { paths } from '@/config/paths';
 import { getStudio } from '@/features/studio/api/get-studio';
 import { StudioSidebar, StudioTabs, useStudioSection } from '@/features/studio/components/studio-nav';
-import { getCurrentUser } from '@/lib/auth';
+import { useCurrentUser } from '@/hooks/use-current-user';
 
 import { HeaderActions } from '../header-actions';
 import { preloadPage } from '../lazy-pages';
@@ -23,7 +23,7 @@ export function useStudio() {
  */
 export function StudioLayout() {
   const section = useStudioSection();
-  const user = getCurrentUser();
+  const user = useCurrentUser();
   if (!user) return <Navigate to={paths.login.getHref(`/studio${section ? `/${section}` : ''}`)} replace />;
   if (user.plan !== 'studio') return <Navigate to={paths.account.getHref('subscription')} replace />;
   const studio = getStudio(user);

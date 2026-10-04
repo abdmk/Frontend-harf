@@ -39,3 +39,13 @@ export const getAccountOverrides = store.get;
 export const saveAccountOverrides = store.set;
 export const useAccountOverrides = store.use;
 export const subscribeAccountOverrides = store.subscribe;
+
+/**
+ * خطة الحساب نفسه — مصدر واحد للخطة سواء غيّرها صاحبها (الاشتراك) أو منحها المشرف:
+ * يبقى الشخص نفسه (الاسم والصورة والبريد) ويتغيّر الاشتراك فقط.
+ */
+export function setAccountPlan(userId: string, plan: Plan): boolean {
+  if (!ID.test(userId)) return false;
+  const o = store.get();
+  return store.set({ ...o, plans: { ...o.plans, [userId]: plan } });
+}

@@ -12,7 +12,7 @@ import { CheckIcon, ClockIcon, CrossIcon, DollarIcon, PlusIcon, TrashIcon } from
 import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { toast } from '@/components/ui/toast';
-import { getCurrentUser } from '@/lib/auth';
+import { useCurrentUser } from '@/hooks/use-current-user';
 import { formatDateAr, formatMoney } from '@/lib/format';
 import type { MaskedPayout } from '@/lib/payout';
 import { PUBLISHER_TERMS } from '@/lib/publisher-terms';
@@ -106,7 +106,7 @@ function RequestPayoutDialog({ available, disabled }: { available: number; disab
 function PayoutAccountPanel({ account, holdUntil }: { account: PayoutAccount | null; holdUntil?: string }) {
   const [editing, setEditing] = useState(false);
   const [removing, setRemoving] = useState(false);
-  const email = getCurrentUser()?.email ?? '';
+  const email = useCurrentUser()?.email ?? '';
   // دولة الناشر من التوثيق — تحدّد الوسائل المتاحة (كي كارد للعراق فقط)
   const country = useMyVerification()?.info.country;
 

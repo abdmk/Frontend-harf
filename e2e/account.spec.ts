@@ -86,3 +86,17 @@ test.describe('الحساب', () => {
     await expect(page.getByRole('region', { name: 'الإشعارات العابرة' })).toHaveAttribute('data-position', 'end');
   });
 });
+
+test('تعديل الاسم يظهر فوراً في الترويسة والقائمة، ويبقى بعد إعادة التحميل', async ({ page }) => {
+  await page.goto('/account/profile?as=free');
+  const name = page.getByLabel('الاسم', { exact: true });
+  await name.fill('ريم سالم');
+  await page.getByRole('button', { name: 'حفظ التغييرات' }).click();
+  // الترويسة (زرّ الحساب) والبطاقة في الصفحة من المصدر نفسه — بلا إعادة تحميل
+  await expect(page.getByRole('button', { name: 'حساب ريم سالم' })).toBeVisible();
+  await expect(page.getByText('ريم سالم').first()).toBeVisible();
+  await page.reload();
+  await expect(page.getByRole('button', { name: 'حساب ريم سالم' })).toBeVisible();
+  await page.getByRole('button', { name: 'حساب ريم سالم' }).click();
+  await expect(page.getByRole('dialog').getByText('ريم سالم')).toBeVisible();
+});
