@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router';
 
 import { Button } from '@/components/ui/button';
@@ -14,6 +14,8 @@ import { PlansDialog } from '@/features/subscriptions/components/plans-dialog';
 import { useCart } from '@/hooks/use-cart';
 import { useCurrentUser } from '@/hooks/use-current-user';
 import { clearWelcome, isWelcomePending } from '@/lib/auth';
+import { onPlansRequest } from '@/lib/plans-request';
+import type { Plan } from '@/types/domain/user';
 
 export function HeaderActions() {
   const user = useCurrentUser();
@@ -24,6 +26,16 @@ export function HeaderActions() {
   const [welcome, setWelcome] = useState(() => !!user && isWelcomePending());
   const [plansOpen, setPlansOpen] = useState(welcome);
   const avatarRef = useRef<HTMLButtonElement>(null);
+  // طلبات الفتح من خارج الترويسة (العمود الجانبي، بطاقة التحويل)
+  const [startWith, setStartWith] = useState<Plan>();
+  useEffect(
+    () =>
+      onPlansRequest((plan) => {
+        setStartWith(plan);
+        setPlansOpen(true);
+      }),
+    [],
+  );
   return (
     <>
       <CartMenu cart={cart} onRemove={removeFromCart} />
@@ -36,8 +48,10 @@ export function HeaderActions() {
             current={user.plan}
             onChange={changePlan}
             open={plansOpen}
+            startWith={startWith}
             onOpenChange={(v) => {
               setPlansOpen(v);
+              if (!v) setStartWith(undefined);
               if (!v && welcome) {
                 clearWelcome();
                 setWelcome(false);

@@ -36,6 +36,7 @@ export function PlansDialog({
   onOpenChange,
   returnFocusTo,
   welcome = false,
+  startWith,
 }: {
   plans: PlanOffer[];
   current: Plan;
@@ -48,6 +49,8 @@ export function PlansDialog({
   returnFocusTo?: RefObject<HTMLElement | null>;
   /** أول دخول بعد إنشاء الحساب: المجانية زرّها «تابع مجاناً» (يغلق النافذة) بدل «خطتك الحالية» */
   welcome?: boolean;
+  /** يُفتح مباشرةً على خطوة الاشتراك في هذه الخطة («تحويل إلى استوديو») — «رجوع» يعرض الخطط كلها */
+  startWith?: Plan;
 }) {
   // أكبر توفير سنوي فعلي بين الخطط المدفوعة — الأسعار تعدّلها الإدارة، فلا رقم ثابت هنا
   const maxSaving = Math.max(
@@ -64,6 +67,14 @@ export function PlansDialog({
   };
   const [cycle, setCycle] = useState<BillingCycle>('monthly');
   const [step, setStep] = useState<Step>({ kind: 'plans' });
+  // عند الفتح بخطة محدّدة (ليست الحالية): خطوة الاشتراك فيها مباشرةً —
+  // تعديل الحالة أثناء العرض عند تغيّر «مفتوحة» (نمط React الموصى به بدل effect)
+  const [wasOpen, setWasOpen] = useState(open);
+  if (open !== wasOpen) {
+    setWasOpen(open);
+    const plan = open && startWith && startWith !== current ? plans.find((p) => p.id === startWith) : undefined;
+    if (plan) setStep({ kind: 'pay', plan });
+  }
   const [error, setError] = useState<string>();
   const [pending, start] = useTransition();
   const wide = step.kind === 'plans';

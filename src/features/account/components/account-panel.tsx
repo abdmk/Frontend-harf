@@ -9,6 +9,7 @@ import { signOut } from '@/features/account/api/sign-out';
 import { accountNavGroups, type NavKey, PLAN_TITLE } from '@/features/account/config/nav';
 import type { User } from '@/features/account/types';
 import { cn } from '@/lib/cn';
+import { requestPlans } from '@/lib/plans-request';
 import { useProfileIncomplete } from '@/lib/public-profile';
 import { type PublicStatus, useMyVerification } from '@/lib/studio-verification';
 
@@ -191,16 +192,21 @@ export function AccountPanel({
               <p className={cn('font-medium', s.boxTitle)}>تريد تنشر أعمالك؟</p>
               <p className={cn('text-muted-foreground', s.boxSub)}>حوّل حسابك إلى استوديو</p>
             </div>
-            <Link
-              to={paths.account.getHref('subscription')}
-              onClick={onNavigate}
+            {/* يفتح نافذة الخطط على خطوة الاشتراك في الاستوديو مباشرةً — كان رابطاً لصفحة الاشتراك
+                لا يفعل شيئاً ظاهراً، خصوصاً حين تكون فيها أصلاً */}
+            <button
+              type="button"
+              onClick={() => {
+                onNavigate?.();
+                requestPlans('studio');
+              }}
               className={cn(
                 'rounded-full bg-sunken font-medium transition-colors hover:bg-inset',
                 menu ? 'px-3 py-1 text-meta' : 'px-4 py-1.5 text-sm',
               )}
             >
               تحويل
-            </Link>
+            </button>
           </div>
         )}
         <form action={handleSignOut}>

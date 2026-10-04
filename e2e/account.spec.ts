@@ -100,3 +100,21 @@ test('تعديل الاسم يظهر فوراً في الترويسة والقا
   await page.getByRole('button', { name: 'حساب ريم سالم' }).click();
   await expect(page.getByRole('dialog').getByText('ريم سالم')).toBeVisible();
 });
+
+test('«تحويل» إلى استوديو يفتح الاشتراك في الاستوديو مباشرةً — من العمود الجانبي ومن القائمة', async ({ page }) => {
+  // من صفحة الاشتراك نفسها: كان رابطاً إليها فلا يحدث شيء ظاهر
+  await page.goto('/account/subscription?as=free');
+  await page.getByRole('complementary').getByRole('button', { name: 'تحويل' }).click();
+  const dlg = page.getByRole('dialog');
+  await expect(dlg.getByRole('heading', { name: 'الاشتراك في الاستوديو' })).toBeVisible();
+  // «رجوع» يعرض الخطط كلها للمقارنة
+  await dlg.getByRole('button', { name: 'رجوع' }).click();
+  await expect(dlg.getByRole('heading', { name: 'الاشتراك في الاستوديو' })).toHaveCount(0);
+  await page.keyboard.press('Escape');
+  await expect(dlg).toBeHidden();
+
+  // من قائمة الصورة: تُغلق القائمة وتُفتح النافذة
+  await page.getByRole('button', { name: /^حساب/ }).click();
+  await page.getByRole('dialog').getByRole('button', { name: 'تحويل' }).click();
+  await expect(page.getByRole('dialog').getByRole('heading', { name: 'الاشتراك في الاستوديو' })).toBeVisible();
+});
