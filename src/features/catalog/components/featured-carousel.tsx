@@ -1,6 +1,6 @@
 import { Link } from 'react-router';
 
-import { BannerSlide } from '@/components/shared/banner-slide';
+import { BANNER_FRAME, BannerSlide } from '@/components/shared/banner-slide';
 import { Carousel } from '@/components/shared/carousel';
 import { isExternalLink, safeContentLink, useSiteContent } from '@/lib/site-content';
 
@@ -11,8 +11,6 @@ const PLACEHOLDERS = [
   '[background:var(--grad-plan-basic)]',
   '[background:var(--grad-dawn-wide)]',
 ];
-
-const FRAME = 'aspect-video rounded-lg sm:aspect-[1120/290]';
 
 /** الشريحة المميّزة أعلى المكتبة — بنراتها من لوحة الإدارة («المحتوى»)، وبلا بنرات مفعّلة أرضيّات هادئة */
 export function FeaturedCarousel({
@@ -44,5 +42,5 @@ export function FeaturedCarousel({
         );
       })
     : PLACEHOLDERS.slice(0, count).map((bg, i) => <div key={i} className={`size-full ${bg}`} />);
-  return <Carousel label="المميّز" autoPlay={6000} slides={slides} className={FRAME} overlay={overlay} />;
+  return <Carousel label="المميّز" autoPlay={6000} slides={slides} className={BANNER_FRAME} overlay={overlay} />;
 }

@@ -10,6 +10,9 @@ export const BANNER_TONE_CLASS: Record<BannerTone, string> = {
   trial: '[background:var(--grad-plan-studio)]',
 };
 
+/** إطار البنر — نفسه في المكتبة وفي الصفحات التي تبدأ ببنر (المخطوطات) */
+export const BANNER_FRAME = 'aspect-video rounded-lg sm:aspect-[1120/290]';
+
 export const BANNER_TONE_LABEL: Record<BannerTone, string> = {
   dawn: 'فجر',
   brand: 'حرف',
@@ -52,5 +55,35 @@ export function BannerSlide({ banner, linked, compact }: { banner: Banner; linke
         </span>
       )}
     </div>
+  );
+}
+
+/**
+ * بنر ثابت في رأس الصفحة بشكل شريحة المكتبة نفسها: الأرضيّة اللونية، العنوان (h1 للصفحة) وسطر تحته.
+ * يُستعمل حيث تريد الصفحة أن تبدو أختاً لصفحة الخطوط.
+ */
+export function PageBanner({
+  title,
+  lead,
+  tone = 'dawn',
+  className,
+}: {
+  title: string;
+  lead?: string;
+  tone?: BannerTone;
+  className?: string;
+}) {
+  return (
+    <header
+      className={cn(
+        BANNER_FRAME,
+        'flex animate-fade-up flex-col justify-center gap-2 overflow-hidden px-6 sm:gap-3 sm:px-14',
+        BANNER_TONE_CLASS[tone],
+        className,
+      )}
+    >
+      <h1 className="text-2xl font-bold tracking-tight text-balance text-foreground sm:text-4xl">{title}</h1>
+      {lead && <p className="max-w-2xl text-control text-pretty text-muted-foreground sm:text-lead">{lead}</p>}
+    </header>
   );
 }

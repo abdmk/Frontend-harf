@@ -40,7 +40,7 @@ const LICENSE_CHIP = { personal: 'ترخيص شخصي', commercial: 'ترخيص 
  * الترخيص، الخط، المصمّم)، والترتيب — ثم سطر الحالة بشرائح قابلة للإزالة، ثم التدفّق المتراكب.
  * كل الحالة في الرابط، قابلة للمشاركة.
  */
-export function ManuscriptsBrowser() {
+export function ManuscriptsBrowser({ className }: { className?: string }) {
   const [params, setParams] = useSearchParams();
   const query = parseQuery(params);
   const saved = useSavedManuscripts();
@@ -87,7 +87,7 @@ export function ManuscriptsBrowser() {
   const clearAll = () => update({ ...DEFAULT_QUERY, sort: query.sort });
 
   return (
-    <div className="flex flex-col gap-5">
+    <div className={cn('flex flex-col gap-5', className)}>
       <div role="search" className="flex flex-wrap items-center gap-2 lg:flex-nowrap">
         <CategoryToggle
           id="manuscript-cats"
@@ -99,7 +99,7 @@ export function ManuscriptsBrowser() {
 
         <SearchField
           label="ابحث عن مخطوطة"
-          placeholder="ابحث عن لوحة أو مناسبة أو خط أو مصمّم…"
+          placeholder="ابحث عن مخطوطة أو مصمّم…"
           value={query.q}
           onChange={(q) => update({ q })}
           className="min-w-45 flex-1"
@@ -168,6 +168,7 @@ export function ManuscriptsBrowser() {
             مسح الكل
           </button>
         )}
+        <span className="ms-auto text-caption text-tertiary max-sm:hidden">نماذج تجريبية بخطوط المكتبة المجانية</span>
       </div>
 
       {list.length ? (
