@@ -17,6 +17,7 @@ export function OrderSummary({
   coupon,
   action,
   note = 'السعر النهائي يُحسب ويُتحقَّق منه على الخادم عند الدفع.',
+  subtotalHint,
   className,
 }: {
   cart: Cart;
@@ -27,6 +28,8 @@ export function OrderSummary({
   coupon?: ReactNode;
   action?: ReactNode;
   note?: ReactNode;
+  /** بجانب «المجموع الفرعي» — عدد العناصر */
+  subtotalHint?: string;
   className?: string;
 }) {
   return (
@@ -53,7 +56,7 @@ export function OrderSummary({
             </div>
           ))}
         <div className="flex justify-between gap-4 text-muted-foreground">
-          <dt>المجموع الفرعي</dt>
+          <dt>المجموع الفرعي{subtotalHint && <span className="text-caption text-tertiary"> ({subtotalHint})</span>}</dt>
           <dd dir="ltr" className="font-medium text-foreground">
             {formatMoney(cart.subtotal)}
           </dd>

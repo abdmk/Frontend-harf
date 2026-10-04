@@ -26,6 +26,9 @@ test.describe('رحلة الشراء', () => {
 
     await page.goto('/cart');
     await expect(page.getByRole('main').getByText('Naskh Hadith', { exact: true }).first()).toBeVisible();
+    // الكود مطويّ خلف رابط هادئ — لا ينافس زرّ الشراء
+    await expect(page.getByLabel('كود الخصم')).toHaveCount(0);
+    await page.getByRole('button', { name: 'لديك رمز خصم؟' }).click();
     await page.getByLabel('كود الخصم').fill('nope');
     await page.getByRole('button', { name: 'تطبيق' }).click();
     await expect(page.getByText('هذا الكود غير صالح أو منتهٍ.')).toBeVisible();
@@ -33,7 +36,7 @@ test.describe('رحلة الشراء', () => {
     await page.getByRole('button', { name: 'تطبيق' }).click();
     await expect(page.getByText('(HARF10)')).toBeVisible();
 
-    await page.getByRole('link', { name: 'إتمام الشراء' }).click();
+    await page.getByRole('link', { name: 'إتمام الشراء' }).first().click();
     await page.waitForURL('**/checkout');
     await page.getByRole('button', { name: /ادفع/ }).click();
     await expect(page.getByRole('status').getByText('جارٍ الدفع…')).toBeVisible();
@@ -58,6 +61,32 @@ test.describe('رحلة الشراء', () => {
     await expect(page.getByRole('heading', { name: 'تعذّر إتمام الدفع' })).toBeVisible({ timeout: 8000 });
     await page.getByRole('button', { name: 'أعد المحاولة' }).click();
     await expect(page.getByRole('button', { name: /ادفع/ })).toBeVisible();
+  });
+
+  test('السلة بعدّة خطوط: الحذف يُتراجع عنه، والمجموع يتبع', async ({ page }) => {
+    await page.addInitScript(() => {
+      if (sessionStorage.getItem('seeded')) return;
+      sessionStorage.setItem('seeded', '1');
+      localStorage.setItem(
+        'harf_cart',
+        JSON.stringify({
+          items: ['naskh', 'thuluth', 'rawi'].map((fontId, i) => ({
+            id: `cartitem${i}`,
+            selection: { fontId, package: 'family', uses: { desktop: 'd2' } },
+          })),
+        }),
+      );
+    });
+    await page.goto('/cart');
+    const list = page.getByRole('list', { name: 'خطوط السلة' });
+    await expect(list.getByRole('listitem')).toHaveCount(3);
+    await expect(page.getByText('(3 خطوط)')).toBeVisible();
+    await list.getByRole('button', { name: 'حذف Rawi Text' }).click();
+    await expect(list.getByRole('listitem')).toHaveCount(2);
+    await expect(page.getByText('(خطّان)')).toBeVisible();
+    await page.getByRole('region', { name: 'الإشعارات العابرة' }).getByRole('button', { name: 'تراجع' }).click();
+    await expect(list.getByRole('listitem')).toHaveCount(3);
+    await expect(list.getByRole('heading', { name: 'Rawi Text' })).toBeVisible();
   });
 
   test('السلة ترفض اختياراً مزوّراً وكوكي معدّلاً', async ({ page, context }) => {

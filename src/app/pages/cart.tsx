@@ -6,18 +6,28 @@ import { EmptyState } from '@/components/shared/empty-state';
 import { OrderSummary } from '@/components/shared/order-summary';
 import { PageMeta } from '@/components/shared/page-meta';
 import { Button } from '@/components/ui/button';
-import { CartIcon } from '@/components/ui/icons';
+import { ArrowLeftIcon, CartIcon, PencilIcon } from '@/components/ui/icons';
 import { paths } from '@/config/paths';
-import { applyCoupon, removeFromCart, updateCartItem } from '@/features/cart/api/actions';
+import { addToCart, applyCoupon, removeFromCart, updateCartItem } from '@/features/cart/api/actions';
 import { CartItems } from '@/features/cart/components/cart-items';
 import { CouponForm } from '@/features/cart/components/coupon-form';
 import { LicenseSheet } from '@/features/licensing/components/license-sheet';
 import { useCart } from '@/hooks/use-cart';
 import { getPricing } from '@/lib/commerce/cart-store';
+import { formatMoney } from '@/lib/format';
 
+/** عدد الخطوط بالعربية: خط واحد، خطّان، 3 خطوط، 11 خطاً */
+const fontsCount = (n: number) => (n === 1 ? 'خط واحد' : n === 2 ? 'خطّان' : n <= 10 ? `${n} خطوط` : `${n} خطاً`);
+
+/**
+ * السلة — مصمّمة لخط واحد أو لعشرة: العناصر في العمود الرئيسي تتراصّ بالبنية نفسها،
+ * والملخّص ثابت بجانبها (المجموع الفرعي، الخصم، الإجمالي) وزرّ الشراء أقوى ما في الصفحة.
+ * على الجوال: شريط سفلي ثابت بالإجمالي وزرّ الشراء — لا تمرير حتى آخر القائمة للدفع.
+ */
 export function CartPage() {
   const cart = useCart();
   const pricings = cart.items.map((i) => getPricing(i.selection.fontId));
+  const count = cart.items.length;
 
   const edits = Object.fromEntries(
     cart.items.map((item, i) => {
@@ -34,9 +44,10 @@ export function CartPage() {
             submitLabel="حفظ التعديل"
             onSubmit={(sel) => updateCartItem(item.id, sel)}
             trigger={
-              <button type="button" className="font-medium text-primary hover:underline">
+              <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground">
+                <PencilIcon />
                 تعديل الترخيص<span className="sr-only"> {item.fontName}</span>
-              </button>
+              </Button>
             }
           />
         ) : null,
@@ -44,12 +55,37 @@ export function CartPage() {
     }),
   );
 
-  return (
-    <Container as="main" id="main" className="py-10 sm:py-14">
-      <PageMeta title="السلة" />
-      <PageIntro size="compact" title="السلة" icon={<CartIcon />} count={cart.items.length} />
+  const checkout = (
+    <Button asChild size="lg" block>
+      <Link to={paths.checkout.getHref()}>
+        إتمام الشراء
+        <ArrowLeftIcon />
+      </Link>
+    </Button>
+  );
 
-      {cart.items.length === 0 ? (
+  return (
+    <Container as="main" id="main" className="py-8 max-lg:pb-32 sm:py-10">
+      <PageMeta title="السلة" />
+      <PageIntro
+        size="compact"
+        title="السلة"
+        icon={<CartIcon />}
+        count={count}
+        className="mb-6"
+        aside={
+          count > 0 && (
+            <Link
+              to={paths.home.getHref()}
+              className="text-meta text-muted-foreground underline-offset-4 transition-colors hover:text-foreground hover:underline"
+            >
+              متابعة التسوّق
+            </Link>
+          )
+        }
+      />
+
+      {count === 0 ? (
         <EmptyState
           icon={<CartIcon />}
           title="سلتك فارغة"
@@ -61,18 +97,35 @@ export function CartPage() {
           }
         />
       ) : (
-        <div className="grid grid-cols-[minmax(0,1fr)] items-start gap-6 lg:grid-cols-[minmax(0,1fr)_360px]">
-          <CartItems items={cart.items} onRemove={removeFromCart} edits={edits} />
+        <div className="grid grid-cols-[minmax(0,1fr)] items-start gap-6 lg:grid-cols-[minmax(0,1fr)_380px] lg:gap-8">
+          <CartItems
+            items={cart.items}
+            onRemove={removeFromCart}
+            onRestore={(item) => addToCart(item.selection)}
+            edits={edits}
+          />
           <OrderSummary
             cart={cart}
-            className="lg:sticky lg:top-24"
-            coupon={<CouponForm action={applyCoupon} />}
-            action={
-              <Button asChild size="lg" block>
-                <Link to={paths.checkout.getHref()}>إتمام الشراء</Link>
-              </Button>
-            }
+            subtotalHint={fontsCount(count)}
+            className="lg:sticky lg:top-26"
+            coupon={<CouponForm action={applyCoupon} applied={cart.coupon} />}
+            action={checkout}
           />
+        </div>
+      )}
+
+      {/* الجوال: الإجمالي وزرّ الشراء في متناول الإبهام دائماً */}
+      {count > 0 && (
+        <div className="fixed inset-x-0 bottom-0 z-20 border-t bg-background/90 backdrop-blur-md lg:hidden">
+          <div className="container-page flex items-center gap-4 py-3">
+            <div className="min-w-0">
+              <p className="text-caption text-muted-foreground">الإجمالي · {fontsCount(count)}</p>
+              <p dir="ltr" className="text-end text-xl font-semibold tabular-nums">
+                {formatMoney(cart.total)}
+              </p>
+            </div>
+            <div className="flex-1">{checkout}</div>
+          </div>
         </div>
       )}
     </Container>
