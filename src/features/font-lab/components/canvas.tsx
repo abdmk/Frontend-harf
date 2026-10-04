@@ -43,12 +43,15 @@ export function TestCanvas({
   compare,
   onCompare,
   onAllFeatures,
+  strip = true,
 }: {
   mode: CanvasMode;
   onMode: (m: CanvasMode) => void;
   compare: boolean;
   onCompare: (v: boolean) => void;
   onAllFeatures: () => void;
+  /** شريط OpenType فوق اللوحة — يُطفأ حين يعرضه المستدعي لكل أدوات التجربة */
+  strip?: boolean;
 }) {
   const { settings: s, set, active } = useLab();
   const changed = useChangedFeatures();
@@ -113,7 +116,7 @@ export function TestCanvas({
         )}
       </div>
 
-      <OpenTypeStrip onAll={onAllFeatures} />
+      {strip && <OpenTypeStrip onAll={onAllFeatures} />}
 
       <div key={mode} className="animate-fade-up">
         {mode === 'write' && <WriteContext compare={compare && changed.length > 0} />}
@@ -129,7 +132,7 @@ export function TestCanvas({
  * ميزات OpenType الاختيارية في الملف — شرائح تُشغَّل وتُطفأ فوق العيّنة مباشرة.
  * المفعّلة بلون العلامة؛ والتفصيل (الأثر، الجرد، المحرّك) في أداة «ميزات OpenType».
  */
-function OpenTypeStrip({ onAll }: { onAll: () => void }) {
+export function OpenTypeStrip({ onAll }: { onAll: () => void }) {
   const { active, settings, set } = useLab();
   if (!active) return null;
   const names = new Map(analyzeOpenType(active).features.map((f) => [f.tag, f.name]));

@@ -105,85 +105,11 @@ export function TextField({ label = 'نص المعاينة' }: { label?: string 
  * والنادر (التباعد، العرض، المحاور الأخرى، الألوان، لغة النص) مطويّ في المكان نفسه.
  */
 export function TextControls() {
-  const { active, settings: s, set, setActive, resetSettings } = useLab();
-  const family = useFamily();
   const [more, setMore] = useState(false);
-  if (!active) return null;
-  const wght = active.axes.find((a) => a.tag === 'wght');
-  const otherAxes = active.axes.filter((a) => a.tag !== 'wght');
-  const langs = analyzeOpenType(active)
-    .scripts.flatMap((sc) => sc.langs)
-    .filter((l, i, a) => a.indexOf(l) === i && LANG_INFO[l]);
-
   return (
     <Panel label="إعدادات العيّنة" className="flex flex-col">
-      <div className="flex flex-col gap-5 p-5">
-        <div className="grid grid-cols-2 gap-x-6 gap-y-5 sm:gap-x-8 xl:grid-cols-4">
-          {/* النمط: ملفات العائلة الحقيقية — لا وزن يصطنعه المتصفّح */}
-          {!wght && family.length > 1 && (
-            <Field label="النمط" value={active.weight}>
-              <Select value={active.id} onValueChange={setActive}>
-                <SelectTrigger aria-label="النمط" className="h-9 w-full rounded-full">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {family.map((f) => (
-                    <SelectItem key={f.id} value={f.id}>
-                      <span dir="ltr">{styleLabel(f)}</span>
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </Field>
-          )}
-          {wght && (
-            <Field label="الوزن" value={Math.round(s.axes.wght ?? wght.default)}>
-              <Slider
-                aria-label="الوزن"
-                value={[s.axes.wght ?? wght.default]}
-                min={wght.min}
-                max={wght.max}
-                onValueChange={([v]) => v !== undefined && set({ axes: { ...s.axes, wght: v } })}
-              />
-            </Field>
-          )}
-          <Field label="الحجم" value={`${s.size}px`}>
-            <Slider
-              aria-label="الحجم"
-              value={[s.size]}
-              min={12}
-              max={200}
-              onValueChange={([v]) => v !== undefined && set({ size: v })}
-            />
-          </Field>
-          <Field label="ارتفاع السطر" value={s.lineHeight.toFixed(1)}>
-            <Slider
-              aria-label="ارتفاع السطر"
-              value={[s.lineHeight]}
-              min={0.9}
-              max={3}
-              step={0.1}
-              onValueChange={([v]) => v !== undefined && set({ lineHeight: v })}
-            />
-          </Field>
-          <Field label="المحاذاة">
-            <div role="group" aria-label="المحاذاة" className="grid h-9 grid-cols-4 gap-1 rounded-full bg-sunken p-1">
-              {ALIGN.map(({ value, label, Icon }) => (
-                <button
-                  key={value}
-                  type="button"
-                  aria-label={label}
-                  title={label}
-                  aria-pressed={s.align === value}
-                  onClick={() => set({ align: value })}
-                  className="grid place-items-center rounded-full text-muted-foreground transition-colors hover:text-foreground aria-pressed:bg-card aria-pressed:text-foreground aria-pressed:shadow-soft"
-                >
-                  <Icon filled="auto" className="size-4" />
-                </button>
-              ))}
-            </div>
-          </Field>
-        </div>
+      <div className="p-5">
+        <PrimaryTextControls className="grid grid-cols-2 gap-x-6 gap-y-5 sm:gap-x-8 xl:grid-cols-4" />
       </div>
 
       {/* ما يُضبط أقلّ — مطويّ في المكان نفسه، لا قائمة منبثقة */}
@@ -192,90 +118,181 @@ export function TextControls() {
           إعدادات متقدّمة
           <ChevronDownIcon className={cn('size-4 transition-transform', more && 'rotate-180')} />
         </CollapsibleTrigger>
-        <CollapsibleContent className="flex flex-col gap-6 px-5 pt-1 pb-5">
-          <div className="grid gap-x-8 gap-y-5 sm:grid-cols-2 xl:grid-cols-3">
-            <RangeControl
-              label="تباعد الحروف"
-              value={s.letterSpacing}
-              min={-5}
-              max={20}
-              onChange={(letterSpacing) => set({ letterSpacing })}
-            />
-            <RangeControl
-              label="تباعد الكلمات"
-              value={s.wordSpacing}
-              min={-10}
-              max={40}
-              onChange={(wordSpacing) => set({ wordSpacing })}
-            />
-            <RangeControl
-              label="عرض النص"
-              unit="%"
-              value={s.width}
-              min={30}
-              max={100}
-              onChange={(width) => set({ width })}
-            />
-            {otherAxes.map((a) => (
-              <RangeControl
-                key={a.tag}
-                label={`${a.name} · ${a.tag}`}
-                unit=""
-                value={s.axes[a.tag] ?? a.default}
-                min={a.min}
-                max={a.max}
-                onChange={(v) => set({ axes: { ...s.axes, [a.tag]: v } })}
-              />
-            ))}
-          </div>
-          <div className="flex flex-wrap gap-x-10 gap-y-5">
-            <Field label="الألوان">
-              <div role="group" aria-label="الألوان" className="flex flex-wrap gap-1.5">
-                {SWATCHES.map((w) => (
-                  <button
-                    key={w.label}
-                    type="button"
-                    title={w.label}
-                    aria-label={w.label}
-                    aria-pressed={s.color === w.color && s.background === w.background}
-                    onClick={() => set({ color: w.color, background: w.background })}
-                    className="grid size-9 place-items-center rounded-full border text-meta font-semibold aria-pressed:ring-2 aria-pressed:ring-primary aria-pressed:ring-offset-2 aria-pressed:ring-offset-card"
-                    style={{ color: w.color || undefined, background: w.background || undefined }}
-                  >
-                    ب
-                  </button>
-                ))}
-              </div>
-            </Field>
-            {langs.length > 0 && (
-              <Field label="لغة النص (أشكال محلّية)">
-                <div role="radiogroup" aria-label="لغة النص" className="flex flex-wrap gap-1">
-                  {['', ...langs].map((l) => {
-                    const bcp = l ? LANG_INFO[l]!.bcp : '';
-                    return (
-                      <button
-                        key={l || 'default'}
-                        type="button"
-                        role="radio"
-                        aria-checked={s.lang === bcp}
-                        onClick={() => set({ lang: bcp })}
-                        className="h-8 rounded-full border px-3 text-caption text-muted-foreground transition-colors hover:text-foreground aria-checked:border-primary aria-checked:bg-tint-brand aria-checked:text-primary"
-                      >
-                        {l ? LANG_INFO[l]!.name : 'الافتراضية'}
-                      </button>
-                    );
-                  })}
-                </div>
-              </Field>
-            )}
-          </div>
-          <Button variant="ghost" size="sm" onClick={resetSettings} className="self-start">
-            <RefreshIcon />
-            إعادة الإعدادات
-          </Button>
+        <CollapsibleContent className="px-5 pt-1 pb-5">
+          <AdvancedTextControls />
         </CollapsibleContent>
       </Collapsible>
     </Panel>
+  );
+}
+
+/** ما يُضبط في كل تجربة: النمط (أو محور الوزن)، الحجم، ارتفاع السطر، المحاذاة — التخطيط من المستدعي */
+export function PrimaryTextControls({ className }: { className?: string }) {
+  const { active, settings: s, set, setActive } = useLab();
+  const family = useFamily();
+  if (!active) return null;
+  const wght = active.axes.find((a) => a.tag === 'wght');
+  return (
+    <div className={className}>
+      {/* النمط: ملفات العائلة الحقيقية — لا وزن يصطنعه المتصفّح */}
+      {!wght && family.length > 1 && (
+        <Field label="النمط" value={active.weight}>
+          <Select value={active.id} onValueChange={setActive}>
+            <SelectTrigger aria-label="النمط" className="h-9 w-full rounded-full">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {family.map((f) => (
+                <SelectItem key={f.id} value={f.id}>
+                  <span dir="ltr">{styleLabel(f)}</span>
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </Field>
+      )}
+      {wght && (
+        <Field label="الوزن" value={Math.round(s.axes.wght ?? wght.default)}>
+          <Slider
+            aria-label="الوزن"
+            value={[s.axes.wght ?? wght.default]}
+            min={wght.min}
+            max={wght.max}
+            onValueChange={([v]) => v !== undefined && set({ axes: { ...s.axes, wght: v } })}
+          />
+        </Field>
+      )}
+      <Field label="الحجم" value={`${s.size}px`}>
+        <Slider
+          aria-label="الحجم"
+          value={[s.size]}
+          min={12}
+          max={200}
+          onValueChange={([v]) => v !== undefined && set({ size: v })}
+        />
+      </Field>
+      <Field label="ارتفاع السطر" value={s.lineHeight.toFixed(1)}>
+        <Slider
+          aria-label="ارتفاع السطر"
+          value={[s.lineHeight]}
+          min={0.9}
+          max={3}
+          step={0.1}
+          onValueChange={([v]) => v !== undefined && set({ lineHeight: v })}
+        />
+      </Field>
+      <Field label="المحاذاة">
+        <div role="group" aria-label="المحاذاة" className="grid h-9 grid-cols-4 gap-1 rounded-full bg-sunken p-1">
+          {ALIGN.map(({ value, label, Icon }) => (
+            <button
+              key={value}
+              type="button"
+              aria-label={label}
+              title={label}
+              aria-pressed={s.align === value}
+              onClick={() => set({ align: value })}
+              className="grid place-items-center rounded-full text-muted-foreground transition-colors hover:text-foreground aria-pressed:bg-card aria-pressed:text-foreground aria-pressed:shadow-soft"
+            >
+              <Icon filled="auto" className="size-4" />
+            </button>
+          ))}
+        </div>
+      </Field>
+    </div>
+  );
+}
+
+/** الإعدادات النادرة: التباعد، العرض، المحاور الأخرى، الألوان، لغة النص، وإعادة الإعدادات */
+export function AdvancedTextControls({ columns = 'sm:grid-cols-2 xl:grid-cols-3' }: { columns?: string }) {
+  const { active, settings: s, set, resetSettings } = useLab();
+  if (!active) return null;
+  const otherAxes = active.axes.filter((a) => a.tag !== 'wght');
+  const langs = analyzeOpenType(active)
+    .scripts.flatMap((sc) => sc.langs)
+    .filter((l, i, a) => a.indexOf(l) === i && LANG_INFO[l]);
+  return (
+    <div className="flex flex-col gap-6">
+      <div className={cn('grid gap-x-8 gap-y-5', columns)}>
+        <RangeControl
+          label="تباعد الحروف"
+          value={s.letterSpacing}
+          min={-5}
+          max={20}
+          onChange={(letterSpacing) => set({ letterSpacing })}
+        />
+        <RangeControl
+          label="تباعد الكلمات"
+          value={s.wordSpacing}
+          min={-10}
+          max={40}
+          onChange={(wordSpacing) => set({ wordSpacing })}
+        />
+        <RangeControl
+          label="عرض النص"
+          unit="%"
+          value={s.width}
+          min={30}
+          max={100}
+          onChange={(width) => set({ width })}
+        />
+        {otherAxes.map((a) => (
+          <RangeControl
+            key={a.tag}
+            label={`${a.name} · ${a.tag}`}
+            unit=""
+            value={s.axes[a.tag] ?? a.default}
+            min={a.min}
+            max={a.max}
+            onChange={(v) => set({ axes: { ...s.axes, [a.tag]: v } })}
+          />
+        ))}
+      </div>
+      <div className="flex flex-wrap gap-x-10 gap-y-5">
+        <Field label="الألوان">
+          <div role="group" aria-label="الألوان" className="flex flex-wrap gap-1.5">
+            {SWATCHES.map((w) => (
+              <button
+                key={w.label}
+                type="button"
+                title={w.label}
+                aria-label={w.label}
+                aria-pressed={s.color === w.color && s.background === w.background}
+                onClick={() => set({ color: w.color, background: w.background })}
+                className="grid size-9 place-items-center rounded-full border text-meta font-semibold aria-pressed:ring-2 aria-pressed:ring-primary aria-pressed:ring-offset-2 aria-pressed:ring-offset-card"
+                style={{ color: w.color || undefined, background: w.background || undefined }}
+              >
+                ب
+              </button>
+            ))}
+          </div>
+        </Field>
+        {langs.length > 0 && (
+          <Field label="لغة النص (أشكال محلّية)">
+            <div role="radiogroup" aria-label="لغة النص" className="flex flex-wrap gap-1">
+              {['', ...langs].map((l) => {
+                const bcp = l ? LANG_INFO[l]!.bcp : '';
+                return (
+                  <button
+                    key={l || 'default'}
+                    type="button"
+                    role="radio"
+                    aria-checked={s.lang === bcp}
+                    onClick={() => set({ lang: bcp })}
+                    className="h-8 rounded-full border px-3 text-caption text-muted-foreground transition-colors hover:text-foreground aria-checked:border-primary aria-checked:bg-tint-brand aria-checked:text-primary"
+                  >
+                    {l ? LANG_INFO[l]!.name : 'الافتراضية'}
+                  </button>
+                );
+              })}
+            </div>
+          </Field>
+        )}
+      </div>
+      <Button variant="ghost" size="sm" onClick={resetSettings} className="self-start">
+        <RefreshIcon />
+        إعادة الإعدادات
+      </Button>
+    </div>
   );
 }
 
