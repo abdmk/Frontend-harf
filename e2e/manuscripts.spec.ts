@@ -59,13 +59,14 @@ test.describe('المخطوطات', () => {
     await expect(page.getByRole('list', { name: 'المخطوطات' }).locator('article')).toHaveCount(1);
   });
 
-  test('البطاقة: شارة «مجاني»، المصمّم رابط لصفحته، وتحميل SVG؛ والتصفية بالمصمّم تُزال من سطر الحالة', async ({
+  test('البطاقة: المخطوطة والعنوان والمصمّم فقط (رابط لصفحته)، وتحميل SVG؛ والتصفية بالمصمّم تُزال من سطر الحالة', async ({
     page,
   }) => {
     await page.goto('/manuscripts');
     const card = page.getByRole('list', { name: 'المخطوطات' }).locator('article').first();
-    await expect(card.getByText('مجاني', { exact: true })).toBeVisible();
-    await expect(card.getByRole('link').first()).toHaveAttribute('href', /^\/designers\//);
+    // لا شارات فوق المخطوطة — الترخيص في العارض
+    await expect(card.getByText('مجاني', { exact: true })).toHaveCount(0);
+    await expect(card.locator('a[href^="/designers/"]')).toHaveCount(1);
     const [download] = await Promise.all([
       page.waitForEvent('download'),
       card.getByRole('link', { name: /^تحميل .*\(SVG،/ }).click(),

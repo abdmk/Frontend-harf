@@ -1,5 +1,4 @@
 import { Container } from '@/components/layout/container';
-import { PageIntro } from '@/components/layout/page-intro';
 import { PageMeta } from '@/components/shared/page-meta';
 import { ManuscriptsBrowser } from '@/features/manuscripts/components/manuscripts-browser';
 
@@ -10,16 +9,16 @@ export function ManuscriptsPage() {
         title="مخطوطات"
         description="لوحات وأعمال خطّية عربية بصيغة SVG متجهة — تصفّحها، كبّرها، وحمّلها لتصاميمك."
       />
-      <PageIntro
-        eyebrow="مكتبة حرف"
-        title="مخطوطات"
-        lead="لوحات وأعمال خطّية عربية بصيغة SVG متجهة — تصفّحها، كبّرها، وحمّلها لتصاميمك."
-        aside={
-          <p className="rounded-full bg-sunken px-3 py-1.5 text-caption text-muted-foreground">
-            نماذج تجريبية مكتوبة بخطوط المكتبة المجانية
+      {/* بداية خفيفة: المعرض هو المحتوى — عنوان وسطر واحد، ثم المخطوطات مباشرة */}
+      <header className="mb-6 flex flex-wrap items-end justify-between gap-x-6 gap-y-2 sm:mb-8">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">مخطوطات</h1>
+          <p className="mt-2 text-control text-muted-foreground">
+            لوحات خطّية عربية بصيغة SVG متجهة — تصفّحها، كبّرها، وحمّلها لتصاميمك.
           </p>
-        }
-      />
+        </div>
+        <p className="text-caption text-tertiary">نماذج تجريبية مكتوبة بخطوط المكتبة المجانية</p>
+      </header>
       <ManuscriptsBrowser />
     </Container>
   );
