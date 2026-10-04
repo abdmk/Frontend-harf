@@ -99,23 +99,28 @@ type PayoutDialogProps = {
  * لا يخرج من هذه النافذة إلا المقنّع (آخر 4 أرقام).
  * ⚠️ عرض: الرمز ثابت (DEMO_OTP). في المنتج يرسله الخادم ويتحقّق منه، ثم يحفظ الرقم الكامل مشفّراً.
  */
-function PayoutDialogBody({
-  open,
-  onOpenChange,
+/**
+ * نموذج وسيلة الاستلام نفسه (البيانات ← رمز التأكيد) — داخل نافذة في «المالية»، أو مباشرة في الصفحة
+ * في خطوة التوثيق (inline) كي لا يكون الإدخال خطوتين: زرّ ثم نافذة.
+ */
+export function PayoutForm({
   email,
+  inline = false,
   title = 'وسيلة استلام الأرباح',
   description = 'إلى أين نحوّل أرباحك؟ نتحقّق منك برمز قبل الحفظ.',
   country,
   onSaved,
 }: {
-  open: boolean;
-  onOpenChange: (o: boolean) => void;
   email: string;
   title?: string;
   description?: string;
   country?: string;
   onSaved: (p: MaskedPayout) => void;
+  /** داخل الصفحة: عنوان عادي بدل عنوان النافذة */
+  inline?: boolean;
 }) {
+  const Title = inline ? InlineTitle : DialogTitle;
+  const Desc = inline ? InlineDesc : DialogDescription;
   const methods = payoutMethodsFor(country);
   const [v, setV] = useState<Values>(EMPTY);
   const [errors, setErrors] = useState<Partial<Record<keyof Values | 'form', string>>>({});
@@ -155,170 +160,188 @@ function PayoutDialogBody({
     const r = verifyOtp(code, `payout:${email}`);
     if (!r.ok) return setOtpError(r.error);
     onSaved(maskPayout(pending));
-    onOpenChange(false);
   }
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-dialog-md">
-        {step === 'form' ? (
-          <form noValidate onSubmit={next} className="flex flex-col gap-5">
-            <div>
-              <DialogTitle>{title}</DialogTitle>
-              <DialogDescription className="mt-1 text-meta leading-relaxed text-muted-foreground">
-                {description}
-              </DialogDescription>
-            </div>
-            {methods.length > 1 && (
-              <MethodChoice
-                value={v.method}
-                methods={methods}
-                onChange={(method) => {
-                  setV({ ...v, method });
-                  setErrors({});
-                }}
-              />
-            )}
+    <>
+      {step === 'form' ? (
+        <form noValidate onSubmit={next} className="flex flex-col gap-5">
+          <div>
+            <Title>{title}</Title>
+            <Desc className="mt-1 text-meta leading-relaxed text-muted-foreground">{description}</Desc>
+          </div>
+          {methods.length > 1 && (
+            <MethodChoice
+              value={v.method}
+              methods={methods}
+              onChange={(method) => {
+                setV({ ...v, method });
+                setErrors({});
+              }}
+            />
+          )}
+          <Field>
+            <FieldLabel htmlFor={`${id}-h`} required>
+              {v.method === 'bank' ? 'اسم صاحب الحساب' : 'الاسم على البطاقة'}
+            </FieldLabel>
+            <Input
+              id={`${id}-h`}
+              value={v.holder}
+              maxLength={80}
+              autoComplete="name"
+              aria-invalid={!!errors.holder}
+              aria-describedby={`${id}-he`}
+              onChange={(e) => setV({ ...v, holder: e.target.value })}
+            />
+            <FieldError id={`${id}-he`}>{errors.holder}</FieldError>
+          </Field>
+          {v.method === 'bank' ? (
             <Field>
-              <FieldLabel htmlFor={`${id}-h`} required>
-                {v.method === 'bank' ? 'اسم صاحب الحساب' : 'الاسم على البطاقة'}
+              <FieldLabel htmlFor={`${id}-i`} required>
+                رقم الحساب الدولي (IBAN)
               </FieldLabel>
               <Input
-                id={`${id}-h`}
-                value={v.holder}
-                maxLength={80}
-                autoComplete="name"
-                aria-invalid={!!errors.holder}
-                aria-describedby={`${id}-he`}
-                onChange={(e) => setV({ ...v, holder: e.target.value })}
+                id={`${id}-i`}
+                dir="ltr"
+                value={groupIban(v.iban)}
+                maxLength={42}
+                autoComplete="off"
+                spellCheck={false}
+                placeholder="IQ98 NBIQ 8501 2345 6789 012"
+                aria-invalid={!!errors.iban}
+                aria-describedby={`${id}-ih ${id}-ie`}
+                onChange={(e) => setV({ ...v, iban: e.target.value.replace(/\s+/g, '') })}
+                className="tracking-wide tabular-nums"
               />
-              <FieldError id={`${id}-he`}>{errors.holder}</FieldError>
+              <FieldHint id={`${id}-ih`}>تجده في تطبيق مصرفك أو على كشف الحساب.</FieldHint>
+              <FieldError id={`${id}-ie`}>{errors.iban}</FieldError>
             </Field>
-            {v.method === 'bank' ? (
-              <Field>
-                <FieldLabel htmlFor={`${id}-i`} required>
-                  رقم الحساب الدولي (IBAN)
-                </FieldLabel>
-                <Input
-                  id={`${id}-i`}
-                  dir="ltr"
-                  value={groupIban(v.iban)}
-                  maxLength={42}
-                  autoComplete="off"
-                  spellCheck={false}
-                  placeholder="IQ98 NBIQ 8501 2345 6789 012"
-                  aria-invalid={!!errors.iban}
-                  aria-describedby={`${id}-ih ${id}-ie`}
-                  onChange={(e) => setV({ ...v, iban: e.target.value.replace(/\s+/g, '') })}
-                  className="tracking-wide tabular-nums"
-                />
-                <FieldHint id={`${id}-ih`}>تجده في تطبيق مصرفك أو على كشف الحساب.</FieldHint>
-                <FieldError id={`${id}-ie`}>{errors.iban}</FieldError>
-              </Field>
-            ) : (
-              <Field>
-                <FieldLabel htmlFor={`${id}-c`} required>
-                  رقم بطاقة كي كارد
-                </FieldLabel>
-                <Input
-                  id={`${id}-c`}
-                  dir="ltr"
-                  inputMode="numeric"
-                  value={groupCard(v.card)}
-                  maxLength={19}
-                  autoComplete="off"
-                  spellCheck={false}
-                  placeholder="0000 0000 0000 0000"
-                  aria-invalid={!!errors.card}
-                  aria-describedby={`${id}-ch ${id}-ce`}
-                  onChange={(e) => setV({ ...v, card: e.target.value.replace(/\D/g, '').slice(0, 16) })}
-                  className="tracking-wide tabular-nums"
-                />
-                <FieldHint id={`${id}-ch`}>
-                  الأرقام الـ16 على وجه البطاقة — لا نطلب رمز CVV أو تاريخ الانتهاء أبداً.
-                </FieldHint>
-                <FieldError id={`${id}-ce`}>{errors.card}</FieldError>
-              </Field>
-            )}
-            <label className="flex items-start gap-3 rounded-lg border p-3.5 text-meta leading-relaxed">
-              <Checkbox
-                checked={v.confirm}
-                onCheckedChange={(c) => setV({ ...v, confirm: c === true })}
-                className="mt-0.5"
-                aria-invalid={!!errors.confirm}
+          ) : (
+            <Field>
+              <FieldLabel htmlFor={`${id}-c`} required>
+                رقم بطاقة كي كارد
+              </FieldLabel>
+              <Input
+                id={`${id}-c`}
+                dir="ltr"
+                inputMode="numeric"
+                value={groupCard(v.card)}
+                maxLength={19}
+                autoComplete="off"
+                spellCheck={false}
+                placeholder="0000 0000 0000 0000"
+                aria-invalid={!!errors.card}
+                aria-describedby={`${id}-ch ${id}-ce`}
+                onChange={(e) => setV({ ...v, card: e.target.value.replace(/\D/g, '').slice(0, 16) })}
+                className="tracking-wide tabular-nums"
               />
-              الحساب باسمي أو باسم استوديوي، وأنا مخوّل باستلام الأرباح عليه.
-            </label>
-            <FieldError>{errors.confirm}</FieldError>
-            <Button type="submit" size="lg" variant="primary">
-              متابعة
+              <FieldHint id={`${id}-ch`}>
+                الأرقام الـ16 على وجه البطاقة — لا نطلب رمز CVV أو تاريخ الانتهاء أبداً.
+              </FieldHint>
+              <FieldError id={`${id}-ce`}>{errors.card}</FieldError>
+            </Field>
+          )}
+          <label className="flex items-start gap-3 rounded-lg border p-3.5 text-meta leading-relaxed">
+            <Checkbox
+              checked={v.confirm}
+              onCheckedChange={(c) => setV({ ...v, confirm: c === true })}
+              className="mt-0.5"
+              aria-invalid={!!errors.confirm}
+            />
+            الحساب باسمي أو باسم استوديوي، وأنا مخوّل باستلام الأرباح عليه.
+          </label>
+          <FieldError>{errors.confirm}</FieldError>
+          <Button type="submit" size="lg" variant="primary">
+            متابعة
+          </Button>
+          <SecureNote />
+        </form>
+      ) : (
+        <form noValidate onSubmit={confirm} className="flex flex-col gap-5">
+          <div>
+            <Title>تأكيد أنه أنت</Title>
+            <Desc className="mt-1 text-meta leading-relaxed text-muted-foreground">
+              أدخل الرمز المكوّن من {OTP_LENGTH} أرقام المرسل إلى بريدك{' '}
+              <span dir="ltr" className="font-medium text-foreground">
+                {maskEmail(email)}
+              </span>{' '}
+              <button
+                type="button"
+                onClick={() => setStep('form')}
+                className="text-info-text underline underline-offset-4"
+              >
+                تعديل البيانات
+              </button>
+            </Desc>
+          </div>
+          <OtpInput
+            value={code}
+            onChange={(c) => {
+              setCode(c);
+              setOtpError(undefined);
+            }}
+            label="رمز التأكيد"
+            invalid={!!otpError}
+            describedBy={`${id}-oe`}
+            autoFocus
+          />
+          <FieldError id={`${id}-oe`}>{otpError}</FieldError>
+          <p className="rounded-md bg-tint-warn px-3 py-2 text-caption text-warn-text">
+            نسخة تجريبية: الرمز{' '}
+            <span dir="ltr" className="font-semibold tabular-nums">
+              {DEMO_OTP}
+            </span>
+          </p>
+          <div className="flex flex-col gap-3">
+            <Button type="submit" size="lg" variant="primary" disabled={!/^\d{6}$/.test(code)}>
+              تأكيد وحفظ
             </Button>
-            <SecureNote />
-          </form>
-        ) : (
-          <form noValidate onSubmit={confirm} className="flex flex-col gap-5">
-            <div>
-              <DialogTitle>تأكيد أنه أنت</DialogTitle>
-              <DialogDescription className="mt-1 text-meta leading-relaxed text-muted-foreground">
-                أدخل الرمز المكوّن من {OTP_LENGTH} أرقام المرسل إلى بريدك{' '}
-                <span dir="ltr" className="font-medium text-foreground">
-                  {maskEmail(email)}
-                </span>{' '}
+            <p className="flex items-center justify-center gap-2 text-meta text-muted-foreground">
+              {wait > 0 ? (
+                <span aria-live="polite">إعادة الإرسال بعد {wait} ثانية</span>
+              ) : (
                 <button
                   type="button"
-                  onClick={() => setStep('form')}
-                  className="text-info-text underline underline-offset-4"
+                  onClick={() => {
+                    setWait(OTP_RESEND_SECONDS);
+                    setCode('');
+                    setOtpError(undefined);
+                  }}
+                  className="font-medium text-foreground underline underline-offset-4"
                 >
-                  تعديل البيانات
+                  أرسل رمزاً جديداً
                 </button>
-              </DialogDescription>
-            </div>
-            <OtpInput
-              value={code}
-              onChange={(c) => {
-                setCode(c);
-                setOtpError(undefined);
-              }}
-              label="رمز التأكيد"
-              invalid={!!otpError}
-              describedBy={`${id}-oe`}
-              autoFocus
-            />
-            <FieldError id={`${id}-oe`}>{otpError}</FieldError>
-            <p className="rounded-md bg-tint-warn px-3 py-2 text-caption text-warn-text">
-              نسخة تجريبية: الرمز{' '}
-              <span dir="ltr" className="font-semibold tabular-nums">
-                {DEMO_OTP}
-              </span>
+              )}
             </p>
-            <div className="flex flex-col gap-3">
-              <Button type="submit" size="lg" variant="primary" disabled={!/^\d{6}$/.test(code)}>
-                تأكيد وحفظ
-              </Button>
-              <p className="flex items-center justify-center gap-2 text-meta text-muted-foreground">
-                {wait > 0 ? (
-                  <span aria-live="polite">إعادة الإرسال بعد {wait} ثانية</span>
-                ) : (
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setWait(OTP_RESEND_SECONDS);
-                      setCode('');
-                      setOtpError(undefined);
-                    }}
-                    className="font-medium text-foreground underline underline-offset-4"
-                  >
-                    أرسل رمزاً جديداً
-                  </button>
-                )}
-              </p>
-            </div>
-            <Button type="button" variant="ghost" className="self-center" onClick={() => setStep('form')}>
-              <ArrowRightIcon />
-              رجوع
-            </Button>
-          </form>
-        )}
+          </div>
+          <Button type="button" variant="ghost" className="self-center" onClick={() => setStep('form')}>
+            <ArrowRightIcon />
+            رجوع
+          </Button>
+        </form>
+      )}
+    </>
+  );
+}
+
+const InlineTitle = ({ children }: { children: React.ReactNode }) => (
+  <h2 className="text-lead font-semibold">{children}</h2>
+);
+const InlineDesc = ({ children, className }: { children: React.ReactNode; className?: string }) => (
+  <p className={className}>{children}</p>
+);
+
+function PayoutDialogBody({ open, onOpenChange, onSaved, ...rest }: PayoutDialogProps) {
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="sm:max-w-dialog-md">
+        <PayoutForm
+          {...rest}
+          onSaved={(p) => {
+            onSaved(p);
+            onOpenChange(false);
+          }}
+        />
       </DialogContent>
     </Dialog>
   );

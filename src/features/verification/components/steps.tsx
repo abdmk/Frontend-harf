@@ -2,7 +2,7 @@ import { useId, useState, type ReactNode } from 'react';
 
 import { ConfirmDialog } from '@/components/shared/confirm-dialog';
 import { PayoutCard, SecureNote } from '@/components/shared/payout-card';
-import { PayoutDialog } from '@/components/shared/payout-dialog';
+import { PayoutForm } from '@/components/shared/payout-dialog';
 import { Alert } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Field, FieldError, FieldHint, FieldLabel } from '@/components/ui/field';
@@ -14,7 +14,6 @@ import {
   ExclamationIcon,
   FingerprintIcon,
   PencilIcon,
-  PlusIcon,
   ShieldCheckIcon,
   TrashIcon,
   UserIcon,
@@ -308,11 +307,13 @@ export function PayoutStep({
   const [removing, setRemoving] = useState(false);
   return (
     <div className="flex flex-col gap-6">
-      <section className="flex flex-col gap-4 rounded-xl border bg-card p-5">
-        <div>
-          <h2 className="text-lead font-semibold">وسيلة الاستلام</h2>
-          <p className="mt-1 text-meta text-muted-foreground">إلى أين نحوّل أرباحك من المبيعات.</p>
-        </div>
+      {/* خطوة واحدة: النموذج في الصفحة مباشرة (لا زرّ «أضف» ثم نافذة)؛ بعد الحفظ تظهر البطاقة */}
+      <section
+        className={cn(
+          'flex flex-col gap-4 rounded-xl border bg-card p-5 sm:p-6',
+          showErrors && !payout && 'border-dgr-300',
+        )}
+      >
         {unsupported && (
           <Alert
             tone="warning"
@@ -320,41 +321,51 @@ export function PayoutStep({
             description="غيّرت الدولة في بياناتك — حدّث وسيلة الاستلام إلى حساب بنكي."
           />
         )}
-        {payout ? (
-          <PayoutCard
-            payout={payout}
-            actions={
-              <>
-                <Button variant="secondary" size="lg" onClick={() => setEditing(true)}>
-                  تحديث
-                </Button>
-                <Button variant="danger" size="lg" onClick={() => setRemoving(true)}>
-                  إزالة
-                </Button>
-              </>
-            }
-          />
+        {payout && !editing ? (
+          <>
+            <div>
+              <h2 className="text-lead font-semibold">وسيلة الاستلام</h2>
+              <p className="mt-1 text-meta text-muted-foreground">إلى أين نحوّل أرباحك من المبيعات.</p>
+            </div>
+            <PayoutCard
+              payout={payout}
+              actions={
+                <>
+                  <Button variant="secondary" size="lg" onClick={() => setEditing(true)}>
+                    تحديث
+                  </Button>
+                  <Button variant="danger" size="lg" onClick={() => setRemoving(true)}>
+                    إزالة
+                  </Button>
+                </>
+              }
+            />
+          </>
         ) : (
-          <button
-            type="button"
-            onClick={() => setEditing(true)}
-            className={cn(
-              'flex items-center gap-4 rounded-lg border-2 border-dashed p-4 text-start transition-colors outline-none hover:border-strong focus-visible:ring-2 focus-visible:ring-ring',
-              showErrors && 'border-dgr-300 bg-tint-dgr/40',
+          <div key={editing ? 'edit' : 'new'} className="animate-fade-up">
+            <PayoutForm
+              inline
+              email={email}
+              country={country}
+              title="وسيلة الاستلام"
+              description={
+                iraq
+                  ? 'حساب بنكي (IBAN) أو بطاقة كي كارد باسمك — نتحقّق منك برمز قبل الحفظ.'
+                  : 'حساب بنكي (IBAN) باسمك — نتحقّق منك برمز قبل الحفظ.'
+              }
+              onSaved={(p) => {
+                onChange(p);
+                setEditing(false);
+              }}
+            />
+            {editing && (
+              <Button variant="ghost" className="mt-2 w-full" onClick={() => setEditing(false)}>
+                إلغاء
+              </Button>
             )}
-          >
-            <span className="grid h-11 w-14 shrink-0 place-items-center rounded-md bg-sunken text-muted-foreground">
-              <PlusIcon className="size-5" />
-            </span>
-            <span>
-              <span className="block text-control font-medium">أضف وسيلة استلام</span>
-              <span className="block text-meta text-muted-foreground">
-                {iraq ? 'حساب بنكي (IBAN) أو بطاقة كي كارد' : 'حساب بنكي (IBAN) باسمك'}
-              </span>
-            </span>
-          </button>
+          </div>
         )}
-        {showErrors && !payout && <FieldError>أضف وسيلة استلام لتتابع.</FieldError>}
+        {showErrors && !payout && <FieldError>أكمل وسيلة الاستلام لتتابع.</FieldError>}
       </section>
 
       <Explain>
@@ -363,7 +374,6 @@ export function PayoutStep({
       </Explain>
       <SecureNote />
 
-      <PayoutDialog open={editing} onOpenChange={setEditing} email={email} country={country} onSaved={onChange} />
       <ConfirmDialog
         open={removing}
         onOpenChange={setRemoving}
