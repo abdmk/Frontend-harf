@@ -29,21 +29,17 @@ const STEPS = [
   },
 ] as const;
 
-/** «كيف تعمل»: ثلاث بطاقات بعيّنة كبيرة فوق وصف قصير */
+/** «كيف يعمل»: ثلاث خطوات — عيّنة مرسومة بالمحرّك نفسه فوق وصف قصير */
 export function HowCards() {
   return (
     <ol className="grid gap-4 md:grid-cols-3">
       {STEPS.map((s, i) => (
-        <li key={s.title} className="flex flex-col gap-4">
-          <div className="grid aspect-[2/1] place-items-center rounded-xl bg-sunken px-6 md:aspect-[16/10]">
+        <li key={s.title} className="flex flex-col gap-3.5">
+          <div className="grid aspect-[5/2] place-items-center rounded-xl bg-sunken px-6">
             <p
               aria-hidden
               dir={s.ltr ? 'ltr' : 'rtl'}
-              className={cn(
-                'text-4xl leading-none font-semibold sm:text-5xl',
-                s.tone,
-                s.ltr && '[unicode-bidi:bidi-override]',
-              )}
+              className={cn('text-4xl leading-none font-semibold', s.tone, s.ltr && '[unicode-bidi:bidi-override]')}
             >
               {s.specimen}
             </p>

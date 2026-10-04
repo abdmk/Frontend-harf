@@ -1,11 +1,7 @@
-import { Collapsible as CollapsiblePrimitive } from 'radix-ui';
-import { Link } from 'react-router';
-
 import { Container } from '@/components/layout/container';
-import { PageIntro } from '@/components/layout/page-intro';
+import { ToolHero } from '@/components/layout/tool-hero';
 import { PageMeta } from '@/components/shared/page-meta';
-import { ArrowLeftIcon, ChevronDownIcon } from '@/components/ui/icons';
-import { paths } from '@/config/paths';
+import { ChevronDownIcon, ShieldCheckIcon } from '@/components/ui/icons';
 import { HowCards } from '@/features/text-tools/components/how-cards';
 import { ReverseWorkspace } from '@/features/text-tools/components/reverse-workspace';
 
@@ -28,6 +24,22 @@ const FAQ = [
   ],
 ] as const;
 
+/** عنوان قسم موحّد في الصفحة: عنوان + سطر توضيح — نفس الإيقاع لكل الأقسام */
+function SectionHead({ id, title, lead }: { id: string; title: string; lead: string }) {
+  return (
+    <header className="mb-6">
+      <h2 id={id} className="text-xl font-semibold sm:text-2xl">
+        {title}
+      </h2>
+      <p className="mt-1.5 text-meta text-muted-foreground">{lead}</p>
+    </header>
+  );
+}
+
+/**
+ * «عكس النص»: بداية الأدوات نفسها (ToolHero)، ثم الأداة مباشرة كأبرز عنصر — بطاقة واحدة تجمع الخيارات
+ * والنص والنتيجة والنسخ — ثم «كيف يعمل» يشرح ما حدث للتوّ، ثم حلول ما بعد اللصق.
+ */
 export function ReverseTextPage() {
   return (
     <Container as="main" id="main" className="py-10 sm:py-14">
@@ -35,52 +47,33 @@ export function ReverseTextPage() {
         title="عكس النص"
         description="حوّل النص العربي ليظهر متّصلاً وصحيح الاتجاه في After Effects وPhotoshop وUnity والبرامج التي لا تدعم العربية."
       />
-      <PageIntro
-        eyebrow="أدوات حرف"
+      <ToolHero
+        badgeIcon={<ShieldCheckIcon />}
+        badge="في متصفّحك — لا يُرسل نصّك إلى أي مكان"
         title="عكس النص"
-        lead="برامج كثيرة تعرض العربية حروفاً منفصلة ومقلوبة. اكتب نصّك، واختر ما يناسب برنامجك، ثم انسخه جاهزاً للّصق — في متصفّحك، ولا يُرسل نصّك إلى أي مكان."
+        highlight="عربية متّصلة في أي برنامج"
+        lead="برامج مثل After Effects وUnity تعرض العربية حروفاً منفصلة ومقلوبة. اكتب نصّك، وانسخ النتيجة جاهزة للّصق."
       />
 
       <ReverseWorkspace />
 
-      <section aria-labelledby="how-title" className="mt-16 sm:mt-20">
-        <h2 id="how-title" className="mb-6 text-xl font-semibold sm:text-2xl">
-          ماذا يحدث لنصّك؟
-        </h2>
+      <section aria-labelledby="how-title" className="mt-14 sm:mt-16">
+        <SectionHead id="how-title" title="كيف يعمل" lead="ثلاث خطوات تجري على نصّك لحظة الكتابة." />
         <HowCards />
       </section>
 
-      <section
-        aria-labelledby="faq-title"
-        className="mt-16 grid gap-8 sm:mt-20 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.6fr)]"
-      >
-        <div>
-          <h2 id="faq-title" className="text-xl font-semibold sm:text-2xl">
-            إن لم تظهر كما تتوقّع
-          </h2>
-          <p className="mt-2 text-meta leading-relaxed text-muted-foreground">
-            أكثر ما يواجهه المصمّمون بعد اللصق، وحلّه.
-          </p>
-          <Link
-            to={paths.home.getHref()}
-            className="group mt-5 inline-flex items-center gap-1.5 text-control font-medium text-primary"
-          >
-            تصفّح الخطوط العربية المجانية
-            <ArrowLeftIcon className="size-4 transition-transform duration-(--dur-base) ease-out-quint group-hover:-translate-x-1" />
-          </Link>
-        </div>
+      <section aria-labelledby="faq-title" className="mt-14 sm:mt-16">
+        <SectionHead id="faq-title" title="إن لم تظهر كما تتوقّع" lead="أكثر ما يواجهه المصمّمون بعد اللصق، وحلّه." />
         <ul className="flex flex-col divide-y overflow-hidden rounded-xl border bg-card">
           {FAQ.map(([q, a]) => (
             <li key={q}>
-              <CollapsiblePrimitive.Root>
-                <CollapsiblePrimitive.Trigger className="group flex w-full items-center justify-between gap-4 px-5 py-4 text-start text-control font-medium transition-colors hover:bg-sunken/60">
+              <details className="group">
+                <summary className="flex cursor-pointer list-none items-center justify-between gap-4 px-5 py-4 text-control font-medium transition-colors outline-none select-none hover:bg-sunken/60 focus-visible:bg-sunken/60 [&::-webkit-details-marker]:hidden">
                   {q}
-                  <ChevronDownIcon className="size-4 shrink-0 text-tertiary transition-transform duration-(--dur-base) ease-out-quint group-data-[state=open]:rotate-180" />
-                </CollapsiblePrimitive.Trigger>
-                <CollapsiblePrimitive.Content className="overflow-hidden data-[state=closed]:animate-collapsible-up data-[state=open]:animate-collapsible-down">
-                  <p className="px-5 pb-4 text-meta leading-relaxed text-muted-foreground">{a}</p>
-                </CollapsiblePrimitive.Content>
-              </CollapsiblePrimitive.Root>
+                  <ChevronDownIcon className="size-4 shrink-0 text-tertiary transition-transform duration-(--dur-slow) ease-out-quint group-open:rotate-180" />
+                </summary>
+                <p className="px-5 pb-4 text-meta leading-relaxed text-muted-foreground">{a}</p>
+              </details>
             </li>
           ))}
         </ul>

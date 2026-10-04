@@ -5,26 +5,30 @@ import { CheckIcon, CopyIcon, CrossSmallIcon, DownloadIcon } from '@/components/
 import { Textarea } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
 import { toast } from '@/components/ui/toast';
-import { cn } from '@/lib/cn';
 
 import { prepareArabic } from '../utils/arabic-reshape';
 
 const EXAMPLE = 'حرفٌ يصنع الهوية\nخط «زيتون» — 5 أوزان';
 const MAX = 5000;
 
+const OPTIONS = [
+  { key: 'shape', label: 'وصل الحروف', hint: 'أشكال الحروف حسب موقعها في الكلمة' },
+  { key: 'reverse', label: 'عكس الاتجاه', hint: 'للبرامج التي ترسم من اليسار لليمين' },
+  { key: 'strip', label: 'إزالة التشكيل', hint: 'إن ظهرت الحركات في غير مكانها' },
+] as const;
+type OptionKey = (typeof OPTIONS)[number]['key'];
+
 /**
- * مساحة «عكس النص»: الخيارات، ثم النص، ثم النتيجة جاهزةً للّصق في البرنامج.
- * كل شيء في المتصفّح؛ النص لا يُرسل ولا يُحفظ.
+ * أداة «عكس النص» — بطاقة واحدة: الخيارات في رأسها، النص والنتيجة جنباً إلى جنب، والأفعال في ذيلها.
+ * كل ما يخصّ التحويل في مكان واحد بدل صناديق متفرّقة. كل شيء في المتصفّح؛ النص لا يُرسل ولا يُحفظ.
  */
 export function ReverseWorkspace() {
   const [text, setText] = useState('');
-  const [shape, setShape] = useState(true);
-  const [reverse, setReverse] = useState(true);
-  const [strip, setStrip] = useState(false);
+  const [opts, setOpts] = useState<Record<OptionKey, boolean>>({ shape: true, reverse: true, strip: false });
   const [copied, setCopied] = useState(false);
   const inId = useId();
   const outId = useId();
-  const result = useMemo(() => prepareArabic(text, { shape, reverse, strip }), [text, shape, reverse, strip]);
+  const result = useMemo(() => prepareArabic(text, opts), [text, opts]);
   const chars = Array.from(text).length;
   const lines = text ? text.split('\n').length : 0;
 
@@ -49,53 +53,41 @@ export function ReverseWorkspace() {
     window.setTimeout(() => URL.revokeObjectURL(url), 1000);
   }
 
-  const panel = 'flex min-w-0 flex-col overflow-hidden rounded-xl border bg-card';
-  const head = 'flex min-h-14 flex-wrap items-center justify-between gap-2 border-b px-4 py-2 sm:px-5';
-  const foot = 'flex min-h-11 items-center gap-3 border-t px-4 py-2 text-caption text-tertiary sm:px-5';
+  const pane = 'flex min-w-0 flex-col';
+  const paneHead =
+    'flex h-11 items-center justify-between gap-2 px-4 text-caption font-medium text-muted-foreground sm:px-5';
+  const area =
+    'min-h-56 flex-1 resize-y rounded-none border-0 bg-transparent px-4 pt-1 pb-4 text-lead leading-loose shadow-none focus-visible:shadow-none sm:min-h-64 sm:px-5';
 
   return (
-    <div className="flex flex-col gap-4">
-      {/* ١ — الخيارات */}
-      <section aria-label="خيارات التحويل" className="rounded-xl border bg-card px-4 py-3.5 sm:px-5">
-        <div className="flex flex-wrap gap-x-6 gap-y-3">
-          {(
-            [
-              ['وصل الحروف', shape, setShape],
-              ['عكس الاتجاه', reverse, setReverse],
-              ['إزالة التشكيل', strip, setStrip],
-            ] as const
-          ).map(([label, on, set]) => (
-            <label key={label} className="flex cursor-pointer items-center gap-3 text-control">
-              <Switch checked={on} onCheckedChange={set} />
-              {label}
-            </label>
-          ))}
-        </div>
-      </section>
-
-      <div className="grid grid-cols-[minmax(0,1fr)] gap-4 lg:grid-cols-2">
-        {/* ٢ — النص */}
-        <section className={panel} aria-labelledby={`${inId}-t`}>
-          <div className={head}>
-            <h2 id={`${inId}-t`} className="text-control font-semibold">
-              النص العربي
-            </h2>
-            <div className="flex gap-1">
-              {text ? (
-                <Button variant="ghost" size="sm" onClick={() => setText('')}>
-                  <CrossSmallIcon />
-                  مسح
-                </Button>
-              ) : (
-                <Button variant="ghost" size="sm" onClick={() => setText(EXAMPLE)}>
-                  جرّب مثالاً
-                </Button>
-              )}
-            </div>
-          </div>
-          <label htmlFor={inId} className="sr-only">
-            النص العربي
+    <section aria-label="أداة عكس النص" className="overflow-hidden rounded-2xl border bg-card shadow-soft">
+      {/* الخيارات — مرتبطة بالأداة، في رأسها */}
+      <fieldset className="flex flex-wrap items-center gap-x-6 gap-y-3 border-b px-4 py-3.5 sm:px-5">
+        <legend className="sr-only">خيارات التحويل</legend>
+        {OPTIONS.map((o) => (
+          <label key={o.key} className="flex cursor-pointer items-center gap-2.5 text-control" title={o.hint}>
+            <Switch checked={opts[o.key]} onCheckedChange={(v) => setOpts((p) => ({ ...p, [o.key]: v }))} />
+            {o.label}
           </label>
+        ))}
+      </fieldset>
+
+      <div className="grid grid-cols-[minmax(0,1fr)] lg:grid-cols-2">
+        {/* النص */}
+        <div className={pane}>
+          <div className={paneHead}>
+            <label htmlFor={inId}>نصّك بالعربية</label>
+            {text ? (
+              <Button variant="ghost" size="sm" className="-me-2" onClick={() => setText('')}>
+                <CrossSmallIcon />
+                مسح
+              </Button>
+            ) : (
+              <Button variant="ghost" size="sm" className="-me-2" onClick={() => setText(EXAMPLE)}>
+                جرّب مثالاً
+              </Button>
+            )}
+          </div>
           <Textarea
             id={inId}
             dir="rtl"
@@ -109,34 +101,15 @@ export function ReverseWorkspace() {
               }
             }}
             placeholder="اكتب أو الصق النص هنا…"
-            className="min-h-64 flex-1 resize-y rounded-none border-0 bg-transparent px-4 py-4 text-lead leading-loose shadow-none focus-visible:shadow-none sm:px-5"
+            className={area}
           />
-          <p className={foot}>
-            <span dir="ltr" className="tabular-nums">
-              {chars.toLocaleString('en-US')} / {MAX.toLocaleString('en-US')}
-            </span>
-            {lines > 1 && <span className="tabular-nums">{lines} أسطر</span>}
-            <span className="ms-auto max-sm:hidden">
-              <kbd className="rounded-xs border px-1.5 py-0.5 font-sans" dir="ltr">
-                Ctrl + Enter
-              </kbd>{' '}
-              للنسخ
-            </span>
-          </p>
-        </section>
+        </div>
 
-        {/* ٣ — النتيجة */}
-        <section className={panel} aria-labelledby={`${outId}-t`}>
-          <div className={head}>
-            <h2 id={`${outId}-t`} className="text-control font-semibold">
-              النتيجة
-            </h2>
+        {/* النتيجة — بترتيب مرئي من اليسار لليمين، كما ستظهر في البرنامج الذي لا يدعم العربية */}
+        <div className={`${pane} border-t bg-sunken/40 lg:border-s lg:border-t-0`}>
+          <div className={paneHead}>
+            <label htmlFor={outId}>النتيجة — جاهزة للّصق</label>
           </div>
-
-          <label htmlFor={outId} className="sr-only">
-            النتيجة
-          </label>
-          {/* النتيجة بترتيب مرئي من اليسار لليمين — كما ستظهر في البرنامج الذي لا يدعم العربية */}
           <Textarea
             id={outId}
             dir="ltr"
@@ -144,28 +117,44 @@ export function ReverseWorkspace() {
             value={result}
             placeholder="ستظهر النتيجة هنا"
             onFocus={(e) => e.currentTarget.select()}
-            className="min-h-64 flex-1 resize-y rounded-none border-0 bg-sunken/50 px-4 py-4 text-left text-lead leading-loose shadow-none [unicode-bidi:bidi-override] focus-visible:shadow-none sm:px-5"
+            className={`${area} text-left [unicode-bidi:bidi-override]`}
           />
-
-          <div className={cn(foot, 'flex-wrap justify-between py-2.5')}>
-            <p aria-live="polite">
-              {copied ? 'نُسخت النتيجة — الصقها في برنامجك.' : 'انقر على النتيجة لتحديدها كلها.'}
-            </p>
-            <div className="flex gap-2">
-              <Button variant="outline" size="sm" onClick={download} disabled={!result}>
-                <DownloadIcon />
-                <span>
-                  تنزيل <span dir="ltr">.txt</span>
-                </span>
-              </Button>
-              <Button size="sm" onClick={copy} disabled={!result}>
-                {copied ? <CheckIcon className="animate-pop-in" /> : <CopyIcon />}
-                {copied ? 'نُسخ' : 'نسخ النتيجة'}
-              </Button>
-            </div>
-          </div>
-        </section>
+        </div>
       </div>
-    </div>
+
+      {/* الأفعال — في ذيل الأداة، النسخ هو الفعل الرئيسي */}
+      <div className="flex flex-wrap items-center justify-between gap-3 border-t px-4 py-3 sm:px-5">
+        <p className="flex flex-wrap items-center gap-x-3 gap-y-1 text-caption text-tertiary" aria-live="polite">
+          {copied ? (
+            <span className="font-medium text-ok-text">نُسخت النتيجة — الصقها في برنامجك.</span>
+          ) : (
+            <>
+              <span dir="ltr" className="tabular-nums">
+                {chars.toLocaleString('en-US')} / {MAX.toLocaleString('en-US')}
+              </span>
+              {lines > 1 && <span className="tabular-nums">{lines} أسطر</span>}
+              <span className="max-sm:hidden">
+                <kbd className="rounded-xs border px-1.5 py-0.5 font-sans" dir="ltr">
+                  Ctrl + Enter
+                </kbd>{' '}
+                للنسخ
+              </span>
+            </>
+          )}
+        </p>
+        <div className="flex gap-2">
+          <Button variant="ghost" size="sm" onClick={download} disabled={!result}>
+            <DownloadIcon />
+            <span>
+              تنزيل <span dir="ltr">.txt</span>
+            </span>
+          </Button>
+          <Button size="sm" onClick={copy} disabled={!result}>
+            {copied ? <CheckIcon className="animate-pop-in" /> : <CopyIcon />}
+            {copied ? 'نُسخ' : 'نسخ النتيجة'}
+          </Button>
+        </div>
+      </div>
+    </section>
   );
 }
