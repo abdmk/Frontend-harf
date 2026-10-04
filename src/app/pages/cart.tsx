@@ -6,7 +6,7 @@ import { EmptyState } from '@/components/shared/empty-state';
 import { OrderSummary } from '@/components/shared/order-summary';
 import { PageMeta } from '@/components/shared/page-meta';
 import { Button } from '@/components/ui/button';
-import { ArrowLeftIcon, CartIcon, PencilIcon } from '@/components/ui/icons';
+import { ArrowLeftIcon, CartIcon, DownloadIcon, LockIcon, PencilIcon, ReceiptIcon } from '@/components/ui/icons';
 import { paths } from '@/config/paths';
 import { addToCart, applyCoupon, removeFromCart, updateCartItem } from '@/features/cart/api/actions';
 import { CartItems } from '@/features/cart/components/cart-items';
@@ -15,6 +15,12 @@ import { LicenseSheet } from '@/features/licensing/components/license-sheet';
 import { useCart } from '@/hooks/use-cart';
 import { getPricing } from '@/lib/commerce/cart-store';
 import { formatMoney } from '@/lib/format';
+
+const REASSURE = [
+  { Icon: LockIcon, tone: 'bg-tint-ok text-ok-text', text: 'دفع آمن عبر Stripe — لا نخزّن بيانات بطاقتك' },
+  { Icon: DownloadIcon, tone: 'bg-tint-info text-info-text', text: 'التحميل فور الدفع من «المشتريات» في حسابك' },
+  { Icon: ReceiptIcon, tone: 'bg-tint-warn text-warn-text', text: 'تعديل الترخيص متاح قبل الدفع لكل خط' },
+] as const;
 
 /** عدد الخطوط بالعربية: خط واحد، خطّان، 3 خطوط، 11 خطاً */
 const fontsCount = (n: number) => (n === 1 ? 'خط واحد' : n === 2 ? 'خطّان' : n <= 10 ? `${n} خطوط` : `${n} خطاً`);
@@ -104,13 +110,26 @@ export function CartPage() {
             onRestore={(item) => addToCart(item.selection)}
             edits={edits}
           />
-          <OrderSummary
-            cart={cart}
-            subtotalHint={fontsCount(count)}
-            className="lg:sticky lg:top-26"
-            coupon={<CouponForm action={applyCoupon} applied={cart.coupon} />}
-            action={checkout}
-          />
+          <div className="flex flex-col gap-3 lg:sticky lg:top-26">
+            <OrderSummary
+              cart={cart}
+              tone="moment"
+              subtotalHint={fontsCount(count)}
+              coupon={<CouponForm action={applyCoupon} applied={cart.coupon} />}
+              action={checkout}
+            />
+            {/* طمأنة قبل الدفع — حقائق عن الخدمة، لا وعود تسويقية */}
+            <ul className="flex flex-col gap-2.5 rounded-lg border bg-card p-4 text-meta">
+              {REASSURE.map(({ Icon, tone, text }) => (
+                <li key={text} className="flex items-center gap-3">
+                  <span className={`grid size-8 shrink-0 place-items-center rounded-full ${tone}`}>
+                    <Icon className="size-4" />
+                  </span>
+                  {text}
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
       )}
 

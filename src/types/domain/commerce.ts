@@ -1,3 +1,4 @@
+import type { LiveFace } from './font';
 import type { LicenseSelection } from './license';
 
 /**
@@ -24,6 +25,8 @@ export type CartItem = {
   /** وصف قصير: «العائلة الكاملة · سطح المكتب حتى جهازين» */
   summary: string[];
   price: Money;
+  /** ملفات معاينة الخط في الموقع — لعرض اسمه بخطه في السلة */
+  face?: LiveFace;
 };
 
 export type Cart = {

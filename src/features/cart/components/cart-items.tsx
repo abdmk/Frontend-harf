@@ -4,10 +4,38 @@ import { PriceDisplay } from '@/components/shared/price-display';
 import { Button } from '@/components/ui/button';
 import { TrashIcon } from '@/components/ui/icons';
 import { toast } from '@/components/ui/toast';
+import { cn } from '@/lib/cn';
+import { faceStyle } from '@/lib/font-weight';
 import type { CartItem } from '@/types/domain/commerce';
 
-import { FontTile } from './cart-line';
 import type { CartActionResult } from '../api/actions';
+
+/** أرضيّات البلاطات — ألوان النظام الفاتحة بالتناوب، فتصير القائمة الطويلة مقروءة لا رمادية */
+const TONES = [
+  'bg-tint-brand text-primary',
+  'bg-tint-info text-info-text',
+  'bg-tint-ok text-ok-text',
+  'bg-tint-warn text-warn-text',
+  'bg-tint-ai text-ai-text',
+] as const;
+
+/** بلاطة الخط: «أب» بالخط نفسه حين تتوفّر ملفاته في الموقع، وإلا أوّل حرفين من اسمه */
+function SpecimenTile({ item, tone }: { item: CartItem; tone: string }) {
+  return (
+    <span
+      aria-hidden
+      dir={item.face ? 'rtl' : 'ltr'}
+      style={item.face ? faceStyle(item.face, 700) : undefined}
+      className={cn(
+        'grid size-16 shrink-0 place-items-center rounded-md font-semibold max-sm:size-13',
+        item.face ? 'text-2xl leading-none' : 'text-lg',
+        tone,
+      )}
+    >
+      {item.face ? 'أب' : item.fontName.slice(0, 2)}
+    </span>
+  );
+}
 
 /**
  * عناصر صفحة السلة — بطاقة مختصرة لكل خط، تتراصّ تحت بعضها مهما زاد العدد:
@@ -40,11 +68,11 @@ export function CartItems({
 
   return (
     <ul aria-label="خطوط السلة" aria-busy={pending} className="flex flex-col gap-3 aria-busy:opacity-70">
-      {items.map((item) => {
+      {items.map((item, i) => {
         const [license, ...uses] = item.summary;
         return (
           <li key={item.id} className="flex animate-fade-up gap-4 rounded-lg border bg-card p-4 sm:p-5">
-            <FontTile name={item.fontName} className="size-14 bg-sunken text-base text-foreground max-sm:size-12" />
+            <SpecimenTile item={item} tone={TONES[i % TONES.length]!} />
             <div className="flex min-w-0 flex-1 flex-col">
               <div className="flex items-start justify-between gap-4">
                 <div className="min-w-0">

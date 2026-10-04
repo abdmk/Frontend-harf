@@ -73,6 +73,7 @@ export function buildCart(state?: CartState): Cart {
       foundry: font.designerLabel ?? font.designers[0]?.nameAr ?? '',
       summary: q.summary,
       price: cents(q.cents),
+      face: font.face,
     });
   }
   const subtotal = items.reduce((a, i) => a + i.price.cents, 0);

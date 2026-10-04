@@ -18,6 +18,7 @@ export function OrderSummary({
   action,
   note = 'السعر النهائي يُحسب ويُتحقَّق منه على الخادم عند الدفع.',
   subtotalHint,
+  tone = 'card',
   className,
 }: {
   cart: Cart;
@@ -30,12 +31,14 @@ export function OrderSummary({
   note?: ReactNode;
   /** بجانب «المجموع الفرعي» — عدد العناصر */
   subtotalHint?: string;
+  /** moment: لحظة «فجر» اللونية — حين يكون الملخّص بطل الصفحة (السلة) */
+  tone?: 'card' | 'moment';
   className?: string;
 }) {
   return (
     <section
       aria-labelledby="summary-title"
-      className={cn('flex flex-col gap-4 rounded-lg border bg-card p-6', className)}
+      className={cn('flex flex-col gap-4 rounded-lg border p-6', tone === 'moment' ? 'moment' : 'bg-card', className)}
     >
       <div className="flex items-center justify-between gap-3">
         <h2 id="summary-title" className="text-base font-semibold">
