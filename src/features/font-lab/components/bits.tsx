@@ -82,3 +82,47 @@ export function StatusPill({ tone, children }: { tone: 'ok' | 'warn' | 'muted'; 
     </span>
   );
 }
+
+/**
+ * رسم محرف من الملف مباشرة (مسار fontkit) — دقيق ومستقلّ عن محرّك التشكيل،
+ * فيُرى البديل نفسه لا ما يختاره المتصفّح. size: ارتفاع الرسم بالبكسل.
+ */
+export function GlyphShape({
+  font,
+  gid,
+  size = 48,
+  label,
+  className,
+}: {
+  font: { kit: unknown; metrics: { ascent: number; descent: number }; unitsPerEm: number };
+  gid: number;
+  size?: number;
+  label?: string;
+  className?: string;
+}) {
+  const g = (
+    font.kit as {
+      getGlyph(id: number): { advanceWidth: number; bbox: { minX: number; maxX: number }; path: { toSVG(): string } };
+    }
+  ).getGlyph(gid);
+  const { ascent, descent } = font.metrics;
+  const finite = Number.isFinite(g.bbox.minX);
+  // العلامات بلا عرض: نأخذ حدود الرسم نفسه
+  const x0 = finite ? Math.min(0, g.bbox.minX) : 0;
+  const x1 = finite ? Math.max(g.advanceWidth, g.bbox.maxX) : g.advanceWidth || font.unitsPerEm / 2;
+  const pad = font.unitsPerEm * 0.04;
+  const w = x1 - x0 + pad * 2;
+  const h = ascent - descent;
+  return (
+    <svg
+      viewBox={`${x0 - pad} ${-ascent} ${w} ${h}`}
+      role={label ? 'img' : undefined}
+      aria-label={label}
+      aria-hidden={label ? undefined : true}
+      className={cn('shrink-0', className)}
+      style={{ height: size, width: (size * w) / h }}
+    >
+      <path d={g.path.toSVG()} transform="scale(1,-1)" className="fill-current" />
+    </svg>
+  );
+}

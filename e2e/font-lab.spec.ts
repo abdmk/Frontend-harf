@@ -21,6 +21,12 @@ test.describe('مختبر الخط', () => {
     await expect(page.getByRole('radiogroup', { name: 'النمط' }).getByRole('radio')).toHaveCount(4);
     // المعاينة هي المشهد الأول، وفيها الأنماط والأوزان
     await expect(page.getByText('حقيقي', { exact: true })).toHaveCount(2); // Regular 400 + Bold 700
+
+    // محلّل OpenType: اسم المجموعة الأسلوبية كما كتبه المصمّم في الملف، وما تغيّره، والربطات
+    await tools(page).getByRole('button', { name: /الدعم/ }).click();
+    await expect(page.getByText('خفض نقطة الباء المسبوقة براء أو واو', { exact: false })).toBeVisible();
+    await expect(page.getByRole('group', { name: 'ما تغيّره ss04' })).toBeVisible();
+    await expect(page.getByRole('region', { name: 'الربطات' }).getByRole('img').first()).toBeVisible();
   });
 
   test('خط من المكتبة: الفحص السريع، ميزات OpenType، اللغات، والمحارف', async ({ page }) => {
