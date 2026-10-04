@@ -17,9 +17,18 @@ import { CheckIcon, ChevronDownIcon, CrossSmallIcon, ExclamationIcon, PlusIcon }
 import { cn } from '@/lib/cn';
 
 import { TestCanvas } from './canvas';
-import { Inspector, type InspectorTab, useFamily } from './inspector';
+import { Inspector, useFamily } from './inspector';
 import { qualityChecks } from './tools/overview';
-import { GLYPH_SUBS, glyphSubByKey, routeOfTool, type ToolKey, type ViewKey, viewByKey, VIEWS } from '../data/tools';
+import {
+  canvasModeByKey,
+  GLYPH_SUBS,
+  glyphSubByKey,
+  routeOfTool,
+  type ToolKey,
+  type ViewKey,
+  viewByKey,
+  VIEWS,
+} from '../data/tools';
 import { useLab } from '../hooks/lab-context';
 import { ACCEPT } from '../utils/load';
 
@@ -28,8 +37,6 @@ const lazyView = <P extends object, K extends string>(
   name: K,
 ) => lazy(() => load().then((m) => ({ default: m[name] })));
 
-const Weights = lazyView(() => import('./tools/weights'), 'Weights');
-const Waterfall = lazyView(() => import('./tools/waterfall'), 'Waterfall');
 const Features = lazyView(() => import('./tools/features'), 'Features');
 const Letters = lazyView(() => import('./tools/letters'), 'Letters');
 const Marks = lazyView(() => import('./tools/marks'), 'Marks');
@@ -40,19 +47,24 @@ const Compare = lazyView(() => import('./tools/compare'), 'Compare');
 const Info = lazyView(() => import('./tools/info'), 'Info');
 const QuickCheck = lazy(() => import('./tools/overview').then((m) => ({ default: m.QuickCheck })));
 
-/** حالة الصفحة في الرابط — قابلة للمشاركة: ?panel=ot (المفتش)، ?view=&sub= (التحليل)، و?tool= القديم يُترجم */
+/** حالة الصفحة في الرابط — قابلة للمشاركة: ?mode= (سياق اللوحة)، ?view=&sub= (الفحص)، و?tool= القديم يُترجم */
 function usePageState() {
   const [params, setParams] = useSearchParams();
   const legacy = params.get('tool') as ToolKey | null;
   const fromLegacy = legacy ? routeOfTool(legacy) : null;
-  const view = viewByKey(params.get('view') ?? fromLegacy?.view ?? null).key;
+  const legacyView = params.get('view');
+  // ?view=styles|preview القديم صار سياق «أنماط» في اللوحة
+  const mode = canvasModeByKey(
+    params.get('mode') ?? fromLegacy?.mode ?? (legacyView === 'styles' || legacyView === 'preview' ? 'styles' : null),
+  );
+  const view = viewByKey(legacyView ?? fromLegacy?.view ?? null).key;
   const sub = glyphSubByKey(params.get('sub') ?? fromLegacy?.sub ?? null);
-  const panel: InspectorTab = params.get('panel') === 'ot' || legacy === 'features' ? 'ot' : 'text';
   const patch = (next: Record<string, string | null>) =>
     setParams(
       (p) => {
         const n = new URLSearchParams(p);
         n.delete('tool');
+        n.delete('panel');
         for (const [k, v] of Object.entries(next)) {
           if (v === null) n.delete(k);
           else n.set(k, v);
@@ -61,26 +73,31 @@ function usePageState() {
       },
       { replace: true },
     );
-  return { view, sub, panel, patch };
+  return { mode, view, sub, patch };
 }
 
 /**
  * مساحة اختبار الخط — أداة مصمّمين لا لوحة تحكّم:
- * لوحة الاختبار هي البطل، وبجانبها مفتش واحد بتبويبين (النص، OpenType) — كل تغيير بجانب ما يتغيّر.
- * التحليل المفصّل تحتهما بهدوء، لمن يريد أن يتعمّق.
+ * لوحة الاختبار هي البطل بسياقاتها (اكتب، اختبارات، فقرات، تخطيط، أحجام، أنماط)،
+ * وبجانبها مفتش واحد يسري على كل السياقات: النص ثم OpenType.
+ * فحص الملف (المحارف، الجرد، الدعم، البيانات) تحتهما بهدوء، لمن يريد أن يتعمّق.
  */
 export function Workspace() {
-  const { view, sub, panel, patch } = usePageState();
+  const { mode, view, sub, patch } = usePageState();
   const { set, settings } = useLab();
   const analysis = useRef<HTMLDivElement>(null);
   const toCanvas = () => document.getElementById('lab-canvas')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   const openView = (v: ViewKey, s?: string) => {
-    patch({ view: v === 'styles' ? null : v, sub: s ?? null });
+    patch({ view: v === VIEWS[0]!.key ? null : v, sub: s ?? null });
     analysis.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
   const goTool = (tool: ToolKey) => {
     const r = routeOfTool(tool);
-    openView(r.view, r.sub);
+    if (r.view) openView(r.view, r.sub);
+    else {
+      patch({ mode: r.mode === 'write' ? null : (r.mode ?? null) });
+      toCanvas();
+    }
   };
   const [compare, setCompare] = useCompare();
 
@@ -89,31 +106,40 @@ export function Workspace() {
       <FontHeader onCheck={() => openView('support')} />
 
       <div className="grid grid-cols-[minmax(0,1fr)] items-start gap-5 lg:grid-cols-[minmax(0,1fr)_22rem]">
-        <TestCanvas compare={compare} onCompare={setCompare} />
+        <TestCanvas
+          mode={mode}
+          onMode={(m) => patch({ mode: m === 'write' ? null : m })}
+          compare={compare}
+          onCompare={setCompare}
+        />
         <div className="lg:sticky lg:top-22 lg:max-h-[calc(100dvh-6.5rem)] lg:overflow-y-auto lg:overscroll-contain">
-          <Inspector tab={panel} onTab={(t) => patch({ panel: t === 'ot' ? 'ot' : null })} onTry={toCanvas} />
+          <Inspector
+            onTry={() => {
+              patch({ mode: null });
+              toCanvas();
+            }}
+          />
         </div>
       </div>
 
       <section ref={analysis} aria-labelledby="lab-analysis-title" className="mt-16 scroll-mt-20">
         <h2 id="lab-analysis-title" className="text-xl font-semibold">
-          تحليل الخط
+          فحص الملف
         </h2>
         <AnalysisTabs current={view} onGo={(v) => openView(v)} />
         <p className="mt-5 mb-5 text-meta text-muted-foreground">{viewByKey(view).lead}</p>
         <Suspense fallback={<LoadingState label="جارٍ فتح القسم…" />}>
           <div key={`${view}-${sub}`} className="animate-fade-up">
-            {view === 'styles' && <StylesView />}
+            {view === 'glyphs' && <GlyphsView sub={sub} onSub={(s) => patch({ view: null, sub: s })} />}
             {view === 'opentype' && (
               <Features
                 onTry={(tag, sample) => {
                   set({ text: sample, features: { ...settings.features, [tag]: true } });
-                  patch({ panel: 'ot' });
+                  patch({ mode: null });
                   toCanvas();
                 }}
               />
             )}
-            {view === 'glyphs' && <GlyphsView sub={sub} onSub={(s) => patch({ view: 'glyphs', sub: s })} />}
             {view === 'support' && <SupportView onGoTool={goTool} />}
             {view === 'compare' && <Compare />}
             {view === 'file' && <Info />}
@@ -286,21 +312,6 @@ function AnalysisTabs({ current, onGo }: { current: ViewKey; onGo: (v: ViewKey) 
 
 function SectionTitle({ children }: { children: ReactNode }) {
   return <h3 className="mb-3 text-base font-semibold">{children}</h3>;
-}
-
-function StylesView() {
-  return (
-    <div className="flex flex-col gap-10">
-      <div>
-        <SectionTitle>الأنماط والأوزان</SectionTitle>
-        <Weights />
-      </div>
-      <div>
-        <SectionTitle>تدرّج الأحجام</SectionTitle>
-        <Waterfall />
-      </div>
-    </div>
-  );
 }
 
 const SUB_TAB =

@@ -3,13 +3,15 @@ import { useMemo, useState } from 'react';
 import { SearchField } from '@/components/shared/search-field';
 import { Button } from '@/components/ui/button';
 import { CopyIcon } from '@/components/ui/icons';
+import { SegmentedControl } from '@/components/ui/segmented-control';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toast } from '@/components/ui/toast';
 
 import { useLab } from '../../hooks/lab-context';
 import type { LabFont } from '../../types';
 import { hex, RANGES, type RangeKey } from '../../utils/coverage';
-import { InfoRows, Panel } from '../bits';
+import { glyphNames } from '../../utils/opentype';
+import { GlyphShape, InfoRows, Panel } from '../bits';
 
 const PAGE = 240;
 
@@ -26,7 +28,115 @@ function search(font: LabFont, q: string): number[] | { gid: number } | null {
   return chars;
 }
 
+type By = 'unicode' | 'file';
+
+/**
+ * المحارف بطريقتين: «بالرموز» (ما يكتبه المستخدم) و«كل محارف الملف» بترتيب GID —
+ * وفيها ما لا رمز له: الأشكال السياقية والربطات والبدائل، والمحارف الفارغة ظاهرة كفارغة.
+ */
 export function Glyphs() {
+  const [by, setBy] = useState<By>('unicode');
+  const { active } = useLab();
+  if (!active) return null;
+  return (
+    <div className="flex flex-col gap-4">
+      <SegmentedControl
+        label="طريقة العرض"
+        value={by}
+        onChange={setBy}
+        className="w-fit"
+        options={[
+          { value: 'unicode', label: 'بالرموز (Unicode)' },
+          { value: 'file', label: `كل محارف الملف · ${active.glyphCount.toLocaleString('en-US')}` },
+        ]}
+      />
+      {by === 'unicode' ? <ByUnicode /> : <ByFile />}
+    </div>
+  );
+}
+
+/** كل محارف الملف بترتيبها — رسمها من المسار مباشرة، فيُرى حتى ما لا يصل إليه النص */
+function ByFile() {
+  const { active } = useLab();
+  const [q, setQ] = useState('');
+  const [shown, setShown] = useState(PAGE);
+  const [picked, setPicked] = useState<number>(0);
+  const names = useMemo(() => (active ? glyphNames(active) : new Map<number, string>()), [active]);
+  const list = useMemo(() => {
+    if (!active) return [];
+    const all = Array.from({ length: active.glyphCount }, (_, i) => i);
+    const t = q.trim().toLowerCase();
+    if (!t) return all;
+    if (/^\d+$/.test(t)) return all.filter((g) => String(g).startsWith(t));
+    return all.filter((g) => (names.get(g) ?? '').toLowerCase().includes(t));
+  }, [active, q, names]);
+  if (!active) return null;
+  return (
+    <div className="grid items-start gap-5 xl:grid-cols-[minmax(0,1fr)_20rem]">
+      <div className="flex min-w-0 flex-col gap-4">
+        <SearchField
+          label="بحث باسم المحرف أو رقمه"
+          placeholder="ابحث باسم المحرف (uni0628.init) أو رقمه…"
+          value={q}
+          onChange={(v) => {
+            setQ(v);
+            setShown(PAGE);
+          }}
+          delay={200}
+        />
+        <p className="text-caption text-muted-foreground">
+          {list.length.toLocaleString('en-US')} من {active.glyphCount.toLocaleString('en-US')} محرفاً، بترتيبها في
+          الملف
+        </p>
+        {list.length ? (
+          <>
+            <ul className="grid grid-cols-[repeat(auto-fill,minmax(5.5rem,1fr))] gap-1.5">
+              {list.slice(0, shown).map((gid) => {
+                const g = active.kit.getGlyph(gid);
+                const name = names.get(gid);
+                const empty = !Number.isFinite(g.bbox.minX);
+                return (
+                  <li key={gid}>
+                    <button
+                      type="button"
+                      aria-pressed={picked === gid}
+                      aria-label={`المحرف ${gid} ${name ?? ''}`}
+                      title={name}
+                      onClick={() => setPicked(gid)}
+                      className="relative flex aspect-square w-full flex-col items-center justify-center gap-1.5 rounded-md border bg-card px-1 transition-colors hover:border-strong aria-pressed:border-primary aria-pressed:bg-tint-brand/50"
+                    >
+                      {empty ? (
+                        <span className="text-caption text-tertiary">فارغ</span>
+                      ) : (
+                        <GlyphShape font={active} gid={gid} size={34} />
+                      )}
+                      <span dir="ltr" className="w-full truncate text-center font-mono text-micro text-tertiary">
+                        {name ?? '—'}
+                      </span>
+                      <span dir="ltr" className="absolute end-1.5 top-1 font-mono text-micro text-tertiary/70">
+                        {gid}
+                      </span>
+                    </button>
+                  </li>
+                );
+              })}
+            </ul>
+            {list.length > shown && (
+              <Button variant="outline" className="self-center" onClick={() => setShown((n) => n + PAGE)}>
+                عرض المزيد ({(list.length - shown).toLocaleString('en-US')} متبقٍّ)
+              </Button>
+            )}
+          </>
+        ) : (
+          <p className="rounded-lg bg-sunken p-6 text-center text-meta text-muted-foreground">لا محارف تطابق البحث.</p>
+        )}
+      </div>
+      <GlyphDetail font={active} picked={{ gid: picked }} name={names.get(picked)} />
+    </div>
+  );
+}
+
+function ByUnicode() {
   const { active, specimen } = useLab();
   const [q, setQ] = useState('');
   const [range, setRange] = useState<RangeKey>('all');
@@ -132,7 +242,7 @@ export function Glyphs() {
 }
 
 /** المحرف برسمه الحقيقي من الملف وخطوط القياس */
-function GlyphDetail({ font, picked }: { font: LabFont; picked: Picked }) {
+function GlyphDetail({ font, picked, name }: { font: LabFont; picked: Picked; name?: string }) {
   const g = font.kit.getGlyph(picked.gid);
   const { ascent, descent, capHeight, xHeight } = font.metrics;
   const adv = g.advanceWidth;
@@ -212,7 +322,7 @@ function GlyphDetail({ font, picked }: { font: LabFont; picked: Picked }) {
       <div className="px-5">
         <InfoRows
           rows={[
-            ['الاسم', <span dir="ltr">{g.name || '—'}</span>],
+            ['الاسم', <span dir="ltr">{g.name || name || '—'}</span>],
             ['رقم المحرف (GID)', <span dir="ltr">{picked.gid}</span>],
             ['عرض التقدّم', <span dir="ltr">{Math.round(adv)}</span>],
             [

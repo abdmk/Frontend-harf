@@ -5,6 +5,8 @@ import type { Page } from '@playwright/test';
 import { expect, test } from './fixtures';
 
 const tools = (page: Page) => page.getByRole('navigation', { name: 'أقسام المختبر' }).first();
+const context = (page: Page, name: string) =>
+  page.getByRole('group', { name: 'سياق الاختبار' }).getByRole('button', { name, exact: true });
 
 test.describe('مختبر الخط', () => {
   test('رفع عائلة كاملة بملف ZIP: الأنماط في الشريط، والأوزان الحقيقية تُكتشف', async ({ page }) => {
@@ -19,8 +21,26 @@ test.describe('مختبر الخط', () => {
       });
     await expect(page.getByRole('heading', { level: 1, name: 'Amiri' })).toBeVisible({ timeout: 20_000 });
     await expect(page.getByRole('radiogroup', { name: 'النمط' }).getByRole('radio')).toHaveCount(4);
-    // المعاينة هي المشهد الأول، وفيها الأنماط والأوزان
+    // سياقات اللوحة: كلها بالإعدادات نفسها — الأنماط، الاختبارات، الفقرات (مع لغات أخرى)
+    await context(page, 'أنماط').click();
+    await expect(page).toHaveURL(/mode=styles/);
     await expect(page.getByText('حقيقي', { exact: true })).toHaveCount(2); // Regular 400 + Bold 700
+    await context(page, 'اختبارات').click();
+    await expect(page.getByRole('article', { name: /الحروف المفردة/ })).toContainText('كل الحروف موجودة');
+    await context(page, 'فقرات').click();
+    await expect(page.getByRole('article', { name: /الفارسية/ })).toBeVisible();
+    await context(page, 'اكتب').click();
+    // OpenType ظاهر في المفتش دائماً: ميزات الملف وحده، بوصف ما تفعله
+    await expect(page.getByRole('region', { name: /^OpenType/ })).toContainText('مجموعة أشكال بديلة رسمها المصمّم');
+
+    // كل محارف الملف بترتيبها، وأسماؤها مشتقّة حين يخلو الملف منها (Amiri: post v3)
+    await tools(page)
+      .getByRole('button', { name: /المحارف/ })
+      .click();
+    await page.getByRole('button', { name: 'كل المحارف', exact: true }).click();
+    await page.getByRole('button', { name: /كل محارف الملف/ }).click();
+    await page.getByRole('searchbox').fill('uni0628.init');
+    await expect(page.getByRole('button', { name: /uni0628\.init$/ }).first()).toBeVisible();
 
     // جرد OpenType: اسم المجموعة الأسلوبية كما كتبه المصمّم في الملف، وما تغيّره، والربطات
     await tools(page)
@@ -51,22 +71,20 @@ test.describe('مختبر الخط', () => {
     await expect(page).toHaveURL(/view=support/);
     await expect(page.getByRole('region', { name: 'فحص سريع' })).toContainText('أشكال الحروف السياقية');
     await expect(page.getByRole('region', { name: 'العربية' })).toContainText('مدعومة بالكامل');
-    // OpenType في المفتش بجانب لوحة الاختبار
-    await page
-      .getByRole('group', { name: 'لوحة الإعدادات' })
-      .getByRole('button', { name: /OpenType/ })
-      .click();
+    // OpenType في المفتش بجانب لوحة الاختبار، ظاهر دون تبويب
     await page.getByRole('switch', { name: /^kern/ }).click();
     await expect(page.getByText('font-feature-settings: "kern" 0;')).toBeVisible();
 
     await tools(page)
-      .getByRole('button', { name: /الحروف/ })
+      .getByRole('button', { name: /المحارف/ })
       .click();
-    await page.getByRole('button', { name: 'كل المحارف' }).click();
+    await page.getByRole('button', { name: 'كل المحارف', exact: true }).click();
     await page.getByRole('searchbox').fill('U+0628');
     await expect(page.getByRole('img', { name: /رسم المحرف ب/ })).toBeVisible();
 
-    await tools(page).getByRole('button', { name: /الملف/ }).click();
+    await tools(page)
+      .getByRole('button', { name: /بيانات الملف/ })
+      .click();
     const [download] = await Promise.all([
       page.waitForEvent('download'),
       page.getByRole('button', { name: 'تنزيل JSON' }).click(),
@@ -94,13 +112,17 @@ test.describe('مختبر الخط', () => {
     const styles = page.getByRole('radiogroup', { name: 'النمط' });
     await expect(styles.getByRole('radio')).toHaveCount(6);
     await expect(styles.getByRole('radio', { name: 'Regular' })).toHaveAttribute('aria-checked', 'true');
+    await context(page, 'أنماط').click();
     await expect(page.getByText('حقيقي', { exact: true })).toHaveCount(6);
     await expect(page.getByText('250 · Thin')).toBeVisible();
+    await context(page, 'اكتب').click();
 
     // نصّ واحد في الشريط يتبعه كل مشهد
     // اللوحة هي مكان الكتابة، والنص نفسه يتبعه تحليل الأنماط تحتها
     await page.getByLabel('نص العيّنة — قابل للتحرير').fill('مكتبة حرف');
+    await context(page, 'أحجام').click();
     await expect(page.getByText('مكتبة حرف').first()).toBeVisible();
+    await context(page, 'اكتب').click();
     await styles.getByRole('radio', { name: 'SemiBold' }).click();
     await expect(styles.getByRole('radio', { name: 'SemiBold' })).toHaveAttribute('aria-checked', 'true');
 

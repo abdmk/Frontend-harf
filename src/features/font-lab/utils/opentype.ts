@@ -298,3 +298,65 @@ export const LANG_INFO: Record<string, { name: string; bcp: string }> = {
   TRK: { name: 'التركية', bcp: 'tr' },
   ENG: { name: 'الإنجليزية', bcp: 'en' },
 };
+
+const hexName = (cp: number) =>
+  cp <= 0xffff ? `uni${cp.toString(16).toUpperCase().padStart(4, '0')}` : `u${cp.toString(16).toUpperCase()}`;
+const nameCache = new WeakMap<object, Map<number, string>>();
+
+/**
+ * أسماء المحارف — من جدول post إن وُجدت، وإلا تُشتقّ كما تفعل برامج التصميم (post v3 بلا أسماء، مثل Amiri):
+ * المرمّز ← uniXXXX، وناتج ميزة تبديل ← اسم أصله + .tag (uni0628.init، uni0628.ss01)، والربطة ← أسماء حروفها بـ _.
+ */
+export function glyphNames(font: LabFont): Map<number, string> {
+  const kit = font.kit as unknown as Kit & { getGlyph(id: number): { name?: string } };
+  const hit = nameCache.get(kit);
+  if (hit) return hit;
+  const names = new Map<number, string>();
+  for (const cp of kit.characterSet) {
+    const id = kit.glyphForCodePoint(cp).id;
+    if (id && !names.has(id)) names.set(id, hexName(cp));
+  }
+  const lookups = arr(kit.GSUB?.lookupList);
+  // الأشكال السياقية أولاً (uni0628.init)، و«كل البدائل» aalt أخيراً — لا تسمّي ما لغيرها اسم أدقّ
+  const rank = (t: string) => (t in FORM_TEXT ? 0 : t === 'aalt' ? 2 : 1);
+  const feats = arr(kit.GSUB?.featureList).sort((a, b) => rank(a.tag) - rank(b.tag));
+  // جولتان: ناتج ميزة قد يكون أصلاً لميزة أخرى (init ← init.ss01)
+  for (let pass = 0; pass < 2; pass++)
+    for (const f of feats)
+      for (const i of arr(f.feature.lookupListIndexes)) {
+        const lookup = lookups[i];
+        if (!lookup) continue;
+        for (const raw of arr(lookup.subTables)) {
+          const [s, type] = unwrap(raw, lookup.lookupType);
+          if (type !== 1 && type !== 2 && type !== 3) continue;
+          const subst = arr(s.substitute);
+          const seqs = arr(type === 3 ? s.alternateSet : s.sequences);
+          coverageGlyphs(s.coverage).forEach((g, k) => {
+            const base = names.get(g);
+            if (!base) return;
+            const outs =
+              type === 1
+                ? [s.deltaGlyphID !== undefined ? (g + s.deltaGlyphID) & 0xffff : subst[k]]
+                : type === 2
+                  ? arr(seqs[k]).length === 1
+                    ? arr(seqs[k])
+                    : []
+                  : arr(seqs[k]);
+            outs.forEach((to, n) => {
+              if (to === undefined || to === g || names.has(to)) return;
+              names.set(to, `${base}.${f.tag}${type === 3 && n ? n + 1 : ''}`);
+            });
+          });
+        }
+      }
+  for (const l of analyzeOpenType(font).ligatures)
+    if (!names.has(l.glyph)) names.set(l.glyph, [...l.text].map((c) => hexName(c.codePointAt(0)!)).join('_'));
+  // الاسم الحقيقي من الملف يتقدّم دائماً
+  for (let g = 0; g < font.glyphCount; g++) {
+    const n = kit.getGlyph(g).name;
+    if (n) names.set(g, n);
+  }
+  if (!names.has(0)) names.set(0, '.notdef');
+  nameCache.set(kit, names);
+  return names;
+}

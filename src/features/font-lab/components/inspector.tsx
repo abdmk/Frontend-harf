@@ -3,7 +3,6 @@ import { useState, type ReactNode } from 'react';
 import { Button } from '@/components/ui/button';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { ArrowLeftIcon, ChevronDownIcon, CopyIcon, RefreshIcon } from '@/components/ui/icons';
-import { SegmentedControl } from '@/components/ui/segmented-control';
 import { Slider } from '@/components/ui/slider';
 import { Switch } from '@/components/ui/switch';
 import { toast } from '@/components/ui/toast';
@@ -23,8 +22,6 @@ import { useLab } from '../hooks/lab-context';
 import type { LabFont } from '../types';
 import { analyzeOpenType, LANG_INFO } from '../utils/opentype';
 
-export type InspectorTab = 'text' | 'ot';
-
 /** أنماط عائلة الخط النشط بترتيب الوزن */
 export function useFamily() {
   const { fonts, active } = useLab();
@@ -35,36 +32,39 @@ export function useFamily() {
 const styleLabel = (f: LabFont) => (f.italic && !/italic/i.test(f.style) ? `${f.style} Italic` : f.style);
 
 /**
- * المفتش — عمود واحد بجانب لوحة الاختبار، بتبويبين فقط: «النص» و«OpenType».
- * كل ما يُغيَّر قريب من النص الذي يتغيّر، ولا قوائم منبثقة فوق بعضها.
+ * المفتش — عمود واحد بجانب لوحة الاختبار، بترتيب أسئلة المصمّم: النمط والحجم أولاً،
+ * ثم OpenType ظاهراً دائماً (ميزات هذا الملف وحده، بأسمائها ووصف ما تفعله)، والنادر مطويّ.
+ * كل ما فيه يسري على كل سياقات اللوحة.
  */
-export function Inspector({
-  tab,
-  onTab,
-  onTry,
-}: {
-  tab: InspectorTab;
-  onTab: (t: InspectorTab) => void;
-  onTry: () => void;
-}) {
+export function Inspector({ onTry }: { onTry: () => void }) {
   const { active, settings } = useLab();
   if (!active) return null;
+  const tags = new Set(active.features.map((f) => f.tag));
+  const optional = [...tags].filter((t) => featureGroup(t) !== 'engine').length;
   const changed = Object.keys(settings.features).length;
   return (
     <aside aria-label="إعدادات الاختبار" className="flex flex-col rounded-2xl border bg-card">
-      <div className="border-b p-2">
-        <SegmentedControl
-          label="لوحة الإعدادات"
-          value={tab}
-          onChange={onTab}
-          className="w-full [&>*]:flex-1"
-          options={[
-            { value: 'text', label: 'النص' },
-            { value: 'ot', label: changed ? `OpenType · ${changed}` : 'OpenType' },
-          ]}
-        />
-      </div>
-      <div className="flex flex-col gap-6 p-5">{tab === 'text' ? <TextPanel /> : <OpenTypePanel onTry={onTry} />}</div>
+      <section aria-labelledby="lab-text-title" className="flex flex-col gap-6 p-5">
+        <h2 id="lab-text-title" className="text-base font-semibold">
+          النص
+        </h2>
+        <TextPanel />
+      </section>
+      <section id="lab-ot" aria-labelledby="lab-ot-title" className="flex scroll-mt-24 flex-col gap-6 border-t p-5">
+        <div>
+          <h2 id="lab-ot-title" className="flex items-center justify-between gap-3 text-base font-semibold">
+            OpenType
+            <span className="text-caption font-normal text-tertiary">
+              {changed ? `${changed} مغيّرة · ` : ''}
+              {optional} قابلة للتبديل
+            </span>
+          </h2>
+          <p className="mt-1 text-caption text-muted-foreground">
+            ميزات هذا الملف فقط — شغّل أيّاً منها وترى أثرها في النص فوراً.
+          </p>
+        </div>
+        <OpenTypePanel onTry={onTry} />
+      </section>
     </aside>
   );
 }
@@ -309,8 +309,11 @@ function OpenTypePanel({ onTry }: { onTry: () => void }) {
                         <span className="block truncate text-control" title={name}>
                           {name}
                         </span>
-                        <span dir="ltr" className="block text-end font-mono text-micro text-tertiary">
-                          {tag}
+                        <span className="flex items-baseline justify-between gap-2 text-caption text-muted-foreground">
+                          <span className="truncate">{featureInfo(tag).hint ?? featureInfo(tag).label}</span>
+                          <span dir="ltr" className="shrink-0 font-mono text-micro text-tertiary">
+                            {tag}
+                          </span>
                         </span>
                       </span>
                       <Switch
