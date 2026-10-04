@@ -1,6 +1,6 @@
 import { Link } from 'react-router';
 
-import { BookmarkIcon, CheckIcon, ClockIcon, CrownIcon, LockIcon } from '@/components/ui/icons';
+import { BookmarkIcon, LockIcon } from '@/components/ui/icons';
 import { Skeleton } from '@/components/ui/skeleton';
 import { paths } from '@/config/paths';
 import { cn } from '@/lib/cn';
@@ -20,32 +20,28 @@ export const comboTitle = (c: Combo) => `تركيبة ${c.heading.font.nameAr} �
 type Role = 'heading' | 'body';
 const SHORT_ROLE = { العناوين: 'العناوين', 'العناوين الفرعية': 'الفرعي', النصوص: 'النصوص' } as const;
 
-/** شارات الترخيص نفسها في بطاقة الخط */
-const BADGE = {
-  free: { cls: 'bg-ok-700 text-white', Icon: CheckIcon },
-  trial: { cls: 'bg-trial-600 text-white', Icon: ClockIcon },
-  paid: { cls: 'bg-gold-500 text-gold-foreground', Icon: CrownIcon },
-} as const;
-
-function LicenseBadge({ font }: { font: Font }) {
-  const b = BADGE[font.type];
+/**
+ * الترخيص نصّاً هادئاً بدل شارة ملوّنة لكل خط: السعر للمدفوع، و«مجاني» بلون النجاح —
+ * الفرق واضح بلا ازدحام شارات في كل سطر.
+ */
+function LicensePrice({ font }: { font: Font }) {
+  if (font.type === 'paid')
+    return (
+      <bdi dir="ltr" className="shrink-0 text-control font-semibold tabular-nums">
+        ${font.price}
+      </bdi>
+    );
   return (
-    <span
-      className={cn(
-        'inline-flex h-5.5 shrink-0 items-center gap-1 rounded-full px-2 text-caption leading-none font-medium',
-        b.cls,
-      )}
-    >
-      <b.Icon className="size-3" />
-      {font.type === 'paid' ? <bdi dir="ltr">${font.price}</bdi> : TYPE_LABEL[font.type]}
+    <span className={cn('shrink-0 text-caption font-medium', font.type === 'free' ? 'text-ok-text' : 'text-info-text')}>
+      {TYPE_LABEL[font.type]}
     </span>
   );
 }
 
 /**
- * بطاقة التركيبة بتشريح بطاقة الخط: في الأعلى لوحة العيّنة — الخطّان معاً كما سيُستعملان
- * (عنوان فوق فقرة) — ثم سطر لكل خط: دوره، اسمه رابطاً لصفحته، أوزانه، شارة ترخيصه، والقفل.
- * في الأسفل سبب التناسق، ثم الحفظ والتحميل/الشراء. النقر في أي مكان آخر يفتح التفاصيل.
+ * بطاقة التركيبة — هرمية واحدة: العيّنة أولاً (الخطّان كما سيُستعملان)، ثم اسم كل خط ودوره وسعره،
+ * ثم فعل رئيسي واحد (شراء إن وُجد مدفوع، وإلا تحميل) مع الحفظ أيقونةً هادئة.
+ * سبب التناسق وCSS في نافذة التفاصيل (النقر في أي مكان آخر)؛ والقفل يظهر عند المرور أو حين يُفعَّل.
  */
 export function PairCard({
   combo,
@@ -89,10 +85,10 @@ export function PairCard({
       />
 
       {/* لوحة العيّنة — النص الحقيقي يحجز مكانه مخفيّاً حتى يصل خطّه، والهيكل فوقه: لا قفزة في الارتفاع */}
-      <div aria-hidden className="pointer-events-none relative border-b bg-sunken px-6 pt-12 pb-7">
-        <span className="absolute end-4 top-4 inline-flex h-6 items-center gap-1 rounded-full bg-card px-2.5 text-caption leading-none text-muted-foreground shadow-soft">
-          تناسق
-          <span dir="ltr" className="font-semibold text-foreground tabular-nums">
+      <div aria-hidden className="pointer-events-none relative border-b bg-sunken px-5 pt-10 pb-6 sm:px-6">
+        <span className="absolute end-4 top-3.5 text-caption text-tertiary">
+          تناسق{' '}
+          <span dir="ltr" className="font-medium text-muted-foreground tabular-nums">
             {combo.score}٪
           </span>
         </span>
@@ -102,7 +98,7 @@ export function PairCard({
             !ready && 'opacity-0',
           )}
         >
-          <p className="line-clamp-2 text-4xl leading-snug [overflow-wrap:anywhere]" style={slotStyle(combo.heading)}>
+          <p className="line-clamp-2 text-3xl leading-snug [overflow-wrap:anywhere]" style={slotStyle(combo.heading)}>
             {text.heading}
           </p>
           {showLatin && (
@@ -115,12 +111,12 @@ export function PairCard({
               {text.sub}
             </p>
           )}
-          <p className="line-clamp-3 text-sm leading-loose text-foreground/75" style={slotStyle(combo.body)}>
+          <p className="line-clamp-2 text-sm leading-loose text-foreground/75" style={slotStyle(combo.body)}>
             {text.body}
           </p>
         </div>
         {!ready && (
-          <span className="absolute inset-x-6 top-12 flex flex-col gap-3">
+          <span className="absolute inset-x-6 top-10 flex flex-col gap-3">
             <Skeleton className="h-9 w-4/5 bg-inset" />
             <Skeleton className="mt-2 h-3.5 w-full bg-inset" />
             <Skeleton className="h-3.5 w-5/6 bg-inset" />
@@ -130,7 +126,7 @@ export function PairCard({
       {!ready && <span role="status" aria-label="تحميل الخطوط" className="sr-only" />}
 
       {/* المحتوى يمرّر النقر إلى الرابط الممتدّ تحته — الأزرار والروابط وحدها تلتقطه */}
-      <div className="pointer-events-none relative flex flex-1 flex-col gap-4 p-5 [&_a]:pointer-events-auto [&_button]:pointer-events-auto">
+      <div className="pointer-events-none relative flex flex-1 flex-col gap-4 p-4 sm:p-5 [&_a]:pointer-events-auto [&_button]:pointer-events-auto">
         <ul className="flex flex-col divide-y">
           {slots.map((s) => {
             const role: Role | null = s === combo.heading ? 'heading' : s === combo.body ? 'body' : null;
@@ -140,7 +136,7 @@ export function PairCard({
               <li
                 key={s.role}
                 aria-label={`${s.role}: ${s.font.nameAr}`}
-                className="flex items-center gap-3 py-3 first:pt-0 last:pb-0"
+                className="flex items-center gap-3 py-2.5 first:pt-0 last:pb-0"
               >
                 <span className="flex min-w-0 flex-1 flex-col gap-0.5">
                   {lib ? (
@@ -160,7 +156,7 @@ export function PairCard({
                     {SHORT_ROLE[s.role]} · {weightsLabel(s.font.weights.length)}
                   </span>
                 </span>
-                {lib && <LicenseBadge font={lib} />}
+                {lib && <LicensePrice font={lib} />}
                 {role && onLock && (
                   <button
                     type="button"
@@ -168,7 +164,8 @@ export function PairCard({
                     aria-label={isLocked ? `فكّ تثبيت ${s.font.nameAr}` : `ثبّت ${s.font.nameAr} لـ${s.role}`}
                     title={isLocked ? 'مثبّت — «تركيبات جديدة» تغيّر الباقي فقط' : 'ثبّت هذا الخط وغيّر الباقي'}
                     onClick={() => onLock(role, s.font.id)}
-                    className="relative z-10 -me-1.5 grid size-8 shrink-0 place-items-center rounded-full text-tertiary transition-[color,background-color] duration-(--dur-fast) hover:bg-sunken hover:text-foreground aria-pressed:bg-tint-brand aria-pressed:text-primary"
+                    // يظهر عند المرور (حيث يوجد مؤشّر) أو التركيز أو حين يكون مفعّلاً — دائماً على اللمس
+                    className="relative z-10 -me-1.5 grid size-8 shrink-0 place-items-center rounded-full text-tertiary transition-[color,background-color,opacity] duration-(--dur-fast) group-hover/card:opacity-100 hover:bg-sunken hover:text-foreground focus-visible:opacity-100 aria-pressed:bg-tint-brand aria-pressed:text-primary aria-pressed:opacity-100 [@media(hover:hover)]:opacity-0"
                   >
                     <LockIcon filled={isLocked} className={cn('size-4', isLocked && 'animate-pop-in')} />
                   </button>
@@ -178,22 +175,20 @@ export function PairCard({
           })}
         </ul>
 
-        <p className="line-clamp-2 text-meta leading-relaxed text-muted-foreground">{combo.reason}</p>
         {failed && <p className="text-caption text-warn-text">تعذّر تحميل أحد الخطوط — المعاينة تقريبية.</p>}
 
-        <div className="mt-auto flex items-center justify-between gap-3">
-          <span className="truncate text-sm font-medium text-lic">{paid ? 'خط مدفوع' : 'مجانية بالكامل'}</span>
+        <div className="mt-auto flex items-center justify-between gap-3 border-t pt-4">
+          <button
+            type="button"
+            aria-pressed={saved}
+            aria-label={saved ? `إزالة ${title} من المحفوظة` : `حفظ ${title}`}
+            title={saved ? 'محفوظة' : 'حفظ'}
+            onClick={onSave}
+            className="relative z-10 -ms-1.5 grid size-8 place-items-center rounded-full text-muted-foreground transition-[background-color,color,transform] duration-(--dur-base) hover:bg-sunken hover:text-foreground active:scale-[.95] aria-pressed:text-primary"
+          >
+            <BookmarkIcon filled={saved} className={cn('size-4', saved && 'animate-pop-in')} />
+          </button>
           <div className="flex shrink-0 gap-2">
-            <button
-              type="button"
-              aria-pressed={saved}
-              aria-label={saved ? `إزالة ${title} من المحفوظة` : `حفظ ${title}`}
-              title={saved ? 'محفوظة' : 'حفظ'}
-              onClick={onSave}
-              className="relative z-10 grid size-8 place-items-center rounded-xs border bg-sunken text-foreground transition-[background-color,border-color,color,transform] duration-(--dur-base) hover:bg-inset active:scale-[.95] aria-pressed:border-primary aria-pressed:bg-tint-brand aria-pressed:text-primary"
-            >
-              <BookmarkIcon filled={saved} className={cn('size-4', saved && 'animate-pop-in')} />
-            </button>
             <DownloadAction items={items} tone={paid ? 'secondary' : 'primary'} />
             <BuyAction items={items} />
           </div>

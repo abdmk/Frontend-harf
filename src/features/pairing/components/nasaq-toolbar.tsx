@@ -17,8 +17,8 @@ export const optionsCount = (b: Brief) =>
   Number(b.fonts !== DEFAULT_BRIEF.fonts);
 
 /**
- * شريط «نسق» على نمط شريط المكتبة: زرّ أحمر للفعل الرئيسي، حقل بعرض المتاح، زرّ لوحة الخيارات،
- * ومبدّل العرض. الاستخدام واللغة والترخيص وعدد الخطوط كلها داخل «الخيارات».
+ * شريط «نسق» بترتيب الاستعمال: نصّ المعاينة أولاً (ما تكتبه)، ثم «الخيارات» (ما تصفّيه) ومبدّل العرض،
+ * ثم «تركيبات جديدة» فعلاً رئيسياً في آخر السطر. الاستخدام واللغة والترخيص وعدد الخطوط داخل «الخيارات».
  */
 export function NasaqToolbar({
   brief,
@@ -43,22 +43,9 @@ export function NasaqToolbar({
 }) {
   const count = optionsCount(brief);
   return (
-    <div className="mt-8 flex flex-col gap-3">
+    <div className="flex flex-col gap-3">
       <div role="group" aria-label="أدوات نسق" className="flex flex-wrap items-center gap-2 lg:flex-nowrap">
-        <button
-          type="button"
-          onClick={onRegenerate}
-          title="أو اضغط مسافة"
-          className={cn(
-            pill,
-            'group/re border-transparent bg-primary-fill ps-4 font-medium text-white hover:bg-harf-600',
-          )}
-        >
-          <RefreshIcon className="size-4 transition-transform duration-(--dur-slow) ease-out-quint group-active/re:-rotate-180" />
-          تركيبات جديدة
-        </button>
-
-        <label className="relative flex h-11 min-w-45 flex-1 items-center rounded-full border bg-card transition-[box-shadow,border-color] focus-within:border-primary focus-within:shadow-focus dark:border-transparent dark:bg-sunken">
+        <label className="relative flex h-11 w-full min-w-45 flex-1 items-center rounded-full border bg-card transition-[box-shadow,border-color] focus-within:border-primary focus-within:shadow-focus sm:w-auto dark:border-transparent dark:bg-sunken">
           <TextIcon className="pointer-events-none absolute start-4 size-4 text-muted-foreground" />
           <span className="sr-only">نص المعاينة</span>
           <input
@@ -116,6 +103,18 @@ export function NasaqToolbar({
             { value: 'saved', label: `المحفوظة${savedCount ? ` (${savedCount})` : ''}` },
           ]}
         />
+        <button
+          type="button"
+          onClick={onRegenerate}
+          title="أو اضغط مسافة"
+          className={cn(
+            pill,
+            'group/re border-transparent bg-primary-fill ps-4 font-medium text-white hover:bg-harf-600',
+          )}
+        >
+          <RefreshIcon className="size-4 transition-transform duration-(--dur-slow) ease-out-quint group-active/re:-rotate-180" />
+          تركيبات جديدة
+        </button>
       </div>
     </div>
   );

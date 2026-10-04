@@ -1,6 +1,7 @@
 import { Container } from '@/components/layout/container';
-import { PageIntro } from '@/components/layout/page-intro';
+import { ToolHero } from '@/components/layout/tool-hero';
 import { PageMeta } from '@/components/shared/page-meta';
+import { LayersIcon } from '@/components/ui/icons';
 import { NasaqTool } from '@/features/pairing/components/nasaq-tool';
 
 /** «نسق» — تُحمَّل كسولاً: الكتالوج والمحرّك وملفات الخطوط لا تثقل باقي الموقع */
@@ -11,10 +12,12 @@ export function NasaqPage() {
         title="نسق — تركيبات خطوط متناسقة"
         description="اختر ما تصمّمه، ونقترح عليك خطوطاً عربية تعمل معاً — معروضة بخطوطها الحقيقية."
       />
-      <PageIntro
-        eyebrow="أدوات حرف"
+      <ToolHero
+        badgeIcon={<LayersIcon />}
+        badge="كل الخطوط من مكتبة حرف — بخطوطها الحقيقية"
         title="نسق"
-        lead="اختر ما تصمّمه، ونقترح عليك خطوطاً عربية تعمل معاً — معروضة بخطوطها الحقيقية، وكلها من مكتبة حرف: حمّل المجانية مباشرة، واشترِ ترخيص المدفوعة من السلة."
+        highlight="خطوط عربية تعمل معاً"
+        lead="اكتب نصّك واختر ما تصمّمه، ونقترح تركيبات متناسقة للعناوين والنصوص — حمّل المجانية، واشترِ المدفوعة من السلة."
       />
       <NasaqTool />
     </Container>
