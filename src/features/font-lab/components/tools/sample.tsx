@@ -1,8 +1,7 @@
 import { AlignCenterIcon, AlignJustifyIcon, AlignLeftIcon, AlignRightIcon } from '@/components/ui/icons';
 
-import { DEFAULT_TEXT, useLab } from '../../hooks/lab-context';
+import { DEFAULT_TEXT } from '../../hooks/lab-context';
 import type { LabSettings } from '../../types';
-import { Panel } from '../bits';
 
 export const PRESETS: [string, string][] = [
   ['عنوان', DEFAULT_TEXT],
@@ -30,35 +29,3 @@ export const ALIGN: { value: LabSettings['align']; label: string; Icon: typeof A
   { value: 'end', label: 'محاذاة لليسار', Icon: AlignLeftIcon },
   { value: 'justify', label: 'ضبط الطرفين', Icon: AlignJustifyIcon },
 ];
-
-/**
- * لوحة العيّنة — نصّك بالخط بالحجم والإعدادات المختارة في الشريط، وتُحرَّر في مكانها.
- * الوزن يأتي من النمط المختار (ملف حقيقي) لا من وزن يصطنعه المتصفّح.
- */
-export function Sample() {
-  const { active, settings: s, set, specimen } = useLab();
-  if (!active) return null;
-  return (
-    <Panel label="العيّنة" className="overflow-hidden">
-      <div className="p-6 sm:p-10" style={{ background: s.background || undefined }}>
-        <textarea
-          aria-label="نص العيّنة — قابل للتحرير"
-          value={s.text}
-          onChange={(e) => set({ text: e.target.value.slice(0, 2000) })}
-          spellCheck={false}
-          dir="auto"
-          className="block min-h-32 resize-none bg-transparent [field-sizing:content] outline-none focus-visible:outline-none"
-          style={specimen(active, {
-            fontSize: s.size,
-            lineHeight: s.lineHeight,
-            letterSpacing: s.letterSpacing,
-            wordSpacing: s.wordSpacing,
-            width: `${s.width}%`,
-            textAlign: s.align,
-            color: s.color || undefined,
-          })}
-        />
-      </div>
-    </Panel>
-  );
-}

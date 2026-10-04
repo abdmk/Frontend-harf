@@ -22,11 +22,26 @@ test.describe('مختبر الخط', () => {
     // المعاينة هي المشهد الأول، وفيها الأنماط والأوزان
     await expect(page.getByText('حقيقي', { exact: true })).toHaveCount(2); // Regular 400 + Bold 700
 
-    // محلّل OpenType: اسم المجموعة الأسلوبية كما كتبه المصمّم في الملف، وما تغيّره، والربطات
-    await tools(page).getByRole('button', { name: /الدعم/ }).click();
-    await expect(page.getByText('خفض نقطة الباء المسبوقة براء أو واو', { exact: false })).toBeVisible();
+    // جرد OpenType: اسم المجموعة الأسلوبية كما كتبه المصمّم في الملف، وما تغيّره، والربطات
+    await tools(page)
+      .getByRole('button', { name: /جرد OpenType/ })
+      .click();
+    await expect(page.getByText('خفض نقطة الباء المسبوقة براء أو واو').first()).toBeVisible();
     await expect(page.getByRole('group', { name: 'ما تغيّره ss04' })).toBeVisible();
     await expect(page.getByRole('region', { name: 'الربطات' }).getByRole('img').first()).toBeVisible();
+
+    // من الجرد إلى اللوحة: «جرّب في النص» يفعّل الميزة، ويضع نصها، ويفتح OpenType في المفتش
+    await page
+      .getByRole('region', { name: 'أثر الميزات' })
+      .getByRole('listitem')
+      .filter({ hasText: 'ss03' })
+      .getByRole('button', { name: 'جرّب في النص' })
+      .click();
+    await expect(page.getByRole('switch', { name: /^ss03/ })).toBeChecked();
+    await expect(page.getByRole('button', { name: 'إلغاء ss03' })).toBeVisible();
+    // «قبل / بعد»: افتراضي الخط بجانب الميزات المفعّلة
+    await page.getByRole('button', { name: 'قبل / بعد' }).click();
+    await expect(page.getByText('افتراضي الخط')).toBeVisible();
   });
 
   test('خط من المكتبة: الفحص السريع، ميزات OpenType، اللغات، والمحارف', async ({ page }) => {
@@ -35,9 +50,14 @@ test.describe('مختبر الخط', () => {
     await page.getByRole('button', { name: /الفحص السريع/ }).click({ timeout: 20_000 });
     await expect(page).toHaveURL(/view=support/);
     await expect(page.getByRole('region', { name: 'فحص سريع' })).toContainText('أشكال الحروف السياقية');
+    await expect(page.getByRole('region', { name: 'العربية' })).toContainText('مدعومة بالكامل');
+    // OpenType في المفتش بجانب لوحة الاختبار
+    await page
+      .getByRole('group', { name: 'لوحة الإعدادات' })
+      .getByRole('button', { name: /OpenType/ })
+      .click();
     await page.getByRole('switch', { name: /^kern/ }).click();
     await expect(page.getByText('font-feature-settings: "kern" 0;')).toBeVisible();
-    await expect(page.getByRole('region', { name: 'العربية' })).toContainText('مدعومة بالكامل');
 
     await tools(page)
       .getByRole('button', { name: /الحروف/ })
@@ -78,8 +98,9 @@ test.describe('مختبر الخط', () => {
     await expect(page.getByText('250 · Thin')).toBeVisible();
 
     // نصّ واحد في الشريط يتبعه كل مشهد
-    await page.getByLabel('نصّ المعاينة').fill('مكتبة حرف');
-    await expect(page.getByLabel('نص العيّنة — قابل للتحرير')).toHaveValue('مكتبة حرف');
+    // اللوحة هي مكان الكتابة، والنص نفسه يتبعه تحليل الأنماط تحتها
+    await page.getByLabel('نص العيّنة — قابل للتحرير').fill('مكتبة حرف');
+    await expect(page.getByText('مكتبة حرف').first()).toBeVisible();
     await styles.getByRole('radio', { name: 'SemiBold' }).click();
     await expect(styles.getByRole('radio', { name: 'SemiBold' })).toHaveAttribute('aria-checked', 'true');
 

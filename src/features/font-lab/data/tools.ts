@@ -15,33 +15,28 @@ export type ToolKey =
   | 'compare'
   | 'info';
 
-/* ── مساحة العمل الجديدة: خمسة مشاهد بدل اثنتي عشرة صفحة ─────────────────────────────── */
+/* ── التحليل تحت لوحة الاختبار ─────────────────────────────────────────────── */
 
-export type ViewKey = 'preview' | 'glyphs' | 'support' | 'compare' | 'file';
-/** أقسام «الحروف» — شرائح داخل المشهد نفسه */
+export type ViewKey = 'styles' | 'opentype' | 'glyphs' | 'support' | 'compare' | 'file';
+/** أقسام «الحروف» — شرائح داخل التبويب نفسه */
 export type GlyphSub = 'letters' | 'marks' | 'numerals' | 'glyphs';
 
 export type View = { key: ViewKey; label: string; lead: string; icon: IconComponent };
 
 /**
- * المشاهد حسب سؤال المصمّم: كيف يبدو نصّي به؟ هل حروفه كاملة؟ هل يدعم ما أحتاج؟ كيف يقارن بغيره؟ ما الملف؟
- * النص والحجم والنمط في شريط واحد فوقها كلها — يتغيّر مرّة ويتبعه كل مشهد.
+ * التحليل المفصّل — تحت لوحة الاختبار والمفتش، لا ينافسهما: كل تبويب يجيب عن سؤال واحد.
  */
 export const VIEWS: View[] = [
+  { key: 'styles', label: 'الأنماط والأحجام', lead: 'نصّك بكل أنماط العائلة، ومن أصغر حجم لأكبره.', icon: TextIcon },
   {
-    key: 'preview',
-    label: 'المعاينة',
-    lead: 'نصّك بالخط: بالحجم الذي تختاره، بكل أنماط العائلة، ومن أصغر حجم لأكبره.',
-    icon: TextIcon,
+    key: 'opentype',
+    label: 'جرد OpenType',
+    lead: 'كل ما في الملف: أثر كل ميزة، الربطات، البدائل، والكتابات واللغات.',
+    icon: LayersIcon,
   },
   { key: 'glyphs', label: 'الحروف', lead: 'أشكال كل حرف، التشكيل، الأرقام، وكل محارف الملف.', icon: GridIcon },
-  {
-    key: 'support',
-    label: 'الدعم',
-    lead: 'هل الخط جاهز لعملك؟ فحص سريع، اللغات، وميزات OpenType التي في الملف.',
-    icon: GlobeIcon,
-  },
-  { key: 'compare', label: 'المقارنة', lead: 'خطوطك المحمّلة جنباً إلى جنب بالنص نفسه.', icon: LayersIcon },
+  { key: 'support', label: 'الدعم', lead: 'هل الخط جاهز لعملك؟ فحص سريع واللغات المدعومة.', icon: GlobeIcon },
+  { key: 'compare', label: 'مقارنة الخطوط', lead: 'خطوطك المحمّلة جنباً إلى جنب بالنص نفسه.', icon: LayersIcon },
   { key: 'file', label: 'الملف', lead: 'بيانات الملف كما في جداوله، وتصديرها.', icon: DocumentIcon },
 ];
 
@@ -52,15 +47,18 @@ export const GLYPH_SUBS: { key: GlyphSub; label: string }[] = [
   { key: 'glyphs', label: 'كل المحارف' },
 ];
 
-export const viewByKey = (k: string | null) => VIEWS.find((v) => v.key === k) ?? VIEWS[0]!;
+/** عناوين قديمة (?view=preview…) تُترجم إلى التبويبات الحالية */
+const LEGACY_VIEW: Record<string, ViewKey> = { preview: 'styles' };
+export const viewByKey = (k: string | null) => VIEWS.find((v) => v.key === (k && (LEGACY_VIEW[k] ?? k))) ?? VIEWS[0]!;
 export const glyphSubByKey = (k: string | null) => GLYPH_SUBS.find((g) => g.key === k)?.key ?? 'letters';
 
-/** وجهة كل أداة قديمة في المشاهد الجديدة — روابط ?tool= القديمة وبنود الفحص السريع */
+/** وجهة كل أداة قديمة (?tool=) وبنود الفحص السريع */
 export function routeOfTool(tool: ToolKey): { view: ViewKey; sub?: GlyphSub } {
   if (tool === 'letters' || tool === 'marks' || tool === 'numerals' || tool === 'glyphs')
     return { view: 'glyphs', sub: tool };
-  if (tool === 'languages' || tool === 'features' || tool === 'overview') return { view: 'support' };
+  if (tool === 'features') return { view: 'opentype' };
+  if (tool === 'languages' || tool === 'overview') return { view: 'support' };
   if (tool === 'compare') return { view: 'compare' };
   if (tool === 'info') return { view: 'file' };
-  return { view: 'preview' };
+  return { view: 'styles' };
 }

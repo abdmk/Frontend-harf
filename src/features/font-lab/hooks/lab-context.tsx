@@ -21,6 +21,7 @@ const DEFAULT_SETTINGS: LabSettings = {
   background: '',
   features: {},
   axes: {},
+  lang: '',
 };
 
 type Lab = {

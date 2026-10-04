@@ -50,4 +50,6 @@ export type LabSettings = {
   features: Record<string, boolean>;
   /** قيم المحاور المتغيّرة */
   axes: Record<string, number>;
+  /** لغة النص (BCP-47) — تُظهر الأشكال المحلّية (locl) للأردية والفارسية… ؛ '' = الافتراضية */
+  lang: string;
 };

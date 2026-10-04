@@ -13,101 +13,107 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import {
-  CheckIcon,
-  ChevronDownIcon,
-  CrossSmallIcon,
-  ExclamationIcon,
-  PlusIcon,
-  RefreshIcon,
-  SlidersIcon,
-  TextIcon,
-} from '@/components/ui/icons';
-import { Input } from '@/components/ui/input';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { Slider } from '@/components/ui/slider';
+import { CheckIcon, ChevronDownIcon, CrossSmallIcon, ExclamationIcon, PlusIcon } from '@/components/ui/icons';
 import { cn } from '@/lib/cn';
 
-import { RangeControl } from './bits';
+import { TestCanvas } from './canvas';
+import { Inspector, type InspectorTab, useFamily } from './inspector';
 import { qualityChecks } from './tools/overview';
-import { ALIGN, PRESETS, SWATCHES } from './tools/sample';
 import { GLYPH_SUBS, glyphSubByKey, routeOfTool, type ToolKey, type ViewKey, viewByKey, VIEWS } from '../data/tools';
 import { useLab } from '../hooks/lab-context';
-import type { LabFont } from '../types';
 import { ACCEPT } from '../utils/load';
 
-const lazyView = <K extends string>(load: () => Promise<Record<K, () => React.JSX.Element | null>>, name: K) =>
-  lazy(() => load().then((m) => ({ default: m[name] })));
+const lazyView = <P extends object, K extends string>(
+  load: () => Promise<Record<K, (p: P) => React.JSX.Element | null>>,
+  name: K,
+) => lazy(() => load().then((m) => ({ default: m[name] })));
 
-const Sample = lazyView(() => import('./tools/sample'), 'Sample');
 const Weights = lazyView(() => import('./tools/weights'), 'Weights');
 const Waterfall = lazyView(() => import('./tools/waterfall'), 'Waterfall');
+const Features = lazyView(() => import('./tools/features'), 'Features');
 const Letters = lazyView(() => import('./tools/letters'), 'Letters');
 const Marks = lazyView(() => import('./tools/marks'), 'Marks');
 const Numerals = lazyView(() => import('./tools/numerals'), 'Numerals');
 const Glyphs = lazyView(() => import('./tools/glyphs'), 'Glyphs');
 const Languages = lazyView(() => import('./tools/languages'), 'Languages');
-const Features = lazyView(() => import('./tools/features'), 'Features');
 const Compare = lazyView(() => import('./tools/compare'), 'Compare');
 const Info = lazyView(() => import('./tools/info'), 'Info');
 const QuickCheck = lazy(() => import('./tools/overview').then((m) => ({ default: m.QuickCheck })));
 
-/** حالة المشهد في الرابط (?view=&sub=) — قابلة للمشاركة، و?tool= القديم يُترجم */
-function useView() {
+/** حالة الصفحة في الرابط — قابلة للمشاركة: ?panel=ot (المفتش)، ?view=&sub= (التحليل)، و?tool= القديم يُترجم */
+function usePageState() {
   const [params, setParams] = useSearchParams();
   const legacy = params.get('tool') as ToolKey | null;
   const fromLegacy = legacy ? routeOfTool(legacy) : null;
   const view = viewByKey(params.get('view') ?? fromLegacy?.view ?? null).key;
   const sub = glyphSubByKey(params.get('sub') ?? fromLegacy?.sub ?? null);
-  const go = (next: ViewKey, nextSub?: string) =>
+  const panel: InspectorTab = params.get('panel') === 'ot' || legacy === 'features' ? 'ot' : 'text';
+  const patch = (next: Record<string, string | null>) =>
     setParams(
       (p) => {
         const n = new URLSearchParams(p);
         n.delete('tool');
-        if (next === 'preview') n.delete('view');
-        else n.set('view', next);
-        if (nextSub) n.set('sub', nextSub);
-        else n.delete('sub');
+        for (const [k, v] of Object.entries(next)) {
+          if (v === null) n.delete(k);
+          else n.set(k, v);
+        }
         return n;
       },
       { replace: true },
     );
-  return { view, sub, go };
+  return { view, sub, panel, patch };
 }
 
 /**
- * مساحة عمل المختبر بعد الرفع — المعاينة أولاً، وكل شيء يتبع نصّك:
- * رأس بالخط نفسه وملخّصه، شريط ثابت (النص، النمط، الحجم، المزيد) يطبَّق على كل المشاهد،
- * ثم خمسة مشاهد بعرض الصفحة كاملاً بدل اثنتي عشرة صفحة خلف قائمة جانبية.
+ * مساحة اختبار الخط — أداة مصمّمين لا لوحة تحكّم:
+ * لوحة الاختبار هي البطل، وبجانبها مفتش واحد بتبويبين (النص، OpenType) — كل تغيير بجانب ما يتغيّر.
+ * التحليل المفصّل تحتهما بهدوء، لمن يريد أن يتعمّق.
  */
 export function Workspace() {
-  const { view, sub, go } = useView();
-  const tabs = useRef<HTMLDivElement>(null);
-  const open = (v: ViewKey, s?: string) => {
-    go(v, s);
-    tabs.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  const { view, sub, panel, patch } = usePageState();
+  const { set, settings } = useLab();
+  const analysis = useRef<HTMLDivElement>(null);
+  const toCanvas = () => document.getElementById('lab-canvas')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  const openView = (v: ViewKey, s?: string) => {
+    patch({ view: v === 'styles' ? null : v, sub: s ?? null });
+    analysis.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
   const goTool = (tool: ToolKey) => {
     const r = routeOfTool(tool);
-    open(r.view, r.sub);
+    openView(r.view, r.sub);
   };
+  const [compare, setCompare] = useCompare();
 
   return (
     <div className="pb-16">
-      <FontHeader onCheck={() => open('support')} />
-      <TypeBar />
-      <div ref={tabs} className="scroll-mt-44">
-        <ViewTabs current={view} onGo={(v) => open(v)} />
+      <FontHeader onCheck={() => openView('support')} />
+
+      <div className="grid grid-cols-[minmax(0,1fr)] items-start gap-5 lg:grid-cols-[minmax(0,1fr)_22rem]">
+        <TestCanvas compare={compare} onCompare={setCompare} />
+        <div className="lg:sticky lg:top-22 lg:max-h-[calc(100dvh-6.5rem)] lg:overflow-y-auto lg:overscroll-contain">
+          <Inspector tab={panel} onTab={(t) => patch({ panel: t === 'ot' ? 'ot' : null })} onTry={toCanvas} />
+        </div>
       </div>
-      <section aria-labelledby="lab-view-title" className="pt-6">
-        <h2 id="lab-view-title" className="sr-only">
-          {viewByKey(view).label}
+
+      <section ref={analysis} aria-labelledby="lab-analysis-title" className="mt-16 scroll-mt-20">
+        <h2 id="lab-analysis-title" className="text-xl font-semibold">
+          تحليل الخط
         </h2>
-        <p className="mb-5 text-meta text-muted-foreground">{viewByKey(view).lead}</p>
+        <AnalysisTabs current={view} onGo={(v) => openView(v)} />
+        <p className="mt-5 mb-5 text-meta text-muted-foreground">{viewByKey(view).lead}</p>
         <Suspense fallback={<LoadingState label="جارٍ فتح القسم…" />}>
           <div key={`${view}-${sub}`} className="animate-fade-up">
-            {view === 'preview' && <PreviewView />}
-            {view === 'glyphs' && <GlyphsView sub={sub} onSub={(s) => go('glyphs', s)} />}
+            {view === 'styles' && <StylesView />}
+            {view === 'opentype' && (
+              <Features
+                onTry={(tag, sample) => {
+                  set({ text: sample, features: { ...settings.features, [tag]: true } });
+                  patch({ panel: 'ot' });
+                  toCanvas();
+                }}
+              />
+            )}
+            {view === 'glyphs' && <GlyphsView sub={sub} onSub={(s) => patch({ view: 'glyphs', sub: s })} />}
             {view === 'support' && <SupportView onGoTool={goTool} />}
             {view === 'compare' && <Compare />}
             {view === 'file' && <Info />}
@@ -118,14 +124,25 @@ export function Workspace() {
   );
 }
 
-/* ───────────────────────── الرأس ───────────────────────── */
-
-/** أنماط عائلة الخط النشط بترتيب الوزن — ما يختار منه الشريط */
-function useFamily() {
-  const { fonts, active } = useLab();
-  const family = active ? fonts.filter((f) => f.family === active.family) : [];
-  return family.sort((a, b) => a.weight - b.weight || Number(a.italic) - Number(b.italic));
+/** «قبل / بعد» يُطفأ تلقائياً حين لا تبقى ميزات مغيّرة (اللوحة تعرض نصاً واحداً حينها) */
+function useCompare(): [boolean, (v: boolean) => void] {
+  const [params, setParams] = useSearchParams();
+  return [
+    params.get('compare') === '1',
+    (v) =>
+      setParams(
+        (p) => {
+          const n = new URLSearchParams(p);
+          if (v) n.set('compare', '1');
+          else n.delete('compare');
+          return n;
+        },
+        { replace: true },
+      ),
+  ];
 }
+
+/* ───────────────────────── الرأس ───────────────────────── */
 
 function FontHeader({ onCheck }: { onCheck: () => void }) {
   const { fonts, active, setActive, remove, clear, add, busy, specimen } = useLab();
@@ -148,13 +165,13 @@ function FontHeader({ onCheck }: { onCheck: () => void }) {
   ];
 
   return (
-    <header className="flex flex-col gap-5 pt-8 pb-6 sm:pt-10 lg:flex-row lg:items-end lg:justify-between">
+    <header className="flex flex-col gap-4 pt-6 pb-5 sm:pt-8 lg:flex-row lg:items-end lg:justify-between">
       <div className="min-w-0">
         <p className="text-caption text-tertiary">مختبر الخط</p>
         <h1
           dir="ltr"
           title={active.fullName}
-          className="mt-1 truncate text-right text-4xl leading-tight sm:text-5xl"
+          className="mt-1 truncate text-right text-3xl leading-tight sm:text-4xl"
           style={active.previewable ? specimen(active) : undefined}
         >
           {active.family}
@@ -240,220 +257,16 @@ function FontHeader({ onCheck }: { onCheck: () => void }) {
   );
 }
 
-/* ───────────────────────── الشريط ───────────────────────── */
-
-/** اسم النمط مختصراً للشريحة: «SemiBold» لا «Graphik Arabic SemiBold» */
-const styleLabel = (f: LabFont) => (f.italic && !/italic/i.test(f.style) ? `${f.style} Italic` : f.style);
-
-/**
- * شريط واحد ثابت فوق كل المشاهد: النص (مع عيّنات جاهزة)، النمط من ملفات العائلة الحقيقية،
- * الحجم، و«المزيد» لما يُضبط أقلّ. يتغيّر مرّة ويتبعه كل مشهد.
- */
-function TypeBar() {
-  const { active, settings: s, set, setActive } = useLab();
-  const family = useFamily();
-  if (!active) return null;
-  const wght = active.axes.find((a) => a.tag === 'wght');
-
-  return (
-    <div className="sticky top-28 z-30 -mx-2 lg:top-20">
-      <div
-        role="toolbar"
-        aria-label="إعدادات المعاينة"
-        className="flex flex-col gap-2 rounded-2xl border bg-card/95 p-2 shadow-soft backdrop-blur-md lg:flex-row lg:items-center"
-      >
-        {/* النص — أهمّ عنصر: يكتب المستخدم نصّه فيراه في كل مكان */}
-        <div className="flex min-w-0 flex-1 items-center gap-1">
-          <Input
-            aria-label="نصّ المعاينة"
-            value={s.text}
-            onChange={(e) => set({ text: e.target.value.slice(0, 2000) })}
-            placeholder="اكتب نصّك…"
-            className="h-10 min-w-0 flex-1 rounded-full border-transparent bg-sunken px-4 text-control"
-          />
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="sm" className="shrink-0">
-                <TextIcon />
-                <span className="max-sm:sr-only">عيّنات</span>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuLabel>نصوص جاهزة</DropdownMenuLabel>
-              <DropdownMenuRadioGroup value={s.text} onValueChange={(text) => set({ text })}>
-                {PRESETS.map(([label, text]) => (
-                  <DropdownMenuRadioItem key={label} value={text}>
-                    {label}
-                  </DropdownMenuRadioItem>
-                ))}
-              </DropdownMenuRadioGroup>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
-
-        {/* الجوال: الأنماط صفّ يتمرّر وحده، والحجم و«المزيد» ظاهران تحته — لا يختبئان في آخر التمرير */}
-        <div className="flex flex-wrap items-center gap-2 lg:flex-nowrap">
-          {/* النمط: ملفات العائلة الحقيقية — أو محور الوزن للخط المتغيّر */}
-          {wght ? (
-            <BarField label="الوزن" value={s.axes.wght ?? wght.default}>
-              <Slider
-                aria-label="الوزن"
-                className="w-28 max-lg:flex-1"
-                value={[s.axes.wght ?? wght.default]}
-                min={wght.min}
-                max={wght.max}
-                onValueChange={([v]) => v !== undefined && set({ axes: { ...s.axes, wght: v } })}
-              />
-            </BarField>
-          ) : family.length > 1 ? (
-            <div
-              role="radiogroup"
-              aria-label="النمط"
-              className="flex shrink-0 [scrollbar-width:none] gap-0.5 overflow-x-auto rounded-full bg-sunken p-1 max-lg:w-full [&::-webkit-scrollbar]:hidden"
-            >
-              {family.map((f) => (
-                <button
-                  key={f.id}
-                  type="button"
-                  role="radio"
-                  aria-checked={f.id === active.id}
-                  title={`${f.style} · ${f.weight}`}
-                  onClick={() => setActive(f.id)}
-                  dir="ltr"
-                  className="h-8 rounded-full px-3 text-caption whitespace-nowrap text-muted-foreground transition-colors hover:text-foreground aria-checked:bg-card aria-checked:font-medium aria-checked:text-foreground aria-checked:shadow-soft"
-                >
-                  {styleLabel(f)}
-                </button>
-              ))}
-            </div>
-          ) : null}
-
-          <BarField label="الحجم" value={`${s.size}px`}>
-            <Slider
-              aria-label="الحجم"
-              className="w-28 max-lg:flex-1"
-              value={[s.size]}
-              min={12}
-              max={200}
-              onValueChange={([v]) => v !== undefined && set({ size: v })}
-            />
-          </BarField>
-
-          <MoreSettings />
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function BarField({ label, value, children }: { label: string; value: ReactNode; children: ReactNode }) {
-  return (
-    <div className="flex h-10 shrink-0 items-center gap-3 rounded-full bg-sunken px-4 max-lg:flex-1">
-      <span className="text-caption text-muted-foreground">{label}</span>
-      {children}
-      <span dir="ltr" className="w-12 text-caption font-medium tabular-nums">
-        {value}
-      </span>
-    </div>
-  );
-}
-
-/** ما يُضبط أقلّ: التباعد، العرض، المحاذاة، الألوان — خلف «المزيد» كي يبقى الشريط هادئاً */
-function MoreSettings() {
-  const { settings: s, set, resetSettings } = useLab();
-  return (
-    <Popover>
-      <PopoverTrigger asChild>
-        <Button variant="ghost" size="sm" className="h-10 shrink-0 rounded-full">
-          <SlidersIcon />
-          المزيد
-        </Button>
-      </PopoverTrigger>
-      <PopoverContent align="end" className="flex w-80 flex-col gap-5 p-5">
-        <RangeControl
-          label="ارتفاع السطر"
-          unit=""
-          value={s.lineHeight}
-          min={0.9}
-          max={3}
-          step={0.1}
-          onChange={(lineHeight) => set({ lineHeight })}
-        />
-        <RangeControl
-          label="تباعد الحروف"
-          value={s.letterSpacing}
-          min={-5}
-          max={20}
-          onChange={(letterSpacing) => set({ letterSpacing })}
-        />
-        <RangeControl
-          label="تباعد الكلمات"
-          value={s.wordSpacing}
-          min={-10}
-          max={40}
-          onChange={(wordSpacing) => set({ wordSpacing })}
-        />
-        <RangeControl
-          label="عرض النص"
-          unit="%"
-          value={s.width}
-          min={30}
-          max={100}
-          onChange={(width) => set({ width })}
-        />
-        <div className="flex items-center justify-between gap-3">
-          <div role="group" aria-label="المحاذاة" className="flex gap-1 rounded-full bg-sunken p-1">
-            {ALIGN.map(({ value, label, Icon }) => (
-              <button
-                key={value}
-                type="button"
-                aria-label={label}
-                title={label}
-                aria-pressed={s.align === value}
-                onClick={() => set({ align: value })}
-                className="grid size-8 place-items-center rounded-full text-muted-foreground transition-colors aria-pressed:bg-card aria-pressed:text-foreground aria-pressed:shadow-soft"
-              >
-                <Icon filled="auto" className="size-4" />
-              </button>
-            ))}
-          </div>
-          <div role="group" aria-label="الألوان" className="flex items-center gap-1">
-            {SWATCHES.map((w) => (
-              <button
-                key={w.label}
-                type="button"
-                title={w.label}
-                aria-label={w.label}
-                aria-pressed={s.color === w.color && s.background === w.background}
-                onClick={() => set({ color: w.color, background: w.background })}
-                className="grid size-7 place-items-center rounded-full border text-caption font-semibold aria-pressed:ring-2 aria-pressed:ring-primary aria-pressed:ring-offset-1 aria-pressed:ring-offset-card"
-                style={{ color: w.color || undefined, background: w.background || undefined }}
-              >
-                ب
-              </button>
-            ))}
-          </div>
-        </div>
-        <Button variant="ghost" size="sm" onClick={resetSettings} className="self-start">
-          <RefreshIcon />
-          الإعدادات الافتراضية
-        </Button>
-      </PopoverContent>
-    </Popover>
-  );
-}
-
-/* ───────────────────────── المشاهد ───────────────────────── */
+/* ───────────────────────── التحليل ───────────────────────── */
 
 const TAB =
   'relative inline-flex h-12 shrink-0 items-center gap-2 px-1 text-control whitespace-nowrap text-muted-foreground transition-colors hover:text-foreground aria-[current=page]:font-semibold aria-[current=page]:text-foreground aria-[current=page]:after:absolute aria-[current=page]:after:inset-x-0 aria-[current=page]:after:bottom-0 aria-[current=page]:after:h-0.5 aria-[current=page]:after:rounded-full aria-[current=page]:after:bg-primary-fill';
 
-function ViewTabs({ current, onGo }: { current: ViewKey; onGo: (v: ViewKey) => void }) {
-  const { fonts } = useLab();
+function AnalysisTabs({ current, onGo }: { current: ViewKey; onGo: (v: ViewKey) => void }) {
   return (
     <nav
       aria-label="أقسام المختبر"
-      className="mt-4 flex [scrollbar-width:none] gap-6 overflow-x-auto border-b [&::-webkit-scrollbar]:hidden"
+      className="mt-2 flex [scrollbar-width:none] gap-6 overflow-x-auto border-b [&::-webkit-scrollbar]:hidden"
     >
       {VIEWS.map((v) => (
         <button
@@ -465,9 +278,6 @@ function ViewTabs({ current, onGo }: { current: ViewKey; onGo: (v: ViewKey) => v
         >
           <v.icon filled={v.key === current} className="size-4" />
           {v.label}
-          {v.key === 'compare' && fonts.length > 1 && (
-            <span className="rounded-full bg-sunken px-1.5 text-caption tabular-nums">{fonts.length}</span>
-          )}
         </button>
       ))}
     </nav>
@@ -478,11 +288,9 @@ function SectionTitle({ children }: { children: ReactNode }) {
   return <h3 className="mb-3 text-base font-semibold">{children}</h3>;
 }
 
-/** المعاينة: نصّك كبيراً، ثم أنماط العائلة به، ثم تدرّج الأحجام — صفحة عيّنة كاملة في تمريرة واحدة */
-function PreviewView() {
+function StylesView() {
   return (
     <div className="flex flex-col gap-10">
-      <Sample />
       <div>
         <SectionTitle>الأنماط والأوزان</SectionTitle>
         <Weights />
@@ -522,7 +330,7 @@ function GlyphsView({ sub, onSub }: { sub: string; onSub: (s: string) => void })
   );
 }
 
-/** الدعم: الجواب أولاً (فحص سريع)، ثم التفصيل — اللغات، ثم ميزات OpenType */
+/** الدعم: الجواب أولاً (فحص سريع)، ثم اللغات */
 function SupportView({ onGoTool }: { onGoTool: (t: ToolKey) => void }) {
   return (
     <div className="flex flex-col gap-10">
@@ -530,10 +338,6 @@ function SupportView({ onGoTool }: { onGoTool: (t: ToolKey) => void }) {
       <div>
         <SectionTitle>اللغات</SectionTitle>
         <Languages />
-      </div>
-      <div id="lab-features">
-        <SectionTitle>ميزات OpenType</SectionTitle>
-        <Features />
       </div>
     </div>
   );

@@ -75,3 +75,47 @@ export function featureSettings(tags: string[], state: Record<string, boolean>) 
     .map((t) => `"${t}" ${state[t] ? 1 : 0}`);
   return parts.length ? parts.join(', ') : 'normal';
 }
+
+/**
+ * مجموعات المفتش حسب سؤال المصمّم — لا حسب جدول الملف:
+ * style: شكل الحروف (مجموعات أسلوبية، بدائل، سواش) · liga: الربطات · num: الأرقام والكسور ·
+ * space: المسافات والتموضع · engine: يديرها محرّك التشكيل للعربية (للعلم فقط).
+ */
+export type FeatureGroup = 'style' | 'liga' | 'num' | 'space' | 'engine';
+
+const NUM = new Set([
+  'lnum',
+  'onum',
+  'pnum',
+  'tnum',
+  'frac',
+  'numr',
+  'dnom',
+  'zero',
+  'sups',
+  'subs',
+  'sinf',
+  'ordn',
+  'afrc',
+]);
+const LIGA = new Set(['liga', 'dlig', 'clig', 'hlig', 'rlig']);
+const SPACE = new Set(['kern', 'mark', 'mkmk', 'curs', 'cpsp', 'case', 'dist', 'abvm', 'blwm', 'palt', 'halt']);
+
+/** تقنية مفعّلة دائماً تقريباً — لا يبحث عنها المصمّم بين البدائل؛ تُعرض مع التلقائية */
+const BASIC = new Set(['ccmp', 'locl', 'rtlm', 'rclt', 'rvrn']);
+
+export function featureGroup(tag: string): FeatureGroup {
+  if (featureInfo(tag).mode === 'engine' || BASIC.has(tag)) return 'engine';
+  if (NUM.has(tag)) return 'num';
+  if (LIGA.has(tag)) return 'liga';
+  if (SPACE.has(tag)) return 'space';
+  return 'style';
+}
+
+export const GROUP_LABEL: Record<FeatureGroup, { label: string; hint: string }> = {
+  style: { label: 'أشكال وبدائل', hint: 'مجموعات أسلوبية وبدائل حروف رسمها المصمّم' },
+  liga: { label: 'الربطات', hint: 'حروف تتّحد في شكل واحد' },
+  num: { label: 'الأرقام والكسور', hint: 'أنماط الأرقام والكسور والأسس' },
+  space: { label: 'المسافات والتموضع', hint: 'التقنين ومواضع العلامات' },
+  engine: { label: 'أساسية وتلقائية', hint: 'يديرها محرّك التشكيل وتعمل دائماً — للعلم' },
+};
