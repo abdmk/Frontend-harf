@@ -15,6 +15,7 @@ export function FavoriteButton({ fontId, fontName, variant = 'card', className }
       type="button"
       aria-pressed={isFav}
       aria-label={`المفضّلة: ${fontName}`}
+      title={isFav ? 'إزالة من المفضّلة' : 'أضف إلى المفضّلة'}
       onClick={(e) => {
         e.preventDefault();
         toggle();

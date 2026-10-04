@@ -5,8 +5,10 @@ import { Button } from '@/components/ui/button';
 import { CheckIcon, ChevronLeftIcon, ClockIcon, DollarIcon, RefreshIcon } from '@/components/ui/icons';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { paths } from '@/config/paths';
+import { useCurrentUser } from '@/hooks/use-current-user';
 import { formatDateAr, formatMoney } from '@/lib/format';
 import { PUBLISHER_TERMS } from '@/lib/publisher-terms';
+import { useIsVerified } from '@/lib/studio-verification';
 import { cents } from '@/types/domain/commerce';
 
 import { getSales, useEarnings } from '../../api/earnings';
@@ -30,6 +32,7 @@ export function FinanceEmpty() {
 /** «نظرة عامة مالية»: الأرصدة كلها في مكان واحد، وآخر المبيعات — والتفاصيل في الصفحات الفرعية */
 export function FinanceOverview() {
   const e = useEarnings();
+  const verified = useIsVerified(useCurrentUser()?.id);
   const sales = getSales();
   const refunds = sales.filter((s) => s.status === 'refunded');
   const tiles = [
@@ -62,7 +65,8 @@ export function FinanceOverview() {
             التحويل التلقائي القادم <strong className="text-foreground">{formatDateAr(e.nextPayout)}</strong>
           </p>
         </div>
-        <Button asChild>
+        {/* قبل التوثيق: «ابدأ التوثيق» أعلى الصفحة هو الفعل الرئيسي — السحب ثانوي */}
+        <Button asChild variant={verified ? 'primary' : 'secondary'}>
           <Link to={paths.studio.getHref('finance/payouts')}>
             <DollarIcon />
             اسحب رصيدك

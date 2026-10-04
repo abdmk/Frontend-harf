@@ -260,7 +260,7 @@ export function saveVerificationDraft(patch: {
     status: 'draft',
     updatedAt: now(),
   });
-  if (!next.success) return { ok: false, error: 'بيانات غير صالحة.' };
+  if (!next.success) return { ok: false, error: 'تعذّر حفظ هذه الخطوة — راجع الحقول ثم حاول مجدداً.' };
   return write(next.data) ? { ok: true } : FULL;
 }
 

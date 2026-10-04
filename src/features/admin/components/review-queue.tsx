@@ -88,7 +88,7 @@ export function ReviewCard({ s }: { s: ReviewItem; compact?: boolean }) {
           · <span className={late ? 'font-medium text-warn-text' : undefined}>{timeAgo(s.submittedAt)}</span>
         </p>
       </div>
-      <Button asChild size="sm" variant={s.state === 'pending' ? 'primary' : 'outline'}>
+      <Button asChild size="sm" variant={s.state === 'pending' ? 'secondary' : 'outline'}>
         <Link to={paths.admin.review.getHref(s.id)}>{s.state === 'pending' ? 'راجِع' : 'التفاصيل'}</Link>
       </Button>
     </li>

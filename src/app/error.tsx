@@ -1,7 +1,8 @@
-import { useRouteError, isRouteErrorResponse, useNavigate } from 'react-router';
+import { isRouteErrorResponse, Link, useNavigate, useRouteError } from 'react-router';
 
 import { PageMeta } from '@/components/shared/page-meta';
 import { Button } from '@/components/ui/button';
+import { paths } from '@/config/paths';
 
 export function ErrorBoundary() {
   const error = useRouteError();
@@ -15,12 +16,20 @@ export function ErrorBoundary() {
         <h1 className="text-2xl font-semibold">{is404 ? 'الصفحة غير موجودة' : 'حدث خطأ غير متوقّع'}</h1>
         <p className="max-w-sm text-sm text-muted-foreground">
           {is404
-            ? 'المسار الذي طلبته غير موجود. تحقّق من الرابط أو عد للرئيسية.'
+            ? 'المسار الذي طلبته غير موجود. تحقّق من الرابط، أو عد إلى المكتبة وابحث عمّا تريد.'
             : 'لم نستطع عرض هذه الصفحة الآن. حاول مجدداً بعد لحظات.'}
         </p>
-        <Button size="lg" className="mt-2" onClick={() => navigate(0)}>
-          أعد المحاولة
-        </Button>
+        {/* 404: إعادة التحميل لا تُصلح رابطاً مفقوداً — الطريق للمكتبة. غيرها: إعادة المحاولة، والمكتبة بديلاً */}
+        <div className="mt-2 flex flex-wrap justify-center gap-3">
+          {!is404 && (
+            <Button size="lg" onClick={() => navigate(0)}>
+              أعد المحاولة
+            </Button>
+          )}
+          <Button asChild size="lg" variant={is404 ? 'primary' : 'secondary'}>
+            <Link to={paths.home.getHref()}>العودة إلى المكتبة</Link>
+          </Button>
+        </div>
       </div>
     </main>
   );

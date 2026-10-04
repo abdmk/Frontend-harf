@@ -178,7 +178,7 @@ export { isValidIban } from '@/lib/payout';
 export function savePayoutAccount(input: unknown): { ok: true } | { ok: false; error: string } {
   if (!requireStudio()) return { ok: false, error: 'هذه العملية لحسابات الاستوديو وحدها.' };
   const r = maskedPayoutSchema.safeParse(input);
-  if (!r.success) return { ok: false, error: 'بيانات غير صالحة.' };
+  if (!r.success) return { ok: false, error: 'تعذّر حفظ وسيلة الاستلام — أعد تحميل الصفحة وأدخلها من جديد.' };
   // تعليق التحويلات بعد التغيير: حماية إن سُرق الحساب وغُيّرت الوسيلة
   writeLocal({ ...readLocal(), account: { ...r.data, changedAt: new Date().toISOString() } });
   return { ok: true };

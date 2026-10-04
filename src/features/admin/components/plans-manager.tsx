@@ -325,6 +325,7 @@ function PlanEditor({ saved }: { saved: PlanEdit }) {
                       variant="ghost"
                       size="icon-sm"
                       aria-label={`نقل الميزة ${i + 1} للأعلى`}
+                      title="للأعلى"
                       disabled={i === 0}
                       onClick={() => move(i, -1)}
                     >
@@ -334,6 +335,7 @@ function PlanEditor({ saved }: { saved: PlanEdit }) {
                       variant="ghost"
                       size="icon-sm"
                       aria-label={`نقل الميزة ${i + 1} للأسفل`}
+                      title="للأسفل"
                       disabled={i === draft.features.length - 1}
                       onClick={() => move(i, 1)}
                     >
@@ -343,6 +345,7 @@ function PlanEditor({ saved }: { saved: PlanEdit }) {
                       variant="ghost"
                       size="icon-sm"
                       aria-label={`حذف الميزة ${i + 1}`}
+                      title="حذف الميزة"
                       disabled={draft.features.length === 1}
                       onClick={() => setDraft((d) => ({ ...d, features: d.features.filter((_, k) => k !== i) }))}
                       className="hover:text-dgr-text"

@@ -94,6 +94,7 @@ export function FontGallery({
               ref={fsBtn}
               type="button"
               aria-label={full ? 'الخروج من ملء الشاشة' : 'ملء الشاشة'}
+              title={full ? 'الخروج من ملء الشاشة' : 'ملء الشاشة'}
               onClick={() => setFull((v) => !v)}
               className="absolute start-5 top-5 z-10 grid size-9 place-items-center rounded-sm bg-nav-car text-muted-foreground shadow-soft transition-[color,transform] hover:scale-105 hover:text-foreground"
             >

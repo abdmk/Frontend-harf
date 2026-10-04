@@ -185,7 +185,8 @@ export function ProfileInfoForm({
           </>
         )}
         <div className="flex justify-end sm:col-span-2">
-          <Button type="submit" loading={pending}>
+          {/* في ملف الاستوديو: حفظ «الملف العام» هو الفعل الرئيسي — هذا ثانوي (زرّ رئيسي واحد في الشاشة) */}
+          <Button type="submit" variant={compact ? 'secondary' : 'primary'} loading={pending}>
             حفظ التغييرات
           </Button>
         </div>
