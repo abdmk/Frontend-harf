@@ -1,13 +1,18 @@
 import { expect, seedVerifiedStudio, test } from './fixtures';
 
 test.describe('الاستوديو والإدارة', () => {
-  test('مساحة الاستوديو للاستوديو وحده، بعمودها الجانبي وأقسامها', async ({ page }) => {
+  test('مساحة الاستوديو للاستوديو وحده، في العمود الجانبي نفسه الذي في الحساب', async ({ page }) => {
     await page.goto('/studio/finance?as=free');
     await expect(page).toHaveURL(/\/account\/subscription$/);
-    await page.goto('/studio?as=studio');
+    await page.goto('/account/library?as=studio');
+    const nav = page.getByRole('navigation', { name: 'قائمة الحساب' });
+    const items = await nav.getByRole('link').allInnerTexts();
+    await page.goto('/studio');
     await expect(page.getByRole('heading', { level: 1, name: 'نظرة عامة' })).toBeVisible();
-    const nav = page.getByRole('navigation', { name: 'أقسام الاستوديو' }).filter({ visible: true });
-    await expect(nav.getByRole('link', { name: 'نظرة عامة' })).toHaveAttribute('aria-current', 'page');
+    // البنود نفسها وبالترتيب نفسه — يتغيّر المحدّد فقط
+    expect(await nav.getByRole('link').allInnerTexts()).toEqual(items);
+    await expect(nav.getByRole('link', { name: 'الاستوديو', exact: true })).toHaveAttribute('aria-current', 'page');
+    await expect(nav.getByRole('link', { name: /^مكتبتي/ })).not.toHaveAttribute('aria-current');
 
     // «خطوطي»: المجاني بلا أرقام بيع، والمدفوع بها؛ قيد المراجعة يفتح النشر
     await nav.getByRole('link', { name: 'خطوطي' }).click();
@@ -31,13 +36,13 @@ test.describe('الاستوديو والإدارة', () => {
     await expect(page).toHaveURL(/\/studio\/finance$/);
     await page.goto('/studio/finance/earnings');
     await expect(page).toHaveURL(/\/studio\/finance$/);
+    const nav = page.getByRole('navigation', { name: 'أقسام المالية' });
+    await expect(nav.getByRole('link', { name: 'الأرباح' })).toHaveCount(0);
     await expect(
-      page
-        .getByRole('navigation', { name: 'أقسام الاستوديو' })
-        .filter({ visible: true })
-        .getByRole('link', { name: 'الأرباح' }),
-    ).toHaveCount(0);
-    const nav = page.getByRole('navigation', { name: 'أقسام الاستوديو' }).filter({ visible: true });
+      page.getByRole('navigation', { name: 'قائمة الحساب' }).getByRole('link', { name: 'المالية' }),
+    ).toHaveAttribute('aria-current', 'page');
+    await nav.getByRole('link', { name: 'السحوبات' }).click();
+    await expect(page).toHaveURL(/\/studio\/finance\/payouts$/);
     await nav.getByRole('link', { name: 'نظرة عامة مالية' }).click();
     await expect(page).toHaveURL(/\/studio\/finance$/);
     await expect(page.getByText('الرصيد المتاح للسحب')).toBeVisible();
@@ -50,6 +55,16 @@ test.describe('الاستوديو والإدارة', () => {
     const acc = page.getByRole('navigation', { name: 'قائمة الحساب' });
     await expect(acc.getByRole('link', { name: 'المبيعات' })).toHaveCount(0);
     await expect(acc.getByRole('link', { name: 'الاستوديو', exact: true })).toBeVisible();
+  });
+
+  test('الجوال: «الحساب» من صفحات الاستوديو يفتح القائمة نفسها (لا يرتدّ إلى الملف)', async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto('/studio/finance?as=studio');
+    await page.getByRole('main').getByRole('link', { name: 'الحساب', exact: true }).click();
+    await expect(page).toHaveURL(/\/account$/);
+    const nav = page.getByRole('navigation', { name: 'قائمة الحساب' });
+    await nav.getByRole('link', { name: 'التحليلات' }).click();
+    await expect(page.getByRole('heading', { level: 1, name: 'التحليلات' })).toBeVisible();
   });
 
   // ⚠️ يتطلّب خادماً حقيقياً: ملف ثابت (SPA) يعيد 200 لأي مسار — حماية الصفحة والتصدير هنا
@@ -258,7 +273,7 @@ test.describe('السحوبات', () => {
 
 test('الملف الشخصي: صور آمنة فقط، روابط بأسماء مستخدمين، و«غير مكتمل» يختفي عند الاكتمال', async ({ page }) => {
   await page.goto('/studio/profile?as=studio');
-  const side = page.getByRole('navigation', { name: 'أقسام الاستوديو' }).filter({ visible: true });
+  const side = page.getByRole('navigation', { name: 'قائمة الحساب' });
   await expect(side.getByText('غير مكتمل')).toBeVisible();
 
   // صورة PNG حقيقية بمقاس محدّد — تُرسم في المتصفّح

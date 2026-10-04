@@ -170,7 +170,7 @@ test.describe('لوحة الإدارة', () => {
 
     // الحساب نفسه (المجاني التجريبي) صار استوديو
     await page.goto('/studio?as=free');
-    await expect(page.getByRole('navigation', { name: 'أقسام الاستوديو' }).first()).toBeVisible();
+    await expect(page.getByRole('heading', { level: 1, name: 'نظرة عامة' })).toBeVisible();
 
     // الحظر: السبب إلزامي، ثم لا جلسة
     await page.goto('/admin/users?as=admin');

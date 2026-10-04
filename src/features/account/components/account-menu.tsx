@@ -4,7 +4,8 @@ import { Link, useLocation } from 'react-router';
 import { ShieldCheckIcon } from '@/components/ui/icons';
 import { focusPanel, Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { paths } from '@/config/paths';
-import { ACCOUNT_SECTIONS, type AccountSection, type User } from '@/features/account/types';
+import { navKeyFor } from '@/features/account/config/nav';
+import type { User } from '@/features/account/types';
 
 import { AccountPanel } from './account-panel';
 import { PLAN_BADGE_LABEL, PlanBadge } from './plan-badge';
@@ -23,8 +24,7 @@ export function AccountMenu({
 }) {
   const [open, setOpen] = useState(false);
   const { pathname } = useLocation();
-  const seg = pathname.startsWith('/account/') ? pathname.split('/')[2] : null;
-  const active = (ACCOUNT_SECTIONS as readonly string[]).includes(seg ?? '') ? (seg as AccountSection) : null;
+  const active = navKeyFor(pathname);
 
   return (
     <>

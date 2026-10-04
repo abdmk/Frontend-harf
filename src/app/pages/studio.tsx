@@ -8,6 +8,7 @@ import { SalesSection } from '@/features/studio/components/money/sales-section';
 import { PublicProfileEditor } from '@/features/studio/components/public-profile-editor';
 import { StudioAnalyticsView } from '@/features/studio/components/studio-analytics';
 import { StudioFonts } from '@/features/studio/components/studio-fonts';
+import { FinanceTabs } from '@/features/studio/components/studio-nav';
 import { StudioOverview } from '@/features/studio/components/studio-overview';
 import { StudioPageHeader } from '@/features/studio/components/studio-page-header';
 import { VerificationCallout } from '@/features/verification/components/verification-callout';
@@ -58,7 +59,8 @@ const FINANCE = {
 export function StudioFinancePage({ page }: { page: keyof typeof FINANCE }) {
   const { fonts } = useStudio();
   const meta = FINANCE[page];
-  const body = !studioTotals(fonts).hasPaid ? (
+  const sells = studioTotals(fonts).hasPaid;
+  const body = !sells ? (
     <FinanceEmpty />
   ) : page === 'overview' ? (
     <FinanceOverview />
@@ -71,6 +73,7 @@ export function StudioFinancePage({ page }: { page: keyof typeof FINANCE }) {
     <>
       <PageMeta title={meta.title} noindex />
       <StudioPageHeader title={meta.title} description={meta.description} />
+      {sells && <FinanceTabs />}
       <VerificationCallout className="mb-6" />
       {body}
     </>

@@ -6,16 +6,19 @@ import { UserVerifiedBadge } from '@/components/shared/verified-badge';
 import { CrownIcon, LayersIcon, SignOutIcon } from '@/components/ui/icons';
 import { paths } from '@/config/paths';
 import { signOut } from '@/features/account/api/sign-out';
-import { accountNavGroups, PLAN_TITLE } from '@/features/account/config/nav';
-import type { AccountSection, User } from '@/features/account/types';
+import { accountNavGroups, type NavKey, PLAN_TITLE } from '@/features/account/config/nav';
+import type { User } from '@/features/account/types';
 import { cn } from '@/lib/cn';
+import { useProfileIncomplete } from '@/lib/public-profile';
+import { type PublicStatus, useMyVerification } from '@/lib/studio-verification';
 
 import { PLAN_TEXT, PlanBadge } from './plan-badge';
 import { UserAvatar } from './user-avatar';
 
 type AccountPanelProps = {
   user: User;
-  active?: AccountSection | null;
+  /** البند المحدّد (navKeyFor) */
+  active?: NavKey | null;
   /** sidebar: عمود صفحة الحساب — menu: قائمة الصورة في الترويسة */
   variant?: 'sidebar' | 'menu';
   onNavigate?: () => void;
@@ -54,6 +57,27 @@ const SIZE = {
     boxSub: 'text-meta',
   },
 } as const;
+
+const PILL = 'rounded-full px-2.5 py-0.5 text-xs font-medium whitespace-nowrap';
+
+/** الملف العام للاستوديو ناقص — تنبيه أصفر حتى يكتمل */
+function ProfileBadge() {
+  return useProfileIncomplete() ? <span className={cn(PILL, 'bg-tint-warn text-warn-text')}>غير مكتمل</span> : null;
+}
+
+/** حالة التوثيق — لون ونصّ معاً، لا لون وحده */
+const VERIFY_BADGE: Record<PublicStatus, { text: string; cls: string }> = {
+  none: { text: 'غير موثّق', cls: 'bg-tint-warn text-warn-text' },
+  draft: { text: 'غير مكتمل', cls: 'bg-tint-warn text-warn-text' },
+  pending: { text: 'قيد المراجعة', cls: 'bg-tint-info text-info-text' },
+  rejected: { text: 'يحتاج تعديلاً', cls: 'bg-tint-dgr text-dgr-text' },
+  approved: { text: 'موثّق', cls: 'bg-tint-ok text-ok-text' },
+};
+
+function VerifyBadge() {
+  const b = VERIFY_BADGE[useMyVerification()?.status ?? 'none'];
+  return <span className={cn(PILL, b.cls)}>{b.text}</span>;
+}
 
 const MANAGE_PLAN = 'rounded-full border bg-card px-3 py-1 text-meta font-medium transition-colors hover:bg-background';
 
@@ -112,29 +136,48 @@ export function AccountPanel({
           <Fragment key={g}>
             {g > 0 && <hr className={cn('border-border', s.hr)} />}
             <ul className="flex flex-col gap-0.5">
-              {group.map(({ section, label, Icon, meta, badge, href }) => {
-                const on = active === section;
-                const m = meta?.(user);
-                return (
-                  <li key={section}>
-                    <Link
-                      to={href ?? paths.account.getHref(section)}
-                      onClick={onNavigate}
-                      aria-current={on ? 'page' : undefined}
-                      className={sideNavRow(on, menu ? 'sm' : 'lg')}
-                    >
-                      <Icon filled={on} className={sideNavIcon(on, menu ? 'sm' : 'lg')} />
-                      <span className="flex-1">{label}</span>
-                      {m && <span className={cn('text-muted-foreground', s.meta)}>{m}</span>}
-                      {badge && (
-                        <span className="rounded-full bg-tint-brand px-2.5 py-0.5 text-xs font-medium text-primary">
-                          {badge}
-                        </span>
+              {group
+                .filter((it) => menu || !it.menuOnly)
+                .map(({ key, label, Icon, meta, href, children }) => {
+                  const on = active === key;
+                  // داخل قسم فرعي: الأيقونة تبقى مملوءة لتربط البند بأبيه
+                  const within = on || !!active?.startsWith(`${key}/`);
+                  const m = meta?.(user);
+                  return (
+                    <li key={key}>
+                      <Link
+                        to={href}
+                        onClick={onNavigate}
+                        aria-current={on ? 'page' : undefined}
+                        className={sideNavRow(on, menu ? 'sm' : 'lg')}
+                      >
+                        <Icon filled={within} className={sideNavIcon(within, menu ? 'sm' : 'lg')} />
+                        <span className="flex-1">{label}</span>
+                        {m && <span className={cn('text-muted-foreground', s.meta)}>{m}</span>}
+                        {key === 'profile' && user.plan === 'studio' && <ProfileBadge />}
+                      </Link>
+                      {!menu && children && (
+                        <ul className="mt-0.5 flex flex-col gap-0.5">
+                          {children.map((c) => {
+                            const cOn = active === c.key;
+                            return (
+                              <li key={c.key}>
+                                <Link
+                                  to={c.href}
+                                  aria-current={cOn ? 'page' : undefined}
+                                  className={sideNavRow(cOn, 'sub')}
+                                >
+                                  <span className="flex-1">{c.label}</span>
+                                  {c.key === 'studio/verify' && <VerifyBadge />}
+                                </Link>
+                              </li>
+                            );
+                          })}
+                        </ul>
                       )}
-                    </Link>
-                  </li>
-                );
-              })}
+                    </li>
+                  );
+                })}
             </ul>
           </Fragment>
         ))}

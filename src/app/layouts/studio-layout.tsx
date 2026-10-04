@@ -2,8 +2,9 @@ import { Navigate, Outlet, useOutletContext } from 'react-router';
 
 import { SiteHeader } from '@/components/layout/site-header';
 import { paths } from '@/config/paths';
+import { WorkspaceShell } from '@/features/account/components/account-shell';
 import { getStudio } from '@/features/studio/api/get-studio';
-import { StudioSidebar, StudioTabs, useStudioSection } from '@/features/studio/components/studio-nav';
+import { useStudioSection } from '@/features/studio/components/studio-nav';
 import { useCurrentUser } from '@/hooks/use-current-user';
 
 import { HeaderActions } from '../header-actions';
@@ -18,7 +19,7 @@ export function useStudio() {
 }
 
 /**
- * مساحة الاستوديو: مستقلّة عن الحساب الشخصي — عمود جانبي بهوية الاستوديو وأقسامه الأربعة،
+ * مساحة الاستوديو: العمود الجانبي نفسه الذي في صفحات الحساب (الاستوديو بند فيه بأقسامه)،
  * وحارس واحد لكل صفحاتها (الاستوديو وحده؛ والخادم يتحقّق من الدور في كل طلب).
  */
 export function StudioLayout() {
@@ -30,17 +31,11 @@ export function StudioLayout() {
   return (
     <>
       <SiteHeader actions={<HeaderActions />} onNavIntent={preloadPage} />
-      <div className="container-page grid grid-cols-[minmax(0,1fr)] gap-6 py-6 sm:py-8 lg:grid-cols-[280px_minmax(0,1fr)] lg:gap-10 lg:py-10">
-        <aside className="hidden lg:sticky lg:top-26 lg:block lg:max-h-[calc(100dvh-8rem)] lg:self-start lg:overflow-y-auto">
-          <StudioSidebar foundry={studio.foundry} />
-        </aside>
-        <StudioTabs foundry={studio.foundry} />
-        <main id="main" className="min-w-0">
-          <PageTransition>
-            <Outlet context={studio} />
-          </PageTransition>
-        </main>
-      </div>
+      <WorkspaceShell user={user}>
+        <PageTransition>
+          <Outlet context={studio} />
+        </PageTransition>
+      </WorkspaceShell>
     </>
   );
 }
