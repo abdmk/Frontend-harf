@@ -1,20 +1,5 @@
 import type { IconComponent } from '@/components/ui/icons';
-import {
-  AlignJustifyIcon,
-  AppsIcon,
-  BadgeIcon,
-  DocumentIcon,
-  GlobeIcon,
-  GridIcon,
-  InterliningIcon,
-  LayersIcon,
-  MagicWandIcon,
-  SlidersIcon,
-  StatsIcon,
-  TextIcon,
-} from '@/components/ui/icons';
-
-import type { LabFont } from '../types';
+import { DocumentIcon, GlobeIcon, GridIcon, LayersIcon, TextIcon } from '@/components/ui/icons';
 
 export type ToolKey =
   | 'overview'
@@ -30,105 +15,52 @@ export type ToolKey =
   | 'compare'
   | 'info';
 
-export type Tool = {
-  key: ToolKey;
-  label: string;
-  lead: string;
-  icon: IconComponent;
-  count?: (f: LabFont) => number | string | null;
-};
+/* ── مساحة العمل الجديدة: خمسة مشاهد بدل اثنتي عشرة صفحة ─────────────────────────────── */
+
+export type ViewKey = 'preview' | 'glyphs' | 'support' | 'compare' | 'file';
+/** أقسام «الحروف» — شرائح داخل المشهد نفسه */
+export type GlyphSub = 'letters' | 'marks' | 'numerals' | 'glyphs';
+
+export type View = { key: ViewKey; label: string; lead: string; icon: IconComponent };
 
 /**
- * أدوات المختبر مجمّعة حسب سؤال المصمّم: كيف يبدو؟ هل حروفه كاملة؟ ماذا يدعم؟ ما هو الملف؟
- * (كانت قائمة مسطّحة من 13 أداة؛ التجميع يجعل التنقّل بينها قراراً واضحاً.)
+ * المشاهد حسب سؤال المصمّم: كيف يبدو نصّي به؟ هل حروفه كاملة؟ هل يدعم ما أحتاج؟ كيف يقارن بغيره؟ ما الملف؟
+ * النص والحجم والنمط في شريط واحد فوقها كلها — يتغيّر مرّة ويتبعه كل مشهد.
  */
-export const TOOL_GROUPS: { label: string; tools: Tool[] }[] = [
+export const VIEWS: View[] = [
   {
-    label: '',
-    tools: [
-      {
-        key: 'overview',
-        label: 'نظرة عامة',
-        lead: 'ملخّص الخط وفحص سريع لأهم نقاط الجودة.',
-        icon: StatsIcon,
-      },
-    ],
-  },
-  {
+    key: 'preview',
     label: 'المعاينة',
-    tools: [
-      { key: 'sample', label: 'عيّنة النص', lead: 'حرّر النص مباشرةً واضبط قياساته وألوانه.', icon: TextIcon },
-      {
-        key: 'waterfall',
-        label: 'تدرّج الأحجام',
-        lead: 'النص نفسه من أصغر أحجام القراءة إلى أحجام العرض.',
-        icon: InterliningIcon,
-      },
-      {
-        key: 'weights',
-        label: 'الأوزان والمحاور',
-        lead: 'الأوزان الحقيقية في الملفات، ومحاور الخط المتغيّر.',
-        icon: SlidersIcon,
-        count: (f) => (f.axes.length ? `${f.axes.length} محاور` : null),
-      },
-    ],
+    lead: 'نصّك بالخط: بالحجم الذي تختاره، بكل أنماط العائلة، ومن أصغر حجم لأكبره.',
+    icon: TextIcon,
   },
+  { key: 'glyphs', label: 'الحروف', lead: 'أشكال كل حرف، التشكيل، الأرقام، وكل محارف الملف.', icon: GridIcon },
   {
-    label: 'الحروف',
-    tools: [
-      {
-        key: 'letters',
-        label: 'الحروف وأشكالها',
-        lead: 'كل حرف بأشكاله السياقية الأربعة وفي كلمة.',
-        icon: GridIcon,
-      },
-      { key: 'marks', label: 'التشكيل', lead: 'مواضع الحركات وتراكبها على الحروف والنصوص.', icon: BadgeIcon },
-      {
-        key: 'numerals',
-        label: 'الأرقام والترقيم',
-        lead: 'الأرقام العربية والهندية والعملات والكسور.',
-        icon: AlignJustifyIcon,
-      },
-      {
-        key: 'glyphs',
-        label: 'المحارف',
-        lead: 'كل محرف في الملف برسمه ورمزه وقياساته.',
-        icon: AppsIcon,
-        count: (f) => f.glyphCount,
-      },
-    ],
-  },
-  {
+    key: 'support',
     label: 'الدعم',
-    tools: [
-      {
-        key: 'languages',
-        label: 'اللغات',
-        lead: 'تقدير مبنيّ على تغطية الحروف المطلوبة لكل لغة.',
-        icon: GlobeIcon,
-      },
-      {
-        key: 'features',
-        label: 'ميزات OpenType',
-        lead: 'الميزات الموجودة فعلاً في الملف — شغّلها وأطفئها وشاهد أثرها.',
-        icon: MagicWandIcon,
-        count: (f) => f.features.length,
-      },
-    ],
+    lead: 'هل الخط جاهز لعملك؟ فحص سريع، اللغات، وميزات OpenType التي في الملف.',
+    icon: GlobeIcon,
   },
-  {
-    label: 'الملف',
-    tools: [
-      { key: 'compare', label: 'المقارنة', lead: 'خطوطك المحمّلة جنباً إلى جنب بالنص نفسه.', icon: LayersIcon },
-      {
-        key: 'info',
-        label: 'المعلومات والتصدير',
-        lead: 'بيانات الملف كما في جداوله، وتصديرها.',
-        icon: DocumentIcon,
-      },
-    ],
-  },
+  { key: 'compare', label: 'المقارنة', lead: 'خطوطك المحمّلة جنباً إلى جنب بالنص نفسه.', icon: LayersIcon },
+  { key: 'file', label: 'الملف', lead: 'بيانات الملف كما في جداوله، وتصديرها.', icon: DocumentIcon },
 ];
 
-export const TOOLS = TOOL_GROUPS.flatMap((g) => g.tools);
-export const toolByKey = (k: string | null) => TOOLS.find((t) => t.key === k) ?? TOOLS[0]!;
+export const GLYPH_SUBS: { key: GlyphSub; label: string }[] = [
+  { key: 'letters', label: 'الحروف وأشكالها' },
+  { key: 'marks', label: 'التشكيل' },
+  { key: 'numerals', label: 'الأرقام والترقيم' },
+  { key: 'glyphs', label: 'كل المحارف' },
+];
+
+export const viewByKey = (k: string | null) => VIEWS.find((v) => v.key === k) ?? VIEWS[0]!;
+export const glyphSubByKey = (k: string | null) => GLYPH_SUBS.find((g) => g.key === k)?.key ?? 'letters';
+
+/** وجهة كل أداة قديمة في المشاهد الجديدة — روابط ?tool= القديمة وبنود الفحص السريع */
+export function routeOfTool(tool: ToolKey): { view: ViewKey; sub?: GlyphSub } {
+  if (tool === 'letters' || tool === 'marks' || tool === 'numerals' || tool === 'glyphs')
+    return { view: 'glyphs', sub: tool };
+  if (tool === 'languages' || tool === 'features' || tool === 'overview') return { view: 'support' };
+  if (tool === 'compare') return { view: 'compare' };
+  if (tool === 'info') return { view: 'file' };
+  return { view: 'preview' };
+}

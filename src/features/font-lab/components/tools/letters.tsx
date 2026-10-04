@@ -5,7 +5,7 @@ import { cn } from '@/lib/cn';
 
 import { useLab } from '../../hooks/lab-context';
 import { hex } from '../../utils/coverage';
-import { Panel, RangeControl, StatusPill } from '../bits';
+import { Panel, StatusPill } from '../bits';
 
 const ZWJ = '‍';
 const BASE = [...'ابتثجحخدذرزسشصضطظعغفقكلمنهوي'];
@@ -30,9 +30,10 @@ function form(c: string, f: (typeof FORMS)[number][0]) {
 const word = (c: string) => `ب${c}ب${c}`;
 
 export function Letters() {
-  const { active, specimen } = useLab();
+  const { active, specimen, settings } = useLab();
   const [pick, setPick] = useState('ب');
-  const [size, setSize] = useState(36);
+  // الحجم من شريط المختبر (واحد لكل المشاهد)، محصوراً بما يناسب هذا العرض
+  const size = Math.min(72, Math.max(20, settings.size));
   const [table, setTable] = useState(false);
   if (!active) return null;
   const set = new Set(active.codepoints);
@@ -123,9 +124,6 @@ export function Letters() {
         <div className="flex flex-wrap items-center justify-between gap-4 border-b px-5 py-4">
           <h3 className="text-control font-semibold">جدول الأشكال كاملاً</h3>
           <div className="flex items-center gap-4">
-            {table && (
-              <RangeControl label="الحجم" value={size} min={20} max={72} onChange={setSize} className="w-56" />
-            )}
             <Button variant="outline" size="sm" aria-expanded={table} onClick={() => setTable((v) => !v)}>
               {table ? 'إخفاء الجدول' : 'عرض الجدول'}
             </Button>

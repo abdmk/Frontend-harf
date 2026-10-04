@@ -1,4 +1,3 @@
-import { useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { CheckIcon, CopyIcon, RefreshIcon } from '@/components/ui/icons';
@@ -7,7 +6,7 @@ import { toast } from '@/components/ui/toast';
 
 import { featureInfo, featureOn, featureSettings } from '../../data/features';
 import { DEFAULT_TEXT, useLab } from '../../hooks/lab-context';
-import { Panel, RangeControl } from '../bits';
+import { Panel } from '../bits';
 
 /** عيّنات تُظهر أثر الميزات — كل سطر يستهدف ميزات بعينها */
 export const OT_SPECIMENS: [string, string][] = [
@@ -25,7 +24,8 @@ export const OT_SPECIMENS: [string, string][] = [
 
 export function Features() {
   const { active, settings, set, specimen } = useLab();
-  const [size, setSize] = useState(32);
+  // الحجم من شريط المختبر (واحد لكل المشاهد)، محصوراً بما يناسب هذا العرض
+  const size = Math.min(64, Math.max(18, settings.size));
   if (!active) return null;
   const tags = active.features.map((f) => f.tag);
   const groups = [
@@ -115,7 +115,6 @@ export function Features() {
           <p className="text-4xl leading-snug" style={specimen(active)}>
             {DEFAULT_TEXT}
           </p>
-          <RangeControl label="الحجم" value={size} min={18} max={64} onChange={setSize} className="w-48 shrink-0" />
         </div>
         <div className="divide-y">
           {OT_SPECIMENS.map(([label, text]) => (

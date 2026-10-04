@@ -2,21 +2,21 @@ import { useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { PlusIcon } from '@/components/ui/icons';
-import { Input } from '@/components/ui/input';
 import { SegmentedControl } from '@/components/ui/segmented-control';
 import { cn } from '@/lib/cn';
 
 import { libraryStarters } from '../../api/library';
 import { useLab } from '../../hooks/lab-context';
-import { Panel, RangeControl } from '../bits';
+import { Panel } from '../bits';
 
 const MAX = 6;
 
 /** الخطوط المحمّلة جنباً إلى جنب بالنص والحجم نفسيهما — مع إضافة خط من المكتبة للمقارنة */
 export function Compare() {
-  const { fonts, active, settings, set, specimen, addFromLibrary, busy } = useLab();
+  const { fonts, active, settings, specimen, addFromLibrary, busy } = useLab();
   const [picked, setPicked] = useState<string[] | null>(null);
-  const [size, setSize] = useState(40);
+  // الحجم من شريط المختبر (واحد لكل المشاهد)، محصوراً بما يناسب هذا العرض
+  const size = Math.min(96, Math.max(16, settings.size));
   const [layout, setLayout] = useState<'rows' | 'grid'>('rows');
   if (!active) return null;
   const chosen = (picked ?? fonts.slice(0, MAX).map((f) => f.id)).filter((id) => fonts.some((f) => f.id === id));
@@ -61,14 +61,7 @@ export function Compare() {
             ))}
           </div>
         )}
-        <div className="grid items-end gap-4 border-t pt-4 sm:grid-cols-[minmax(0,1fr)_14rem_auto]">
-          <Input
-            aria-label="نص المقارنة"
-            value={settings.text}
-            onChange={(e) => set({ text: e.target.value.slice(0, 200) })}
-            className="h-11 rounded-full px-5"
-          />
-          <RangeControl label="الحجم" value={size} min={16} max={96} onChange={setSize} />
+        <div className="flex justify-end border-t pt-4">
           <SegmentedControl
             label="التخطيط"
             value={layout}

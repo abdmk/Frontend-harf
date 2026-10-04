@@ -6,7 +6,7 @@ import { type LangKey, LANGUAGES } from '../../data/languages';
 import { useLab } from '../../hooks/lab-context';
 import type { LabFont } from '../../types';
 import { coverage, hex, STATUS_LABEL } from '../../utils/coverage';
-import { Panel, RangeControl, StatusPill } from '../bits';
+import { Panel, StatusPill } from '../bits';
 
 /** اللغات التي يعلنها الخط صراحةً في جدول GSUB (وسوم langSys) */
 function declared(font: LabFont) {
@@ -17,8 +17,9 @@ function declared(font: LabFont) {
 }
 
 export function Languages() {
-  const { active, specimen } = useLab();
-  const [size, setSize] = useState(32);
+  const { active, specimen, settings } = useLab();
+  // الحجم من شريط المختبر (واحد لكل المشاهد)، محصوراً بما يناسب هذا العرض
+  const size = Math.min(64, Math.max(18, settings.size));
   const [only, setOnly] = useState<LangKey | 'all'>('all');
   if (!active) return null;
   const set = new Set(active.codepoints);
@@ -49,7 +50,6 @@ export function Languages() {
             </Chip>
           ))}
         </div>
-        <RangeControl label="حجم العيّنات" value={size} min={18} max={64} onChange={setSize} className="w-56" />
       </div>
 
       {visible.map(({ l, c }) => (
