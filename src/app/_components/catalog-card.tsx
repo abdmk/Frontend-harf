@@ -9,7 +9,10 @@ import type { Font } from '@/types/domain/font';
 export function CatalogCard({
   font,
   ...rest
-}: { font: Font } & Pick<ComponentProps<typeof FontCard>, 'specimen' | 'meta' | 'extra' | 'className'>) {
+}: { font: Font } & Pick<
+  ComponentProps<typeof FontCard>,
+  'specimen' | 'specimenRatio' | 'meta' | 'extra' | 'className'
+>) {
   return (
     <FontCard
       {...rest}

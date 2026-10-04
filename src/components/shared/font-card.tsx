@@ -49,6 +49,7 @@ export function FontCard({
   specimen,
   meta,
   extra,
+  specimenRatio = 'default',
   className,
 }: {
   font: Font;
@@ -61,6 +62,8 @@ export function FontCard({
   meta?: ReactNode;
   /** سطر إضافي فوق سطر الترخيص */
   extra?: ReactNode;
+  /** wide: عيّنة أقصر لنصّ قصير (نتائج «عين») — نفس البطاقة، أقلّ فراغاً */
+  specimenRatio?: 'default' | 'wide';
   className?: string;
 }) {
   return (
@@ -72,7 +75,10 @@ export function FontCard({
     >
       <div
         aria-hidden
-        className="relative grid aspect-[7/5] place-items-center overflow-hidden border-b bg-sunken px-6"
+        className={cn(
+          'relative grid place-items-center overflow-hidden border-b bg-sunken px-6',
+          specimenRatio === 'wide' ? 'aspect-[2/1]' : 'aspect-[7/5]',
+        )}
       >
         {font.face && (
           <span
