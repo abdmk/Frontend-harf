@@ -94,7 +94,7 @@ test.describe('مختبر الخط', () => {
 
   test('Graphik Arabic بملفات منفصلة: كل الملفات تُقرأ، النص يتبع كل المشاهد، والـHero يختفي', async ({ page }) => {
     await page.goto('/tools/font-lab');
-    await expect(page.getByRole('heading', { level: 1, name: /أفضل أداة لاختبار الخطوط/ })).toBeVisible();
+    await expect(page.getByRole('heading', { level: 1, name: /اكتشف خطّك قبل أن تستخدمه/ })).toBeVisible();
     const weights = [250, 270, 300, 400, 500, 600];
     await page
       .locator('input[type=file][accept]')
@@ -108,7 +108,7 @@ test.describe('مختبر الخط', () => {
       );
     // العائلة الطباعية (name 16) لا اسم كل ملف؛ والبداية بالوزن العادي لا بأول ملف
     await expect(page.getByRole('heading', { level: 1, name: 'Graphik Arabic' })).toBeVisible({ timeout: 20_000 });
-    await expect(page.getByText('أفضل أداة لاختبار الخطوط')).toHaveCount(0);
+    await expect(page.getByText('اكتشف خطّك')).toHaveCount(0);
     const styles = page.getByRole('radiogroup', { name: 'النمط' });
     await expect(styles.getByRole('radio')).toHaveCount(6);
     await expect(styles.getByRole('radio', { name: 'Regular' })).toHaveAttribute('aria-checked', 'true');
@@ -127,7 +127,7 @@ test.describe('مختبر الخط', () => {
     await expect(styles.getByRole('radio', { name: 'SemiBold' })).toHaveAttribute('aria-checked', 'true');
 
     await page.getByRole('button', { name: 'ابدأ من جديد' }).click();
-    await expect(page.getByRole('heading', { level: 1, name: /أفضل أداة لاختبار الخطوط/ })).toBeVisible();
+    await expect(page.getByRole('heading', { level: 1, name: /اكتشف خطّك قبل أن تستخدمه/ })).toBeVisible();
   });
 
   test('ملف ليس خطاً يُرفض برسالة', async ({ page }) => {
