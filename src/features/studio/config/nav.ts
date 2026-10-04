@@ -26,7 +26,7 @@ export const STUDIO_NAV: StudioNavItem[] = [
   },
 ];
 
-export const STUDIO_PROFILE_ITEM = { section: 'profile', label: 'الملف العام', Icon: UserIcon } as const;
+export const STUDIO_PROFILE_ITEM = { section: 'profile', label: 'الملف الشخصي', Icon: UserIcon } as const;
 
 export const STUDIO_TITLE: Record<string, string> = {
   '': 'نظرة عامة',

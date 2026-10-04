@@ -1,6 +1,5 @@
 import { Link } from 'react-router';
 
-import { HarfLockup } from '@/components/shared/harf-logo';
 import { Button } from '@/components/ui/button';
 import { CheckIcon, ClockIcon, ExclamationIcon, ShieldCheckIcon, UploadIcon } from '@/components/ui/icons';
 import { paths } from '@/config/paths';
@@ -88,17 +87,11 @@ export function VerificationStatusScreen({ record, onEdit }: { record: Verificat
   const { Icon } = view;
 
   return (
-    <div className="flex min-h-dvh flex-col bg-background">
-      <header className="flex h-16 items-center px-4 sm:px-8">
-        <Link
-          to={paths.home.getHref()}
-          aria-label="حرف — الرئيسية"
-          className="rounded-sm outline-none focus-visible:ring-2 focus-visible:ring-ring"
-        >
-          <HarfLockup className="h-7 w-auto" />
-        </Link>
-      </header>
-      <main className="mx-auto flex w-full max-w-lg flex-1 flex-col items-center px-4 pt-10 pb-16 text-center sm:pt-16">
+    <div className="flex flex-col">
+      <main
+        id="main"
+        className="mx-auto flex w-full max-w-lg flex-1 flex-col items-center px-4 pt-10 pb-16 text-center sm:pt-16"
+      >
         <span className={cn('grid size-16 animate-pop-in place-items-center rounded-2xl [&_svg]:size-7', view.tone)}>
           <Icon />
         </span>

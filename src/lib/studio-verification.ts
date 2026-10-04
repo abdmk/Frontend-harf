@@ -92,32 +92,8 @@ export function missingOf(r: VerificationRecord): Missing[] {
 
 const now = () => new Date().toISOString();
 
-/** طلبات تجريبية للإدارة + الاستوديو التجريبي القائم (معتمد سلفاً — لديه مبيعات) */
+/** طلبات تجريبية بانتظار الإدارة — لا حساب موثّق سلفاً: كل توثيق يمرّ بالمسار كاملاً */
 const SEED: Record<string, VerificationRecord> = {
-  'u-abdmk': {
-    userId: 'u-abdmk',
-    status: 'approved',
-    info: {
-      legalName: 'عبدالملك جاسم محمد',
-      studioName: 'مسبك تجاريب',
-      entity: 'company',
-      companyName: 'مسبك تجاريب للتصميم',
-      country: 'IQ',
-      city: 'بغداد',
-    },
-    docType: 'national_id',
-    docs: {},
-    payout: { method: 'bank', holder: 'مسبك تجاريب', last4: '4471', country: 'IQ', verifiedAt: '2025-08-02T10:00:00Z' },
-    agreement: {
-      version: AGREEMENT_VERSION,
-      signedAt: '2025-08-02T10:04:00Z',
-      signer: 'عبدالملك جاسم محمد',
-      signature: 'd-seedsign1',
-    },
-    submittedAt: '2025-08-02T10:05:00Z',
-    decidedAt: '2025-08-03T09:12:00Z',
-    updatedAt: '2025-08-03T09:12:00Z',
-  },
   'u-seed-noor': {
     userId: 'u-seed-noor',
     status: 'pending',
@@ -180,7 +156,8 @@ const SEED: Record<string, VerificationRecord> = {
 
 type Stored = Record<string, VerificationRecord>;
 const store = createJsonStore<Stored>(
-  'harf_studio_verification',
+  // v2: صُفّرت كل التوثيقات السابقة (طلب المالك) — المفتاح الجديد يتجاهل ما حُفظ قبلها
+  'harf_studio_verification_v2',
   (x) => {
     const out: Stored = { ...SEED };
     for (const [id, r] of Object.entries(asObject(x)).slice(0, 500)) {

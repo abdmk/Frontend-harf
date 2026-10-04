@@ -59,8 +59,9 @@ describe('توثيق الاستوديو', () => {
     setDemoSession('newstudio');
   });
 
-  it('الاستوديو القائم معتمد، والجديد لم يبدأ — ولا بيع قبل الاعتماد', () => {
-    expect(canSell('u-abdmk')).toBe(true);
+  it('لا حساب موثّق سلفاً — ولا بيع قبل الاعتماد', () => {
+    expect(canSell('u-abdmk')).toBe(false);
+    expect(statusOf('u-abdmk')).toBe('none');
     expect(statusOf(ME)).toBe('none');
     expect(canSell(ME)).toBe(false);
   });

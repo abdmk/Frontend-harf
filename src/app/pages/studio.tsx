@@ -1,4 +1,6 @@
 import { PageMeta } from '@/components/shared/page-meta';
+import { updateProfile } from '@/features/account/api/actions';
+import { ProfileInfoForm, ProfileSummary } from '@/features/account/components/sections/profile-section';
 import { studioTotals } from '@/features/studio/api/get-studio';
 import { FinanceEmpty, FinanceOverview } from '@/features/studio/components/money/finance-overview';
 import { PayoutsSection } from '@/features/studio/components/money/payouts-section';
@@ -9,6 +11,7 @@ import { StudioFonts } from '@/features/studio/components/studio-fonts';
 import { StudioOverview } from '@/features/studio/components/studio-overview';
 import { StudioPageHeader } from '@/features/studio/components/studio-page-header';
 import { VerificationCallout } from '@/features/verification/components/verification-callout';
+import { requireUser } from '@/lib/auth';
 
 import { useStudio } from '../layouts/studio-layout';
 
@@ -74,13 +77,27 @@ export function StudioFinancePage({ page }: { page: keyof typeof FINANCE }) {
   );
 }
 
+/** «الملف الشخصي» للاستوديو: الحساب والصفحة العامة في صفحة واحدة — لا ملفّان منفصلان */
 export function StudioProfilePage() {
   const { foundry } = useStudio();
+  const user = requireUser();
   return (
     <>
-      <PageMeta title="الملف العام" noindex />
-      <StudioPageHeader title="الملف العام" description="ما يراه الناس في صفحة استوديوك." />
-      <PublicProfileEditor foundry={foundry} />
+      <PageMeta title="الملف الشخصي" noindex />
+      <StudioPageHeader title="الملف الشخصي" description="حسابك وما يراه الناس في صفحتك — في مكان واحد." />
+      <div className="flex flex-col gap-5">
+        {user && <ProfileSummary user={user} />}
+        <PublicProfileEditor foundry={foundry} />
+        {user && (
+          <ProfileInfoForm
+            user={user}
+            action={updateProfile}
+            compact
+            title="معلومات الفواتير"
+            description="الاسم الذي يظهر على تراخيصك وفواتيرك — لا يظهر في صفحتك العامة."
+          />
+        )}
+      </div>
     </>
   );
 }

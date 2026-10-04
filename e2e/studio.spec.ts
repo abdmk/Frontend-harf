@@ -1,4 +1,4 @@
-import { expect, test } from './fixtures';
+import { expect, seedVerifiedStudio, test } from './fixtures';
 
 test.describe('الاستوديو والإدارة', () => {
   test('مساحة الاستوديو للاستوديو وحده، بعمودها الجانبي وأقسامها', async ({ page }) => {
@@ -45,8 +45,8 @@ test.describe('الاستوديو والإدارة', () => {
     await expect(page.getByRole('table', { name: 'سجلّ المبيعات' })).toBeVisible();
     await page.getByRole('button', { name: 'مستردّة' }).click();
     await expect(page.getByRole('table', { name: 'سجلّ المبيعات' }).getByRole('row')).toHaveCount(2);
-    // الحساب الشخصي لم يعد يحمل أقسام المال
-    await page.goto('/account/profile');
+    // الحساب الشخصي لم يعد يحمل أقسام المال (ملفّه الشخصي صار في الاستوديو؛ نتفقّد قسماً آخر)
+    await page.goto('/account/library');
     const acc = page.getByRole('navigation', { name: 'قائمة الحساب' });
     await expect(acc.getByRole('link', { name: 'المبيعات' })).toHaveCount(0);
     await expect(acc.getByRole('link', { name: 'الاستوديو', exact: true })).toBeVisible();
@@ -78,6 +78,7 @@ test.describe('الاستوديو والإدارة', () => {
   });
 
   test('صور الخط: تُرتَّب بالسحب، وبالأسهم من لوحة المفاتيح', async ({ page }) => {
+    await seedVerifiedStudio(page);
     await page.goto('/studio/publish?as=studio');
     await page.getByRole('button', { name: /الصور/ }).first().click();
     const png = Buffer.from(
@@ -125,6 +126,7 @@ test.describe('الاستوديو والإدارة', () => {
   });
 
   test('مساحة النشر: «التالي» يسمّي النواقص، والمراجعة تعرض المُدخل ثم إرسال ناجح', async ({ page }) => {
+    await seedVerifiedStudio(page);
     await page.goto('/studio/publish?as=studio');
     await expect(page.getByText('الخطوة 1 من 5')).toBeVisible();
     // «التالي» بلا ملفات: يسمّي الناقص ولا يتقدّم
@@ -254,7 +256,7 @@ test.describe('السحوبات', () => {
   });
 });
 
-test('الملف العام: صور آمنة فقط، روابط بأسماء مستخدمين، و«غير مكتمل» يختفي عند الاكتمال', async ({ page }) => {
+test('الملف الشخصي: صور آمنة فقط، روابط بأسماء مستخدمين، و«غير مكتمل» يختفي عند الاكتمال', async ({ page }) => {
   await page.goto('/studio/profile?as=studio');
   const side = page.getByRole('navigation', { name: 'أقسام الاستوديو' }).filter({ visible: true });
   await expect(side.getByText('غير مكتمل')).toBeVisible();
@@ -290,6 +292,8 @@ test('الملف العام: صور آمنة فقط، روابط بأسماء م
   await coverInput.setInputFiles({ name: 'cover.png', mimeType: 'image/png', buffer: await png(1600, 400) });
   await expect(page.getByRole('img', { name: 'غلاف الاستوديو' })).toBeVisible();
 
+  // الروابط مطويّة افتراضياً
+  await page.getByText('روابط التواصل', { exact: true }).click();
   await page.getByLabel('Instagram').fill('bad handle!');
   await page.getByRole('button', { name: 'حفظ الملف العام' }).click();
   await expect(page.getByText('اسم المستخدم فقط — حروف لاتينية وأرقام و . _ -')).toBeVisible();

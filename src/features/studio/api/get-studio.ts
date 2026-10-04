@@ -12,7 +12,8 @@ export function getStudio(user: User) {
   return { foundry: emptyFoundry(user), fonts: [] as typeof MOCK_STUDIO_FONTS, analytics: EMPTY_ANALYTICS };
 }
 
-const MOCK_STUDIO_OWNER = 'u-abdmk';
+/** صاحب الاستوديو التجريبي — علامة توثيق مسبكه تتبع اعتماد حسابه */
+export const MOCK_STUDIO_OWNER = 'u-abdmk';
 
 function emptyFoundry(user: User): Foundry {
   return {

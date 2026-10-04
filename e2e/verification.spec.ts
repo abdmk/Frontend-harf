@@ -85,7 +85,7 @@ test.describe('توثيق الحساب', () => {
     await expect(page.getByRole('heading', { name: 'طلبك قيد المراجعة' })).toBeVisible();
 
     // لا شيء حسّاس كامل في التخزين
-    const stored = await page.evaluate(() => localStorage.getItem('harf_studio_verification') ?? '');
+    const stored = await page.evaluate(() => localStorage.getItem('harf_studio_verification_v2') ?? '');
     expect(stored).not.toContain('4111111111111111');
 
     // قيد المراجعة: النشر متاح للمجاني فقط

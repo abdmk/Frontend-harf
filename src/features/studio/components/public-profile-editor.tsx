@@ -8,6 +8,7 @@ import {
   ArrowLeftIcon,
   BuildingIcon,
   CheckIcon,
+  ChevronDownIcon,
   GlobeIcon,
   PictureIcon,
   TrashIcon,
@@ -110,6 +111,8 @@ export function PublicProfileEditor({ foundry }: { foundry: Foundry }) {
     };
   });
   const [errors, setErrors] = useState<Record<string, string | undefined>>({});
+  const linkCount = (draft.website.trim() ? 1 : 0) + Object.values(draft.social).filter((v) => v?.trim()).length;
+  const linkErrors = !!errors.website || (Object.keys(SOCIALS) as SocialKey[]).some((k) => errors[k]);
   const [saving, setSaving] = useState(false);
   const id = useId();
   const checklist = profileChecklist(draft);
@@ -368,56 +371,68 @@ export function PublicProfileEditor({ foundry }: { foundry: Foundry }) {
         </Field>
       </SectionCard>
 
-      <SectionCard title="روابط التواصل" description="تظهر أيقونات في صفحتك. اسم المستخدم فقط.">
-        <ul className="flex flex-col divide-y">
-          <li className="pb-4">
-            <Field>
-              <FieldLabel htmlFor={`${id}-web`} className="flex items-center gap-2">
-                <GlobeIcon className="size-4" />
-                الموقع الإلكتروني
-              </FieldLabel>
-              <Input
-                id={`${id}-web`}
-                dir="ltr"
-                type="url"
-                placeholder="https://"
-                maxLength={200}
-                value={draft.website}
-                onChange={(e) => set({ website: e.target.value })}
-                aria-invalid={!!errors.website}
-              />
-              <FieldError>{errors.website}</FieldError>
-            </Field>
-          </li>
-          {(Object.keys(SOCIALS) as SocialKey[]).map((k) => (
-            <li key={k} className="py-4 last:pb-0">
+      {/* الروابط مطويّة افتراضياً — تنفتح بانسياب عند الضغط، وتنفتح وحدها إن كان فيها خطأ */}
+      <details open={linkErrors || undefined} className="group animate-fade-up rounded-xl border bg-card">
+        <summary className="flex cursor-pointer list-none items-center justify-between gap-4 rounded-xl px-6 py-5 outline-none select-none hover:bg-sunken/50 focus-visible:ring-2 focus-visible:ring-ring [&::-webkit-details-marker]:hidden">
+          <span>
+            <span className="block text-lg font-semibold">روابط التواصل</span>
+            <span className="mt-1 block text-meta text-muted-foreground">
+              {linkCount > 0 ? `${linkCount} مضافة · ` : ''}تظهر أيقونات في صفحتك. اسم المستخدم فقط.
+            </span>
+          </span>
+          <ChevronDownIcon className="size-5 shrink-0 text-muted-foreground transition-transform duration-(--dur-slow) ease-out-quint group-open:rotate-180" />
+        </summary>
+        <div className="border-t p-6">
+          <ul className="flex flex-col divide-y">
+            <li className="pb-4">
               <Field>
-                <FieldLabel htmlFor={`${id}-${k}`}>{SOCIALS[k].label}</FieldLabel>
-                <div
+                <FieldLabel htmlFor={`${id}-web`} className="flex items-center gap-2">
+                  <GlobeIcon className="size-4" />
+                  الموقع الإلكتروني
+                </FieldLabel>
+                <Input
+                  id={`${id}-web`}
                   dir="ltr"
-                  className="flex items-stretch overflow-hidden rounded-sm border bg-card focus-within:ring-2 focus-within:ring-ring"
-                >
-                  <span className="flex items-center bg-sunken px-3 text-meta text-muted-foreground">
-                    {SOCIALS[k].prefix}
-                  </span>
-                  <input
-                    id={`${id}-${k}`}
-                    value={draft.social[k] ?? ''}
-                    maxLength={41}
-                    spellCheck={false}
-                    autoComplete="off"
-                    placeholder="username"
-                    onChange={(e) => set({ social: { ...draft.social, [k]: e.target.value } })}
-                    aria-invalid={!!errors[k]}
-                    className="h-10 min-w-0 flex-1 bg-transparent px-3 text-control outline-none"
-                  />
-                </div>
-                <FieldError>{errors[k]}</FieldError>
+                  type="url"
+                  placeholder="https://"
+                  maxLength={200}
+                  value={draft.website}
+                  onChange={(e) => set({ website: e.target.value })}
+                  aria-invalid={!!errors.website}
+                />
+                <FieldError>{errors.website}</FieldError>
               </Field>
             </li>
-          ))}
-        </ul>
-      </SectionCard>
+            {(Object.keys(SOCIALS) as SocialKey[]).map((k) => (
+              <li key={k} className="py-4 last:pb-0">
+                <Field>
+                  <FieldLabel htmlFor={`${id}-${k}`}>{SOCIALS[k].label}</FieldLabel>
+                  <div
+                    dir="ltr"
+                    className="flex items-stretch overflow-hidden rounded-sm border bg-card focus-within:ring-2 focus-within:ring-ring"
+                  >
+                    <span className="flex items-center bg-sunken px-3 text-meta text-muted-foreground">
+                      {SOCIALS[k].prefix}
+                    </span>
+                    <input
+                      id={`${id}-${k}`}
+                      value={draft.social[k] ?? ''}
+                      maxLength={41}
+                      spellCheck={false}
+                      autoComplete="off"
+                      placeholder="username"
+                      onChange={(e) => set({ social: { ...draft.social, [k]: e.target.value } })}
+                      aria-invalid={!!errors[k]}
+                      className="h-10 min-w-0 flex-1 bg-transparent px-3 text-control outline-none"
+                    />
+                  </div>
+                  <FieldError>{errors[k]}</FieldError>
+                </Field>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </details>
 
       <div className="flex flex-wrap items-center justify-between gap-3">
         <Link

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link } from 'react-router';
+import { Link, Navigate } from 'react-router';
 
 import { CatalogCard } from '@/app/_components/catalog-card';
 import { EmptyState } from '@/components/shared/empty-state';
@@ -45,6 +45,8 @@ function UsageWithPlans({ user }: { user: User }) {
 export function SectionContent({ user, section }: { user: User; section: AccountSection }) {
   switch (section) {
     case 'profile':
+      // الاستوديو: ملف واحد يجمع الحساب والصفحة العامة في /studio/profile
+      if (user.plan === 'studio') return <Navigate to={paths.studio.getHref('profile')} replace />;
       return <ProfileSection user={user} action={updateProfile} />;
     case 'usage':
       return <UsageWithPlans user={user} />;

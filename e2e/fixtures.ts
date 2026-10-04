@@ -39,3 +39,45 @@ export async function resultCount(page: Page) {
     .textContent();
   return Number.parseInt(text ?? '', 10);
 }
+
+/** حساب الاستوديو التجريبي موثّق مسبقاً — لاختبارات النشر التي تفترض اعتماد التوثيق (لا حساب موثّق افتراضياً) */
+export async function seedVerifiedStudio(page: Page) {
+  await page.addInitScript(() => {
+    if (localStorage.getItem('harf_studio_verification_v2')) return;
+    localStorage.setItem(
+      'harf_studio_verification_v2',
+      JSON.stringify({
+        'u-abdmk': {
+          userId: 'u-abdmk',
+          status: 'approved',
+          info: {
+            legalName: 'عبدالملك جاسم محمد',
+            studioName: 'مسبك تجاريب',
+            entity: 'company',
+            companyName: 'مسبك تجاريب للتصميم',
+            country: 'IQ',
+            city: 'بغداد',
+          },
+          docType: 'national_id',
+          docs: {},
+          payout: {
+            method: 'bank',
+            holder: 'مسبك تجاريب',
+            last4: '4471',
+            country: 'IQ',
+            verifiedAt: '2025-08-02T10:00:00Z',
+          },
+          agreement: {
+            version: '2026.10',
+            signedAt: '2025-08-02T10:04:00Z',
+            signer: 'عبدالملك جاسم محمد',
+            signature: 'd-seedsign1',
+          },
+          submittedAt: '2025-08-02T10:05:00Z',
+          decidedAt: '2025-08-03T09:12:00Z',
+          updatedAt: '2025-08-03T09:12:00Z',
+        },
+      }),
+    );
+  });
+}
