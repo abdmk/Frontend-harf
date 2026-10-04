@@ -3,7 +3,7 @@ import { Container } from '@/components/layout/container';
 import { ToolHero } from '@/components/layout/tool-hero';
 import { PageMeta } from '@/components/shared/page-meta';
 import { Button } from '@/components/ui/button';
-import { MagicWandIcon } from '@/components/ui/icons';
+import { MagicWandIcon, ShieldCheckIcon } from '@/components/ui/icons';
 import { FontMatchingTool, type ResultCardProps } from '@/features/font-matching/components/font-matching-tool';
 import { cn } from '@/lib/cn';
 
@@ -79,8 +79,10 @@ export function FontMatchingPage() {
         description="ارفع صورة فيها كتابة عربية، ونقارن شكل حروفها بخطوط مكتبة حرف — في متصفّحك."
       />
       <ToolHero
-        badgeIcon={<MagicWandIcon />}
-        badge="مطابقة بصرية داخل متصفّحك"
+        icon={<MagicWandIcon />}
+        name="عين"
+        noteIcon={<ShieldCheckIcon />}
+        note="مطابقة بصرية داخل متصفّحك"
         title="أفضل أداة AI!"
         highlight="لمطابقة الخطوط العربية"
         lead="ارفع الصورة واكتشف أي خط في ثوانٍ معدودة، يحلل ويطابق مع أكثر من 20,000 خط عربي"

@@ -1,7 +1,7 @@
 import { Container } from '@/components/layout/container';
 import { ToolHero } from '@/components/layout/tool-hero';
 import { PageMeta } from '@/components/shared/page-meta';
-import { ChevronDownIcon, ShieldCheckIcon } from '@/components/ui/icons';
+import { CheckIcon, ChevronDownIcon, TextIcon } from '@/components/ui/icons';
 import { HowCards } from '@/features/text-tools/components/how-cards';
 import { ReverseWorkspace } from '@/features/text-tools/components/reverse-workspace';
 
@@ -48,11 +48,13 @@ export function ReverseTextPage() {
         description="حوّل النص العربي ليظهر متّصلاً وصحيح الاتجاه في After Effects وPhotoshop وUnity والبرامج التي لا تدعم العربية."
       />
       <ToolHero
-        badgeIcon={<ShieldCheckIcon />}
-        badge="في متصفّحك — لا يُرسل نصّك إلى أي مكان"
-        title="عكس النص"
-        highlight="عربية متّصلة في أي برنامج"
-        lead="برامج مثل After Effects وUnity تعرض العربية حروفاً منفصلة ومقلوبة. اكتب نصّك، وانسخ النتيجة جاهزة للّصق."
+        icon={<TextIcon />}
+        name="عكس النص"
+        title="نص عربي"
+        highlight="جاهز لأي برنامج"
+        lead="حوّل النص العربي إلى صيغة مناسبة للبرامج التي لا تدعم العربية بشكل صحيح، ثم انسخه واستخدمه مباشرة."
+        noteIcon={<CheckIcon />}
+        note="نصّك يبقى مقروءاً أينما استخدمته"
       />
 
       <ReverseWorkspace />

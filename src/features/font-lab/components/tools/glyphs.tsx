@@ -267,7 +267,7 @@ function GlyphDetail({ font, picked, name }: { font: LabFont; picked: Picked; na
   const stroke = font.unitsPerEm / 250;
 
   return (
-    <Panel label="تفاصيل المحرف" className="overflow-hidden xl:sticky xl:top-24">
+    <Panel label="تفاصيل المحرف" className="overflow-hidden xl:sticky xl:top-(--lab-sticky,6rem)">
       <svg
         viewBox={`${x0} ${-top} ${w} ${h}`}
         role="img"

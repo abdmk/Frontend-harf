@@ -3,47 +3,65 @@ import type { ReactNode } from 'react';
 import { cn } from '@/lib/cn';
 
 /**
- * بداية صفحات الأدوات التي تبدأ برفع ملف (عين، مختبر الخط): كل شيء في المنتصف —
- * شارة صغيرة، عنوان من سطرين (الثاني بلون العلامة)، ووصف بعرض قراءة. بطاقة الرفع تأتي بعده مباشرة
- * فتكون أول ما يُفعل في الصفحة. مسطّحة عمداً: لا تدرّجات قبل اعتماد «اللحظات اللونية».
+ * بداية صفحات الأدوات (نسق، عكس النص، مختبر الخط، عين): كل شيء في المنتصف بتسلسل واحد —
+ * اسم الأداة (أيقونة + اسم) ← العنوان الرئيسي، أقوى عنصر، من سطرين والثاني بلون العلامة ←
+ * الوصف تحته مباشرة ← سطر مساند صغير هادئ (اختياري) يقرّب حقيقة عن الأداة من أول فعل في الصفحة.
+ * مسطّحة عمداً: لا تدرّجات قبل اعتماد «اللحظات اللونية».
  */
 export function ToolHero({
-  badge,
-  badgeIcon,
+  name,
+  icon,
   title,
   highlight,
   lead,
+  note,
+  noteIcon,
   className,
 }: {
-  /** شارة فوق العنوان — حقيقة عن الأداة، لا شعار تسويقي */
-  badge: ReactNode;
-  /** أيقونة صغيرة داخل الشارة — بدلها نقطة */
-  badgeIcon?: ReactNode;
+  /** اسم الأداة — يعرّف بها فوق العنوان */
+  name: string;
+  /** أيقونة الأداة بجانب اسمها */
+  icon: ReactNode;
+  /** السطر الأول من العنوان الرئيسي */
   title: string;
   /** السطر الثاني من العنوان — بلون العلامة */
   highlight: string;
   lead: ReactNode;
+  /** سطر مساند تحت الوصف — حقيقة عن الأداة، لا شعار تسويقي */
+  note?: ReactNode;
+  /** أيقونة السطر المساند — بدلها نقطة */
+  noteIcon?: ReactNode;
   className?: string;
 }) {
   return (
-    <header className={cn('mx-auto mb-10 max-w-4xl text-center sm:mb-14', className)}>
-      <p className="inline-flex animate-fade-up items-center gap-2 rounded-full bg-tint-brand px-4 py-1.5 text-meta font-medium text-primary">
-        {badgeIcon ? (
-          <span aria-hidden className="[&_svg]:size-4">
-            {badgeIcon}
-          </span>
-        ) : (
-          <span aria-hidden className="size-1.5 rounded-full bg-primary-fill" />
-        )}
-        {badge}
+    <hgroup className={cn('mx-auto mb-10 flex max-w-3xl flex-col items-center text-center sm:mb-14', className)}>
+      <p className="inline-flex animate-fade-up items-center gap-2.5 text-lg font-semibold sm:text-xl">
+        <span
+          aria-hidden
+          className="grid size-9 place-items-center rounded-md bg-tint-brand text-primary [&_svg]:size-4.5"
+        >
+          {icon}
+        </span>
+        {name}
       </p>
-      <h1 className="mt-6 animate-fade-up text-hero leading-[1.2] font-bold tracking-tight text-balance">
-        {title}
-        <span className="block text-primary">{highlight}</span>
+      <h1 className="mt-5 animate-fade-up text-hero leading-[1.2] font-bold tracking-tight text-balance sm:mt-6">
+        {title} <span className="block text-primary">{highlight}</span>
       </h1>
-      <p className="mx-auto mt-5 max-w-[60ch] animate-fade-up text-lead leading-relaxed text-pretty text-muted-foreground">
+      <p className="mt-5 max-w-[52ch] animate-fade-up text-base leading-relaxed text-balance text-muted-foreground sm:text-lg">
         {lead}
       </p>
-    </header>
+      {note ? (
+        <p className="mt-6 inline-flex animate-fade-up items-center gap-2 rounded-full border px-3.5 py-1.5 text-meta text-muted-foreground">
+          {noteIcon ? (
+            <span aria-hidden className="text-primary [&_svg]:size-3.5">
+              {noteIcon}
+            </span>
+          ) : (
+            <span aria-hidden className="size-1.5 rounded-full bg-primary-fill" />
+          )}
+          {note}
+        </p>
+      ) : null}
+    </hgroup>
   );
 }

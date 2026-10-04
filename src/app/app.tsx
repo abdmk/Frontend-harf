@@ -64,6 +64,7 @@ export function App() {
           <Route path="tools/reverse-text" element={<ReverseTextPage />} />
           <Route path="tools/nasaq" element={<NasaqPage />} />
           <Route path="tools/font-lab" element={<FontLabPage />} />
+          <Route path="tools/font-lab-b" element={<FontLabPage layout="b" />} />
           <Route path="tools/font-matching" element={<FontMatchingPage />} />
           <Route path="blog" element={<BlogPage />} />
           <Route path="blog/:slug" element={<BlogPostPage />} />

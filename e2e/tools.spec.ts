@@ -4,7 +4,7 @@ test('عكس النص: من الترويسة، والنتيجة متّصلة و�
   await page.goto('/');
   await page.getByRole('link', { name: 'عكس النص' }).first().click();
   await expect(page).toHaveURL(/\/tools\/reverse-text$/);
-  await expect(page.getByRole('heading', { level: 1, name: /^عكس النص/ })).toBeVisible();
+  await expect(page.getByRole('heading', { level: 1, name: /نص عربي جاهز لأي برنامج/ })).toBeVisible();
 
   await page.getByRole('textbox', { name: 'نصّك بالعربية' }).fill('سلام 2026');
   const out = page.getByRole('textbox', { name: /^النتيجة/ });
