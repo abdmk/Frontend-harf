@@ -57,11 +57,13 @@ test.describe('توثيق الحساب', () => {
     await dlg.getByLabel('الاسم على البطاقة').fill('هبة عبدالحميد');
     await dlg.getByLabel('رقم بطاقة كي كارد').fill('4111 1111 1111 1111');
     await dlg.getByRole('checkbox').click();
-    await dlg.getByRole('button', { name: 'متابعة' }).click();
+    // زرّ رئيسي واحد في الخطوة: «اتفاقية الناشر» في الأسفل يقدّم البيانات ثم الرمز، ثم ينتقل
+    await expect(dlg.getByRole('button', { name: 'متابعة' })).toHaveCount(0);
+    const next = page.getByRole('button', { name: /اتفاقية الناشر/ });
+    await next.click();
     await page.getByLabel('الرقم 1 من 6').fill('246810');
-    await page.getByRole('button', { name: 'تأكيد وحفظ' }).click();
-    await expect(page.getByText('كي كارد •••• 1111')).toBeVisible();
-    await page.getByRole('button', { name: /اتفاقية الناشر/ }).click();
+    await expect(page.getByRole('button', { name: 'تأكيد وحفظ' })).toHaveCount(0);
+    await next.click();
 
     // 4. الاتفاقية: 35٪ واضحة، والتوقيع يتطلّب الإقرار
     await expect(page.getByText(/تستقطع حرف 35٪ من قيمة كل عملية بيع/)).toBeVisible();

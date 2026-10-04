@@ -36,6 +36,7 @@ import {
   type DocsValues,
   InfoStep,
   type InfoValues,
+  PAYOUT_FORM_ID,
   PayoutStep,
   ReviewStep,
   type Signed,
@@ -214,6 +215,9 @@ export function VerifyFlow({ user, record }: { user: User; record: VerificationR
       if (info.entity !== 'company') delete files.company;
       if (!save({ docType, docs: files })) return;
     } else if (step === 3) {
+      // النموذج مفتوح (إضافة أو تحديث): الزرّ يقدّمه — البيانات ثم الرمز، وبعد الحفظ ننتقل تلقائياً
+      const form = document.getElementById(PAYOUT_FORM_ID);
+      if (form instanceof HTMLFormElement) return form.requestSubmit();
       if (!payout) return;
       if (!save({ payout: { ...payout, verifiedAt: rec.payout?.verifiedAt ?? new Date().toISOString() } })) return;
     } else if (step === 4) {
@@ -287,6 +291,10 @@ export function VerifyFlow({ user, record }: { user: User; record: VerificationR
                 <PayoutStep
                   payout={payout}
                   onChange={setPayout}
+                  onSaved={(p) => {
+                    // تحقّق للتوّ بالرمز
+                    if (save({ payout: { ...p, verifiedAt: new Date().toISOString() } })) go(4);
+                  }}
                   email={user.email}
                   country={info.country}
                   showErrors={showErrors}

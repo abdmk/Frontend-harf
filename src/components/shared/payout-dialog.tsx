@@ -110,6 +110,7 @@ export function PayoutForm({
   description = 'إلى أين نحوّل أرباحك؟ نتحقّق منك برمز قبل الحفظ.',
   country,
   onSaved,
+  formId,
 }: {
   email: string;
   title?: string;
@@ -118,6 +119,11 @@ export function PayoutForm({
   onSaved: (p: MaskedPayout) => void;
   /** داخل الصفحة: عنوان عادي بدل عنوان النافذة */
   inline?: boolean;
+  /**
+   * معرّف النموذج — حين يُعطى يُقدَّم النموذج من زرّ الصفحة الرئيسي (زرّ واحد للتقدّم)
+   * فتُخفى أزرار «متابعة» و«تأكيد وحفظ» الداخلية.
+   */
+  formId?: string;
 }) {
   const Title = inline ? InlineTitle : DialogTitle;
   const Desc = inline ? InlineDesc : DialogDescription;
@@ -157,6 +163,8 @@ export function PayoutForm({
   function confirm(e: React.FormEvent) {
     e.preventDefault();
     if (!pending) return;
+    // رمز ناقص لا يُحسب محاولةً (التقديم ممكن من زرّ الصفحة حتى قبل اكتماله)
+    if (!/^\d{6}$/.test(code)) return setOtpError(`أدخل الأرقام ${OTP_LENGTH} كاملة.`);
     const r = verifyOtp(code, `payout:${email}`);
     if (!r.ok) return setOtpError(r.error);
     onSaved(maskPayout(pending));
@@ -165,7 +173,7 @@ export function PayoutForm({
   return (
     <>
       {step === 'form' ? (
-        <form noValidate onSubmit={next} className="flex flex-col gap-5">
+        <form id={formId} noValidate onSubmit={next} className="flex flex-col gap-5">
           <div>
             <Title>{title}</Title>
             <Desc className="mt-1 text-meta leading-relaxed text-muted-foreground">{description}</Desc>
@@ -251,13 +259,16 @@ export function PayoutForm({
             الحساب باسمي أو باسم استوديوي، وأنا مخوّل باستلام الأرباح عليه.
           </label>
           <FieldError>{errors.confirm}</FieldError>
-          <Button type="submit" size="lg" variant="primary">
-            متابعة
-          </Button>
-          <SecureNote />
+          {!formId && (
+            <Button type="submit" size="lg" variant="primary">
+              متابعة
+            </Button>
+          )}
+          {/* في الصفحة تظهر الملاحظة مرّة واحدة تحت النموذج */}
+          {!formId && <SecureNote />}
         </form>
       ) : (
-        <form noValidate onSubmit={confirm} className="flex flex-col gap-5">
+        <form id={formId} noValidate onSubmit={confirm} className="flex flex-col gap-5">
           <div>
             <Title>تأكيد أنه أنت</Title>
             <Desc className="mt-1 text-meta leading-relaxed text-muted-foreground">
@@ -293,9 +304,11 @@ export function PayoutForm({
             </span>
           </p>
           <div className="flex flex-col gap-3">
-            <Button type="submit" size="lg" variant="primary" disabled={!/^\d{6}$/.test(code)}>
-              تأكيد وحفظ
-            </Button>
+            {!formId && (
+              <Button type="submit" size="lg" variant="primary" disabled={!/^\d{6}$/.test(code)}>
+                تأكيد وحفظ
+              </Button>
+            )}
             <p className="flex items-center justify-center gap-2 text-meta text-muted-foreground">
               {wait > 0 ? (
                 <span aria-live="polite">إعادة الإرسال بعد {wait} ثانية</span>
@@ -314,10 +327,13 @@ export function PayoutForm({
               )}
             </p>
           </div>
-          <Button type="button" variant="ghost" className="self-center" onClick={() => setStep('form')}>
-            <ArrowRightIcon />
-            رجوع
-          </Button>
+          {/* في الصفحة: «تعديل البيانات» أعلاه يكفي — «رجوع» الصفحة في الأسفل يعود خطوة كاملة */}
+          {!formId && (
+            <Button type="button" variant="ghost" className="self-center" onClick={() => setStep('form')}>
+              <ArrowRightIcon />
+              رجوع
+            </Button>
+          )}
         </form>
       )}
     </>

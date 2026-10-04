@@ -286,15 +286,21 @@ export function DocsStep({
 
 /* ══ 3. استلام الأرباح ═══════════════════════════════════════════════════ */
 
+/** نموذج وسيلة الاستلام يُقدَّم من زرّ التقدّم في أسفل الصفحة — زرّ رئيسي واحد في الخطوة */
+export const PAYOUT_FORM_ID = 'verify-payout-form';
+
 export function PayoutStep({
   payout,
   onChange,
+  onSaved,
   email,
   country,
   showErrors,
 }: {
   payout: MaskedPayout | undefined;
   onChange: (p: MaskedPayout | undefined) => void;
+  /** بعد التحقّق بالرمز: تُحفظ الوسيلة ويُنتقل للخطوة التالية */
+  onSaved?: (p: MaskedPayout) => void;
   email: string;
   /** دولة الناشر من الخطوة الأولى — كي كارد للعراق فقط */
   country: string;
@@ -345,6 +351,7 @@ export function PayoutStep({
           <div key={editing ? 'edit' : 'new'} className="animate-fade-up">
             <PayoutForm
               inline
+              formId={PAYOUT_FORM_ID}
               email={email}
               country={country}
               title="وسيلة الاستلام"
@@ -356,6 +363,7 @@ export function PayoutStep({
               onSaved={(p) => {
                 onChange(p);
                 setEditing(false);
+                onSaved?.(p);
               }}
             />
             {editing && (
