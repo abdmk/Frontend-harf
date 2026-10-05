@@ -88,7 +88,7 @@ function compose(lines, { gap = 0.18 } = {}) {
 
 // [id, العنوان, التصنيف, الأسطر]
 const WORKS = [
-  ['bismillah', 'بسم الله الرحمن الرحيم', 'panels', [['بسم الله الرحمن الرحيم', 'amiri']]],
+  ['bismillah', 'بسم الله الرحمن الرحيم', 'islamic', [['بسم الله الرحمن الرحيم', 'amiri']]],
   [
     'ramadan-kareem',
     'رمضان كريم',
@@ -127,7 +127,7 @@ const WORKS = [
     ],
   ],
   ['mabrook', 'ألف مبروك', 'greetings', [['ألف مبروك', 'lalezar']]],
-  ['alhamdulillah', 'الحمد لله', 'panels', [['الحمد لله', 'ruqaa']]],
+  ['alhamdulillah', 'الحمد لله', 'islamic', [['الحمد لله', 'ruqaa']]],
   ['ramadan-mubarak', 'رمضان مبارك', 'ramadan', [['رمضان مبارك', 'changa']]],
   [
     'taqabbal',
@@ -141,13 +141,13 @@ const WORKS = [
   [
     'muhammad',
     'محمد رسول الله',
-    'panels',
+    'islamic',
     [
       ['محمد', 'ruqaa', 1.8],
       ['رسول الله', 'ruqaa', 0.9],
     ],
   ],
-  ['mashallah', 'ما شاء الله', 'panels', [['ما شاء الله', 'lalezar']]],
+  ['mashallah', 'ما شاء الله', 'islamic', [['ما شاء الله', 'lalezar']]],
   [
     'ahlan',
     'أهلاً وسهلاً',
@@ -166,7 +166,7 @@ const WORKS = [
       ['وأنتم بخير', 'kufi'],
     ],
   ],
-  ['tawakkalt', 'توكّلت على الله', 'panels', [['توكّلت على الله', 'naskh']]],
+  ['tawakkalt', 'توكّلت على الله', 'islamic', [['توكّلت على الله', 'naskh']]],
   [
     'ahlan-ramadan',
     'أهلاً رمضان',
@@ -189,7 +189,7 @@ const WORKS = [
   [
     'subhan',
     'سبحان الله وبحمده',
-    'panels',
+    'islamic',
     [
       ['سبحان الله', 'amiri', 1.2],
       ['وبحمده', 'amiri', 0.9],
@@ -198,7 +198,7 @@ const WORKS = [
   [
     'national-day',
     'يوم وطني سعيد',
-    'greetings',
+    'national',
     [
       ['يوم وطني', 'messiri', 1.2],
       ['سعيد', 'messiri', 0.9],
@@ -216,7 +216,7 @@ const WORKS = [
   [
     'ilm',
     'وقل ربّ زدني علماً',
-    'panels',
+    'islamic',
     [
       ['وقل ربّ', 'naskh'],
       ['زدني علماً', 'naskh', 1.2],
@@ -226,7 +226,7 @@ const WORKS = [
   [
     'usr-yusr',
     'إنّ مع العسر يسراً',
-    'panels',
+    'islamic',
     [
       ['إنّ مع', 'kufi', 0.8],
       ['العسر', 'kufi', 1.3],
@@ -280,7 +280,7 @@ const WORKS = [
     ],
   ],
   ['mothers', 'يوم الأمّ', 'greetings', [['يوم الأمّ', 'ruqaa']]],
-  ['la-ilaha', 'لا إله إلا الله', 'panels', [['لا إله إلا الله', 'kufi']]],
+  ['la-ilaha', 'لا إله إلا الله', 'islamic', [['لا إله إلا الله', 'kufi']]],
   [
     'eid-adha',
     'عيد أضحى مبارك',
@@ -293,7 +293,7 @@ const WORKS = [
   [
     'salli',
     'اللهم صلّ على محمد',
-    'panels',
+    'islamic',
     [
       ['اللهم صلّ', 'messiri'],
       ['على محمد', 'messiri', 1.2],

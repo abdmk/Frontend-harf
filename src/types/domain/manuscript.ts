@@ -2,17 +2,17 @@ import type { Designer } from './font';
 
 /**
  * التصنيفات بسؤال المستخدم «لأيّ مناسبة؟» — خمسة لا تتداخل:
- * آيات وأذكار (لوحات تصلح لكل وقت) · رمضان · العيد · مناسبات إسلامية (المولد، الهجرة، الجمعة…) · تهاني ومناسبات.
+ * اليوم الوطني · رمضان · العيد · إسلامية (آيات، أذكار، المولد، الهجرة، الجمعة) · تهاني ومناسبات.
  * التفصيل الأدقّ (جمعة، هجري…) يصل إليه البحث بالعنوان.
  */
-export const MANUSCRIPT_CATEGORIES = ['panels', 'ramadan', 'eid', 'islamic', 'greetings'] as const;
+export const MANUSCRIPT_CATEGORIES = ['national', 'ramadan', 'eid', 'islamic', 'greetings'] as const;
 export type ManuscriptCategory = (typeof MANUSCRIPT_CATEGORIES)[number];
 
 export const MANUSCRIPT_CATEGORY_LABEL: Record<ManuscriptCategory, string> = {
-  panels: 'آيات وأذكار',
+  national: 'اليوم الوطني',
   ramadan: 'رمضان',
   eid: 'العيد',
-  islamic: 'مناسبات إسلامية',
+  islamic: 'إسلامية',
   greetings: 'تهاني ومناسبات',
 };
 
@@ -22,6 +22,7 @@ export const LEGACY_MANUSCRIPT_CATEGORY: Record<string, ManuscriptCategory> = {
   hijri: 'islamic',
   jumua: 'islamic',
   occasions: 'greetings',
+  panels: 'islamic',
 };
 
 /** مخطوطة: عمل خطّي متجه (SVG) جاهز للتحميل — كلها مجانية حالياً */
