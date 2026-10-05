@@ -9,7 +9,7 @@ export function getFont(id: string): Font | null {
   return font && isPubliclyVisible(id) ? applyEdit(font) : null;
 }
 
-export function getRelatedFonts(font: Font, limit = 3): Font[] {
+export function getRelatedFonts(font: Font, limit = 4): Font[] {
   return publicFonts(MOCK_FONTS)
     .filter((f) => f.id !== font.id)
     .sort(
