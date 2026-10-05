@@ -9,6 +9,7 @@ import { loaders } from './preload';
 
 // صفحات الأدوات والمكتبة
 export const NasaqPage = lazy(() => loaders['/tools/nasaq']().then((m) => ({ default: m.NasaqPage })));
+export const NasaqPairPage = lazy(() => import('./pages/nasaq-pair').then((m) => ({ default: m.NasaqPairPage })));
 export const FontLabPage = lazy(() => loaders['/tools/font-lab']().then((m) => ({ default: m.FontLabPage })));
 export const FontMatchingPage = lazy(() =>
   loaders['/tools/font-matching']().then((m) => ({ default: m.FontMatchingPage })),
@@ -58,6 +59,9 @@ export const StudioFontsPage = lazy(() => studio().then((m) => ({ default: m.Stu
 export const StudioAnalyticsPage = lazy(() => studio().then((m) => ({ default: m.StudioAnalyticsPage })));
 export const StudioFinancePage = lazy(() => studio().then((m) => ({ default: m.StudioFinancePage })));
 export const StudioProfilePage = lazy(() => studio().then((m) => ({ default: m.StudioProfilePage })));
+export const ManuscriptUploadPage = lazy(() =>
+  import('./pages/manuscript-upload').then((m) => ({ default: m.ManuscriptUploadPage })),
+);
 export const PublishPage = lazy(() => import('./pages/publish').then((m) => ({ default: m.PublishPage })));
 
 // الإدارة — لا تصل إلى حزمة الزائر أبداً

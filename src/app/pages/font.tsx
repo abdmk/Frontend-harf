@@ -82,7 +82,11 @@ export function FontPage() {
             <ChevronLeftIcon className="size-3.5 transition-transform group-hover:-translate-x-0.5" />
           </Link>
         </div>
-        <FontGrid fonts={related} renderCard={(f) => <CatalogCard font={f} />} />
+        <FontGrid
+          fonts={related}
+          columns="sm:grid-cols-2 xl:grid-cols-4"
+          renderCard={(f) => <CatalogCard font={f} />}
+        />
       </section>
       <CtaSection />
     </Container>

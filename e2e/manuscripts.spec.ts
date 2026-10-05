@@ -1,4 +1,6 @@
-import { expect, test } from './fixtures';
+import { readFileSync } from 'node:fs';
+
+import { expect, seedVerifiedStudio, test } from './fixtures';
 
 test.describe('المخطوطات', () => {
   test('التصنيف والبحث (بلا تشكيل) والترتيب تبقى في الرابط', async ({ page }) => {
@@ -29,11 +31,12 @@ test.describe('المخطوطات', () => {
   test('التصنيفات المدموجة: خمسة، والروابط القديمة تفتح التصنيف الذي صارت فيه', async ({ page }) => {
     await page.goto('/manuscripts?cat=jumua');
     const cards = page.getByRole('list', { name: 'المخطوطات' }).locator('article');
-    await expect(cards).toHaveCount(7);
+    await expect(cards).toHaveCount(17);
     await page.getByRole('button', { name: 'التصنيف', exact: true }).click();
     const cats = page.getByRole('group', { name: 'التصنيفات' }).getByRole('button');
     await expect(cats).toHaveCount(6); // الكل + خمسة
-    await expect(cats.filter({ hasText: 'مناسبات إسلامية' })).toHaveAttribute('aria-pressed', 'true');
+    await expect(cats.filter({ hasText: 'إسلامية' })).toHaveAttribute('aria-pressed', 'true');
+    await expect(cats.filter({ hasText: 'اليوم الوطني' })).toBeVisible();
   });
 
   test('العارض: فتح، تنقّل، تكبير، تحميل SVG، وحفظ يبقى', async ({ page }) => {
@@ -91,5 +94,52 @@ test.describe('المخطوطات', () => {
     await expect(page).toHaveURL(/by=/);
     await page.getByRole('button', { name: `إزالة ${name}` }).click();
     await expect(page).not.toHaveURL(/by=/);
+  });
+});
+
+test.describe('رفع مخطوطة', () => {
+  test('الاستوديو الموثّق يرفع SVG ويرسله للمراجعة، والملف الذي فيه سكربت يُرفض', async ({ page }) => {
+    await seedVerifiedStudio(page);
+    await page.goto('/manuscripts?as=studio');
+    await page.getByRole('link', { name: 'ارفع مخطوطة' }).click();
+    await expect(page).toHaveURL(/\/studio\/manuscripts\/new$/);
+    await expect(page.getByRole('heading', { level: 1, name: 'رفع مخطوطة' })).toBeVisible();
+
+    const input = page.locator('input[type=file]').first();
+    // ملف فيه سكربت: يُرفض قبل أي معاينة
+    await input.setInputFiles({
+      name: 'bad.svg',
+      mimeType: 'image/svg+xml',
+      buffer: Buffer.from(
+        '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10 10"><script>alert(1)</script></svg>',
+      ),
+    });
+    await expect(page.getByText(/عنصراً غير مسموح/)).toBeVisible();
+
+    await input.setInputFiles({
+      name: 'ramadan-kareem.svg',
+      mimeType: 'image/svg+xml',
+      buffer: readFileSync('public/manuscripts/ahlan-ramadan.svg'),
+    });
+    await expect(page.getByRole('img', { name: /معاينة/ })).toBeVisible();
+
+    // إرسال ناقص: الأخطاء بجانب حقولها
+    await page.getByRole('button', { name: 'إرسال للمراجعة' }).click();
+    await expect(page.getByText('اختر التصنيف.')).toBeVisible();
+    await expect(page.getByText('أكّد أنك صاحب العمل أو تملك حقّ نشره.')).toBeVisible();
+
+    await page.getByRole('combobox', { name: 'التصنيف' }).click();
+    await page.getByRole('option', { name: 'رمضان' }).click();
+    await page.getByRole('combobox', { name: 'الخطوط المستخدمة' }).fill('Cairo');
+    await page.getByRole('option', { name: /Cairo/ }).first().click();
+    await page.getByRole('checkbox').click();
+    await page.getByRole('button', { name: 'إرسال للمراجعة' }).click();
+    await expect(page.getByRole('heading', { name: 'أُرسلت المخطوطة للمراجعة' })).toBeVisible();
+  });
+
+  test('بلا توثيق: بوّابة التوثيق بدل الرفع', async ({ page }) => {
+    await page.goto('/studio/manuscripts/new?as=studio');
+    await expect(page.getByRole('button', { name: 'ارفع مخطوطة' })).toHaveCount(0);
+    await expect(page.getByText(/وثّق/).first()).toBeVisible();
   });
 });

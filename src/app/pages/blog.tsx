@@ -1,10 +1,10 @@
 import { Link, Navigate, useParams } from 'react-router';
 
 import { Container } from '@/components/layout/container';
-import { ContentPage } from '@/components/layout/content-page';
+import { ToolHero } from '@/components/layout/tool-hero';
 import { PageMeta } from '@/components/shared/page-meta';
 import { PostBlocks } from '@/components/shared/post-blocks';
-import { ChevronRightIcon } from '@/components/ui/icons';
+import { ChevronRightIcon, DocumentIcon } from '@/components/ui/icons';
 import { type BlogPost, usePublishedPosts } from '@/lib/blog';
 import { cn } from '@/lib/cn';
 import { formatDateAr } from '@/lib/format';
@@ -24,13 +24,23 @@ function Cover({ post, className }: { post: BlogPost; className?: string }) {
   );
 }
 
-/** المدونة: المقالات المنشورة من لوحة الإدارة — وبلا مقالات تبقى صفحة «قريباً» */
+/** المدونة: المقالات المنشورة من لوحة الإدارة — بعنوان صفحات الأدوات نفسه، وبلا مقالات تبقى صفحة «قريباً» */
 export function BlogPage() {
   const posts = usePublishedPosts();
   if (!posts.length) return <ComingSoonPage page="blog" />;
   return (
-    <ContentPage title="المدونة" lead="مقالات عن الخط العربي وتصميم الحروف وقصص المصمّمين والمسابك." wide>
-      <ul className="grid gap-4 sm:grid-cols-2">
+    <Container as="main" id="main" className="py-10 sm:py-14">
+      <PageMeta title="المدونة" description="مقالات عن الخط العربي وتصميم الحروف وقصص المصمّمين والمسابك." />
+      <ToolHero
+        icon={<DocumentIcon />}
+        name="المدونة"
+        title="قصص الحرف"
+        highlight="من الفكرة إلى الخط"
+        lead="مقالات عن الخط العربي وتصميم الحروف، وقصص المصمّمين والمسابك."
+        noteIcon={<DocumentIcon />}
+        note={posts.length === 1 ? 'مقال منشور' : `${posts.length.toLocaleString('ar')} مقالات منشورة`}
+      />
+      <ul className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
         {posts.map((p) => (
           <li key={p.id}>
             <Link
@@ -50,7 +60,7 @@ export function BlogPage() {
           </li>
         ))}
       </ul>
-    </ContentPage>
+    </Container>
   );
 }
 

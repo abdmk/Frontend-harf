@@ -213,3 +213,29 @@ export function explain(heading: PairFont, body: PairFont, useCase: UseCase) {
   if (themeDistance(heading, body) < 0.15) return 'الخطان قريبان في النسب والمزاج، فيبدو التصميم موحّداً دون رتابة.';
   return useCase.note;
 }
+
+/** رابط صفحة التركيبة: معرّفات الخطوط بترتيب أدوارها — عنوان+فرعي+متن (أو عنوان+متن) */
+export const pairSlug = (c: Combo) =>
+  [c.heading.font.id, c.sub?.font.id, c.body.font.id].filter((x): x is string => !!x).join('+');
+
+/**
+ * يعيد بناء التركيبة من رابط صفحتها — الدرجة والتعليل يُحسبان للاستخدام المختار، فالرابط يكفي وحده
+ * (قابل للمشاركة). معرّف مجهول أو تكرار خط أو أكثر من ثلاثة = null.
+ */
+export function comboFromSlug(families: readonly PairFont[], slug: string, useCase: UseCase): Combo | null {
+  const ids = slug.split('+');
+  if (ids.length < 2 || ids.length > 3 || new Set(ids).size !== ids.length) return null;
+  const find = (id: string) => families.find((f) => f.id === id) ?? null;
+  const heading = find(ids[0]!);
+  const body = find(ids[ids.length - 1]!);
+  const sub = ids.length === 3 ? find(ids[1]!) : null;
+  if (!heading || !body || (ids.length === 3 && !sub)) return null;
+  return {
+    key: comboKey(heading.id, body.id, sub?.id),
+    score: score(heading, body, useCase),
+    heading: { font: heading, weight: headingWeight(heading), role: 'العناوين' },
+    body: { font: body, weight: bodyWeight(body), role: 'النصوص' },
+    ...(sub && { sub: { font: sub, weight: bodyWeight(sub), role: 'العناوين الفرعية' as const } }),
+    reason: explain(heading, body, useCase),
+  };
+}

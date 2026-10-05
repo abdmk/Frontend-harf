@@ -5,21 +5,51 @@ import { Reveal } from '@/components/shared/reveal';
 import { Button } from '@/components/ui/button';
 import { CrossSmallIcon, LayersIcon, LockIcon } from '@/components/ui/icons';
 import { toast } from '@/components/ui/toast';
+import { paths } from '@/config/paths';
 
 import { NasaqToolbar } from './nasaq-toolbar';
 import { PairCard } from './pair-card';
-import { PairDetail } from './pair-detail';
 import { type Brief, DEFAULT_BRIEF, FONTS_LABEL, LANG_LABEL, TIER_LABEL, type View } from '../data/brief';
 import { byId, FAMILIES, LANG_SETS, TIERS, USE_CASES } from '../data/catalog';
 import { SPECIMENS } from '../data/specimens';
 import { useSavedPairs } from '../hooks/use-saved-pairs';
-import { cssSnippet } from '../utils/css-snippet';
-import { type Combo, generate } from '../utils/pairing';
+import { type Combo, generate, pairSlug } from '../utils/pairing';
 
 type Role = 'heading' | 'body';
 type Locked = Partial<Record<Role, string>>;
+
+const SESSION_KEY = 'harf-nasaq-session';
+type Session = { brief: Brief; seed: number; locked: Locked; heading: string; view: View };
+const FRESH: Session = { brief: DEFAULT_BRIEF, seed: 1, locked: {}, heading: '', view: 'suggest' };
+
+/** حالة الأداة في هذه الجلسة — كل حقل يُتحقّق منه، وما لا يصلح يعود للافتراضي */
+function readSession(): Session {
+  try {
+    const raw = JSON.parse(sessionStorage.getItem(SESSION_KEY) ?? 'null') as Partial<Session> | null;
+    if (!raw || typeof raw !== 'object') return FRESH;
+    const b = raw.brief;
+    const brief: Brief =
+      b &&
+      Object.hasOwn(USE_CASES, b.useCase) &&
+      Object.hasOwn(LANG_SETS, b.lang) &&
+      Object.hasOwn(TIERS, b.tier) &&
+      (b.fonts === 2 || b.fonts === 3)
+        ? b
+        : DEFAULT_BRIEF;
+    const ok = (id: unknown) => (typeof id === 'string' && byId(id) ? id : undefined);
+    return {
+      brief,
+      seed: Number.isInteger(raw.seed) && raw.seed! > 0 ? raw.seed! : 1,
+      locked: { heading: ok(raw.locked?.heading), body: ok(raw.locked?.body) },
+      heading: typeof raw.heading === 'string' ? raw.heading.slice(0, 80) : '',
+      view: raw.view === 'saved' ? 'saved' : 'suggest',
+    };
+  } catch {
+    return FRESH;
+  }
+}
 const ROLE_LABEL = { heading: 'العناوين', body: 'النصوص' } as const;
-const BATCH = 9;
+const BATCH = 8;
 
 type Chip = { key: string; label: string; clear: () => void; lock?: boolean };
 
@@ -32,17 +62,26 @@ function countLabel(n: number) {
 }
 
 /**
- * «نسق»: شريط أدوات فوق شبكة تركيبات موحّدة (تسع في الدفعة) بخطوطها الحقيقية.
+ * «نسق»: شريط أدوات فوق شبكة تركيبات موحّدة (ثمانٍ في الدفعة) بخطوطها الحقيقية.
  * «تركيبات جديدة» (أو المسافة) يعيد التوليد، والقفل يثبّت خطاً لدوره ويغيّر الباقي.
  */
 export function NasaqTool() {
-  const [brief, setBrief] = useState<Brief>(DEFAULT_BRIEF);
-  const [seed, setSeed] = useState(1);
-  const [locked, setLocked] = useState<Locked>({});
-  const [heading, setHeading] = useState('');
-  const [view, setView] = useState<View>('suggest');
-  const [open, setOpen] = useState<Combo | null>(null);
+  const [initial] = useState(readSession);
+  const [brief, setBrief] = useState<Brief>(initial.brief);
+  const [seed, setSeed] = useState(initial.seed);
+  const [locked, setLocked] = useState<Locked>(initial.locked);
+  const [heading, setHeading] = useState(initial.heading);
+  const [view, setView] = useState<View>(initial.view);
   const saved = useSavedPairs();
+
+  // الرجوع من صفحة تركيبة يعيد ما تركه المستخدم: نصّه وخياراته والتركيبات نفسها (البذرة)
+  useEffect(() => {
+    try {
+      sessionStorage.setItem(SESSION_KEY, JSON.stringify({ brief, seed, locked, heading, view }));
+    } catch {
+      /* التخزين غير متاح — تبدأ الأداة من جديد */
+    }
+  }, [brief, seed, locked, heading, view]);
 
   const base = SPECIMENS[brief.useCase];
   const text = heading.trim() ? { ...base, heading } : base;
@@ -70,7 +109,7 @@ export function NasaqTool() {
   // المسافة تولّد تركيبات جديدة — إلا أثناء الكتابة أو على زرّ أو داخل نافذة/قائمة
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if (e.code !== 'Space' || e.repeat || open) return;
+      if (e.code !== 'Space' || e.repeat) return;
       const t = e.target as HTMLElement;
       if (t.isContentEditable || t.closest('input, textarea, button, a, [role="menu"], [role="dialog"]')) return;
       e.preventDefault();
@@ -78,7 +117,7 @@ export function NasaqTool() {
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [open]);
+  }, []);
 
   function changeBrief(b: Brief) {
     // تغيير الخيارات يُلغي الأقفال التي لم تعد صالحة لها
@@ -98,15 +137,6 @@ export function NasaqTool() {
   function toggleLock(role: Role, id: string) {
     setLocked((l) => ({ ...l, [role]: l[role] === id ? undefined : id }));
     setSeed((s) => s + 1);
-  }
-
-  async function copy(c: Combo) {
-    try {
-      await navigator.clipboard.writeText(cssSnippet(c));
-      toast({ tone: 'success', title: 'نُسخ مقتطف CSS', description: 'الصقه في ملف الأنماط.' });
-    } catch {
-      toast({ tone: 'danger', title: 'تعذّر النسخ' });
-    }
   }
 
   function save(c: Combo) {
@@ -215,7 +245,7 @@ export function NasaqTool() {
         <ul
           key={view === 'saved' ? 'saved' : seed}
           aria-label={view === 'saved' ? 'التركيبات المحفوظة' : 'التركيبات المقترحة'}
-          className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3"
+          className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
         >
           {shown.map((c, i) => (
             <Reveal as="li" key={c.key} index={i} className="flex [&>*]:w-full">
@@ -227,7 +257,11 @@ export function NasaqTool() {
                 onLock={view === 'suggest' ? toggleLock : undefined}
                 saved={saved.isSaved(c.key)}
                 onSave={() => save(c)}
-                onOpen={() => setOpen(c)}
+                href={paths.tools.nasaqPair.getHref(pairSlug(c), {
+                  use: brief.useCase,
+                  lang: brief.lang,
+                  text: heading.trim(),
+                })}
               />
             </Reveal>
           ))}
@@ -261,16 +295,6 @@ export function NasaqTool() {
           }
         />
       )}
-
-      <PairDetail
-        combo={open}
-        text={text}
-        showLatin={showLatin}
-        saved={open ? saved.isSaved(open.key) : false}
-        onSave={() => open && save(open)}
-        onCopy={() => open && copy(open)}
-        onOpenChange={(v) => !v && setOpen(null)}
-      />
     </div>
   );
 }

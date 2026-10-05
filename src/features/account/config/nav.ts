@@ -3,6 +3,7 @@ import {
   AppsIcon,
   ChartHistogramIcon,
   CloudUploadIcon,
+  PictureIcon,
   DocumentSignedIcon,
   CrownIcon,
   FolderIcon,
@@ -21,7 +22,7 @@ import { ACCOUNT_SECTIONS, type AccountSection, type User } from '@/features/acc
  * مفتاح البند في القائمة الموحّدة: قسم الحساب، أو قسم من الاستوديو ('studio'، 'studio/fonts'…)،
  * أو وجهة خارجية ('publish'، 'review'، 'admin').
  */
-export type NavKey = AccountSection | 'studio' | `studio/${string}` | 'publish' | 'review' | 'admin';
+export type NavKey = AccountSection | 'studio' | `studio/${string}` | 'publish' | 'manuscript' | 'review' | 'admin';
 
 export type NavItem = {
   key: NavKey;
@@ -63,6 +64,13 @@ export function accountNavGroups(user: User): NavItem[][] {
               label: 'رفع خط',
               Icon: CloudUploadIcon,
               href: paths.studio.getHref('publish'),
+              menuOnly: true,
+            } as const,
+            {
+              key: 'manuscript',
+              label: 'رفع مخطوطة',
+              Icon: PictureIcon,
+              href: paths.studio.getHref('manuscripts/new'),
               menuOnly: true,
             } as const,
           ]
@@ -151,6 +159,8 @@ export function navKeyFor(pathname: string): NavKey | null {
   if (s[1] === 'profile') return 'profile';
   // رفع خط جزء من «خطوطي»
   if (s[1] === 'publish') return 'studio/fonts';
+  // رفع مخطوطة من أعمال الاستوديو — بلا بند خاص في العمود
+  if (s[1] === 'manuscripts') return 'studio';
   return `studio/${s[1]}`;
 }
 

@@ -41,7 +41,7 @@ function LicensePrice({ font }: { font: Font }) {
 /**
  * بطاقة التركيبة — هرمية واحدة: العيّنة أولاً (الخطّان كما سيُستعملان)، ثم اسم كل خط ودوره وسعره،
  * ثم فعل رئيسي واحد (شراء إن وُجد مدفوع، وإلا تحميل) مع الحفظ أيقونةً هادئة.
- * سبب التناسق وCSS في نافذة التفاصيل (النقر في أي مكان آخر)؛ والقفل يظهر عند المرور أو حين يُفعَّل.
+ * سبب التناسق والخطوط في سياقها وCSS في صفحة التركيبة (النقر في أي مكان آخر)؛ والقفل يظهر عند المرور أو حين يُفعَّل.
  */
 export function PairCard({
   combo,
@@ -51,7 +51,7 @@ export function PairCard({
   onLock,
   saved,
   onSave,
-  onOpen,
+  href,
 }: {
   combo: Combo;
   text: Specimen;
@@ -60,7 +60,8 @@ export function PairCard({
   onLock?: (role: Role, id: string) => void;
   saved: boolean;
   onSave: () => void;
-  onOpen: () => void;
+  /** صفحة التركيبة — الخطوط في سياقها */
+  href: string;
 }) {
   const slots = comboSlots(combo);
   const { ready, failed } = useFontsReady(
@@ -76,10 +77,9 @@ export function PairCard({
       aria-label={title}
       className="group/card relative flex h-full flex-col overflow-hidden rounded-lg border bg-card transition-[transform,box-shadow,border-color] duration-(--dur-slow) ease-out-quint hover:-translate-y-1 hover:border-strong hover:shadow-float"
     >
-      {/* رابط البطاقة الممتدّ: النقر في أي مكان خارج الأزرار يفتح التفاصيل */}
-      <button
-        type="button"
-        onClick={onOpen}
+      {/* رابط البطاقة الممتدّ: النقر في أي مكان خارج الأزرار يفتح صفحة التركيبة (الخطوط في سياقها) */}
+      <Link
+        to={href}
         aria-label={`تفاصيل ${title}`}
         className="absolute inset-0 rounded-lg focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-primary focus-visible:outline-none"
       />

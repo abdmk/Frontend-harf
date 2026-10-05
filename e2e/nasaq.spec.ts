@@ -34,7 +34,7 @@ test.describe('نسق', () => {
     await page.getByRole('navigation', { name: 'الأقسام' }).getByRole('link', { name: 'نسق' }).click();
     await expect(page).toHaveURL(/\/tools\/nasaq$/);
     const cards = page.locator('article');
-    await expect(cards).toHaveCount(9);
+    await expect(cards).toHaveCount(8);
 
     // الخطوط محمّلة فعلاً لا بديلة
     await expect(page.getByRole('status', { name: 'تحميل الخطوط' })).toHaveCount(0, { timeout: 10_000 });
@@ -46,7 +46,7 @@ test.describe('نسق', () => {
     // الاستخدام داخل «الخيارات»، ويظهر بعدها شريحةً قابلة للإزالة في سطر الحالة
     await apply(page, { الاستخدام: 'النصوص الطويلة' });
     await expect(page.getByRole('button', { name: 'إزالة النصوص الطويلة' })).toBeVisible();
-    await expect(cards).toHaveCount(9);
+    await expect(cards).toHaveCount(8);
 
     await apply(page, { 'عدد الخطوط': 'ثلاثة خطوط' });
     await expect(cards.first().getByText('الفرعي')).toBeVisible();
@@ -58,7 +58,7 @@ test.describe('نسق', () => {
   test('القفل يثبّت خط العنوان، ونص المعاينة يتغيّر في كل البطاقات، والحفظ يبقى', async ({ page }) => {
     await page.goto('/tools/nasaq');
     const cards = page.locator('article');
-    await expect(cards).toHaveCount(9);
+    await expect(cards).toHaveCount(8);
 
     const lock = cards.first().getByRole('button', { name: /^ثبّت .* لـالعناوين$/ });
     const name = (await lock.getAttribute('aria-label'))!.replace(/^ثبّت (.*) لـالعناوين$/, '$1');
@@ -104,16 +104,29 @@ test.describe('نسق', () => {
     await expect(page.getByRole('region', { name: 'الإشعارات العابرة' }).getByText('أُضيف إلى السلة')).toBeVisible();
   });
 
-  test('التفاصيل: رابط صفحة الخط ونسخ CSS', async ({ page }) => {
+  test('صفحة التركيبة: الخطوط في سياقها، وروابط الخطوط، والرجوع إلى نسق', async ({ page }) => {
     await page.goto('/tools/nasaq');
+    await page.getByRole('textbox', { name: 'نص المعاينة' }).fill('مرحباً بالعالم');
     await page
       .locator('article')
       .first()
-      .getByRole('button', { name: /^تفاصيل/ })
+      .getByRole('link', { name: /^تفاصيل/ })
       .click();
-    const dialog = page.getByRole('dialog');
-    await expect(dialog.getByRole('link', { name: 'صفحة الخط' }).first()).toHaveAttribute('href', /^\/fonts\//);
-    await expect(dialog.getByRole('button', { name: 'نسخ CSS' })).toBeVisible();
+    await expect(page).toHaveURL(/\/tools\/nasaq\/[a-z0-9-]+\+[a-z0-9-]+/);
+    await expect(page.getByRole('heading', { level: 1 })).toContainText('+');
+    await expect(page.getByRole('heading', { name: 'كيف تبدو في التصميم' })).toBeVisible();
+    await expect(page.getByRole('figure')).toHaveCount(3);
+    await expect(page.getByRole('link', { name: 'صفحة الخط' }).first()).toHaveAttribute('href', /^\/fonts\//);
+    await expect(page.getByRole('button', { name: 'نسخ CSS' })).toBeVisible();
+    await page.getByRole('button', { name: 'العودة إلى نسق' }).click();
+    await expect(page).toHaveURL(/\/tools\/nasaq$/);
+  });
+
+  test('رابط تركيبة مباشر يُبنى من الرابط وحده، والرابط الخاطئ «غير موجودة»', async ({ page }) => {
+    await page.goto('/tools/nasaq/aref-ruqaa+noto-naskh?use=print');
+    await expect(page.getByRole('heading', { level: 1 })).toContainText('+');
+    await page.goto('/tools/nasaq/not-a-font+cairo');
+    await expect(page.getByRole('heading', { level: 1, name: 'الصفحة غير موجودة' })).toBeVisible();
   });
 
   test('لوحة الخيارات تمنع مسبقاً خيارات بلا تركيبات، و«مسح الكل» يعيدها', async ({ page }) => {
@@ -122,6 +135,6 @@ test.describe('نسق', () => {
     await expect(sheet.getByRole('button', { name: 'لا تركيبات لهذه الخيارات' })).toBeDisabled();
     await sheet.getByRole('button', { name: 'مسح الكل' }).click();
     await sheet.getByRole('button', { name: 'عرض التركيبات' }).click();
-    await expect(page.locator('article')).toHaveCount(9);
+    await expect(page.locator('article')).toHaveCount(8);
   });
 });
