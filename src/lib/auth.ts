@@ -1,5 +1,6 @@
 import { useSyncExternalStore } from 'react';
 
+import { DEMO_MODE } from '@/config/demo';
 import { MOCK_NEW_STUDIO, MOCK_USERS } from '@/mocks/users';
 import type { User } from '@/types/domain/user';
 
@@ -44,7 +45,8 @@ export function useIsAdmin(): boolean {
  */
 function baseUser(): User | null {
   const as = getDemoSession();
-  if (as === 'out') return null;
+  // الإنتاج: الزائر بلا جلسة غير مسجّل؛ العرض التجريبي: الحساب المجاني لتسهيل العرض
+  if (as === 'out' || (as === null && !DEMO_MODE)) return null;
   if (as === 'studio') return MOCK_USERS.studio;
   // ناشر جديد (المجاني بعد الترقية): لم يوثّق استوديوه بعد
   if (as === 'newstudio') return MOCK_NEW_STUDIO;
@@ -133,10 +135,14 @@ export function setDemoSession(account: DemoAccount) {
   sessionSignal.notify();
 }
 
+/** ما يصل إليه الدخول التجريبي من النموذج — في الإنتاج لا يُقبل غيره ولو حُفظ في المتصفّح (كجلسة إدارة سابقة) */
+const PUBLIC_ACCOUNTS: readonly DemoAccount[] = ['free', 'studio', 'out'];
+
 export function getDemoSession(): DemoAccount | null {
   try {
     const v = localStorage.getItem(DEMO_STORAGE_KEY);
-    return (DEMO_ACCOUNTS as readonly string[]).includes(v ?? '') ? (v as DemoAccount) : null;
+    const allowed: readonly string[] = DEMO_MODE ? DEMO_ACCOUNTS : PUBLIC_ACCOUNTS;
+    return allowed.includes(v ?? '') ? (v as DemoAccount) : null;
   } catch {
     return null;
   }

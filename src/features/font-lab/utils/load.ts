@@ -12,6 +12,8 @@ export const ACCEPT = [...FONT_EXTS, 'zip'].map((e) => `.${e}`).join(',');
 const MAX_FILE = 30 * 1024 * 1024;
 const MAX_ZIP = 80 * 1024 * 1024;
 const MAX_FONTS = 40;
+/** مجموع ما يُفكّ من ZIP واحد — يحمي التبويب من ملف مضغوط ينتفخ عند فكّه */
+const MAX_UNZIPPED = 120 * 1024 * 1024;
 
 export type LoadReport = { fonts: LabFont[]; skipped: { name: string; reason: string }[] };
 
@@ -25,14 +27,28 @@ type Raw = { name: string; data: Uint8Array };
 
 /** يفكّ ZIP ويأخذ ملفات الخطوط منه فقط (يتجاهل __MACOSX والملفات المخفية) */
 function fromZip(name: string, data: Uint8Array, skipped: LoadReport['skipped']): Raw[] {
+  let total = 0;
+  let count = 0;
+  let capped = false;
   try {
     const files = unzipSync(data, {
-      filter: (f) =>
-        !f.name.includes('__MACOSX') &&
-        !f.name.split('/').pop()!.startsWith('.') &&
-        (FONT_EXTS as readonly string[]).includes(ext(f.name)) &&
-        f.originalSize <= MAX_FILE,
+      filter: (f) => {
+        const ok =
+          !f.name.includes('__MACOSX') &&
+          !f.name.split('/').pop()!.startsWith('.') &&
+          (FONT_EXTS as readonly string[]).includes(ext(f.name)) &&
+          f.originalSize <= MAX_FILE;
+        if (!ok) return false;
+        if (count >= MAX_FONTS || total + f.originalSize > MAX_UNZIPPED) {
+          capped = true;
+          return false;
+        }
+        total += f.originalSize;
+        count++;
+        return true;
+      },
     });
+    if (capped) skipped.push({ name, reason: 'حُمّل جزء من الملف فقط — تجاوز حدّ الحجم أو عدد الخطوط' });
     const out = Object.entries(files).map(([n, d]) => ({ name: n.split('/').pop()!, data: d }));
     if (!out.length) skipped.push({ name, reason: 'لا يحتوي ملفات خطوط' });
     return out;
@@ -107,9 +123,12 @@ async function toLabFont(kit: fontkit.Font, name: string, bytes: number, data: U
   };
   // ملفات TTC: نحاول تسجيلها كما هي؛ إن رفضها المتصفّح يبقى التحليل متاحاً بلا معاينة
   let previewable = true;
+  const faces: FontFace[] = [];
   try {
-    for (const f of [new FontFace(css, buffer, descriptors), new FontFace(familyCss, buffer, descriptors)])
+    for (const f of [new FontFace(css, buffer, descriptors), new FontFace(familyCss, buffer, descriptors)]) {
       document.fonts.add(await f.load());
+      faces.push(f);
+    }
   } catch {
     previewable = false;
   }
@@ -117,6 +136,7 @@ async function toLabFont(kit: fontkit.Font, name: string, bytes: number, data: U
   const outline = 'CFF2' in tablesOf(kit) ? 'CFF2' : 'CFF ' in tablesOf(kit) ? 'CFF' : 'TrueType (glyf)';
   const font: LabFont = {
     id,
+    faces,
     fileName: name,
     bytes,
     format: ttc ? 'TTC' : formatOf(kit, name),
@@ -195,4 +215,9 @@ export async function loadLibraryPackage(url: string, name: string) {
   if (!res.ok) throw new Error('تعذّر تحميل الخط');
   const blob = await res.blob();
   return loadFiles([new File([blob], `${name}.zip`, { type: 'application/zip' })]);
+}
+
+/** يحرّر خطاً من ذاكرة المتصفّح — عند إزالته أو «ابدأ من جديد» أو مغادرة المختبر */
+export function releaseFont(font: LabFont) {
+  for (const f of font.faces) document.fonts.delete(f);
 }

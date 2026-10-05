@@ -50,90 +50,91 @@ export function App() {
   return (
     <AppProviders>
       <ScrollToTop />
-      <Routes>
-        {/* صفحات الموقع العامة — ترويسة عادية + تذييل */}
-        <Route errorElement={<ErrorBoundary />} element={<SiteLayout />}>
-          <Route index element={<HomePage />} />
-          <Route path="fonts/:id" element={<FontPage />} />
-          <Route path="cart" element={<CartPage />} />
-          <Route path="checkout" element={<CheckoutPage />} />
-          <Route path="notifications" element={<NotificationsPage />} />
-          <Route path="foundries/:id" element={<FoundryPage />} />
-          <Route path="designers/:id" element={<DesignerPage />} />
-          <Route path="manuscripts" element={<ManuscriptsPage />} />
-          <Route path="tools/reverse-text" element={<ReverseTextPage />} />
-          <Route path="tools/nasaq" element={<NasaqPage />} />
-          <Route path="tools/font-lab" element={<FontLabPage />} />
-          <Route path="tools/font-matching" element={<FontMatchingPage />} />
-          <Route path="blog" element={<BlogPage />} />
-          <Route path="blog/:slug" element={<BlogPostPage />} />
-          <Route path="about" element={<AboutPage />} />
-          <Route path="services" element={<ServicesPage />} />
-          <Route path="help" element={<HelpPage />} />
-          <Route path="terms" element={<TermsPage />} />
-          <Route path="privacy" element={<PrivacyPage />} />
-        </Route>
+      {/* حاجز أخير لأخطاء التخطيطات وصفحات المصادقة؛ الصفحات داخل التخطيطات لها حاجزها في PageTransition */}
+      <ErrorBoundary>
+        <Routes>
+          {/* صفحات الموقع العامة — ترويسة عادية + تذييل */}
+          <Route element={<SiteLayout />}>
+            <Route index element={<HomePage />} />
+            <Route path="fonts/:id" element={<FontPage />} />
+            <Route path="cart" element={<CartPage />} />
+            <Route path="checkout" element={<CheckoutPage />} />
+            <Route path="notifications" element={<NotificationsPage />} />
+            <Route path="foundries/:id" element={<FoundryPage />} />
+            <Route path="designers/:id" element={<DesignerPage />} />
+            <Route path="manuscripts" element={<ManuscriptsPage />} />
+            <Route path="tools/reverse-text" element={<ReverseTextPage />} />
+            <Route path="tools/nasaq" element={<NasaqPage />} />
+            <Route path="tools/font-lab" element={<FontLabPage />} />
+            <Route path="tools/font-matching" element={<FontMatchingPage />} />
+            <Route path="blog" element={<BlogPage />} />
+            <Route path="blog/:slug" element={<BlogPostPage />} />
+            <Route path="about" element={<AboutPage />} />
+            <Route path="services" element={<ServicesPage />} />
+            <Route path="help" element={<HelpPage />} />
+            <Route path="terms" element={<TermsPage />} />
+            <Route path="privacy" element={<PrivacyPage />} />
+          </Route>
 
-        {/* المصادقة — بلا ترويسة */}
-        <Route errorElement={<ErrorBoundary />}>
+          {/* المصادقة — بلا ترويسة */}
           <Route path="login" element={<LoginPage />} />
           <Route path="register" element={<RegisterPage />} />
-        </Route>
 
-        {/* الحساب — ترويسة عريضة بلا تذييل */}
-        <Route errorElement={<ErrorBoundary />} element={<WideLayout />}>
-          <Route path="account" element={<AccountIndexPage />} />
-          <Route path="account/:section" element={<AccountSectionPage />} />
-          {/* توثيق الحساب — شريط الموقع العلوي، بلا عمود الاستوديو الجانبي */}
-          <Route path="studio/verify" element={<StudioVerifyPage />} />
-        </Route>
+          {/* الحساب — ترويسة عريضة بلا تذييل */}
+          <Route element={<WideLayout />}>
+            <Route path="account" element={<AccountIndexPage />} />
+            <Route path="account/:section" element={<AccountSectionPage />} />
+            {/* توثيق الحساب — شريط الموقع العلوي، بلا عمود الاستوديو الجانبي */}
+            <Route path="studio/verify" element={<StudioVerifyPage />} />
+          </Route>
 
-        {/* الاستوديو — مساحة مستقلّة بعمودها الجانبي */}
-        <Route path="studio" errorElement={<ErrorBoundary />} element={<StudioLayout />}>
-          <Route index element={<StudioOverviewPage />} />
-          <Route path="fonts" element={<StudioFontsPage />} />
-          <Route path="analytics" element={<StudioAnalyticsPage />} />
-          <Route path="finance" element={<StudioFinancePage page="overview" />} />
-          <Route path="finance/sales" element={<StudioFinancePage page="sales" />} />
-          <Route path="finance/payouts" element={<StudioFinancePage page="payouts" />} />
-          {/* «الأرباح» حُذف — العنوان القديم يذهب إلى النظرة المالية */}
-          <Route path="finance/earnings" element={<Navigate to="/studio/finance" replace />} />
-          <Route path="profile" element={<StudioProfilePage />} />
-          <Route path="publish" element={<PublishPage />} />
-          <Route path="*" element={<Navigate to="/studio" replace />} />
-        </Route>
+          {/* الاستوديو — مساحة مستقلّة بعمودها الجانبي */}
+          <Route path="studio" element={<StudioLayout />}>
+            <Route index element={<StudioOverviewPage />} />
+            <Route path="fonts" element={<StudioFontsPage />} />
+            <Route path="analytics" element={<StudioAnalyticsPage />} />
+            <Route path="finance" element={<StudioFinancePage page="overview" />} />
+            <Route path="finance/sales" element={<StudioFinancePage page="sales" />} />
+            <Route path="finance/payouts" element={<StudioFinancePage page="payouts" />} />
+            {/* «الأرباح» حُذف — العنوان القديم يذهب إلى النظرة المالية */}
+            <Route path="finance/earnings" element={<Navigate to="/studio/finance" replace />} />
+            <Route path="profile" element={<StudioProfilePage />} />
+            <Route path="publish" element={<PublishPage />} />
+            <Route path="*" element={<Navigate to="/studio" replace />} />
+          </Route>
 
-        {/* عناوين المالية القديمة في الحساب */}
-        <Route path="account/sales" element={<Navigate to="/studio/finance/sales" replace />} />
-        <Route path="account/earnings" element={<Navigate to="/studio/finance" replace />} />
-        <Route path="account/payouts" element={<Navigate to="/studio/finance/payouts" replace />} />
+          {/* عناوين المالية القديمة في الحساب */}
+          <Route path="account/sales" element={<Navigate to="/studio/finance/sales" replace />} />
+          <Route path="account/earnings" element={<Navigate to="/studio/finance" replace />} />
+          <Route path="account/payouts" element={<Navigate to="/studio/finance/payouts" replace />} />
 
-        {/* لوحة الإدارة — مساحة مستقلّة بعمود جانبي وحارس واحد */}
-        <Route path="admin" errorElement={<ErrorBoundary />} element={<AdminLayout />}>
-          <Route index element={<AdminHomePage />} />
-          <Route path="requests" element={<AdminRequestsPage />} />
-          <Route path="review/:id" element={<AdminReviewDetailPage />} />
-          <Route path="studios/:id" element={<AdminStudioDetailPage />} />
-          <Route path="fonts" element={<AdminFontsPage />} />
-          <Route path="fonts/:id" element={<AdminFontDetailPage />} />
-          <Route path="users" element={<AdminUsersPage />} />
-          <Route path="content" element={<AdminContentPage />} />
-          <Route path="analytics" element={<AdminAnalyticsPage />} />
-          {/* عناوين قديمة: المراجعة والتوثيق صارا «الطلبات»، والخطط تبويباً في «المحتوى» */}
-          <Route path="review" element={<Navigate to="/admin/requests" replace />} />
-          <Route path="studios" element={<Navigate to="/admin/requests?type=studios" replace />} />
-          <Route path="plans" element={<Navigate to="/admin/content?tab=plans" replace />} />
-          <Route path="*" element={<Navigate to="/admin" replace />} />
-        </Route>
+          {/* لوحة الإدارة — مساحة مستقلّة بعمود جانبي وحارس واحد */}
+          <Route path="admin" element={<AdminLayout />}>
+            <Route index element={<AdminHomePage />} />
+            <Route path="requests" element={<AdminRequestsPage />} />
+            <Route path="review/:id" element={<AdminReviewDetailPage />} />
+            <Route path="studios/:id" element={<AdminStudioDetailPage />} />
+            <Route path="fonts" element={<AdminFontsPage />} />
+            <Route path="fonts/:id" element={<AdminFontDetailPage />} />
+            <Route path="users" element={<AdminUsersPage />} />
+            <Route path="content" element={<AdminContentPage />} />
+            <Route path="analytics" element={<AdminAnalyticsPage />} />
+            {/* عناوين قديمة: المراجعة والتوثيق صارا «الطلبات»، والخطط تبويباً في «المحتوى» */}
+            <Route path="review" element={<Navigate to="/admin/requests" replace />} />
+            <Route path="studios" element={<Navigate to="/admin/requests?type=studios" replace />} />
+            <Route path="plans" element={<Navigate to="/admin/content?tab=plans" replace />} />
+            <Route path="*" element={<Navigate to="/admin" replace />} />
+          </Route>
 
-        {/* دليل التصميم */}
-        <Route errorElement={<ErrorBoundary />} element={<WideLayout />}>
-          <Route path="design-system" element={<DesignSystemPage />} />
-        </Route>
+          {/* دليل التصميم */}
+          <Route element={<WideLayout />}>
+            <Route path="design-system" element={<DesignSystemPage />} />
+          </Route>
 
-        {/* 404 */}
-        <Route path="*" element={<NotFoundPage />} />
-      </Routes>
+          {/* 404 */}
+          <Route path="*" element={<NotFoundPage />} />
+        </Routes>
+      </ErrorBoundary>
     </AppProviders>
   );
 }

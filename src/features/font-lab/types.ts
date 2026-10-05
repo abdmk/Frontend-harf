@@ -31,6 +31,8 @@ export type LabFont = {
   features: { tag: string; table: 'GSUB' | 'GPOS' }[];
   axes: Axis[];
   instances: { name: string; coords: Record<string, number> }[];
+  /** وجوه FontFace المسجّلة في document.fonts — تُحذف بـreleaseFont — لا يُسلسَل */
+  faces: FontFace[];
   /** للوصول إلى المحارف ومساراتها — لا يُسلسَل */
   kit: FontkitFont;
 };
