@@ -1,6 +1,14 @@
 /** أقسام مساحة الاستوديو — قائمة مغلقة (لا مسارات حرّة) */
 export type StudioSection =
-  'fonts' | 'analytics' | 'finance' | 'finance/sales' | 'finance/payouts' | 'profile' | 'publish' | 'verify';
+  | 'fonts'
+  | 'analytics'
+  | 'finance'
+  | 'finance/sales'
+  | 'finance/payouts'
+  | 'profile'
+  | 'publish'
+  | 'manuscripts/new'
+  | 'verify';
 
 /** أقسام لوحة الإدارة */
 export type AdminSection = 'requests' | 'review' | 'studios' | 'fonts' | 'users' | 'plans' | 'content' | 'analytics';

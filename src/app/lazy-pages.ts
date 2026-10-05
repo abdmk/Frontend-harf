@@ -59,6 +59,9 @@ export const StudioFontsPage = lazy(() => studio().then((m) => ({ default: m.Stu
 export const StudioAnalyticsPage = lazy(() => studio().then((m) => ({ default: m.StudioAnalyticsPage })));
 export const StudioFinancePage = lazy(() => studio().then((m) => ({ default: m.StudioFinancePage })));
 export const StudioProfilePage = lazy(() => studio().then((m) => ({ default: m.StudioProfilePage })));
+export const ManuscriptUploadPage = lazy(() =>
+  import('./pages/manuscript-upload').then((m) => ({ default: m.ManuscriptUploadPage })),
+);
 export const PublishPage = lazy(() => import('./pages/publish').then((m) => ({ default: m.PublishPage })));
 
 // الإدارة — لا تصل إلى حزمة الزائر أبداً

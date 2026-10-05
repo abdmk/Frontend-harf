@@ -32,6 +32,7 @@ import {
   HelpPage,
   LoginPage,
   ManuscriptsPage,
+  ManuscriptUploadPage,
   NasaqPage,
   NasaqPairPage,
   NotificationsPage,
@@ -113,6 +114,7 @@ export function App() {
               <Route path="finance/earnings" element={<Navigate to="/studio/finance" replace />} />
               <Route path="profile" element={<StudioProfilePage />} />
               <Route path="publish" element={<PublishPage />} />
+              <Route path="manuscripts/new" element={<ManuscriptUploadPage />} />
               <Route path="*" element={<Navigate to="/studio" replace />} />
             </Route>
 
