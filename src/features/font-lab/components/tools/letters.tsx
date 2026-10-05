@@ -87,7 +87,7 @@ export function Letters() {
         </Panel>
 
         {/* الحرف المختار: أشكاله الأربعة بحجم كبير */}
-        <Panel label={`أشكال ${pick}`} className="overflow-hidden xl:sticky xl:top-(--lab-sticky,6rem)">
+        <Panel label={`أشكال ${pick}`} className="overflow-hidden xl:sticky xl:top-24">
           <div className="flex items-center justify-between gap-3 border-b px-5 py-3">
             <span className="text-control font-semibold">
               الحرف <span style={specimen(active)}>{pick}</span>

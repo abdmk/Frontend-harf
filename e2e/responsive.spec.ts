@@ -36,7 +36,6 @@ const PAGES = [
   '/tools/nasaq',
   '/tools/font-matching',
   '/tools/font-lab?font=cairo',
-  '/tools/font-lab-b?font=cairo',
   '/manuscripts',
   '/?license=paid',
   '/about',

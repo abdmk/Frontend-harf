@@ -4,17 +4,14 @@ import { ControlsCard, TextField } from '../controls';
 
 const SIZES = [12, 14, 16, 20, 24, 32, 40, 48, 64, 80, 100, 128];
 
-/** controls=false حين يعرض المستدعي شريط نصّ مشتركاً */
-export function Waterfall({ controls = true }: { controls?: boolean }) {
+export function Waterfall() {
   const { active, settings, specimen } = useLab();
   if (!active) return null;
   return (
     <div className="flex flex-col gap-5">
-      {controls && (
-        <ControlsCard label="نص التدرّج">
-          <TextField label="نص التدرّج" />
-        </ControlsCard>
-      )}
+      <ControlsCard label="نص التدرّج">
+        <TextField label="نص التدرّج" />
+      </ControlsCard>
       <Panel label="تدرّج الأحجام" className="divide-y overflow-hidden">
         {SIZES.map((size) => (
           <div key={size} className="flex items-baseline gap-5 px-5 py-3.5">

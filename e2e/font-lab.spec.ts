@@ -162,39 +162,3 @@ test.describe('مختبر الخط', () => {
     await expect(page.getByText('ليست ملف خط')).toBeVisible();
   });
 });
-
-test.describe('مختبر الخط — النسخة «ب»', () => {
-  test('تبويبات مجمّعة مثبّتة، وشريط نصّ واحد يتبع أدوات «جرّب»', async ({ page }) => {
-    await page.goto('/tools/font-lab-b?font=cairo');
-    await expect(page.getByRole('heading', { level: 1, name: 'Cairo' })).toBeVisible({ timeout: 20_000 });
-    const nav = page.getByRole('navigation', { name: 'أدوات الفحص' });
-    for (const g of ['جرّب', 'افحص', 'تحقّق']) await expect(nav.getByRole('group', { name: g })).toBeVisible();
-
-    // شريط النص نفسه في العيّنة والأحجام — والحجم يبقى كما ضُبط
-    const bar = page.getByRole('region', { name: 'إعدادات النص' });
-    await expect(bar).toBeVisible();
-    await nav.getByRole('button', { name: 'الأحجام' }).click();
-    await expect(page).toHaveURL(/tool=waterfall/);
-    await bar.getByLabel('نص المعاينة').fill('مكتبة حرف');
-    await expect(page.getByText('مكتبة حرف').nth(1)).toBeVisible();
-
-    // أدوات «افحص» بلا شريط النص — لكلٍّ إعداداتها
-    await nav.getByRole('button', { name: /^OpenType/ }).click();
-    await expect(bar).toHaveCount(0);
-    await page.getByRole('switch', { name: /^kern/ }).click();
-    await expect(page.getByText('font-feature-settings: "kern" 0;')).toBeVisible();
-
-    await page.getByRole('button', { name: /الفحص السريع/ }).click();
-    await expect(page).toHaveURL(/tool=languages/);
-    await expect(page.getByRole('region', { name: 'فحص سريع' })).toBeVisible();
-  });
-
-  test('الجوال: الإعدادات في لوحة سفلية', async ({ page }) => {
-    await page.setViewportSize({ width: 390, height: 844 });
-    await page.goto('/tools/font-lab-b?font=cairo');
-    await page.getByRole('button', { name: 'إعدادات النص' }).click({ timeout: 20_000 });
-    const sheet = page.getByRole('dialog', { name: 'إعدادات النص' });
-    await expect(sheet.getByRole('slider', { name: 'الحجم' })).toBeVisible();
-    await expect(sheet.getByRole('group', { name: 'الألوان' })).toBeVisible();
-  });
-});

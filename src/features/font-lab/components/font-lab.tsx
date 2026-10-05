@@ -8,21 +8,20 @@ import { FolderIcon, GlobeIcon, LayersIcon, ShieldCheckIcon, SlidersIcon, TextIc
 import { Spinner } from '@/components/ui/spinner';
 
 import { Workspace } from './workspace';
-import { WorkspaceB } from './workspace-b';
 import { libraryPackage } from '../api/library';
 import { LabProvider, useLab } from '../hooks/lab-context';
 import { ACCEPT } from '../utils/load';
 
 /** «مختبر الخط»: كل الملفات تُقرأ في المتصفّح — لا يُرفع شيء إلى الخادم */
-export function FontLab({ hero, layout = 'a' }: { hero: React.ReactNode; layout?: 'a' | 'b' }) {
+export function FontLab({ hero }: { hero: React.ReactNode }) {
   return (
     <LabProvider>
-      <LabBody hero={hero} layout={layout} />
+      <LabBody hero={hero} />
     </LabProvider>
   );
 }
 
-function LabBody({ hero, layout }: { hero: React.ReactNode; layout: 'a' | 'b' }) {
+function LabBody({ hero }: { hero: React.ReactNode }) {
   const { active, addFromLibrary, fonts } = useLab();
   const [params] = useSearchParams();
 
@@ -38,11 +37,7 @@ function LabBody({ hero, layout }: { hero: React.ReactNode; layout: 'a' | 'b' })
 
   // بعد الرفع يختفي الـHero كاملاً وتصير الصفحة مساحة عمل
   return active ? (
-    layout === 'b' ? (
-      <WorkspaceB />
-    ) : (
-      <Workspace />
-    )
+    <Workspace />
   ) : (
     <div className="py-10 sm:py-14">
       {hero}
