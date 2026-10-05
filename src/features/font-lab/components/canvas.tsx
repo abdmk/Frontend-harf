@@ -12,8 +12,8 @@ import { cn } from '@/lib/cn';
 
 import { LayoutContext, ParagraphsContext, TestsContext } from './contexts';
 import { OT_SPECIMENS } from './tools/features';
-import { PRESETS } from './tools/sample';
 import { featureGroup, featureInfo, featureOn } from '../data/features';
+import { PRESETS } from '../data/presets';
 import { type CanvasMode, CANVAS_MODES } from '../data/tools';
 import { useLab } from '../hooks/lab-context';
 import { analyzeOpenType } from '../utils/opentype';

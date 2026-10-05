@@ -11,7 +11,6 @@ import { toast } from '@/components/ui/toast';
 import { cn } from '@/lib/cn';
 
 import { GlyphShape, Panel, RangeControl } from './bits';
-import { ALIGN, SWATCHES } from './tools/sample';
 import {
   type FeatureGroup,
   featureGroup,
@@ -20,6 +19,7 @@ import {
   featureSettings,
   GROUP_LABEL,
 } from '../data/features';
+import { ALIGN, SWATCHES } from '../data/presets';
 import { useLab } from '../hooks/lab-context';
 import type { LabFont } from '../types';
 import { analyzeOpenType, LANG_INFO } from '../utils/opentype';
