@@ -1,26 +1,27 @@
 import type { Designer } from './font';
 
-export const MANUSCRIPT_CATEGORIES = [
-  'panels',
-  'ramadan',
-  'eid',
-  'mawlid',
-  'jumua',
-  'hijri',
-  'greetings',
-  'occasions',
-] as const;
+/**
+ * التصنيفات بسؤال المستخدم «لأيّ مناسبة؟» — خمسة لا تتداخل:
+ * آيات وأذكار (لوحات تصلح لكل وقت) · رمضان · العيد · مناسبات إسلامية (المولد، الهجرة، الجمعة…) · تهاني ومناسبات.
+ * التفصيل الأدقّ (جمعة، هجري…) يصل إليه البحث بالعنوان.
+ */
+export const MANUSCRIPT_CATEGORIES = ['panels', 'ramadan', 'eid', 'islamic', 'greetings'] as const;
 export type ManuscriptCategory = (typeof MANUSCRIPT_CATEGORIES)[number];
 
 export const MANUSCRIPT_CATEGORY_LABEL: Record<ManuscriptCategory, string> = {
-  panels: 'لوحات',
+  panels: 'آيات وأذكار',
   ramadan: 'رمضان',
-  eid: 'عيد',
-  mawlid: 'مولد نبوي',
-  jumua: 'جمعة',
-  hijri: 'هجري',
-  greetings: 'تهاني',
-  occasions: 'مناسبات',
+  eid: 'العيد',
+  islamic: 'مناسبات إسلامية',
+  greetings: 'تهاني ومناسبات',
+};
+
+/** تصنيفات سابقة دُمجت — روابطها المشارَكة (?cat=) تفتح التصنيف الذي صارت فيه */
+export const LEGACY_MANUSCRIPT_CATEGORY: Record<string, ManuscriptCategory> = {
+  mawlid: 'islamic',
+  hijri: 'islamic',
+  jumua: 'islamic',
+  occasions: 'greetings',
 };
 
 /** مخطوطة: عمل خطّي متجه (SVG) جاهز للتحميل — كلها مجانية حالياً */

@@ -26,6 +26,16 @@ test.describe('المخطوطات', () => {
     await expect(cards).toHaveCount(36);
   });
 
+  test('التصنيفات المدموجة: خمسة، والروابط القديمة تفتح التصنيف الذي صارت فيه', async ({ page }) => {
+    await page.goto('/manuscripts?cat=jumua');
+    const cards = page.getByRole('list', { name: 'المخطوطات' }).locator('article');
+    await expect(cards).toHaveCount(7);
+    await page.getByRole('button', { name: 'التصنيف', exact: true }).click();
+    const cats = page.getByRole('group', { name: 'التصنيفات' }).getByRole('button');
+    await expect(cats).toHaveCount(6); // الكل + خمسة
+    await expect(cats.filter({ hasText: 'مناسبات إسلامية' })).toHaveAttribute('aria-pressed', 'true');
+  });
+
   test('العارض: فتح، تنقّل، تكبير، تحميل SVG، وحفظ يبقى', async ({ page }) => {
     await page.goto('/manuscripts');
     await page.getByRole('button', { name: 'محمد رسول الله', exact: true }).click();

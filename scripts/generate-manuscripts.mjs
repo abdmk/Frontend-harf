@@ -100,27 +100,27 @@ const WORKS = [
   ],
   ['eid-mubarak', 'عيد مبارك', 'eid', [['عيد مبارك', 'lalezar']]],
   [
-    'mawlid',
+    'islamic',
     'المولد النبوي الشريف',
-    'mawlid',
+    'islamic',
     [
       ['المولد النبوي', 'ruqaa', 1.2],
       ['الشريف', 'messiri', 0.6],
     ],
   ],
   [
-    'jumua',
+    'islamic',
     'جمعة مباركة',
-    'jumua',
+    'islamic',
     [
       ['جمعة', 'kufi', 1.5],
       ['مباركة', 'kufi', 0.8],
     ],
   ],
   [
-    'hijri',
+    'islamic',
     'عام هجري سعيد',
-    'hijri',
+    'islamic',
     [
       ['عام هجري', 'marhey'],
       ['سعيد', 'marhey', 1.3],
@@ -141,7 +141,7 @@ const WORKS = [
   [
     'muhammad',
     'محمد رسول الله',
-    'mawlid',
+    'panels',
     [
       ['محمد', 'ruqaa', 1.8],
       ['رسول الله', 'ruqaa', 0.9],
@@ -176,7 +176,7 @@ const WORKS = [
       ['رمضان', 'lalezar', 1.5],
     ],
   ],
-  ['saat-istijaba', 'ساعة استجابة', 'jumua', [['ساعة استجابة', 'ruqaa']]],
+  ['saat-istijaba', 'ساعة استجابة', 'islamic', [['ساعة استجابة', 'ruqaa']]],
   [
     'shukran',
     'شكراً لكم',
@@ -198,7 +198,7 @@ const WORKS = [
   [
     'national-day',
     'يوم وطني سعيد',
-    'occasions',
+    'greetings',
     [
       ['يوم وطني', 'messiri', 1.2],
       ['سعيد', 'messiri', 0.9],
@@ -236,7 +236,7 @@ const WORKS = [
   [
     'teachers',
     'يوم المعلّم',
-    'occasions',
+    'greetings',
     [
       ['يوم', 'marhey', 0.8],
       ['المعلّم', 'marhey', 1.4],
@@ -245,7 +245,7 @@ const WORKS = [
   [
     'talaa-albadr',
     'طلع البدر علينا',
-    'mawlid',
+    'islamic',
     [
       ['طلع البدر', 'amiri', 1.2],
       ['علينا', 'amiri'],
@@ -269,17 +269,17 @@ const WORKS = [
       ['مبارك', 'lalezar'],
     ],
   ],
-  ['jumua-2', 'جمعة طيّبة', 'jumua', [['جمعة طيّبة', 'marhey']]],
+  ['jumua-2', 'جمعة طيّبة', 'islamic', [['جمعة طيّبة', 'marhey']]],
   [
     'hijri-1448',
     'سنة هجرية مباركة',
-    'hijri',
+    'islamic',
     [
       ['سنة هجرية', 'ruqaa'],
       ['مباركة', 'ruqaa', 1.2],
     ],
   ],
-  ['mothers', 'يوم الأمّ', 'occasions', [['يوم الأمّ', 'ruqaa']]],
+  ['mothers', 'يوم الأمّ', 'greetings', [['يوم الأمّ', 'ruqaa']]],
   ['la-ilaha', 'لا إله إلا الله', 'panels', [['لا إله إلا الله', 'kufi']]],
   [
     'eid-adha',
@@ -293,7 +293,7 @@ const WORKS = [
   [
     'salli',
     'اللهم صلّ على محمد',
-    'mawlid',
+    'panels',
     [
       ['اللهم صلّ', 'messiri'],
       ['على محمد', 'messiri', 1.2],
@@ -302,7 +302,7 @@ const WORKS = [
   [
     'marhaba',
     'مرحباً بكم',
-    'occasions',
+    'greetings',
     [
       ['مرحباً', 'lalezar', 1.3],
       ['بكم', 'lalezar', 0.9],
