@@ -121,7 +121,7 @@ export function FoundryPage() {
             }
             description="من يصمّمون خطوط المسبك — افتح ملف أيّ منهم لترى كل أعماله."
           />
-          <ul className="grid grid-cols-[minmax(0,1fr)] gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <ul className="grid grid-cols-[minmax(0,1fr)] gap-4 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
             {designers.map(({ d, own, weights }) => (
               <li key={d.id}>
                 <DesignerCard

@@ -17,7 +17,7 @@ type FontGridProps = {
 export function FontGrid({ fonts, renderCard, empty = null }: FontGridProps) {
   if (!fonts.length) return empty;
   return (
-    <ul className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+    <ul className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
       {fonts.map((f, i) => (
         <Reveal as="li" key={f.id} index={i} className="flex [&>*]:w-full">
           {renderCard ? renderCard(f) : <FontCard font={f} />}

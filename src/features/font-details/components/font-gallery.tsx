@@ -88,7 +88,11 @@ export function FontGallery({
           slides={slides}
           index={i}
           onIndexChange={setI}
-          className={cn(full ? 'size-full rounded-none' : 'aspect-[4/3] rounded-lg sm:aspect-[1120/580]')}
+          className={cn(
+            full
+              ? 'size-full rounded-none'
+              : 'aspect-[4/3] w-full rounded-lg sm:aspect-[1120/580] sm:max-h-[min(36rem,70dvh)]',
+          )}
           overlay={
             <button
               ref={fsBtn}

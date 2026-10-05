@@ -13,10 +13,13 @@ export function NotificationsPage() {
   if (!user) return <Navigate to={paths.login.getHref(paths.notifications.getHref())} replace />;
   const items = getNotifications(user);
   return (
-    <Container as="main" id="main" className="max-w-2xl py-8 sm:py-12">
+    <Container as="main" id="main" className="py-8 sm:py-12">
       <PageMeta title="الإشعارات" noindex />
-      <PageIntro size="compact" title="الإشعارات" />
-      <NotificationsPanel initial={items} />
+      {/* الحاوية الموحّدة، والقائمة بعرض قراءة في وسطها */}
+      <div className="mx-auto max-w-2xl">
+        <PageIntro size="compact" title="الإشعارات" />
+        <NotificationsPanel initial={items} />
+      </div>
     </Container>
   );
 }
