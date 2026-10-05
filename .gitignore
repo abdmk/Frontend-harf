@@ -46,3 +46,6 @@ yarn-error.log*
 /test-results/
 /playwright-report/
 /blob-report/
+
+# صور المراجع التصميمية — خارج المستودع (حجمها ~100MB)؛ محفوظة في سجلّ git قبل هذا الإيداع
+reference/

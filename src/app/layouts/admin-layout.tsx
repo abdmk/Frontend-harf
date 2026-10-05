@@ -6,7 +6,7 @@ import { AdminSidebar, AdminTabs } from '@/features/admin/components/admin-shell
 import { useCurrentUser } from '@/hooks/use-current-user';
 
 import { HeaderActions } from '../header-actions';
-import { preloadPage } from '../lazy-pages';
+import { preloadPage } from '../preload';
 import { PageTransition } from './page-transition';
 import { NotFoundPage } from '../pages/not-found';
 

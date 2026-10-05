@@ -1,4 +1,4 @@
-import { Navigate, useParams } from 'react-router';
+import { useParams } from 'react-router';
 
 import { CatalogCard } from '@/app/_components/catalog-card';
 import { Container } from '@/components/layout/container';
@@ -12,10 +12,12 @@ import { DEFAULT_QUERY } from '@/features/catalog/types/catalog-query';
 import { getDesigner } from '@/features/studio/api/get-studio';
 import { DesignerProfileHeader } from '@/features/studio/components/designer-profile';
 
+import { NotFoundPage } from './not-found';
+
 export function DesignerPage() {
   const { id } = useParams<{ id: string }>();
   const data = getDesigner(id!);
-  if (!data) return <Navigate to="/" replace />;
+  if (!data) return <NotFoundPage inLayout />;
   const fonts = getFonts(DEFAULT_QUERY).filter((f) => f.designers.some((d) => d.id === data.designer.id));
   const weights = fonts.reduce((sum, f) => sum + f.weights, 0);
 

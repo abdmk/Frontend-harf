@@ -127,6 +127,7 @@ export function CheckoutForm({ user, total, empty, action }: Props) {
   if (empty)
     return (
       <EmptyState
+        className="border-0 bg-transparent py-16 sm:py-20"
         icon={<CartIcon />}
         title="لا شيء للدفع بعد"
         description="أضف ترخيص خط إلى السلة أوّلاً."

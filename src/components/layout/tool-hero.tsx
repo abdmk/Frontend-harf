@@ -65,3 +65,12 @@ export function ToolHero({
     </hgroup>
   );
 }
+
+/**
+ * مسرح بداية الأداة — بطاقة الرفع أو مساحة العمل الأولى ونصائحها تحت الـHero مباشرة.
+ * عرضه محدود (1024px) حتى لا تتمدّد بطاقة الرفع على عرض الصفحة كاملاً (1440px) فتبدو فارغة؛
+ * أعرض قليلاً من العنوان (768px) فيتدرّج البصر: عنوان ← أداة ← بقية الصفحة.
+ */
+export function ToolStage({ className, children }: { className?: string; children: ReactNode }) {
+  return <div className={cn('mx-auto w-full max-w-5xl', className)}>{children}</div>;
+}

@@ -1,0 +1,8 @@
+User-agent: *
+Disallow: /account
+Disallow: /studio
+Disallow: /admin
+Disallow: /checkout
+Disallow: /cart
+Disallow: /notifications
+Disallow: /design-system

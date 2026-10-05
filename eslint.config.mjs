@@ -1,9 +1,9 @@
 import { readdirSync } from 'node:fs';
 
 import { defineConfig, globalIgnores } from 'eslint/config';
-import importX from 'eslint-plugin-import-x';
+import { flatConfigs as importConfigs } from 'eslint-plugin-import-x';
 import reactHooks from 'eslint-plugin-react-hooks';
-import tseslint from 'typescript-eslint';
+import { configs as tsConfigs } from 'typescript-eslint';
 
 /** كل feature لا يستورد من feature آخر — التركيب يحدث في src/app فقط (Bulletproof React) */
 const FEATURES = readdirSync(new URL('./src/features', import.meta.url), { withFileTypes: true })
@@ -11,9 +11,9 @@ const FEATURES = readdirSync(new URL('./src/features', import.meta.url), { withF
   .map((d) => d.name);
 
 const eslintConfig = defineConfig([
-  ...tseslint.configs.recommended,
-  importX.flatConfigs.recommended,
-  importX.flatConfigs.typescript,
+  ...tsConfigs.recommended,
+  importConfigs.recommended,
+  importConfigs.typescript,
   reactHooks.configs.flat.recommended,
   {
     settings: {

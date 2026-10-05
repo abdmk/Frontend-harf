@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { useSearchParams } from 'react-router';
 
+import { ToolStage } from '@/components/layout/tool-hero';
 import { Dropzone } from '@/components/shared/dropzone';
 import { ToolTips } from '@/components/shared/tool-tips';
 import { Button } from '@/components/ui/button';
@@ -62,7 +63,7 @@ function Empty() {
   const folder = useRef<HTMLInputElement>(null);
 
   return (
-    <div className="flex flex-col gap-6">
+    <ToolStage className="flex flex-col gap-6">
       <div className="relative">
         <Dropzone
           feature
@@ -105,6 +106,6 @@ function Empty() {
       </div>
 
       <ToolTips id="lab-tips" title="ما يكشفه المختبر" tips={LAB_TIPS} />
-    </div>
+    </ToolStage>
   );
 }
