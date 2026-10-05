@@ -46,7 +46,7 @@ const Info = lazyTool(() => import('./tools/info'), 'Info');
  * حالة الصفحة في الرابط — قابلة للمشاركة: ?tool= (الأداة)، ?mode= (سياق العيّنة)، ?sub= (عرض الميزات)،
  * ?compare=1 (قبل / بعد). روابط الإصدار السابق (?view=…) تُترجم إلى أداتها.
  */
-export function usePageState() {
+function usePageState() {
   const [params, setParams] = useSearchParams();
   const tool = toolByKey(params.get('tool') ?? legacyTool(params)).key;
   const mode = canvasModeByKey(params.get('mode'));
@@ -148,7 +148,7 @@ export function Workspace() {
 
 /* ───────────────────────── بطاقة الخط ───────────────────────── */
 
-export const kb = (n: number) => `${(n / 1024).toLocaleString('en-US', { maximumFractionDigits: 1 })} KB`;
+const kb = (n: number) => `${(n / 1024).toLocaleString('en-US', { maximumFractionDigits: 1 })} KB`;
 
 /** الخط النشط: اسمه بخطّه، ملفه، جواب الفحص السريع، وتبديل العائلة أو إضافة خطوط */
 function FontCard({ onCheck }: { onCheck: () => void }) {
@@ -262,7 +262,7 @@ function FontCard({ onCheck }: { onCheck: () => void }) {
 /* ───────────────────────── أدوات الفحص ───────────────────────── */
 
 /** الرقم بجانب كل أداة — جواب سريع قبل فتحها (لغات مدعومة، ميزات، محارف، محاور) */
-export function useCounts(): Partial<Record<ToolKey, number>> {
+function useCounts(): Partial<Record<ToolKey, number>> {
   const { active } = useLab();
   return useMemo(() => {
     if (!active) return {};

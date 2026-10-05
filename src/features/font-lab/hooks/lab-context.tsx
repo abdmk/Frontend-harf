@@ -1,10 +1,20 @@
-import { type CSSProperties, createContext, type ReactNode, useCallback, useContext, useMemo, useState } from 'react';
+import {
+  type CSSProperties,
+  createContext,
+  type ReactNode,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 
 import { toast } from '@/components/ui/toast';
 
 import { featureSettings } from '../data/features';
 import type { LabFont, LabSettings } from '../types';
-import { loadFiles, loadLibraryPackage } from '../utils/load';
+import { loadFiles, loadLibraryPackage, releaseFont } from '../utils/load';
 
 export const DEFAULT_TEXT = 'الخطُّ الحسنُ يجعل الحقَّ أكثرَ وضوحًا';
 
@@ -108,11 +118,21 @@ export function LabProvider({ children }: { children: ReactNode }) {
     [accept],
   );
 
+  // آخر قائمة خطوط — لتحرير وجوهها من document.fonts دون آثار جانبية داخل setState
+  const fontsRef = useRef(fonts);
+  useEffect(() => {
+    fontsRef.current = fonts;
+  }, [fonts]);
+  // مغادرة المختبر تحرّر كل الخطوط المحمّلة من ذاكرة المتصفّح
+  useEffect(() => () => fontsRef.current.forEach(releaseFont), []);
+
   const remove = useCallback((id: string) => {
+    fontsRef.current.filter((f) => f.id === id).forEach(releaseFont);
     setFonts((prev) => prev.filter((f) => f.id !== id));
   }, []);
 
   const clear = useCallback(() => {
+    fontsRef.current.forEach(releaseFont);
     setFonts([]);
     setActiveId(null);
   }, []);

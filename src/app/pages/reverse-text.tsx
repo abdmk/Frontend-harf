@@ -1,7 +1,7 @@
 import { Container } from '@/components/layout/container';
 import { ToolHero } from '@/components/layout/tool-hero';
 import { PageMeta } from '@/components/shared/page-meta';
-import { CheckIcon, ChevronDownIcon, TextIcon } from '@/components/ui/icons';
+import { ChevronDownIcon, ShieldCheckIcon, TextIcon } from '@/components/ui/icons';
 import { HowCards } from '@/features/text-tools/components/how-cards';
 import { ReverseWorkspace } from '@/features/text-tools/components/reverse-workspace';
 
@@ -50,11 +50,11 @@ export function ReverseTextPage() {
       <ToolHero
         icon={<TextIcon />}
         name="عكس النص"
-        title="نص عربي"
-        highlight="جاهز لأي برنامج"
-        lead="حوّل النص العربي إلى صيغة مناسبة للبرامج التي لا تدعم العربية بشكل صحيح، ثم انسخه واستخدمه مباشرة."
-        noteIcon={<CheckIcon />}
-        note="نصّك يبقى مقروءاً أينما استخدمته"
+        title="عربية متّصلة"
+        highlight="في أي برنامج تصميم"
+        lead="اكتب نصّك وانسخه جاهزاً للّصق في After Effects وPhotoshop وUnity."
+        noteIcon={<ShieldCheckIcon />}
+        note="في متصفّحك — لا يُرسل نصّك إلى أي مكان"
       />
 
       <ReverseWorkspace />

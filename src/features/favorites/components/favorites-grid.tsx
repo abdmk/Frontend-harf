@@ -28,7 +28,7 @@ export function FavoritesGrid({ cards }: { cards: Record<string, ReactNode> }) {
       />
     );
   return (
-    <ul className="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-3">
+    <ul className="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
       {ids.map((id) => (
         <li key={id} className="flex animate-fade-up [&>*]:w-full">
           {cards[id]}

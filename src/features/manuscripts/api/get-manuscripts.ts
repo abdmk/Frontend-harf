@@ -1,5 +1,10 @@
 import { MOCK_MANUSCRIPTS } from '@/mocks/manuscripts';
-import { MANUSCRIPT_CATEGORIES, type Manuscript, type ManuscriptCategory } from '@/types/domain/manuscript';
+import {
+  LEGACY_MANUSCRIPT_CATEGORY,
+  MANUSCRIPT_CATEGORIES,
+  type Manuscript,
+  type ManuscriptCategory,
+} from '@/types/domain/manuscript';
 
 export type Sort = 'newest' | 'popular';
 export type LicenseFilter = 'all' | Manuscript['license'];
@@ -40,11 +45,12 @@ const list = (raw: string | null, known: readonly { id: string }[]) =>
 
 /** من الرابط إلى استعلام مضمون — أي قيمة غير معروفة تعود للافتراضي */
 export function parseQuery(p: URLSearchParams): ManuscriptQuery {
-  const cat = p.get('cat');
+  const raw = p.get('cat') ?? '';
+  const cat = Object.hasOwn(LEGACY_MANUSCRIPT_CATEGORY, raw) ? LEGACY_MANUSCRIPT_CATEGORY[raw]! : raw;
   const lic = p.get('lic');
   return {
     q: (p.get('q') ?? '').slice(0, 80),
-    cat: (MANUSCRIPT_CATEGORIES as readonly string[]).includes(cat ?? '') ? (cat as ManuscriptCategory) : 'all',
+    cat: (MANUSCRIPT_CATEGORIES as readonly string[]).includes(cat) ? (cat as ManuscriptCategory) : 'all',
     sort: p.get('sort') === 'popular' ? 'popular' : 'newest',
     saved: p.get('view') === 'saved',
     license: lic === 'personal' || lic === 'commercial' ? lic : 'all',

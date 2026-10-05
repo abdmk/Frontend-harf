@@ -44,7 +44,7 @@
   {
     "id": "mawlid",
     "title": "المولد النبوي الشريف",
-    "category": "mawlid",
+    "category": "islamic",
     "width": 5027,
     "height": 2779,
     "bytes": 10694,
@@ -62,7 +62,7 @@
   {
     "id": "jumua",
     "title": "جمعة مباركة",
-    "category": "jumua",
+    "category": "islamic",
     "width": 3553,
     "height": 2971,
     "bytes": 4224,
@@ -76,7 +76,7 @@
   {
     "id": "hijri",
     "title": "عام هجري سعيد",
-    "category": "hijri",
+    "category": "islamic",
     "width": 4620,
     "height": 2786,
     "bytes": 6587,
@@ -146,7 +146,7 @@
   {
     "id": "muhammad",
     "title": "محمد رسول الله",
-    "category": "mawlid",
+    "category": "panels",
     "width": 2925,
     "height": 3363,
     "bytes": 5844,
@@ -230,7 +230,7 @@
   {
     "id": "saat-istijaba",
     "title": "ساعة استجابة",
-    "category": "jumua",
+    "category": "islamic",
     "width": 4246,
     "height": 1551,
     "bytes": 5794,
@@ -272,7 +272,7 @@
   {
     "id": "national-day",
     "title": "يوم وطني سعيد",
-    "category": "occasions",
+    "category": "greetings",
     "width": 6040,
     "height": 2833,
     "bytes": 8577,
@@ -342,7 +342,7 @@
   {
     "id": "teachers",
     "title": "يوم المعلّم",
-    "category": "occasions",
+    "category": "greetings",
     "width": 4652,
     "height": 3184,
     "bytes": 5248,
@@ -356,7 +356,7 @@
   {
     "id": "talaa-albadr",
     "title": "طلع البدر علينا",
-    "category": "mawlid",
+    "category": "islamic",
     "width": 4106,
     "height": 3180,
     "bytes": 4829,
@@ -398,7 +398,7 @@
   {
     "id": "jumua-2",
     "title": "جمعة طيّبة",
-    "category": "jumua",
+    "category": "islamic",
     "width": 5141,
     "height": 1534,
     "bytes": 5609,
@@ -412,7 +412,7 @@
   {
     "id": "hijri-1448",
     "title": "سنة هجرية مباركة",
-    "category": "hijri",
+    "category": "islamic",
     "width": 3219,
     "height": 3260,
     "bytes": 8738,
@@ -426,7 +426,7 @@
   {
     "id": "mothers",
     "title": "يوم الأمّ",
-    "category": "occasions",
+    "category": "greetings",
     "width": 2940,
     "height": 1548,
     "bytes": 4857,
@@ -468,7 +468,7 @@
   {
     "id": "salli",
     "title": "اللهم صلّ على محمد",
-    "category": "mawlid",
+    "category": "panels",
     "width": 5873,
     "height": 3092,
     "bytes": 9850,
@@ -482,7 +482,7 @@
   {
     "id": "marhaba",
     "title": "مرحباً بكم",
-    "category": "occasions",
+    "category": "greetings",
     "width": 2643,
     "height": 2700,
     "bytes": 3685,

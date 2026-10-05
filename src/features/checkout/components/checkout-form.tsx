@@ -57,7 +57,8 @@ type Props = {
 
 /**
  * نموذج الدفع (دليل التصميم 5.7): الحساب ← صاحب الترخيص ← الدفع، ثم حالات ما بعد الدفع.
- * حقول البطاقة هنا شكلية: لا تحمل name ولا تُرسل — في المنتج يحلّ محلّها Stripe Elements.
+ * حقول البطاقة هنا شكلية ومعطّلة: لا تحمل name ولا تقبل إدخالاً (حتى لا يكتب زائر بطاقته الحقيقية) —
+ * في المنتج يحلّ محلّها Stripe Elements.
  */
 export function CheckoutForm({ user, total, empty, action }: Props) {
   const [state, formAction, pending] = useActionState(action, { status: 'idle' });
@@ -237,6 +238,7 @@ export function CheckoutForm({ user, total, empty, action }: Props) {
                 dir="ltr"
                 placeholder="1234 1234 1234 1234"
                 autoComplete="off"
+                disabled
                 start={<CreditCardIcon />}
                 end={<span className="text-micro font-medium">VISA · MC · AMEX</span>}
               />
@@ -244,20 +246,21 @@ export function CheckoutForm({ user, total, empty, action }: Props) {
             <div className="grid grid-cols-3 gap-3">
               <Field className="col-span-3 sm:col-span-1">
                 <FieldLabel htmlFor="cc-name">الاسم على البطاقة</FieldLabel>
-                <InputGroup id="cc-name" dir="ltr" placeholder="ABDULMALIK JASSIM" autoComplete="off" />
+                <InputGroup id="cc-name" dir="ltr" disabled placeholder="ABDULMALIK JASSIM" autoComplete="off" />
               </Field>
               <Field className="col-span-3 sm:col-span-1">
                 <FieldLabel htmlFor="cc-exp">الانتهاء</FieldLabel>
-                <InputGroup id="cc-exp" dir="ltr" placeholder="MM / YY" autoComplete="off" />
+                <InputGroup id="cc-exp" dir="ltr" disabled placeholder="MM / YY" autoComplete="off" />
               </Field>
               <Field className="col-span-3 sm:col-span-1">
                 <FieldLabel htmlFor="cc-cvc">CVC</FieldLabel>
-                <InputGroup id="cc-cvc" dir="ltr" placeholder="123" autoComplete="off" inputMode="numeric" />
+                <InputGroup id="cc-cvc" dir="ltr" disabled placeholder="123" autoComplete="off" inputMode="numeric" />
               </Field>
             </div>
             <p id="card-note" className="flex items-center gap-1.5 text-caption text-tertiary">
               <LockIcon className="size-3.5" />
-              بيئة تجريبية: لا تُدخل بطاقة حقيقية. في المنتج تُعرض حقول البطاقة من Stripe مباشرة ولا تمرّ بخوادم حرف.
+              الدفع الحقيقي لم يُفعَّل بعد — هذه الحقول للعرض فقط ولا تقبل إدخالاً. عند التفعيل تُعرض من Stripe مباشرة
+              ولا تمرّ بيانات بطاقتك بخوادم حرف.
             </p>
           </div>
         ) : (
