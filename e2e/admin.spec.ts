@@ -66,9 +66,10 @@ test.describe('لوحة الإدارة', () => {
     await page.getByRole('button', { name: 'إخفاء Cairo' }).click();
     await expect(page.getByRole('button', { name: 'إظهار Cairo' })).toBeVisible();
 
-    // صفحة الخط المخفي غير متاحة للزوّار: تعيد إلى المكتبة
+    // صفحة الخط المخفي غير متاحة للزوّار: «الصفحة غير موجودة» بدل تحويل صامت، ولا يظهر في المكتبة
     await page.goto('/fonts/cairo');
-    await expect(page).toHaveURL(/\/$/);
+    await expect(page.getByRole('heading', { level: 1, name: 'الصفحة غير موجودة' })).toBeVisible();
+    await page.goto('/');
     await expect(page.getByRole('link', { name: /^Cairo/ })).toHaveCount(0);
 
     await page.goto('/admin/fonts/cairo');

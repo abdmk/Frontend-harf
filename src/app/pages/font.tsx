@@ -1,4 +1,4 @@
-import { Link, Navigate, useParams, useSearchParams } from 'react-router';
+import { Link, useParams, useSearchParams } from 'react-router';
 
 import { CatalogCard } from '@/app/_components/catalog-card';
 import { Container } from '@/components/layout/container';
@@ -21,12 +21,14 @@ import { PurchaseActions } from '@/features/licensing/components/purchase-action
 import { useCurrentUser } from '@/hooks/use-current-user';
 import { getPricing } from '@/lib/commerce/cart-store';
 
+import { NotFoundPage } from './not-found';
+
 export function FontPage() {
   const { id } = useParams<{ id: string }>();
   const [searchParams] = useSearchParams();
   const font = getFont(id!);
   const user = useCurrentUser();
-  if (!font) return <Navigate to="/" replace />;
+  if (!font) return <NotFoundPage inLayout />;
 
   const pricing = getPricing(font.id);
   const owned = getOwnedLicense(user, font.id);

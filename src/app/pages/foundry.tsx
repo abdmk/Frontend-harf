@@ -1,4 +1,4 @@
-import { Navigate, useParams } from 'react-router';
+import { useParams } from 'react-router';
 
 import { CatalogCard } from '@/app/_components/catalog-card';
 import { Container } from '@/components/layout/container';
@@ -17,6 +17,8 @@ import { useCurrentUser } from '@/hooks/use-current-user';
 import { getPublicProfile, markOf, type SocialKey, socialUrl } from '@/lib/public-profile';
 import { useIsVerified } from '@/lib/studio-verification';
 
+import { NotFoundPage } from './not-found';
+
 export function FoundryPage() {
   const { id } = useParams<{ id: string }>();
   const me = useCurrentUser();
@@ -30,7 +32,7 @@ export function FoundryPage() {
   const ownerVerified = useIsVerified(
     isMine ? me!.id : id === getFoundry(id!)?.foundry.id ? MOCK_STUDIO_OWNER : undefined,
   );
-  if (!found) return <Navigate to="/" replace />;
+  if (!found) return <NotFoundPage inLayout />;
   // ⚠️ عرض: الملف المحفوظ في هذا المتصفّح يظهر على مسبك صاحبه وحده؛ مع الخادم يأتي من قاعدة البيانات
   const own = isMine ? getPublicProfile() : null;
   const data = own
