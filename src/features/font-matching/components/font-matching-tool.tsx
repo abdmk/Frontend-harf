@@ -1,5 +1,6 @@
 import { type ReactNode, useEffect, useId, useRef, useState } from 'react';
 
+import { ToolStage } from '@/components/layout/tool-hero';
 import { Dropzone } from '@/components/shared/dropzone';
 import { ToolTips } from '@/components/shared/tool-tips';
 import { Alert } from '@/components/ui/alert';
@@ -147,7 +148,7 @@ export function FontMatchingTool({ renderResult }: { renderResult: (p: ResultCar
         )}
 
         {state.phase === 'empty' ? (
-          <div className="flex flex-col gap-6">
+          <ToolStage className="flex flex-col gap-6">
             <Dropzone
               feature
               onFiles={onFiles}
@@ -165,7 +166,7 @@ export function FontMatchingTool({ renderResult }: { renderResult: (p: ResultCar
             />
             {state.error && <Alert tone="danger" title={state.error} />}
             <ToolTips id={`${textId}-tips`} title="نصائح لنتيجة أدق" tips={TIPS} />
-          </div>
+          </ToolStage>
         ) : (
           <div className="mt-6 grid gap-6 lg:grid-cols-[minmax(0,1.35fr)_minmax(0,1fr)] lg:gap-8">
             <div className="flex min-w-0 flex-col gap-3">

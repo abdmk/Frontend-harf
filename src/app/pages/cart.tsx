@@ -93,6 +93,7 @@ export function CartPage() {
 
       {count === 0 ? (
         <EmptyState
+          className="border-0 bg-transparent py-16 sm:py-20"
           icon={<CartIcon />}
           title="سلتك فارغة"
           description="اختر ترخيصاً من صفحة أي خط مدفوع، وسيظهر هنا بتفاصيله."

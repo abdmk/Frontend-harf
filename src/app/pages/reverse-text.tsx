@@ -1,5 +1,5 @@
 import { Container } from '@/components/layout/container';
-import { ToolHero } from '@/components/layout/tool-hero';
+import { ToolHero, ToolStage } from '@/components/layout/tool-hero';
 import { PageMeta } from '@/components/shared/page-meta';
 import { ChevronDownIcon, ShieldCheckIcon, TextIcon } from '@/components/ui/icons';
 import { HowCards } from '@/features/text-tools/components/how-cards';
@@ -57,29 +57,31 @@ export function ReverseTextPage() {
         note="في متصفّحك — لا يُرسل نصّك إلى أي مكان"
       />
 
-      <ReverseWorkspace />
+      <ToolStage>
+        <ReverseWorkspace />
 
-      <section aria-labelledby="how-title" className="mt-14 sm:mt-16">
-        <SectionHead id="how-title" title="كيف يعمل" lead="ثلاث خطوات تجري على نصّك لحظة الكتابة." />
-        <HowCards />
-      </section>
+        <section aria-labelledby="how-title" className="mt-14 sm:mt-16">
+          <SectionHead id="how-title" title="كيف يعمل" lead="ثلاث خطوات تجري على نصّك لحظة الكتابة." />
+          <HowCards />
+        </section>
 
-      <section aria-labelledby="faq-title" className="mt-14 sm:mt-16">
-        <SectionHead id="faq-title" title="إن لم تظهر كما تتوقّع" lead="أكثر ما يواجهه المصمّمون بعد اللصق، وحلّه." />
-        <ul className="flex flex-col divide-y overflow-hidden rounded-xl border bg-card">
-          {FAQ.map(([q, a]) => (
-            <li key={q}>
-              <details className="group">
-                <summary className="flex cursor-pointer list-none items-center justify-between gap-4 px-5 py-4 text-control font-medium transition-colors outline-none select-none hover:bg-sunken/60 focus-visible:bg-sunken/60 [&::-webkit-details-marker]:hidden">
-                  {q}
-                  <ChevronDownIcon className="size-4 shrink-0 text-tertiary transition-transform duration-(--dur-slow) ease-out-quint group-open:rotate-180" />
-                </summary>
-                <p className="px-5 pb-4 text-meta leading-relaxed text-muted-foreground">{a}</p>
-              </details>
-            </li>
-          ))}
-        </ul>
-      </section>
+        <section aria-labelledby="faq-title" className="mt-14 sm:mt-16">
+          <SectionHead id="faq-title" title="إن لم تظهر كما تتوقّع" lead="أكثر ما يواجهه المصمّمون بعد اللصق، وحلّه." />
+          <ul className="flex flex-col divide-y overflow-hidden rounded-xl border bg-card">
+            {FAQ.map(([q, a]) => (
+              <li key={q}>
+                <details className="group">
+                  <summary className="flex cursor-pointer list-none items-center justify-between gap-4 px-5 py-4 text-control font-medium transition-colors outline-none select-none hover:bg-sunken/60 focus-visible:bg-sunken/60 [&::-webkit-details-marker]:hidden">
+                    {q}
+                    <ChevronDownIcon className="size-4 shrink-0 text-tertiary transition-transform duration-(--dur-slow) ease-out-quint group-open:rotate-180" />
+                  </summary>
+                  <p className="px-5 pb-4 text-meta leading-relaxed text-muted-foreground">{a}</p>
+                </details>
+              </li>
+            ))}
+          </ul>
+        </section>
+      </ToolStage>
     </Container>
   );
 }
