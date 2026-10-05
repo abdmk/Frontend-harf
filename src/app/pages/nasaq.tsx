@@ -1,7 +1,7 @@
 import { Container } from '@/components/layout/container';
 import { ToolHero } from '@/components/layout/tool-hero';
 import { PageMeta } from '@/components/shared/page-meta';
-import { LayersIcon } from '@/components/ui/icons';
+import { CheckIcon, LayersIcon } from '@/components/ui/icons';
 import { NasaqTool } from '@/features/pairing/components/nasaq-tool';
 
 /** «نسق» — تُحمَّل كسولاً: الكتالوج والمحرّك وملفات الخطوط لا تثقل باقي الموقع */
@@ -15,9 +15,11 @@ export function NasaqPage() {
       <ToolHero
         icon={<LayersIcon />}
         name="نسق"
-        title="اعثر على خطوط"
-        highlight="تنسجم معاً"
-        lead="اكتب نصّك، واختر خطاً، ودع «نسق» يقترح تركيبات متوازنة للعناوين والنصوص من مكتبة حرف."
+        title="خطوط عربية"
+        highlight="تنسجم معاً في تصميمك"
+        lead="اكتب نصّك واختر خطاً، و«نسق» يقترح ما يناسبه للعناوين والنصوص."
+        noteIcon={<CheckIcon />}
+        note="كل الاقتراحات من مكتبة حرف — بخطوطها الحقيقية"
       />
       <NasaqTool />
     </Container>
