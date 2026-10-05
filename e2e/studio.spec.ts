@@ -6,6 +6,8 @@ test.describe('الاستوديو والإدارة', () => {
     await expect(page).toHaveURL(/\/account\/subscription$/);
     await page.goto('/account/library?as=studio');
     const nav = page.getByRole('navigation', { name: 'قائمة الحساب' });
+    // صفحات الحساب كسولة: ننتظر القائمة كاملة قبل قراءة بنودها
+    await expect(nav.getByRole('link', { name: 'الاستوديو', exact: true })).toBeVisible();
     const items = await nav.getByRole('link').allInnerTexts();
     await page.goto('/studio');
     await expect(page.getByRole('heading', { level: 1, name: 'نظرة عامة' })).toBeVisible();

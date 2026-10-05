@@ -14,9 +14,12 @@ export default defineConfig({
   build: {
     rollupOptions: {
       output: {
-        manualChunks: {
-          react: ['react', 'react-dom', 'react-router'],
-          radix: ['radix-ui'],
+        // المكتبات في حزم ثابتة منفصلة: تتغيّر نادراً فيبقيها المتصفّح مخزّنة بين النشرات
+        manualChunks(id) {
+          if (!id.includes('node_modules')) return;
+          if (/[\\/](react|react-dom|react-router|scheduler)[\\/]/.test(id)) return 'react';
+          if (/[\\/](radix-ui|@radix-ui)[\\/]/.test(id)) return 'radix';
+          if (/[\\/]zod[\\/]/.test(id)) return 'zod';
         },
       },
     },

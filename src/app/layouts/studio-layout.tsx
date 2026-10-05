@@ -8,7 +8,7 @@ import { useStudioSection } from '@/features/studio/components/studio-nav';
 import { useCurrentUser } from '@/hooks/use-current-user';
 
 import { HeaderActions } from '../header-actions';
-import { preloadPage } from '../lazy-pages';
+import { preloadPage } from '../preload';
 import { PageTransition } from './page-transition';
 
 type StudioContext = ReturnType<typeof getStudio>;
