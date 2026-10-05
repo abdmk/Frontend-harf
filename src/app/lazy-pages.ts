@@ -9,6 +9,7 @@ import { loaders } from './preload';
 
 // صفحات الأدوات والمكتبة
 export const NasaqPage = lazy(() => loaders['/tools/nasaq']().then((m) => ({ default: m.NasaqPage })));
+export const NasaqPairPage = lazy(() => import('./pages/nasaq-pair').then((m) => ({ default: m.NasaqPairPage })));
 export const FontLabPage = lazy(() => loaders['/tools/font-lab']().then((m) => ({ default: m.FontLabPage })));
 export const FontMatchingPage = lazy(() =>
   loaders['/tools/font-matching']().then((m) => ({ default: m.FontMatchingPage })),

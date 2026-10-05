@@ -33,6 +33,7 @@ import {
   LoginPage,
   ManuscriptsPage,
   NasaqPage,
+  NasaqPairPage,
   NotificationsPage,
   PrivacyPage,
   PublishPage,
@@ -76,6 +77,7 @@ export function App() {
               <Route path="manuscripts" element={<ManuscriptsPage />} />
               <Route path="tools/reverse-text" element={<ReverseTextPage />} />
               <Route path="tools/nasaq" element={<NasaqPage />} />
+              <Route path="tools/nasaq/:pair" element={<NasaqPairPage />} />
               <Route path="tools/font-lab" element={<FontLabPage />} />
               <Route path="tools/font-matching" element={<FontMatchingPage />} />
               <Route path="blog" element={<BlogPage />} />

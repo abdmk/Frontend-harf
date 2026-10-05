@@ -33,6 +33,19 @@ export const paths = {
     font: { getHref: (id: string) => `/admin/fonts/${encodeURIComponent(id)}` },
     studio: { getHref: (id: string) => `/admin/studios/${encodeURIComponent(id)}` },
   },
-  tools: { reverseText: { getHref: () => '/tools/reverse-text' } },
+  tools: {
+    reverseText: { getHref: () => '/tools/reverse-text' },
+    /** صفحة تركيبة «نسق»: الخطوط في سياقها — slug من pairSlug، والاستخدام واللغة ونصّ المستخدم في الرابط */
+    nasaqPair: {
+      getHref: (slug: string, q: { use?: string; lang?: string; text?: string } = {}) => {
+        const p = new URLSearchParams();
+        if (q.use && q.use !== 'identity') p.set('use', q.use);
+        if (q.lang && q.lang !== 'ar') p.set('lang', q.lang);
+        if (q.text) p.set('t', q.text.slice(0, 80));
+        const s = p.toString();
+        return `/tools/nasaq/${slug}${s ? `?${s}` : ''}`;
+      },
+    },
+  },
   designSystem: { getHref: () => '/design-system' },
 } as const;
