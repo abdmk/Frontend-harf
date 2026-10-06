@@ -18,7 +18,7 @@ export function FollowButton({
   return (
     <Button
       size="sm"
-      variant={on ? 'primary' : 'outline'}
+      variant={on ? 'default' : 'outline'}
       aria-pressed={on}
       aria-label={`${on ? 'إلغاء متابعة' : 'متابعة'} ${name}`}
       onClick={() => setOn((v) => !v)}

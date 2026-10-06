@@ -66,7 +66,7 @@ export function FinanceOverview() {
           </p>
         </div>
         {/* قبل التوثيق: «ابدأ التوثيق» أعلى الصفحة هو الفعل الرئيسي — السحب ثانوي */}
-        <Button asChild variant={verified ? 'primary' : 'secondary'}>
+        <Button asChild variant={verified ? 'default' : 'secondary'}>
           <Link to={paths.studio.getHref('finance/payouts')}>
             <DollarIcon />
             اسحب رصيدك

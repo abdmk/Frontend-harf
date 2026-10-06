@@ -96,7 +96,7 @@ export function Dropzone({
             {browseLabel}
           </Button>
         ) : (
-          <Button variant="outline" size="md" className="text-muted-foreground" onClick={browse}>
+          <Button variant="outline" size="default" className="text-muted-foreground" onClick={browse}>
             {browseLabel}
           </Button>
         )}

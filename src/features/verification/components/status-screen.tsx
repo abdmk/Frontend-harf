@@ -111,11 +111,11 @@ export function VerificationStatusScreen({ record, onEdit }: { record: Verificat
 
         <div className="mt-8 flex w-full flex-col gap-3 sm:flex-row">
           {record.status === 'rejected' ? (
-            <Button size="lg" variant="primary" className="flex-1" onClick={onEdit}>
+            <Button size="lg" variant="default" className="flex-1" onClick={onEdit}>
               عدّل وأعد الإرسال
             </Button>
           ) : (
-            <Button asChild size="lg" variant="primary" className="flex-1">
+            <Button asChild size="lg" variant="default" className="flex-1">
               <Link to={paths.studio.getHref('publish')}>
                 <UploadIcon />
                 {record.status === 'approved' ? 'انشر خطاً' : 'جهّز خطاً مجانياً'}

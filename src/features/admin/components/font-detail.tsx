@@ -118,7 +118,7 @@ export function FontDetail({ id }: { id: string }) {
                 <StarIcon filled={item.featured} />
                 {item.featured ? 'مميّز' : 'تمييز'}
               </Button>
-              <Button variant="danger" onClick={() => setDel(true)}>
+              <Button variant="destructive" onClick={() => setDel(true)}>
                 <TrashIcon />
                 حذف
               </Button>

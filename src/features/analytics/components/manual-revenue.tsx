@@ -28,10 +28,10 @@ const dateLabel = (d: string) =>
 /** نافذة «أضف إيراداً»: النوع، المبلغ، العميل، التاريخ، ملاحظة — تحقّق كامل قبل الحفظ */
 export function AddRevenueDialog({
   onAdd,
-  variant = 'primary',
+  variant = 'default',
 }: {
   onAdd: (e: ManualRevenue) => void;
-  variant?: 'primary' | 'outline';
+  variant?: 'default' | 'outline';
 }) {
   const [open, setOpen] = useState(false);
   const [category, setCategory] = useState<RevenueCategory>('font-design');

@@ -67,7 +67,7 @@ function Welcome({ onStart, rejected }: { onStart: () => void; rejected?: string
         title="وثّق حسابك"
         lead="قبل أوّل نشر، نتعرّف عليك ونتّفق على الشروط. خطوة واحدة تحمي خطوطك ومشتريها، وتفتح لك البيع — وتظهر علامة التوثيق بجانب اسمك."
         aside={
-          <Button size="xl" variant="primary" className="w-full sm:w-auto" onClick={onStart}>
+          <Button size="xl" variant="default" className="w-full sm:w-auto" onClick={onStart}>
             ابدأ التوثيق
             <ChevronLeftIcon />
           </Button>
@@ -324,12 +324,12 @@ export function VerifyFlow({ user, record }: { user: User; record: VerificationR
               رجوع
             </Button>
             {step < 5 ? (
-              <Button variant="primary" size="lg" className="flex-1" onClick={next}>
+              <Button variant="default" size="lg" className="flex-1" onClick={next}>
                 {STEPS[step as number]!.title}
                 <ChevronLeftIcon />
               </Button>
             ) : (
-              <Button variant="primary" size="lg" className="flex-1" disabled={missing.length > 0} onClick={submit}>
+              <Button variant="default" size="lg" className="flex-1" disabled={missing.length > 0} onClick={submit}>
                 <ShieldCheckIcon />
                 إرسال للمراجعة
               </Button>

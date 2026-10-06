@@ -43,13 +43,13 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip
 
 import { DsPanel, DsSection } from './ds-section';
 
-const VARIANTS = ['primary', 'secondary', 'outline', 'ghost', 'danger', 'ink', 'ai', 'link'] as const;
+const VARIANTS = ['default', 'secondary', 'outline', 'ghost', 'destructive', 'ink', 'ai', 'link'] as const;
 const VARIANT_LABEL: Record<(typeof VARIANTS)[number], string> = {
-  primary: 'تحميل الخط',
+  default: 'تحميل الخط',
   secondary: 'التفاصيل',
   outline: 'استعراض الملفات',
   ghost: 'إلغاء',
-  danger: 'حذف نهائياً',
+  destructive: 'حذف نهائياً',
   ink: 'ابدأ مجاناً',
   ai: 'طابق بالذكاء الاصطناعي',
   link: 'عرض جميع الخطوط',
@@ -76,7 +76,7 @@ export function ComponentsDemo() {
           <div className="flex flex-wrap items-center gap-3">
             {VARIANTS.map((v) => (
               <Button key={v} variant={v} size="lg">
-                {v === 'primary' && <DownloadIcon />}
+                {v === 'default' && <DownloadIcon />}
                 {v === 'ai' && <MagicWandIcon />}
                 {VARIANT_LABEL[v]}
               </Button>
@@ -86,7 +86,7 @@ export function ComponentsDemo() {
         <DsPanel label="الأحجام والأشكال">
           <div className="flex flex-wrap items-center gap-3">
             <Button size="sm">صغير · 34</Button>
-            <Button size="md">متوسط · 42</Button>
+            <Button size="default">متوسط · 42</Button>
             <Button size="lg">كبير · 48</Button>
             <Button size="xl">أكبر · 56</Button>
             <Button shape="pill" variant="ink">
@@ -95,7 +95,7 @@ export function ComponentsDemo() {
             <Button size="icon" variant="outline" aria-label="أضف إلى المفضّلة">
               <HeartIcon />
             </Button>
-            <Button size="icon" variant="danger" aria-label="أُضيف إلى المفضّلة">
+            <Button size="icon" variant="destructive" aria-label="أُضيف إلى المفضّلة">
               <HeartFilledIcon />
             </Button>
             <Button size="icon-lg" shape="pill" aria-label="إضافة">
@@ -392,7 +392,7 @@ export function ComponentsDemo() {
         <DsPanel>
           <Dialog>
             <DialogTrigger asChild>
-              <Button variant="danger">
+              <Button variant="destructive">
                 <BanIcon />
                 حذف الخط
               </Button>
@@ -407,7 +407,7 @@ export function ComponentsDemo() {
                   <Button variant="secondary">إلغاء</Button>
                 </DialogClose>
                 <DialogClose asChild>
-                  <Button variant="danger">حذف نهائياً</Button>
+                  <Button variant="destructive">حذف نهائياً</Button>
                 </DialogClose>
               </DialogFooter>
             </DialogContent>

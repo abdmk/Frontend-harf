@@ -134,7 +134,7 @@ function PayoutAccountPanel({ account, holdUntil }: { account: PayoutAccount | n
               <Button variant="secondary" size="lg" onClick={() => setEditing(true)}>
                 تحديث
               </Button>
-              <Button variant="danger" size="lg" onClick={() => setRemoving(true)}>
+              <Button variant="destructive" size="lg" onClick={() => setRemoving(true)}>
                 إزالة
               </Button>
             </>

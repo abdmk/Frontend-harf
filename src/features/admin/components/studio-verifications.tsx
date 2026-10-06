@@ -232,7 +232,7 @@ export function StudioRequestDetail({ id }: { id: string }) {
         </div>
         {pending && (
           <div className="flex gap-2">
-            <Button variant="danger" onClick={() => setRejecting(true)}>
+            <Button variant="destructive" onClick={() => setRejecting(true)}>
               <CrossIcon />
               رفض
             </Button>

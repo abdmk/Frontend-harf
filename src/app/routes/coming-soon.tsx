@@ -59,7 +59,7 @@ export function ComingSoonPage({ page }: { page: ComingSoonKey }) {
           </ul>
         )}
         <div className="mt-10 flex flex-wrap justify-center gap-3">
-          <Button size="lg" variant={on ? 'secondary' : 'primary'} aria-pressed={on} onClick={toggle}>
+          <Button size="lg" variant={on ? 'secondary' : 'default'} aria-pressed={on} onClick={toggle}>
             {on ? <CheckIcon className="animate-pop-in" /> : <BellIcon />}
             {on ? 'سننبّهك عند الإطلاق' : 'نبّهني عند الإطلاق'}
           </Button>

@@ -78,7 +78,7 @@ export function SecuritySection({
         title="حذف الحساب"
         description="يُحذف حسابك وبياناتك. تبقى إيصالات مشترياتك محفوظة كما يقتضي القانون."
       >
-        <Button variant="danger" onClick={() => setConfirmDelete(true)}>
+        <Button variant="destructive" onClick={() => setConfirmDelete(true)}>
           <TrashIcon />
           حذف الحساب
         </Button>

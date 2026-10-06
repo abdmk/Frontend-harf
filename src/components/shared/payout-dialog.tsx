@@ -260,7 +260,7 @@ export function PayoutForm({
           </label>
           <FieldError>{errors.confirm}</FieldError>
           {!formId && (
-            <Button type="submit" size="lg" variant="primary">
+            <Button type="submit" size="lg" variant="default">
               متابعة
             </Button>
           )}
@@ -305,7 +305,7 @@ export function PayoutForm({
           </p>
           <div className="flex flex-col gap-3">
             {!formId && (
-              <Button type="submit" size="lg" variant="primary" disabled={!/^\d{6}$/.test(code)}>
+              <Button type="submit" size="lg" variant="default" disabled={!/^\d{6}$/.test(code)}>
                 تأكيد وحفظ
               </Button>
             )}

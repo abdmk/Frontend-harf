@@ -33,7 +33,7 @@ import { parseLegal } from '@/utils/legal';
 
 function ContactButton({ label = CONTACT_EMAIL }: { label?: string }) {
   return (
-    <Button asChild variant={label === CONTACT_EMAIL ? 'outline' : 'primary'} className="w-fit">
+    <Button asChild variant={label === CONTACT_EMAIL ? 'outline' : 'default'} className="w-fit">
       <a href={`mailto:${CONTACT_EMAIL}`}>
         <MailIcon />
         <span dir={label === CONTACT_EMAIL ? 'ltr' : undefined}>{label}</span>

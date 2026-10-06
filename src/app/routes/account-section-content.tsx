@@ -103,7 +103,7 @@ export function SectionContent({ user, section }: { user: User; section: Account
               current={user.plan}
               onChange={changePlan}
               trigger={
-                <Button variant={user.plan === 'free' ? 'primary' : 'secondary'}>
+                <Button variant={user.plan === 'free' ? 'default' : 'secondary'}>
                   {user.plan === 'free' ? 'ترقية الخطة' : 'تغيير الخطة'}
                 </Button>
               }
