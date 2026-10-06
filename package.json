@@ -14,7 +14,6 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "check": "pnpm typecheck && pnpm lint && pnpm lint:tokens && pnpm test",
-    "icons": "node scripts/generate-icons.mts && prettier --write src/components/ui/icons/icons.generated.ts src/components/ui/icons/generated",
     "e2e": "pnpm build && playwright test",
     "lint:tokens": "node scripts/lint-tokens.mts"
   },
@@ -23,6 +22,7 @@
     "clsx": "^2.1.1",
     "fflate": "0.8.3",
     "fontkit": "2.0.4",
+    "lucide-react": "1.52.0",
     "radix-ui": "^1.6.7",
     "react": "19.1.0",
     "react-dom": "19.1.0",

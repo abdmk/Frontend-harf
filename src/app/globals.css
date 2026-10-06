@@ -67,8 +67,8 @@
 
 /* ══ الأساس ══ */
 @layer base {
-  /* أيقونة filled="auto": خطّية، ومصمتة حين يكون أبوها المباشر مختاراً أو مفتوحاً */
-  svg[data-auto-fill] > [data-v='solid'],
+  /* أيقونة filled="auto": خطّية، وتصير «مختارة» حين يكون أبوها المباشر مختاراً أو مفتوحاً —
+     الأشكال المغلقة تُملأ، والبقية يثقل خطّها (create-icon.tsx) */
   :is(
       [aria-pressed='true'],
       [aria-current='page'],
@@ -78,9 +78,8 @@
       [data-state='active'],
       [data-state='checked']
     )
-    > svg[data-auto-fill]
-    > [data-v='line'] {
-    display: none;
+    > svg[data-auto-fill='fill'] {
+    fill: currentColor;
   }
   :is(
       [aria-pressed='true'],
@@ -91,9 +90,8 @@
       [data-state='active'],
       [data-state='checked']
     )
-    > svg[data-auto-fill]
-    > [data-v='solid'] {
-    display: inline;
+    > svg[data-auto-fill='bold'] {
+    stroke-width: 2.25;
   }
 
   * {

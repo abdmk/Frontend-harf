@@ -1,52 +1,43 @@
-import * as React from 'react';
+import type { LucideIcon } from 'lucide-react';
+import type * as React from 'react';
 
 import { cn } from '@/lib/utils';
 
-type Shape = 'path' | 'rect' | 'circle' | 'ellipse' | 'polygon';
-type IconNode = readonly [Shape, Readonly<Record<string, string>>];
-
-export type IconProps = Omit<React.SVGProps<SVGSVGElement>, 'children'> & {
+export type IconProps = Omit<React.SVGProps<SVGSVGElement>, 'children' | 'ref'> & {
   /** نصّ بديل؛ بدونه تُعدّ الأيقونة زخرفية وتُخفى عن قارئ الشاشة */
   title?: string;
   /**
-   * النسخة المصمتة للعنصر المختار/المفعّل (رابط حالي، زرّ مضغوط، قائمة مفتوحة) — خطّية في غيره.
-   * 'auto': تتبع حالة العنصر الأب المباشر (aria-pressed/current/expanded، data-state) عبر CSS —
-   * للمكوّنات العامة التي لا تعرف حالتها (أزرار تفتح نافذة، SegmentedControl).
+   * حالة العنصر المختار/المفعّل (رابط حالي، زرّ مضغوط، قائمة مفتوحة): الأشكال المغلقة (قلب، نجمة،
+   * جرس…) تُملأ، والبقية يثقل خطّها. 'auto': تتبع حالة الأب المباشر عبر CSS (globals.css).
    */
   filled?: boolean | 'auto';
 };
 
-/** يصنع مكوّن أيقونة من أشكال SVG بلون currentColor ومقاس 1em افتراضياً */
-export function createIcon(name: string, viewBox: string, nodes: readonly IconNode[], solid?: readonly IconNode[]) {
+/** سُمك خطّ lucide في حرف — أنحف قليلاً من الافتراضي (2) ليتّسق مع خطّ الواجهة */
+export const ICON_STROKE = 1.75;
+
+/**
+ * أيقونة حرف من lucide بنفس الواجهة في كل الموقع: مقاس 1em ولون currentColor، وfilled للحالة المختارة.
+ * `fillable`: شكل مغلق يحسن ملؤه؛ غيره يثقل خطّه بدل الملء (lucide بلا نسخ مصمتة).
+ */
+export function createIcon(Lucide: LucideIcon, name: string, opts: { fillable?: boolean; solid?: boolean } = {}) {
   function Icon({ className, title, filled, ...props }: IconProps) {
-    const draw = (list: readonly IconNode[]) =>
-      list.map(([Tag, attrs], i) => React.createElement(Tag, { key: i, ...attrs }));
-    const auto = filled === 'auto' && !!solid;
+    const on = opts.solid || filled === true;
     return (
-      <svg
-        viewBox={viewBox}
-        fill="currentColor"
-        width="1em"
-        height="1em"
+      <Lucide
+        size="1em"
+        strokeWidth={on && !opts.fillable && !opts.solid ? 2.25 : ICON_STROKE}
+        fill={on && (opts.fillable || opts.solid) ? 'currentColor' : 'none'}
         aria-hidden={title ? undefined : true}
         role={title ? 'img' : undefined}
+        aria-label={title}
         focusable="false"
         data-icon={name}
-        data-filled={filled === true && solid ? '' : undefined}
-        data-auto-fill={auto ? '' : undefined}
+        data-filled={on ? '' : undefined}
+        data-auto-fill={filled === 'auto' ? (opts.fillable ? 'fill' : 'bold') : undefined}
         className={cn('shrink-0', className)}
         {...props}
-      >
-        {title ? <title>{title}</title> : null}
-        {auto ? (
-          <>
-            <g data-v="line">{draw(nodes)}</g>
-            <g data-v="solid">{draw(solid)}</g>
-          </>
-        ) : (
-          draw(filled === true && solid ? solid : nodes)
-        )}
-      </svg>
+      />
     );
   }
   Icon.displayName = `Icon(${name})`;
