@@ -68,8 +68,13 @@ export function FontPage() {
           ) : undefined
         }
       />
-      <FontTester face={font.face} />
-      <WeightWaterfall variable={font.variable} face={font.face} />
+      {/* التجربة والأوزان بالخط نفسه فقط — بلا ملفاته تُعرض بخط الموقع فتضلّل */}
+      {font.face && (
+        <>
+          <FontTester face={font.face} />
+          <WeightWaterfall variable={font.variable} face={font.face} />
+        </>
+      )}
       <FontDetailsTabs font={font} />
 
       <section aria-labelledby="related-title" className="mt-10">
