@@ -1,7 +1,7 @@
 import type * as React from 'react';
 
 import { InfoIcon } from '@/components/ui/icons';
-import { cn } from '@/lib/cn';
+import { cn } from '@/lib/utils';
 
 /**
  * تركيب الحقل: عنوان مربوط بـfor + الحقل + تلميح أو رسالة خطأ.

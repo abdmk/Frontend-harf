@@ -9,13 +9,13 @@ import { CartIcon, CheckIcon, ComputerIcon, CrossIcon, GlobeIcon, MobileIcon, Pl
 import { Sheet, SheetClose, SheetDescription, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { toast } from '@/components/ui/toast';
 import { paths } from '@/config/paths';
-import { cn } from '@/lib/cn';
-import { quote } from '@/lib/commerce/quote';
-import { faceStyle, weightStyle } from '@/lib/font-weight';
-import { formatMoney, weightsLabel } from '@/lib/format';
+import { cn } from '@/lib/utils';
 import { cents } from '@/types/domain/commerce';
 import type { LiveFace } from '@/types/domain/font';
 import { LICENSE_USES, type LicensePricing, type LicenseSelection, type LicenseUse } from '@/types/domain/license';
+import { quote } from '@/utils/commerce/quote';
+import { faceStyle, weightStyle } from '@/utils/font-weight';
+import { formatMoney, weightsLabel } from '@/utils/format';
 
 /**
  * انتقال سلس بين حالتين (View Transitions): البطاقة المختارة تنساب إلى مكانها في الملخّص بدل

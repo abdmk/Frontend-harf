@@ -5,11 +5,11 @@ import { Button } from '@/components/ui/button';
 import { CheckIcon, ChevronLeftIcon, ClockIcon, DollarIcon, RefreshIcon } from '@/components/ui/icons';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { paths } from '@/config/paths';
+import { PUBLISHER_TERMS } from '@/config/publisher-terms';
 import { useCurrentUser } from '@/hooks/use-current-user';
-import { formatDateAr, formatMoney } from '@/lib/format';
-import { PUBLISHER_TERMS } from '@/lib/publisher-terms';
-import { useIsVerified } from '@/lib/studio-verification';
+import { useIsVerified } from '@/stores/studio-verification';
 import { cents } from '@/types/domain/commerce';
+import { formatDateAr, formatMoney } from '@/utils/format';
 
 import { getSales, useEarnings } from '../../api/earnings';
 

@@ -1,7 +1,7 @@
 import { RadioGroup as RadioGroupPrimitive } from 'radix-ui';
 import type { ReactNode } from 'react';
 
-import { cn } from '@/lib/cn';
+import { cn } from '@/lib/utils';
 
 /**
  * اختيار بالبطاقات: معاينة مصغّرة فوق اسم الخيار (المظهر، موضع الإشعارات…).

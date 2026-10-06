@@ -18,10 +18,9 @@ import {
 import { Input, Textarea } from '@/components/ui/input';
 import { toast } from '@/components/ui/toast';
 import { paths } from '@/config/paths';
-import { updateAccountProfile } from '@/lib/account-profile';
 import { getCurrentUser } from '@/lib/auth';
-import { cn } from '@/lib/cn';
-import { prepareImage } from '@/lib/image-upload';
+import { cn } from '@/lib/utils';
+import { updateAccountProfile } from '@/stores/account-profile';
 import {
   BIO_MAX,
   BIO_MIN,
@@ -34,8 +33,9 @@ import {
   savePublicProfile,
   SOCIALS,
   type SocialKey,
-} from '@/lib/public-profile';
+} from '@/stores/public-profile';
 import type { Foundry } from '@/types/domain/foundry';
+import { prepareImage } from '@/utils/image-upload';
 
 const IMG = {
   avatar: { maxBytes: 2 * 1024 * 1024, maxSide: 512, minSide: 128 },

@@ -1,4 +1,4 @@
-import { getPosts, type PostBlock, postSchema, type PostStatus, savePosts } from '@/lib/blog';
+import { getPosts, type PostBlock, postSchema, type PostStatus, savePosts } from '@/stores/blog';
 
 import { logAdmin } from './audit';
 import { adminOrNull, type AdminResult, DENIED } from './guard';

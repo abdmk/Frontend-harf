@@ -1,6 +1,6 @@
 import type * as React from 'react';
 
-import { cn } from '@/lib/cn';
+import { cn } from '@/lib/utils';
 
 /**
  * الحقل (دليل التصميم 2.2): أرضية بيضاء بحدّ رفيع، والتركيز حدّ أحمر مع حلقة ناعمة.

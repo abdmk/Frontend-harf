@@ -19,7 +19,7 @@ import { WeightWaterfall } from '@/features/font-details/components/weight-water
 import { FontTester } from '@/features/font-tester/components/font-tester';
 import { PurchaseActions } from '@/features/licensing/components/purchase-actions';
 import { useCurrentUser } from '@/hooks/use-current-user';
-import { getPricing } from '@/lib/commerce/cart-store';
+import { getPricing } from '@/stores/cart';
 
 import { NotFoundPage } from './not-found';
 

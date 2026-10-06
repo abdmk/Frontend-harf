@@ -5,7 +5,7 @@ import { PageMeta } from '@/components/shared/page-meta';
 import { Button } from '@/components/ui/button';
 import { MagicWandIcon, ShieldCheckIcon } from '@/components/ui/icons';
 import { FontMatchingTool, type ResultCardProps } from '@/features/font-matching/components/font-matching-tool';
-import { cn } from '@/lib/cn';
+import { cn } from '@/lib/utils';
 
 /** درجة التطابق: اللون مع كلمة تصفه — لا يُقرأ المعنى من اللون وحده */
 function matchTone(score: number) {

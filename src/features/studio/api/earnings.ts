@@ -1,11 +1,11 @@
 import { useSyncExternalStore } from 'react';
 import { z } from 'zod';
 
+import { netOf, PUBLISHER_TERMS } from '@/config/publisher-terms';
 import { requireStudio } from '@/lib/auth';
 import { createLocalStoreSignal } from '@/lib/local-store-signal';
-import { type MaskedPayout, maskedPayoutSchema } from '@/lib/payout';
-import { netOf, PUBLISHER_TERMS } from '@/lib/publisher-terms';
 import { MOCK_PAYOUTS, MOCK_SALES, MOCK_STUDIO_ANALYTICS, type MockPayout, type MockSale } from '@/mocks/studio';
+import { type MaskedPayout, maskedPayoutSchema } from '@/utils/payout';
 
 /*
  * أرباح الناشر وسحبها. ⚠️ عرض: في الإنتاج كل ما هنا طلبات للخادم — هو وحده يحسب الرصيد من
@@ -169,7 +169,7 @@ export function requestPayout(_prev: FormState, form: FormData): FormState {
 
 /* ── تغيير حساب التحويل ──────────────────────────────────────────────────── */
 
-export { isValidIban } from '@/lib/payout';
+export { isValidIban } from '@/utils/payout';
 
 /**
  * حفظ وسيلة الاستلام بعد تأكيدها برمز (PayoutDialog) — لا يصل هنا إلا المقنّع.

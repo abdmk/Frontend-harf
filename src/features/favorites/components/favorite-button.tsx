@@ -2,7 +2,7 @@ import { useState } from 'react';
 
 import { HeartIcon } from '@/components/ui/icons';
 import { useFavorite } from '@/features/favorites/hooks/use-favorites';
-import { cn } from '@/lib/cn';
+import { cn } from '@/lib/utils';
 
 type Props = { fontId: string; fontName: string; variant?: 'card' | 'square'; className?: string };
 

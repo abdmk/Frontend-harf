@@ -8,7 +8,7 @@ import { paths } from '@/config/paths';
 import { pay } from '@/features/checkout/api/pay';
 import { CheckoutForm } from '@/features/checkout/components/checkout-form';
 import { useCurrentUser } from '@/hooks/use-current-user';
-import { buildCart } from '@/lib/commerce/cart-store';
+import { buildCart } from '@/stores/cart';
 
 export function CheckoutPage() {
   const user = useCurrentUser();

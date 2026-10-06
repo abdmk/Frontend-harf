@@ -1,4 +1,4 @@
-import { cn } from '@/lib/cn';
+import { cn } from '@/lib/utils';
 
 /** شعار حرف: «مكتبة حرف / Harf Library» مع الرمز — بلون currentColor */
 export function HarfLockup({ className }: { className?: string }) {

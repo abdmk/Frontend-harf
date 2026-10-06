@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { PlusIcon } from '@/components/ui/icons';
 import { SegmentedControl } from '@/components/ui/segmented-control';
-import { cn } from '@/lib/cn';
+import { cn } from '@/lib/utils';
 
 import { libraryStarters } from '../../api/library';
 import { useLab } from '../../hooks/lab-context';

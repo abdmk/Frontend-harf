@@ -1,7 +1,7 @@
 import { Link } from 'react-router';
 
 import { ChevronLeftIcon } from '@/components/ui/icons';
-import { cn } from '@/lib/cn';
+import { cn } from '@/lib/utils';
 
 export type Crumb = { label: string; href?: string; ltr?: boolean };
 

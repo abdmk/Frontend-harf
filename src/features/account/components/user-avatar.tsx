@@ -1,5 +1,5 @@
 import type { User } from '@/features/account/types';
-import { cn } from '@/lib/cn';
+import { cn } from '@/lib/utils';
 
 /**
  * صورة المستخدم داخل حلقة ذهبية: الصورة الشخصية إن وُجدت، وإلا الحرفان الأوّلان.

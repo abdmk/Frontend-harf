@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 
 import { useSlidingIndicator } from '@/hooks/use-sliding-indicator';
-import { cn } from '@/lib/cn';
+import { cn } from '@/lib/utils';
 
 type Option<T extends string> = { value: T; label: string; icon?: ReactNode };
 

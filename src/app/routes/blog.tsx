@@ -5,9 +5,9 @@ import { ToolHero } from '@/components/layout/tool-hero';
 import { PageMeta } from '@/components/shared/page-meta';
 import { PostBlocks } from '@/components/shared/post-blocks';
 import { ChevronRightIcon, DocumentIcon } from '@/components/ui/icons';
-import { type BlogPost, usePublishedPosts } from '@/lib/blog';
-import { cn } from '@/lib/cn';
-import { formatDateAr } from '@/lib/format';
+import { cn } from '@/lib/utils';
+import { type BlogPost, usePublishedPosts } from '@/stores/blog';
+import { formatDateAr } from '@/utils/format';
 
 import { ComingSoonPage } from './coming-soon';
 

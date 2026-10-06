@@ -1,7 +1,7 @@
 import { Link } from 'react-router';
 
 import { Reveal } from '@/components/shared/reveal';
-import { useSiteContent } from '@/lib/site-content';
+import { useSiteContent } from '@/stores/site-content';
 
 /** «تبحث عن خط خاص؟» — دعوة أسفل صفحات المكتبة */
 export function CtaSection() {

@@ -3,8 +3,8 @@ import { Link } from 'react-router';
 import { Button } from '@/components/ui/button';
 import { ClockIcon, ExclamationIcon, ShieldCheckIcon } from '@/components/ui/icons';
 import { paths } from '@/config/paths';
-import { cn } from '@/lib/cn';
-import { type PublicStatus, useMyVerification } from '@/lib/studio-verification';
+import { cn } from '@/lib/utils';
+import { type PublicStatus, useMyVerification } from '@/stores/studio-verification';
 
 const VIEW: Record<
   Exclude<PublicStatus, 'approved'>,

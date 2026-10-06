@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 
-import { getConsent, hasConsent, saveConsent } from './consent';
+import { getConsent, hasConsent, saveConsent } from '../consent';
 
 describe('consent', () => {
   beforeEach(() => localStorage.clear());

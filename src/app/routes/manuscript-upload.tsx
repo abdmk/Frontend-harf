@@ -7,7 +7,7 @@ import { ManuscriptUpload } from '@/features/publishing/components/manuscript-up
 import { MyManuscripts } from '@/features/publishing/components/my-manuscripts';
 import { VerificationGate } from '@/features/verification/components/verification-callout';
 import { requireStudio } from '@/lib/auth';
-import { useMyVerification } from '@/lib/studio-verification';
+import { useMyVerification } from '@/stores/studio-verification';
 
 /** رفع مخطوطة — داخل الاستوديو، وبوّابة التوثيق نفسها التي يمرّ بها نشر الخطوط */
 export function ManuscriptUploadPage() {

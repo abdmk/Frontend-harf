@@ -2,7 +2,7 @@ import { type ReactNode, useRef, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { CloudUploadIcon } from '@/components/ui/icons';
-import { cn } from '@/lib/cn';
+import { cn } from '@/lib/utils';
 
 /**
  * منطقة الإفلات. مشتركة بين نافذة الرفع و«عين» و«مختبر الخط». التحقّق من الملفات مسؤولية المستدعي.

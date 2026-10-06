@@ -15,7 +15,7 @@ import {
   RefreshIcon,
 } from '@/components/ui/icons';
 import { paths } from '@/config/paths';
-import { cn } from '@/lib/cn';
+import { cn } from '@/lib/utils';
 import { type Manuscript, MANUSCRIPT_CATEGORY_LABEL } from '@/types/domain/manuscript';
 
 import { fileName } from './manuscript-card';

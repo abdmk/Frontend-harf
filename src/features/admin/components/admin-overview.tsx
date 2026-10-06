@@ -14,10 +14,10 @@ import {
   UserIcon,
 } from '@/components/ui/icons';
 import { paths } from '@/config/paths';
-import { cn } from '@/lib/cn';
-import { formatMoney } from '@/lib/format';
-import { useSiteContent } from '@/lib/site-content';
+import { cn } from '@/lib/utils';
+import { useSiteContent } from '@/stores/site-content';
 import type { AdminAnalytics } from '@/types/domain/analytics';
+import { formatMoney } from '@/utils/format';
 
 import { AdminPageHeader } from './admin-nav';
 import { useAuditLog } from '../api/audit';

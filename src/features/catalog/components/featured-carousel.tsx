@@ -2,7 +2,7 @@ import { Link } from 'react-router';
 
 import { BANNER_FRAME, BannerSlide } from '@/components/shared/banner-slide';
 import { Carousel } from '@/components/shared/carousel';
-import { type Banner, isExternalLink, safeContentLink, useSiteContent } from '@/lib/site-content';
+import { type Banner, isExternalLink, safeContentLink, useSiteContent } from '@/stores/site-content';
 
 /**
  * بلا بنرات مفعّلة من لوحة الإدارة: شرائح تعريفية بمحتوى حقيقي (المكتبة وأدواتها) بدل أرضيّات فارغة —

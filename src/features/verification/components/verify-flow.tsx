@@ -14,9 +14,8 @@ import {
   UserIcon,
 } from '@/components/ui/icons';
 import { toast } from '@/components/ui/toast';
-import { cn } from '@/lib/cn';
 import { deleteDoc, storeDoc } from '@/lib/media-store';
-import type { MaskedPayout } from '@/lib/payout';
+import { cn } from '@/lib/utils';
 import {
   AGREEMENT_VERSION,
   getVerification,
@@ -25,8 +24,9 @@ import {
   studioInfoSchema,
   submitVerification,
   type VerificationRecord,
-} from '@/lib/studio-verification';
+} from '@/stores/studio-verification';
 import type { User } from '@/types/domain/user';
+import type { MaskedPayout } from '@/utils/payout';
 
 import { SignatureDialog } from './signature-dialog';
 import { VerificationStatusScreen } from './status-screen';

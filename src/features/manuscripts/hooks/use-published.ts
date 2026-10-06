@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 
-import { useApprovedSubmissions } from '@/lib/manuscript-submissions';
 import { publishedManuscriptUrl } from '@/lib/media-store';
+import { useApprovedSubmissions } from '@/stores/manuscript-submissions';
 import type { Manuscript } from '@/types/domain/manuscript';
 
 const initialsOf = (name: string) =>

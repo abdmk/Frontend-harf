@@ -14,8 +14,8 @@ import { DEFAULT_QUERY } from '@/features/catalog/types/catalog-query';
 import { getFoundry, getFoundryDesigners, getStudio, MOCK_STUDIO_OWNER } from '@/features/studio/api/get-studio';
 import { FoundryProfile } from '@/features/studio/components/foundry-profile';
 import { useCurrentUser } from '@/hooks/use-current-user';
-import { getPublicProfile, markOf, type SocialKey, socialUrl } from '@/lib/public-profile';
-import { useIsVerified } from '@/lib/studio-verification';
+import { getPublicProfile, markOf, type SocialKey, socialUrl } from '@/stores/public-profile';
+import { useIsVerified } from '@/stores/studio-verification';
 
 import { NotFoundPage } from './not-found';
 

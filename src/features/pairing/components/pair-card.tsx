@@ -3,10 +3,10 @@ import { Link } from 'react-router';
 import { BookmarkIcon, LockIcon } from '@/components/ui/icons';
 import { Skeleton } from '@/components/ui/skeleton';
 import { paths } from '@/config/paths';
-import { cn } from '@/lib/cn';
-import { weightsLabel } from '@/lib/format';
-import { TYPE_LABEL } from '@/lib/labels';
+import { cn } from '@/lib/utils';
 import type { Font } from '@/types/domain/font';
+import { weightsLabel } from '@/utils/format';
+import { TYPE_LABEL } from '@/utils/labels';
 
 import { BuyAction, DownloadAction, libraryItems } from './font-actions';
 import type { Specimen } from '../data/specimens';

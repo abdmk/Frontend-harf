@@ -2,7 +2,7 @@ import { z } from 'zod';
 
 import { COUNTRY_CODES } from '@/config/countries';
 import { getCurrentUser } from '@/lib/auth';
-import { buildCart, writeCartState } from '@/lib/commerce/cart-store';
+import { buildCart, writeCartState } from '@/stores/cart';
 import type { Order } from '@/types/domain/commerce';
 
 /**

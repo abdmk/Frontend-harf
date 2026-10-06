@@ -6,10 +6,10 @@ import { SectionCard } from '@/components/shared/section-card';
 import { Button } from '@/components/ui/button';
 import { CheckIcon, DocumentSignedIcon, ExclamationIcon } from '@/components/ui/icons';
 import { paths } from '@/config/paths';
-import { cn } from '@/lib/cn';
-import { faceStyle } from '@/lib/font-weight';
-import { formatBytesAr } from '@/lib/format';
-import { CATEGORY_LABEL, LANG_LABEL } from '@/lib/labels';
+import { cn } from '@/lib/utils';
+import { faceStyle } from '@/utils/font-weight';
+import { formatBytesAr } from '@/utils/format';
+import { CATEGORY_LABEL, LANG_LABEL } from '@/utils/labels';
 
 import { AdminPageHeader } from './admin-nav';
 import { DecisionPanel } from './decision-panel';

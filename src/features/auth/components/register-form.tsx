@@ -7,7 +7,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Field, FieldError, FieldLabel } from '@/components/ui/field';
 import { CheckIcon, MailIcon, UserIcon } from '@/components/ui/icons';
 import { InputGroup } from '@/components/ui/input';
-import { cn } from '@/lib/cn';
+import { cn } from '@/lib/utils';
 
 import { AuthDivider } from './auth-divider';
 import { GoogleButton } from './google-button';

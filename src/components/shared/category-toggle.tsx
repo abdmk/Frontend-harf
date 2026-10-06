@@ -1,7 +1,7 @@
 import { useRef, useState } from 'react';
 
 import { AppsIcon } from '@/components/ui/icons';
-import { cn } from '@/lib/cn';
+import { cn } from '@/lib/utils';
 
 /** حبّة شريط الأدوات — واحدة في المكتبة والمخطوطات و«نسق» */
 export const TOOLBAR_PILL =

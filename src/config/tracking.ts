@@ -1,4 +1,4 @@
-import type { ConsentCategory } from '@/lib/consent';
+import type { ConsentCategory } from '@/stores/consent';
 
 /**
  * الأدوات غير الضرورية المفعّلة في الموقع (تحليلات، تسويق). اليوم لا شيء، والموافقة تُطلب مسبقاً.

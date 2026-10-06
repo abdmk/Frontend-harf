@@ -7,7 +7,7 @@ import { Field, FieldError, FieldHint, FieldLabel } from '@/components/ui/field'
 import { ArrowRightIcon, BankIcon, CreditCardIcon } from '@/components/ui/icons';
 import { Input } from '@/components/ui/input';
 import { OtpInput } from '@/components/ui/otp-input';
-import { cn } from '@/lib/cn';
+import { cn } from '@/lib/utils';
 import {
   DEMO_OTP,
   type MaskedPayout,
@@ -20,7 +20,7 @@ import {
   type PayoutMethod,
   payoutMethodsFor,
   verifyOtp,
-} from '@/lib/payout';
+} from '@/utils/payout';
 
 import { SecureNote } from './payout-card';
 

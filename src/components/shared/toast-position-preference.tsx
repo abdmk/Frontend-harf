@@ -1,7 +1,7 @@
 import { ChoiceCards, MockWindow } from '@/components/shared/choice-cards';
 import { toast } from '@/components/ui/toast';
-import { cn } from '@/lib/cn';
-import { setToastPosition, type ToastPosition, useToastPosition } from '@/lib/toast-position';
+import { cn } from '@/lib/utils';
+import { setToastPosition, type ToastPosition, useToastPosition } from '@/stores/toast-position';
 
 /** نقطة الإشعار داخل النافذة المصغّرة — في الموضع الذي يمثّله الخيار */
 function Dot({ at }: { at: ToastPosition }) {

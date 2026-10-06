@@ -1,8 +1,8 @@
 import { useSyncExternalStore } from 'react';
 import { z } from 'zod';
 
-import { isSafeImageUrl } from './image-upload';
-import { createLocalStoreSignal } from './local-store-signal';
+import { createLocalStoreSignal } from '../lib/local-store-signal';
+import { isSafeImageUrl } from '../utils/image-upload';
 
 /**
  * الملف العام لحساب الاستوديو (صفحة المسبك/المصمّم): الشعار، الغلاف، النبذة، وحسابات التواصل.

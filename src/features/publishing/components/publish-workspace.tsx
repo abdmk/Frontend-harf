@@ -6,7 +6,7 @@ import { CheckIcon, ChevronLeftIcon, ChevronRightIcon, ExclamationIcon } from '@
 import { SegmentedControl } from '@/components/ui/segmented-control';
 import { toast } from '@/components/ui/toast';
 import { paths } from '@/config/paths';
-import { cn } from '@/lib/cn';
+import { cn } from '@/lib/utils';
 
 import { FilesStep, ImagesStep, InfoStep, PricingStep } from './publish-steps';
 import { ReviewStep } from './review-step';

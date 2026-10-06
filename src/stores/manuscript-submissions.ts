@@ -3,8 +3,8 @@ import { z } from 'zod';
 
 import { MANUSCRIPT_CATEGORIES } from '@/types/domain/manuscript';
 
-import { asObject, createJsonStore } from './json-store';
-import { isManuscriptFileId } from './media-store';
+import { asObject, createJsonStore } from '../lib/json-store';
+import { isManuscriptFileId } from '../lib/media-store';
 
 /**
  * طلبات المخطوطات: يرسلها الاستوديو من «رفع مخطوطة» وتقرّر فيها الإدارة من «الطلبات».

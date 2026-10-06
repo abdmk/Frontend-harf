@@ -8,9 +8,9 @@ import { CartIcon, CheckIcon, ClockIcon, DollarIcon, RefreshIcon } from '@/compo
 import { SegmentedControl } from '@/components/ui/segmented-control';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { paths } from '@/config/paths';
-import { formatDateAr, formatMoney } from '@/lib/format';
-import { PUBLISHER_TERMS } from '@/lib/publisher-terms';
+import { PUBLISHER_TERMS } from '@/config/publisher-terms';
 import { cents } from '@/types/domain/commerce';
+import { formatDateAr, formatMoney } from '@/utils/format';
 
 import { getSales, type Sale } from '../../api/earnings';
 

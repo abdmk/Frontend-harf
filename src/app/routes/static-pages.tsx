@@ -28,7 +28,7 @@ import privacyText from '@/content/legal/privacy.txt?raw';
 import termsText from '@/content/legal/terms.txt?raw';
 import { getFonts } from '@/features/catalog/api/get-fonts';
 import { DEFAULT_QUERY } from '@/features/catalog/types/catalog-query';
-import { openConsentSettings } from '@/lib/consent';
+import { openConsentSettings } from '@/stores/consent';
 import { LANGS } from '@/types/domain/font';
 
 function ContactButton({ label = CONTACT_EMAIL }: { label?: string }) {

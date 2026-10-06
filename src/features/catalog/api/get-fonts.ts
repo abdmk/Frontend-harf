@@ -1,7 +1,7 @@
 import type { CatalogQuery } from '@/features/catalog/types/catalog-query';
 import { filterFonts } from '@/features/catalog/utils/filter-fonts';
-import { publicFonts } from '@/lib/catalog-overrides';
 import { MOCK_FONTS } from '@/mocks/fonts';
+import { publicFonts } from '@/stores/catalog-overrides';
 import type { Font } from '@/types/domain/font';
 
 /**

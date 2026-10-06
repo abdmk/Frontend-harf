@@ -2,7 +2,7 @@ import { ToggleGroup as ToggleGroupPrimitive } from 'radix-ui';
 import type * as React from 'react';
 
 import { CheckIcon } from '@/components/ui/icons';
-import { cn } from '@/lib/cn';
+import { cn } from '@/lib/utils';
 
 /**
  * مجموعة شرائح اختيار (دليل التصميم 2.5 «الشرائح»): حدّ رفيع، والمختارة بلون العلامة الفاتح وحدّها مع ✓ —

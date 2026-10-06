@@ -25,10 +25,10 @@ import {
 } from '@/components/ui/icons';
 import { Input, Textarea } from '@/components/ui/input';
 import { toast } from '@/components/ui/toast';
-import { type BlogPost, POST_LIMITS, type PostBlock, type PostStatus, usePosts } from '@/lib/blog';
-import { formatDateAr } from '@/lib/format';
-import { prepareImage } from '@/lib/image-upload';
 import { deleteVideo, storeVideo } from '@/lib/media-store';
+import { type BlogPost, POST_LIMITS, type PostBlock, type PostStatus, usePosts } from '@/stores/blog';
+import { formatDateAr } from '@/utils/format';
+import { prepareImage } from '@/utils/image-upload';
 
 import { deletePost, savePost, setPostStatus } from '../api/blog';
 

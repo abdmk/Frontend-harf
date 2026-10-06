@@ -1,10 +1,10 @@
 import { useSyncExternalStore } from 'react';
 import { z } from 'zod';
 
-import { getCurrentUser, subscribeSession } from './auth';
-import { asObject, createJsonStore } from './json-store';
-import { isDocId } from './media-store';
-import { maskedPayoutSchema, payoutMethodsFor } from './payout';
+import { getCurrentUser, subscribeSession } from '../lib/auth';
+import { asObject, createJsonStore } from '../lib/json-store';
+import { isDocId } from '../lib/media-store';
+import { maskedPayoutSchema, payoutMethodsFor } from '../utils/payout';
 
 /**
  * توثيق الاستوديو واعتماده: قبل أوّل نشر يوقّع الناشر الاتفاقية، يرفع وثائق هويته، ويضيف وسيلة

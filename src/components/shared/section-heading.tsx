@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 
-import { cn } from '@/lib/cn';
+import { cn } from '@/lib/utils';
 
 /** عنوان قسم مع رابط/إجراء اختياري على الطرف الآخر */
 export function SectionHeading({

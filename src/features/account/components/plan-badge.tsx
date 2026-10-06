@@ -1,6 +1,6 @@
 import { CrownIcon } from '@/components/ui/icons';
 import type { Plan } from '@/features/account/types';
-import { cn } from '@/lib/cn';
+import { cn } from '@/lib/utils';
 
 /** لون نصّ/أيقونة الخطة — يُستعمل وحده حيث لا خلفية (سطر الخطة في القائمة) */
 export const PLAN_TEXT: Record<Plan, string> = {

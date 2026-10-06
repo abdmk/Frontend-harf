@@ -1,6 +1,6 @@
 import { CATEGORIES, type Category, type Font } from '@/types/domain/font';
 
-import { asObject, asStrings, createJsonStore } from './json-store';
+import { asObject, asStrings, createJsonStore } from '../lib/json-store';
 
 /**
  * قرارات الإدارة على خطوط المكتبة (مخزن الخطوط): الإخفاء، الحذف، التمييز، والتعديلات.

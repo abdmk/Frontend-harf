@@ -1,7 +1,7 @@
 import { Link } from 'react-router';
 
 import { ArrowLeftIcon } from '@/components/ui/icons';
-import { isExternalLink, safeContentLink, useSiteContent } from '@/lib/site-content';
+import { isExternalLink, safeContentLink, useSiteContent } from '@/stores/site-content';
 
 /** شريط إعلان أعلى الموقع — نصّه ورابطه من لوحة الإدارة («المحتوى»)، ولا يظهر ما لم يُفعَّل */
 export function AnnouncementBar() {

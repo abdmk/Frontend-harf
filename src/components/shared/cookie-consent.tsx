@@ -13,7 +13,7 @@ import {
   onOpenConsentSettings,
   saveConsent,
   useConsent,
-} from '@/lib/consent';
+} from '@/stores/consent';
 
 const ROWS: { key: 'necessary' | ConsentCategory; title: string; body: string }[] = [
   {

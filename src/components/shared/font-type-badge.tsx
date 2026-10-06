@@ -1,9 +1,9 @@
 import type { ReactNode } from 'react';
 
 import { CheckIcon, ClockIcon, CrownIcon } from '@/components/ui/icons';
-import { cn } from '@/lib/cn';
-import { TYPE_LABEL } from '@/lib/labels';
+import { cn } from '@/lib/utils';
 import type { LicenseType } from '@/types/domain/font';
+import { TYPE_LABEL } from '@/utils/labels';
 
 /** ألوان نوع الخط — واحدة في كل الموقع: مجاني أخضر، تجربة أزرق، مدفوع ذهبي */
 export const FONT_TYPE_BADGE = {

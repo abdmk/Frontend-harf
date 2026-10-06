@@ -1,9 +1,9 @@
 import { useState } from 'react';
 
 import { AlignCenterIcon, AlignJustifyIcon, AlignLeftIcon, AlignRightIcon, TextIcon } from '@/components/ui/icons';
-import { cn } from '@/lib/cn';
-import { faceStyle } from '@/lib/font-weight';
+import { cn } from '@/lib/utils';
 import type { LiveFace } from '@/types/domain/font';
+import { faceStyle } from '@/utils/font-weight';
 
 import { OPENTYPE_FEATURES, type OpenTypeTag } from './opentype-features';
 

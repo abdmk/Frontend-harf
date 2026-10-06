@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { netOf } from '@/lib/publisher-terms';
+import { netOf } from '@/config/publisher-terms';
 
 import { isValidIban } from '../earnings';
 

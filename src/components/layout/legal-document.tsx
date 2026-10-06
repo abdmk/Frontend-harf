@@ -5,7 +5,7 @@ import { Container } from '@/components/layout/container';
 import { PageMeta } from '@/components/shared/page-meta';
 import { ChevronDownIcon } from '@/components/ui/icons';
 import type { LegalBlock, LegalDoc } from '@/content/legal/parse';
-import { cn } from '@/lib/cn';
+import { cn } from '@/lib/utils';
 
 /** يحوّل عناوين البريد داخل النص إلى روابط mailto — الباقي نصّ عادي */
 function withEmails(text: string): ReactNode {

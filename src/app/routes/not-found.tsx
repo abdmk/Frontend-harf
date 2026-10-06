@@ -4,7 +4,7 @@ import { HarfMark } from '@/components/shared/harf-logo';
 import { PageMeta } from '@/components/shared/page-meta';
 import { Button } from '@/components/ui/button';
 import { paths } from '@/config/paths';
-import { cn } from '@/lib/cn';
+import { cn } from '@/lib/utils';
 
 /**
  * «غير موجودة» — صفحة كاملة للمسارات المجهولة، وداخل التخطيط (inLayout) لخط أو مصمّم أو مؤسسة غير موجودة:

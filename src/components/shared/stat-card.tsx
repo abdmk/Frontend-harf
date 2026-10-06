@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 
 import { ArrowDownIcon, ArrowUpIcon } from '@/components/ui/icons';
-import { cn } from '@/lib/cn';
+import { cn } from '@/lib/utils';
 
 import { Sparkline } from './charts/sparkline';
 import { CountUp } from './count-up';

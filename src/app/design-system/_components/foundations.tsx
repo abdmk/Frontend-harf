@@ -1,5 +1,5 @@
 import * as Icons from '@/components/ui/icons';
-import { cn } from '@/lib/cn';
+import { cn } from '@/lib/utils';
 
 import { DsPanel, DsSection } from './ds-section';
 import { MotionDemo } from './motion-demo';

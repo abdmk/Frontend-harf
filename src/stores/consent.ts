@@ -1,6 +1,6 @@
 import { useSyncExternalStore } from 'react';
 
-import { createLocalStoreSignal } from './local-store-signal';
+import { createLocalStoreSignal } from '../lib/local-store-signal';
 
 /**
  * موافقة ملفات تعريف الارتباط. الضرورية (الجلسة، السلة، التفضيلات، هذا الاختيار نفسه) تعمل دائماً؛

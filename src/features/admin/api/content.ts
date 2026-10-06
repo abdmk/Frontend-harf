@@ -6,7 +6,7 @@ import {
   getSiteContent,
   saveSiteContent,
   type SiteContent,
-} from '@/lib/site-content';
+} from '@/stores/site-content';
 
 import { logAdmin } from './audit';
 import { adminOrNull, type AdminResult, DENIED } from './guard';

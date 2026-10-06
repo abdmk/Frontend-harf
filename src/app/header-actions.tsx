@@ -14,7 +14,7 @@ import { PlansDialog } from '@/features/subscriptions/components/plans-dialog';
 import { useCart } from '@/hooks/use-cart';
 import { useCurrentUser } from '@/hooks/use-current-user';
 import { clearWelcome, isWelcomePending } from '@/lib/auth';
-import { onPlansRequest } from '@/lib/plans-request';
+import { onPlansRequest } from '@/stores/plans-request';
 import type { Plan } from '@/types/domain/user';
 
 export function HeaderActions() {

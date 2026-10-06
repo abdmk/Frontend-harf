@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { isSafeImageUrl, sniffImage } from './image-upload';
+import { isSafeImageUrl, sniffImage } from '../image-upload';
 
 const bytes = (...xs: number[]) => new Uint8Array([...xs, ...Array(16).fill(0)]);
 

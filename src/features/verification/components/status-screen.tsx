@@ -3,9 +3,9 @@ import { Link } from 'react-router';
 import { Button } from '@/components/ui/button';
 import { CheckIcon, ClockIcon, ExclamationIcon, ShieldCheckIcon, UploadIcon } from '@/components/ui/icons';
 import { paths } from '@/config/paths';
-import { cn } from '@/lib/cn';
-import { formatDateAr } from '@/lib/format';
-import type { VerificationRecord } from '@/lib/studio-verification';
+import { cn } from '@/lib/utils';
+import type { VerificationRecord } from '@/stores/studio-verification';
+import { formatDateAr } from '@/utils/format';
 
 type Stage = { title: string; text: string; state: 'done' | 'current' | 'todo' | 'failed' };
 

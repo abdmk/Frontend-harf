@@ -8,10 +8,10 @@ import { Button } from '@/components/ui/button';
 import { CheckIcon, ClockIcon, CloudUploadIcon, CrossIcon, LayersIcon, PencilIcon } from '@/components/ui/icons';
 import { SegmentedControl } from '@/components/ui/segmented-control';
 import { paths } from '@/config/paths';
-import { formatDateAr, formatMoney } from '@/lib/format';
-import { netOf } from '@/lib/publisher-terms';
+import { netOf } from '@/config/publisher-terms';
 import { cents } from '@/types/domain/commerce';
 import type { ReviewStatus, StudioFont } from '@/types/domain/foundry';
+import { formatDateAr, formatMoney } from '@/utils/format';
 
 import { StudioPageHeader } from './studio-page-header';
 

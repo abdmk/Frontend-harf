@@ -1,12 +1,12 @@
 import { Badge } from '@/components/ui/badge';
 import { CheckIcon, ClockIcon, CrossIcon, PencilIcon } from '@/components/ui/icons';
+import { useManuscriptUrl } from '@/lib/media-store';
 import {
   type ManuscriptSubmission,
   SUBMISSION_STATUS_LABEL,
   type SubmissionStatus,
   useMySubmissions,
-} from '@/lib/manuscript-submissions';
-import { useManuscriptUrl } from '@/lib/media-store';
+} from '@/stores/manuscript-submissions';
 import { MANUSCRIPT_CATEGORY_LABEL } from '@/types/domain/manuscript';
 
 const TONE: Record<SubmissionStatus, { tone: 'info' | 'success' | 'warning' | 'danger'; Icon: typeof CheckIcon }> = {

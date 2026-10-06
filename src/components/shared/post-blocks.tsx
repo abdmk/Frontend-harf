@@ -1,5 +1,5 @@
-import type { PostBlock } from '@/lib/blog';
 import { useVideoUrl } from '@/lib/media-store';
+import type { PostBlock } from '@/stores/blog';
 
 function Video({ id, caption }: { id: string; caption?: string }) {
   const url = useVideoUrl(id);

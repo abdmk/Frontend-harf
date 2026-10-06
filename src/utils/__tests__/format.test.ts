@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { formatBytesAr, formatDateAr, formatMoney, weightsLabel } from '@/lib/format';
+import { formatBytesAr, formatDateAr, formatMoney, weightsLabel } from '@/utils/format';
 
 describe('format', () => {
   it('uses correct Arabic plural forms for weights', () => {

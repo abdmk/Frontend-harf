@@ -3,7 +3,7 @@ import * as React from 'react';
 
 import { Button } from '@/components/ui/button';
 import { CrossSmallIcon } from '@/components/ui/icons';
-import { cn } from '@/lib/cn';
+import { cn } from '@/lib/utils';
 
 function Dialog({ ...props }: React.ComponentProps<typeof DialogPrimitive.Root>) {
   return <DialogPrimitive.Root data-slot="dialog" {...props} />;

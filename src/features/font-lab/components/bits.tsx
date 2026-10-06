@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 
 import { Slider } from '@/components/ui/slider';
-import { cn } from '@/lib/cn';
+import { cn } from '@/lib/utils';
 
 /** سطح أدوات المختبر — بطاقة الموقع نفسها */
 export function Panel({ className, children, label }: { className?: string; children: ReactNode; label?: string }) {

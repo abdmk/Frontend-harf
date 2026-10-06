@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { ClockIcon, CrownIcon, DownloadIcon, MagicWandIcon } from '@/components/ui/icons';
 import { PLAN_TITLE } from '@/features/account/config/nav';
 import type { User } from '@/features/account/types';
-import { cn } from '@/lib/cn';
+import { cn } from '@/lib/utils';
 import type { UsageMeter } from '@/types/domain/user';
 
 import { PLAN_TEXT } from '../plan-badge';

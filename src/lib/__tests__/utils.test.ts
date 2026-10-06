@@ -3,7 +3,7 @@ import { join } from 'node:path';
 
 import { describe, expect, it } from 'vitest';
 
-import { cn } from '../cn';
+import { cn } from '../utils';
 
 describe('cn مع رموز حرف', () => {
   it('يبقي حجم الخطّ واللون معاً', () => {

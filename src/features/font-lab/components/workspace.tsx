@@ -14,7 +14,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { CheckIcon, ChevronDownIcon, CrossSmallIcon, ExclamationIcon, PlusIcon } from '@/components/ui/icons';
-import { cn } from '@/lib/cn';
+import { cn } from '@/lib/utils';
 
 import { TestCanvas } from './canvas';
 import { ControlsCard, SizeField, styleLabel, TextControls, useFamily } from './controls';

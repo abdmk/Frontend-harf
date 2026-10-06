@@ -6,7 +6,7 @@ import { cents } from '@/types/domain/commerce';
 import type { PlanOffer } from '@/types/domain/subscription';
 import { PLANS, type Plan } from '@/types/domain/user';
 
-import { asObject, createJsonStore } from './json-store';
+import { asObject, createJsonStore } from '../lib/json-store';
 
 /**
  * تعريف الخطط كما تعدّله الإدارة: الاسم والوصف والسعرين والمزايا. نافذة الخطط وصفحة الاشتراك

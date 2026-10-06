@@ -1,6 +1,6 @@
 import type * as React from 'react';
 
-import { cn } from '@/lib/cn';
+import { cn } from '@/lib/utils';
 
 /**
  * الجدول (دليل التصميم 4.2): رأس بخطّ صغير رمادي، صفوف بفواصل رفيعة، والأرقام بمحاذاة ثابتة.

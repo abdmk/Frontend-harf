@@ -3,7 +3,7 @@ import { Link } from 'react-router';
 
 import { BellIcon } from '@/components/ui/icons';
 import { focusPanel, Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { cn } from '@/lib/cn';
+import { cn } from '@/lib/utils';
 
 import { MarkAllRead, NotificationList } from './notification-list';
 import { useNotifications } from '../hooks/use-notifications';

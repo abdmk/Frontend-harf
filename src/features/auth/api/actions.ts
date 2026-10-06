@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
 import { safeNext, setDemoSession } from '@/lib/auth';
-import { clientKey, hit } from '@/lib/rate-limit';
+import { clientKey, hit } from '@/utils/rate-limit';
 
 /**
  * الدخول وإنشاء الحساب — ⚠️ عرض: لا توجد قاعدة مستخدمين بعد.

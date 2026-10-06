@@ -8,7 +8,7 @@ import { focusPanel } from '@/components/ui/popover';
 import { Spinner } from '@/components/ui/spinner';
 import { paths } from '@/config/paths';
 import { useIsAdmin } from '@/lib/auth';
-import { useSiteContent } from '@/lib/site-content';
+import { useSiteContent } from '@/stores/site-content';
 
 // المحرّر يُحمَّل عند الفتح فقط — لا يثقل الصفحة الرئيسية على الزوّار
 const BannersEditor = lazy(() => import('./content-manager').then((m) => ({ default: m.BannersEditor })));

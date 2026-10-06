@@ -1,8 +1,8 @@
 import { z } from 'zod';
 
-import { updateAccountProfile } from '@/lib/account-profile';
 import { getCurrentUser } from '@/lib/auth';
-import { clientKey, hit } from '@/lib/rate-limit';
+import { updateAccountProfile } from '@/stores/account-profile';
+import { clientKey, hit } from '@/utils/rate-limit';
 
 /** إجراءات الحساب — ⚠️ عرض: يُتحقّق من المدخلات ولا تُخزَّن بعد (لا قاعدة بيانات). */
 export type FormState = {

@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 
 import { SearchIcon } from '@/components/ui/icons';
-import { cn } from '@/lib/cn';
+import { cn } from '@/lib/utils';
 
 /**
  * حقل البحث (دليل التصميم 4.4): حبّة بأيقونة، يرسل القيمة بعد توقّف الكتابة (debounce)

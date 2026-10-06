@@ -1,5 +1,5 @@
 import { PriceDisplay } from '@/components/shared/price-display';
-import { cn } from '@/lib/cn';
+import { cn } from '@/lib/utils';
 import type { CartItem } from '@/types/domain/commerce';
 
 /** بلاطة الخط الصغيرة: أوّل حرفين على أرضية داكنة (بديل صورة المعاينة) */

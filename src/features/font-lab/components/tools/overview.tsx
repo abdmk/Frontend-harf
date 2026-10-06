@@ -1,5 +1,5 @@
 import { CheckIcon, ExclamationIcon } from '@/components/ui/icons';
-import { cn } from '@/lib/cn';
+import { cn } from '@/lib/utils';
 
 import type { ToolKey } from '../../data/tools';
 import { useLab } from '../../hooks/lab-context';

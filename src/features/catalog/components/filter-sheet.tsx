@@ -21,9 +21,9 @@ import {
 } from '@/features/catalog/types/catalog-query';
 import { activeFilterCount } from '@/features/catalog/utils/filter-fonts';
 import { DATE_LABEL, LICENSE_FILTER_LABEL } from '@/features/catalog/utils/labels';
-import { weightsLabel } from '@/lib/format';
-import { LANG_LABEL } from '@/lib/labels';
 import { LANGS, type Lang } from '@/types/domain/font';
+import { weightsLabel } from '@/utils/format';
+import { LANG_LABEL } from '@/utils/labels';
 
 import { useCatalog } from './catalog-context';
 

@@ -8,10 +8,10 @@ import { paths } from '@/config/paths';
 import { signOut } from '@/features/account/api/sign-out';
 import { accountNavGroups, type NavKey, PLAN_TITLE } from '@/features/account/config/nav';
 import type { User } from '@/features/account/types';
-import { cn } from '@/lib/cn';
-import { requestPlans } from '@/lib/plans-request';
-import { useProfileIncomplete } from '@/lib/public-profile';
-import { type PublicStatus, useMyVerification } from '@/lib/studio-verification';
+import { cn } from '@/lib/utils';
+import { requestPlans } from '@/stores/plans-request';
+import { useProfileIncomplete } from '@/stores/public-profile';
+import { type PublicStatus, useMyVerification } from '@/stores/studio-verification';
 
 import { PLAN_TEXT, PlanBadge } from './plan-badge';
 import { UserAvatar } from './user-avatar';

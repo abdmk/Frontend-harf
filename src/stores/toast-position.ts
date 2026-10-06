@@ -1,6 +1,6 @@
 import { useSyncExternalStore } from 'react';
 
-import { createLocalStoreSignal } from './local-store-signal';
+import { createLocalStoreSignal } from '../lib/local-store-signal';
 
 /** موضع الإشعارات العابرة: بداية الأسفل، الوسط (الافتراضي)، أو نهاية الأسفل — يُحفظ في هذا المتصفّح */
 export const TOAST_POSITIONS = ['start', 'center', 'end'] as const;

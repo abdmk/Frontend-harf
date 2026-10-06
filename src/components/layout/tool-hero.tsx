@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 
-import { cn } from '@/lib/cn';
+import { cn } from '@/lib/utils';
 
 /**
  * بداية صفحات الأدوات (نسق، عكس النص، مختبر الخط، عين): كل شيء في المنتصف بتسلسل واحد —

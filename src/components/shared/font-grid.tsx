@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 
 import { Reveal } from '@/components/shared/reveal';
-import { cn } from '@/lib/cn';
+import { cn } from '@/lib/utils';
 import type { Font } from '@/types/domain/font';
 
 import { FontCard } from './font-card';

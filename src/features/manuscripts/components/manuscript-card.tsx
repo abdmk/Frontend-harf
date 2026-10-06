@@ -4,9 +4,9 @@ import { Avatar } from '@/components/shared/avatar';
 import { DownloadButton } from '@/components/shared/download-button';
 import { BookmarkIcon, CheckIcon } from '@/components/ui/icons';
 import { paths } from '@/config/paths';
-import { cn } from '@/lib/cn';
-import { TYPE_LABEL, USAGE_LABEL } from '@/lib/labels';
+import { cn } from '@/lib/utils';
 import type { Manuscript } from '@/types/domain/manuscript';
+import { TYPE_LABEL, USAGE_LABEL } from '@/utils/labels';
 
 /** الهامش حول الرسم داخل سطح البطاقة (نسبةً للعرض) */
 export const CARD_PAD = 0.22;

@@ -6,7 +6,7 @@ import { submitForReview } from '@/features/publishing/api/submit';
 import { PublishWorkspace } from '@/features/publishing/components/publish-workspace';
 import { VerificationGate } from '@/features/verification/components/verification-callout';
 import { requireStudio } from '@/lib/auth';
-import { canSell, useMyVerification } from '@/lib/studio-verification';
+import { canSell, useMyVerification } from '@/stores/studio-verification';
 
 /**
  * أوّل نشر يمرّ بتوثيق الاستوديو: قبل إرسال الطلب تظهر بوّابة التوثيق بدل مساحة النشر.

@@ -1,4 +1,4 @@
-import { PLATFORM_SHARE_PCT } from '@/lib/studio-verification';
+import { PLATFORM_SHARE_PCT } from '@/stores/studio-verification';
 import { cents } from '@/types/domain/commerce';
 
 /**

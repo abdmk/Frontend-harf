@@ -1,5 +1,5 @@
-import { isSafeImageUrl } from './image-upload';
-import { asObject, createJsonStore } from './json-store';
+import { asObject, createJsonStore } from '../lib/json-store';
+import { isSafeImageUrl } from '../utils/image-upload';
 
 /**
  * بيانات الحساب التي يعدّلها صاحبها: الاسم، الصورة، المهنة، الموقع، الرابط — لكل حساب بمعرّفه.

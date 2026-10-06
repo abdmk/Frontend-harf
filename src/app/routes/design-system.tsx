@@ -25,12 +25,12 @@ import { NotificationsPanel } from '@/features/notifications/components/notifica
 import { UploadDialog } from '@/features/publishing/components/upload-dialog';
 import { getPlans } from '@/features/subscriptions/api/get-subscription';
 import { PlansDialog } from '@/features/subscriptions/components/plans-dialog';
-import { getPricing } from '@/lib/commerce/cart-store';
-import { CATEGORY_LABEL } from '@/lib/labels';
 import { MOCK_FONTS } from '@/mocks/fonts';
 import { MOCK_USERS } from '@/mocks/users';
+import { getPricing } from '@/stores/cart';
 import { type Cart, cents, usd } from '@/types/domain/commerce';
 import { CATEGORIES } from '@/types/domain/font';
+import { CATEGORY_LABEL } from '@/utils/labels';
 
 import { ComponentsDemo } from '../design-system/_components/components-demo';
 import { demoPlan, demoSubmit } from '../design-system/_components/demo-actions';

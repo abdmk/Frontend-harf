@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { ArrowLeftIcon, ArrowRightIcon, BookmarkIcon, CopyIcon } from '@/components/ui/icons';
 import { toast } from '@/components/ui/toast';
 import { paths } from '@/config/paths';
-import { cn } from '@/lib/cn';
+import { cn } from '@/lib/utils';
 
 import { BuyAction, DownloadAction, libraryItems, PriceTag } from './font-actions';
 import { comboSlots, slotStyle } from './pair-card';

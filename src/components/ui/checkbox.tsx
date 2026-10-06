@@ -2,7 +2,7 @@ import { Checkbox as CheckboxPrimitive } from 'radix-ui';
 import type * as React from 'react';
 
 import { CheckIcon } from '@/components/ui/icons';
-import { cn } from '@/lib/cn';
+import { cn } from '@/lib/utils';
 
 /** خانة اختيار حرف (دليل التصميم 2.4): مربّع ناعم يمتلئ بالأحمر */
 function Checkbox({ className, ...props }: React.ComponentProps<typeof CheckboxPrimitive.Root>) {

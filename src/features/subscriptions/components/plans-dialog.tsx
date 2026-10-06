@@ -5,10 +5,10 @@ import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { CheckIcon, CrossSmallIcon, CrownIcon, DiamondIcon, LockIcon, UserIcon } from '@/components/ui/icons';
 import { SegmentedControl } from '@/components/ui/segmented-control';
-import { cn } from '@/lib/cn';
-import { formatMoney } from '@/lib/format';
+import { cn } from '@/lib/utils';
 import type { BillingCycle, PlanOffer } from '@/types/domain/subscription';
 import type { Plan } from '@/types/domain/user';
+import { formatMoney } from '@/utils/format';
 
 import type { ChangePlanResult } from '../api/actions';
 

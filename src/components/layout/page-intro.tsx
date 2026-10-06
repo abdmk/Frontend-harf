@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 
-import { cn } from '@/lib/cn';
+import { cn } from '@/lib/utils';
 
 /**
  * بداية الصفحة — نظام واحد لكل الموقع بدل عناوين متفرّقة المقاسات:

@@ -33,9 +33,9 @@ import { Input, InputGroup, Textarea } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { toast } from '@/components/ui/toast';
-import { cn } from '@/lib/cn';
-import { formatDateAr } from '@/lib/format';
+import { cn } from '@/lib/utils';
 import { PLANS, type Plan } from '@/types/domain/user';
+import { formatDateAr } from '@/utils/format';
 
 import { AdminPageHeader } from './admin-nav';
 import {

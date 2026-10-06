@@ -1,8 +1,8 @@
 import { FileIcon, type FileKind } from '@/components/shared/file-icon';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { formatDateAr, weightsLabel } from '@/lib/format';
-import { CATEGORY_LABEL, LANG_LABEL } from '@/lib/labels';
 import type { Font } from '@/types/domain/font';
+import { formatDateAr, weightsLabel } from '@/utils/format';
+import { CATEGORY_LABEL, LANG_LABEL } from '@/utils/labels';
 
 /** «معلومات الخط» و«محتويات الحزمة» — المؤشّر الأحمر ينزلق بين التبويبين */
 export function FontDetailsTabs({ font }: { font: Font }) {

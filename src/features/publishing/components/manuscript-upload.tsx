@@ -10,9 +10,9 @@ import { CheckIcon, RefreshIcon } from '@/components/ui/icons';
 import { Input, Textarea } from '@/components/ui/input';
 import { SegmentedControl } from '@/components/ui/segmented-control';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { cn } from '@/lib/cn';
-import { checkSvgFile } from '@/lib/svg-check';
+import { cn } from '@/lib/utils';
 import { MANUSCRIPT_CATEGORIES, MANUSCRIPT_CATEGORY_LABEL, type ManuscriptCategory } from '@/types/domain/manuscript';
+import { checkSvgFile } from '@/utils/svg-check';
 
 import { TagPicker } from './tag-picker';
 import { libraryFontById, searchLibraryFonts, submitManuscript } from '../api/manuscripts';

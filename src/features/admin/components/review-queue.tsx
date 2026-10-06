@@ -7,8 +7,8 @@ import { Button } from '@/components/ui/button';
 import { DocumentSignedIcon, ExclamationIcon, RefreshIcon } from '@/components/ui/icons';
 import { SegmentedControl } from '@/components/ui/segmented-control';
 import { paths } from '@/config/paths';
-import { faceStyle } from '@/lib/font-weight';
-import { CATEGORY_LABEL } from '@/lib/labels';
+import { faceStyle } from '@/utils/font-weight';
+import { CATEGORY_LABEL } from '@/utils/labels';
 
 import { AdminPageHeader } from './admin-nav';
 import { STATE } from './decision-panel';

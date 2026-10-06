@@ -2,8 +2,8 @@ import { z } from 'zod';
 
 import { SEED_POSTS } from '@/mocks/blog';
 
-import { isSafeImageUrl } from './image-upload';
-import { asObject, createJsonStore } from './json-store';
+import { asObject, createJsonStore } from '../lib/json-store';
+import { isSafeImageUrl } from '../utils/image-upload';
 
 /**
  * مقالات المدونة: مسودّة ← قيد المراجعة ← منشور. الموقع يعرض المنشور وحده.

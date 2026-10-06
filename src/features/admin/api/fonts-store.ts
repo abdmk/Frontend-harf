@@ -1,5 +1,6 @@
 import { z } from 'zod';
 
+import { MOCK_FONTS } from '@/mocks/fonts';
 import {
   applyEdit,
   type CatalogOverrides,
@@ -8,8 +9,7 @@ import {
   saveCatalogOverrides,
   TAG_MAX,
   useCatalogOverrides,
-} from '@/lib/catalog-overrides';
-import { MOCK_FONTS } from '@/mocks/fonts';
+} from '@/stores/catalog-overrides';
 import { CATEGORIES, type Font } from '@/types/domain/font';
 
 import { logAdmin } from './audit';

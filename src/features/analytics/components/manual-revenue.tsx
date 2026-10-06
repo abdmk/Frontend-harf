@@ -10,7 +10,7 @@ import { PlusIcon, TrashIcon } from '@/components/ui/icons';
 import { Input, Textarea } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { toast } from '@/components/ui/toast';
-import { formatMoney } from '@/lib/format';
+import { formatMoney } from '@/utils/format';
 
 import {
   createRevenue,

@@ -1,6 +1,6 @@
 import { ArrowLeftIcon } from '@/components/ui/icons';
-import { cn } from '@/lib/cn';
-import type { Banner, BannerTone } from '@/lib/site-content';
+import { cn } from '@/lib/utils';
+import type { Banner, BannerTone } from '@/stores/site-content';
 
 /** أرضيّات البنر النصّي — تدرّجات نظام التصميم، تعمل في الوضعين */
 export const BANNER_TONE_CLASS: Record<BannerTone, string> = {

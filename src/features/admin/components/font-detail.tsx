@@ -21,9 +21,9 @@ import {
   TrashIcon,
 } from '@/components/ui/icons';
 import { paths } from '@/config/paths';
-import { faceStyle } from '@/lib/font-weight';
-import { formatDateAr, weightsLabel } from '@/lib/format';
-import { CATEGORY_LABEL, LANG_LABEL, TYPE_LABEL, USAGE_LABEL } from '@/lib/labels';
+import { faceStyle } from '@/utils/font-weight';
+import { formatDateAr, weightsLabel } from '@/utils/format';
+import { CATEGORY_LABEL, LANG_LABEL, TYPE_LABEL, USAGE_LABEL } from '@/utils/labels';
 
 import { AdminPageHeader } from './admin-nav';
 import { DeleteFontDialog, EditFontDialog } from './font-dialogs';

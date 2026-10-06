@@ -6,9 +6,9 @@ import { FlameIcon, SlidersIcon, TimePastIcon } from '@/components/ui/icons';
 import { SegmentedControl } from '@/components/ui/segmented-control';
 import type { Sort } from '@/features/catalog/types/catalog-query';
 import { activeFilterCount } from '@/features/catalog/utils/filter-fonts';
-import { cn } from '@/lib/cn';
-import { CATEGORY_LABEL } from '@/lib/labels';
+import { cn } from '@/lib/utils';
 import { CATEGORIES } from '@/types/domain/font';
+import { CATEGORY_LABEL } from '@/utils/labels';
 
 import { useCatalog } from './catalog-context';
 import { FilterSheet } from './filter-sheet';

@@ -1,4 +1,4 @@
-import { cn } from '@/lib/cn';
+import { cn } from '@/lib/utils';
 
 /** مؤشّر تحميل دائري بلون النص الحالي — يُخفى عن قارئ الشاشة؛ أعلن الحالة في العنصر الأب (aria-busy) */
 export function Spinner({ className }: { className?: string }) {

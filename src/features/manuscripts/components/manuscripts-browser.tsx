@@ -8,7 +8,7 @@ import { SearchField } from '@/components/shared/search-field';
 import { Button } from '@/components/ui/button';
 import { BookmarkIcon, CrossSmallIcon, FlameIcon, PictureIcon, SlidersIcon, TimePastIcon } from '@/components/ui/icons';
 import { SegmentedControl } from '@/components/ui/segmented-control';
-import { cn } from '@/lib/cn';
+import { cn } from '@/lib/utils';
 import { MANUSCRIPT_CATEGORIES, MANUSCRIPT_CATEGORY_LABEL, type Manuscript } from '@/types/domain/manuscript';
 
 import { CARD_PAD, cardExtra, ManuscriptCard } from './manuscript-card';

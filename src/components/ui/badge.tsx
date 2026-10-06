@@ -1,7 +1,7 @@
 import { cva, type VariantProps } from 'class-variance-authority';
 import type * as React from 'react';
 
-import { cn } from '@/lib/cn';
+import { cn } from '@/lib/utils';
 
 /**
  * الشارات (دليل التصميم 2.5): أرضية خفيفة بلون الحالة + أيقونة في دائرة مصمتة.

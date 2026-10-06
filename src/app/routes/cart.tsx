@@ -13,8 +13,8 @@ import { CartItems } from '@/features/cart/components/cart-items';
 import { CouponForm } from '@/features/cart/components/coupon-form';
 import { LicenseSheet } from '@/features/licensing/components/license-sheet';
 import { useCart } from '@/hooks/use-cart';
-import { getPricing } from '@/lib/commerce/cart-store';
-import { formatMoney } from '@/lib/format';
+import { getPricing } from '@/stores/cart';
+import { formatMoney } from '@/utils/format';
 
 const REASSURE = [
   { Icon: LockIcon, tone: 'bg-tint-ok text-ok-text', text: 'دفع آمن عبر Stripe — لا نخزّن بيانات بطاقتك' },

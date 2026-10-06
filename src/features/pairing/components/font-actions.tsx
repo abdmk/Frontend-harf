@@ -10,7 +10,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { CartIcon, ChevronDownIcon, DownloadIcon } from '@/components/ui/icons';
 import { paths } from '@/config/paths';
-import { cn } from '@/lib/cn';
+import { cn } from '@/lib/utils';
 import type { Font } from '@/types/domain/font';
 
 import { libraryFont } from '../api/library';

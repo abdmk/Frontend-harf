@@ -1,6 +1,6 @@
 import { Reveal } from '@/components/shared/reveal';
-import { faceStyle } from '@/lib/font-weight';
 import type { LiveFace } from '@/types/domain/font';
+import { faceStyle } from '@/utils/font-weight';
 
 const WEIGHTS = [
   [100, 'Thin'],

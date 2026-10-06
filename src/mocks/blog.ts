@@ -1,5 +1,5 @@
 /* ══ مقالات المدونة — بيانات تجريبية للعرض فقط ══════════════════════════════ */
-import type { BlogPost } from '@/lib/blog';
+import type { BlogPost } from '@/stores/blog';
 
 export const SEED_POSTS: BlogPost[] = [
   {

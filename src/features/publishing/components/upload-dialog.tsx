@@ -14,9 +14,9 @@ import { CheckIcon, CloudUploadIcon, CrossIcon, InfoIcon, LinkIcon, TrashIcon } 
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { useUploads } from '@/features/publishing/hooks/use-uploads';
 import { UPLOAD_LIMITS } from '@/features/publishing/utils/validate';
-import { cn } from '@/lib/cn';
-import { formatBytesAr } from '@/lib/format';
+import { cn } from '@/lib/utils';
 import type { UploadItem } from '@/types/domain/publishing';
+import { formatBytesAr } from '@/utils/format';
 
 /** نافذة «تحميل الملفات»: منطقة إفلات، صفوف الملفات بحالاتها، والاستيراد من رابط */
 export function UploadDialog({ children }: { children: ReactNode }) {

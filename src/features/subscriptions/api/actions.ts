@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
-import { setAccountPlan } from '@/lib/account-overrides';
 import { getCurrentUser } from '@/lib/auth';
+import { setAccountPlan } from '@/stores/account-overrides';
 import { PLANS } from '@/types/domain/user';
 
 /**

@@ -4,8 +4,8 @@ import { mockPricing } from '@/mocks/pricing';
 import { type Cart, type CartItem, cents } from '@/types/domain/commerce';
 import type { LicensePricing } from '@/types/domain/license';
 
-import { quote } from './quote';
-import { type CartState, cartStateSchema } from './selection';
+import { quote } from '../utils/commerce/quote';
+import { type CartState, cartStateSchema } from '../utils/commerce/selection';
 
 const cartSignal = createLocalStoreSignal();
 /** يشترك عنصر دائم في التخطيط (كالترويسة) بتغيّر السلة — استخدمه عبر useCart */
