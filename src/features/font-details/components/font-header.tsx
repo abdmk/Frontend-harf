@@ -4,8 +4,8 @@ import { Link } from 'react-router';
 import { Avatar } from '@/components/shared/avatar';
 import { DownloadButton } from '@/components/shared/download-button';
 import { paths } from '@/config/paths';
-import { CATEGORY_LABEL, USAGE_LABEL } from '@/lib/labels';
 import type { Font } from '@/types/domain/font';
+import { CATEGORY_LABEL, USAGE_LABEL } from '@/utils/labels';
 
 /** العنوان والمصمّمون والأفعال، ثم شريط المعلومات */
 export function FontHeader({

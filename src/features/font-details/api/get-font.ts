@@ -1,5 +1,5 @@
-import { applyEdit, isPubliclyVisible, publicFonts } from '@/lib/catalog-overrides';
-import { MOCK_FONTS } from '@/mocks/fonts';
+import { applyEdit, isPubliclyVisible, publicFonts } from '@/stores/catalog-overrides';
+import { MOCK_FONTS } from '@/testing/mocks/fonts';
 import type { Font } from '@/types/domain/font';
 
 /** بيانات صفحة الخط — اليوم من البيانات التجريبية، ولاحقاً من الـAPI بالواجهة نفسها */

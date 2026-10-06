@@ -21,7 +21,7 @@ import { Input } from '@/components/ui/input';
 import { SegmentedControl } from '@/components/ui/segmented-control';
 import { Switch } from '@/components/ui/switch';
 import { toast } from '@/components/ui/toast';
-import { cn } from '@/lib/cn';
+import { cn } from '@/lib/utils';
 
 import { CompareView } from './compare-view';
 import { CropImage } from './crop-image';

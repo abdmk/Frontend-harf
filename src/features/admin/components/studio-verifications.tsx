@@ -24,9 +24,8 @@ import { Textarea } from '@/components/ui/input';
 import { SegmentedControl } from '@/components/ui/segmented-control';
 import { toast } from '@/components/ui/toast';
 import { paths } from '@/config/paths';
-import { cn } from '@/lib/cn';
-import { formatDateAr } from '@/lib/format';
 import { useDocUrl } from '@/lib/media-store';
+import { cn } from '@/lib/utils';
 import {
   AGREEMENT_VERSION,
   DOC_TYPE_LABEL,
@@ -34,7 +33,8 @@ import {
   needsBack,
   type VerificationRecord,
   type VerificationStatus,
-} from '@/lib/studio-verification';
+} from '@/stores/studio-verification';
+import { formatDateAr } from '@/utils/format';
 
 import { AdminPageHeader } from './admin-nav';
 import { approveStudio, logDocsViewed, rejectStudio, useStudioRequests } from '../api/studios';
@@ -232,7 +232,7 @@ export function StudioRequestDetail({ id }: { id: string }) {
         </div>
         {pending && (
           <div className="flex gap-2">
-            <Button variant="danger" onClick={() => setRejecting(true)}>
+            <Button variant="destructive" onClick={() => setRejecting(true)}>
               <CrossIcon />
               رفض
             </Button>

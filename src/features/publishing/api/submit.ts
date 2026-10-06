@@ -1,5 +1,5 @@
 import { getCurrentUser } from '@/lib/auth';
-import { canSell, statusOf } from '@/lib/studio-verification';
+import { canSell, statusOf } from '@/stores/studio-verification';
 
 import { isKnownFoundry, isKnownPerson, personById } from './directory';
 import { draftSchema } from '../types/draft';

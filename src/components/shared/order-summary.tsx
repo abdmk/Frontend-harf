@@ -1,9 +1,9 @@
 import type { ReactNode } from 'react';
 
 import { ShieldCheckIcon } from '@/components/ui/icons';
-import { cn } from '@/lib/cn';
-import { formatMoney } from '@/lib/format';
+import { cn } from '@/lib/utils';
 import type { Cart } from '@/types/domain/commerce';
+import { formatMoney } from '@/utils/format';
 
 /**
  * ملخّص الطلب (السلة والدفع): المجموع الفرعي، الخصم، الإجمالي.

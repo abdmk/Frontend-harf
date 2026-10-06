@@ -7,7 +7,7 @@ import { Field, FieldError, FieldHint, FieldLabel } from '@/components/ui/field'
 import { CheckIcon, ClockIcon, CrossIcon, PencilIcon } from '@/components/ui/icons';
 import { Textarea } from '@/components/ui/input';
 import { toast } from '@/components/ui/toast';
-import { cn } from '@/lib/cn';
+import { cn } from '@/lib/utils';
 
 import { type AdminResult } from '../api/guard';
 import { REASON_MAX, REASON_MIN } from '../api/review';

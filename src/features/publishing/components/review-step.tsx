@@ -2,8 +2,8 @@ import type { ReactNode } from 'react';
 
 import { Badge } from '@/components/ui/badge';
 import { CheckIcon, ExclamationIcon, PencilIcon } from '@/components/ui/icons';
-import { cn } from '@/lib/cn';
-import { CATEGORY_LABEL, LANG_LABEL } from '@/lib/labels';
+import { cn } from '@/lib/utils';
+import { CATEGORY_LABEL, LANG_LABEL } from '@/utils/labels';
 
 import { ConsentField, type StepProps } from './publish-steps';
 import { type DirectoryEntry, foundryById, personById } from '../api/directory';

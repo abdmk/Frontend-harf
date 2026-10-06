@@ -4,7 +4,7 @@ import { sideNavIcon, sideNavRow } from '@/components/shared/side-nav';
 import { ChevronRightIcon, ShieldCheckIcon } from '@/components/ui/icons';
 import { paths } from '@/config/paths';
 import { useCurrentUser } from '@/hooks/use-current-user';
-import { cn } from '@/lib/cn';
+import { cn } from '@/lib/utils';
 
 import { useAdminSection } from './admin-nav';
 import { usePendingManuscripts } from '../api/manuscripts';

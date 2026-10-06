@@ -1,7 +1,7 @@
 import { Alert } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { RefreshIcon } from '@/components/ui/icons';
-import { cn } from '@/lib/cn';
+import { cn } from '@/lib/utils';
 
 import { useLab } from '../../hooks/lab-context';
 import { Panel, RangeControl, StatusPill } from '../bits';

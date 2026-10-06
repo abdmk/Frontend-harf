@@ -1,7 +1,7 @@
 import { type ReactNode, useCallback, useEffect, useRef, useState } from 'react';
 
 import { ChevronLeftIcon, ChevronRightIcon } from '@/components/ui/icons';
-import { cn } from '@/lib/cn';
+import { cn } from '@/lib/utils';
 
 type CarouselProps = {
   slides: ReactNode[];

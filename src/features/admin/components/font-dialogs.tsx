@@ -8,9 +8,9 @@ import { TrashIcon } from '@/components/ui/icons';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toast } from '@/components/ui/toast';
-import { FONT_NAME_MAX } from '@/lib/catalog-overrides';
-import { CATEGORY_LABEL } from '@/lib/labels';
+import { FONT_NAME_MAX } from '@/stores/catalog-overrides';
 import { CATEGORIES, type Category } from '@/types/domain/font';
+import { CATEGORY_LABEL } from '@/utils/labels';
 
 import { deleteFont, editFont, type StoreFont } from '../api/fonts-store';
 

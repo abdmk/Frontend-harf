@@ -7,7 +7,7 @@ import { Field, FieldError, FieldHint, FieldLabel } from '@/components/ui/field'
 import { ArrowRightIcon, BankIcon, CreditCardIcon } from '@/components/ui/icons';
 import { Input } from '@/components/ui/input';
 import { OtpInput } from '@/components/ui/otp-input';
-import { cn } from '@/lib/cn';
+import { cn } from '@/lib/utils';
 import {
   DEMO_OTP,
   type MaskedPayout,
@@ -20,7 +20,7 @@ import {
   type PayoutMethod,
   payoutMethodsFor,
   verifyOtp,
-} from '@/lib/payout';
+} from '@/utils/payout';
 
 import { SecureNote } from './payout-card';
 
@@ -260,7 +260,7 @@ export function PayoutForm({
           </label>
           <FieldError>{errors.confirm}</FieldError>
           {!formId && (
-            <Button type="submit" size="lg" variant="primary">
+            <Button type="submit" size="lg" variant="default">
               متابعة
             </Button>
           )}
@@ -305,7 +305,7 @@ export function PayoutForm({
           </p>
           <div className="flex flex-col gap-3">
             {!formId && (
-              <Button type="submit" size="lg" variant="primary" disabled={!/^\d{6}$/.test(code)}>
+              <Button type="submit" size="lg" variant="default" disabled={!/^\d{6}$/.test(code)}>
                 تأكيد وحفظ
               </Button>
             )}

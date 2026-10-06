@@ -22,8 +22,7 @@ import { Input, InputGroup } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { toast } from '@/components/ui/toast';
-import { cn } from '@/lib/cn';
-import { formatMoney } from '@/lib/format';
+import { cn } from '@/lib/utils';
 import {
   defaultPlan,
   MAX_PRICE_CENTS,
@@ -32,9 +31,10 @@ import {
   planEditSchema,
   toEdit,
   usePlanOffers,
-} from '@/lib/plan-offers';
+} from '@/stores/plan-offers';
 import { cents } from '@/types/domain/commerce';
 import type { Plan } from '@/types/domain/user';
+import { formatMoney } from '@/utils/format';
 
 import { AdminPageHeader } from './admin-nav';
 import { resetPlan, updatePlan } from '../api/plans';

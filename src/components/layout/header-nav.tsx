@@ -2,7 +2,7 @@ import { useLayoutEffect, useRef } from 'react';
 import { Link, useLocation, useSearchParams } from 'react-router';
 
 import { mainNav } from '@/config/site';
-import { cn } from '@/lib/cn';
+import { cn } from '@/lib/utils';
 
 /** «خطوط مجانية» تشمل الرئيسية وصفحات الخطوط، و«خطوط مدفوعة» هي المكتبة بفلتر المدفوع */
 function isActive(href: string, pathname: string, paid: boolean) {

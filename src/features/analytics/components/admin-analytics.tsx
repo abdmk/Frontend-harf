@@ -12,9 +12,9 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { CartIcon, CrownIcon, DownloadIcon, GlobeIcon, UserIcon } from '@/components/ui/icons';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { cn } from '@/lib/cn';
-import { formatMoney } from '@/lib/format';
+import { cn } from '@/lib/utils';
 import type { AdminAnalytics, Range } from '@/types/domain/analytics';
+import { formatMoney } from '@/utils/format';
 
 import { AddRevenueDialog, ManualRevenueSection } from './manual-revenue';
 import { TransactionsLog } from './transactions-log';

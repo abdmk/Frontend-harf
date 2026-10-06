@@ -2,7 +2,7 @@ import type { ReactNode } from 'react';
 
 import { Container } from '@/components/layout/container';
 import { PageMeta } from '@/components/shared/page-meta';
-import { cn } from '@/lib/cn';
+import { cn } from '@/lib/utils';
 
 /**
  * صفحة محتوى (عن حرف، الخدمات، المساعدة): عنوان في الوسط ومقدّمة كالوثائق القانونية،

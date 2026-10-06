@@ -2,7 +2,7 @@ import { Tabs as TabsPrimitive } from 'radix-ui';
 import type { ComponentProps } from 'react';
 
 import { useSlidingIndicator } from '@/hooks/use-sliding-indicator';
-import { cn } from '@/lib/cn';
+import { cn } from '@/lib/utils';
 
 /** التبويبات (دليل التصميم 3.4): خطّ أحمر ينزلق تحت التبويب النشط */
 const Tabs = TabsPrimitive.Root;

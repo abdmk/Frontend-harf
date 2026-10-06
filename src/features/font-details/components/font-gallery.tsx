@@ -3,9 +3,9 @@ import { useEffect, useRef, useState } from 'react';
 import { Carousel } from '@/components/shared/carousel';
 import { NoPreview } from '@/components/shared/no-preview';
 import { CrossIcon, ExpandIcon } from '@/components/ui/icons';
-import { cn } from '@/lib/cn';
-import { faceStyle } from '@/lib/font-weight';
+import { cn } from '@/lib/utils';
 import type { LiveFace } from '@/types/domain/font';
+import { faceStyle } from '@/utils/font-weight';
 
 /** معرض صور الخط: شريحة كبيرة + مصغّرات + ملء الشاشة (Esc للخروج) */
 const THUMB = ['أ', 'ا ب', 'حرف', 'نص', '٣'];

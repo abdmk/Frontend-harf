@@ -19,11 +19,9 @@ import {
   UserIcon,
 } from '@/components/ui/icons';
 import { Input } from '@/components/ui/input';
-import { cn } from '@/lib/cn';
-import { formatDateAr } from '@/lib/format';
+import { PUBLISHER_TERMS } from '@/config/publisher-terms';
 import { useDocUrl } from '@/lib/media-store';
-import { type MaskedPayout, PAYOUT_METHOD_LABEL, payoutLabel, payoutMethodsFor } from '@/lib/payout';
-import { PUBLISHER_TERMS } from '@/lib/publisher-terms';
+import { cn } from '@/lib/utils';
 import {
   DOC_TYPE_LABEL,
   DOC_TYPES,
@@ -33,7 +31,9 @@ import {
   MISSING_LABEL,
   needsBack,
   type VerificationRecord,
-} from '@/lib/studio-verification';
+} from '@/stores/studio-verification';
+import { formatDateAr } from '@/utils/format';
+import { type MaskedPayout, PAYOUT_METHOD_LABEL, payoutLabel, payoutMethodsFor } from '@/utils/payout';
 
 import { CountryPicker } from './country-picker';
 import { DocSlot } from './doc-slot';
@@ -340,7 +340,7 @@ export function PayoutStep({
                   <Button variant="secondary" size="lg" onClick={() => setEditing(true)}>
                     تحديث
                   </Button>
-                  <Button variant="danger" size="lg" onClick={() => setRemoving(true)}>
+                  <Button variant="destructive" size="lg" onClick={() => setRemoving(true)}>
                     إزالة
                   </Button>
                 </>
@@ -530,7 +530,7 @@ export function AgreementStep({
         <SignaturePreview signed={signed} onResign={onSign} />
       ) : (
         <div className="flex flex-col gap-2">
-          <Button size="lg" variant="primary" disabled={!ready} onClick={onSign}>
+          <Button size="lg" variant="default" disabled={!ready} onClick={onSign}>
             <DocumentSignedIcon />
             وقّع الاتفاقية
           </Button>

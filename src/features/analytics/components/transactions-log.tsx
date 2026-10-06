@@ -3,8 +3,8 @@ import { useState } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { SegmentedControl } from '@/components/ui/segmented-control';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { formatMoney } from '@/lib/format';
 import type { AdminAnalytics } from '@/types/domain/analytics';
+import { formatMoney } from '@/utils/format';
 
 type Row = Omit<AdminAnalytics['transactions'][number], 'kind'> & {
   kind: AdminAnalytics['transactions'][number]['kind'] | 'other';

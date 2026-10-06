@@ -23,9 +23,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Spinner } from '@/components/ui/spinner';
 import { COUNTRIES } from '@/config/countries';
 import { paths } from '@/config/paths';
-import { cn } from '@/lib/cn';
-import { formatMoney } from '@/lib/format';
+import { cn } from '@/lib/utils';
 import type { Money, PaymentMethod } from '@/types/domain/commerce';
+import { formatMoney } from '@/utils/format';
 
 import type { PayState } from '../api/pay';
 

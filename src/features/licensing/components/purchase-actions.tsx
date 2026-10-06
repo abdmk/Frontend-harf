@@ -41,7 +41,7 @@ export function PurchaseActions({
   defaultOpen,
   onSubmit,
 }: Props) {
-  const sheet = (label: string, variant: 'primary' | 'outline' = 'primary') => (
+  const sheet = (label: string, variant: 'default' | 'outline' = 'default') => (
     <LicenseSheet
       fontName={font.name}
       foundry={foundry}

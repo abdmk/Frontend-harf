@@ -3,8 +3,8 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { decideManuscript, undoManuscriptDecision } from '@/features/admin/api/manuscripts';
 import { searchLibraryFonts, submitManuscript } from '@/features/publishing/api/manuscripts';
 import { getCurrentUser, setDemoSession } from '@/lib/auth';
-import { getSubmission, getSubmissions } from '@/lib/manuscript-submissions';
 import type * as MediaStore from '@/lib/media-store';
+import { getSubmission, getSubmissions } from '@/stores/manuscript-submissions';
 
 // IndexedDB غير موجود في jsdom — الحفظ نفسه يُختبر في المتصفّح (e2e)
 vi.mock('@/lib/media-store', async (orig) => ({

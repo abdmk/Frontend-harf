@@ -8,7 +8,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { ArrowLeftIcon, ChevronDownIcon } from '@/components/ui/icons';
-import { cn } from '@/lib/cn';
+import { cn } from '@/lib/utils';
 
 import { LayoutContext, ParagraphsContext, TestsContext } from './contexts';
 import { OT_SPECIMENS } from './tools/features';

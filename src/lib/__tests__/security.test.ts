@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
-import { safeNext } from '../safe-next';
-import { hit } from '../sliding-window';
+import { safeNext } from '@/utils/safe-next';
+import { hit } from '@/utils/sliding-window';
 
 describe('safeNext — منع إعادة التوجيه المفتوح', () => {
   it.each(['//evil.com', '/\\evil.com', 'https://evil.com', 'javascript:alert(1)', '/a\nb', ''])('يرفض %j', (v) => {

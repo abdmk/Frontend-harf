@@ -1,7 +1,7 @@
 import { Switch as SwitchPrimitive } from 'radix-ui';
 import type * as React from 'react';
 
-import { cn } from '@/lib/cn';
+import { cn } from '@/lib/utils';
 
 /** المفتاح (دليل التصميم 2.4): أخضر عند التشغيل، والمقبض ينزلق بحركة pop — يدعم RTL */
 function Switch({ className, ...props }: React.ComponentProps<typeof SwitchPrimitive.Root>) {

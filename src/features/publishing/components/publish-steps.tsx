@@ -20,10 +20,10 @@ import { Input, Textarea } from '@/components/ui/input';
 import { RadioGroup, RadioOption } from '@/components/ui/radio-group';
 import { Switch } from '@/components/ui/switch';
 import { paths } from '@/config/paths';
-import { cn } from '@/lib/cn';
-import { formatBytesAr } from '@/lib/format';
-import { CATEGORY_LABEL, LANG_LABEL } from '@/lib/labels';
+import { cn } from '@/lib/utils';
 import { CATEGORIES, LANGS } from '@/types/domain/font';
+import { formatBytesAr } from '@/utils/format';
+import { CATEGORY_LABEL, LANG_LABEL } from '@/utils/labels';
 
 import { SortableImages } from './sortable-images';
 import { TagPicker } from './tag-picker';

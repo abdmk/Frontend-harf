@@ -1,6 +1,6 @@
 import { useId, useRef } from 'react';
 
-import { cn } from '@/lib/cn';
+import { cn } from '@/lib/utils';
 
 /**
  * رمز التأكيد بخانات منفصلة: الكتابة تنتقل للخانة التالية، الحذف يعود، واللصق يوزّع الأرقام.

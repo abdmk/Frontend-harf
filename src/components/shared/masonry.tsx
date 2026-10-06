@@ -1,6 +1,6 @@
 import { type ReactNode, useLayoutEffect, useMemo, useRef, useState } from 'react';
 
-import { cn } from '@/lib/cn';
+import { cn } from '@/lib/utils';
 
 /**
  * تخطيط متدفّق (Masonry) بترتيب صفّي: كل عنصر يذهب إلى أقصر عمود، والارتفاع يُحسب مسبقاً من

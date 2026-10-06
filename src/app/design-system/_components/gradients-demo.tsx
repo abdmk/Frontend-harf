@@ -1,13 +1,13 @@
 import type { CSSProperties } from 'react';
 
 import { CheckIcon, DownloadIcon, MagicWandIcon } from '@/components/ui/icons';
-import { cn } from '@/lib/cn';
+import { cn } from '@/lib/utils';
 
 import { DsSection } from './ds-section';
 
 type Dir = { id: string; name: string; en: string; mood: string; use: string };
 
-/** الاتجاه المعتمد — القيم في src/design-system/gradients.css */
+/** الاتجاه المعتمد — القيم في src/config/design-tokens/gradients.css */
 const DIRS: Dir[] = [
   {
     id: 'dawn',

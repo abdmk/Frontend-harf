@@ -6,7 +6,7 @@ import { join, relative } from 'node:path';
 
 const ROOT = new URL('..', import.meta.url).pathname;
 const SRC = join(ROOT, 'src');
-const SKIP = [/^src\/design-system\//, /^src\/mocks\//, /icons\.generated\.ts$/, /\/icons\/generated\//, /\.test\.tsx?$/];
+const SKIP = [/^src\/config\/design-tokens\//, /^src\/testing\/mocks\//, /\.test\.tsx?$/];
 
 const RADII = new Set(['8', '12', '16', '22', '28']);
 const RULES: { re: RegExp; message: (m: RegExpExecArray) => string | null }[] = [

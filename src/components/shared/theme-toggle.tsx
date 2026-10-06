@@ -1,7 +1,7 @@
 import { useSyncExternalStore } from 'react';
 
 import { MoonIcon, SunIcon } from '@/components/ui/icons';
-import { cn } from '@/lib/cn';
+import { cn } from '@/lib/utils';
 
 const THEME_STORAGE_KEY = 'harf-theme';
 

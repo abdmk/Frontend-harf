@@ -2,13 +2,14 @@ import { cva, type VariantProps } from 'class-variance-authority';
 import { Slot } from 'radix-ui';
 import type * as React from 'react';
 
-import { cn } from '@/lib/cn';
+import { cn } from '@/lib/utils';
 
 import { Spinner } from './spinner';
 
 /**
  * زرّ حرف — الأنواع والأحجام من دليل التصميم (2.1).
- * الأحمر هو لون الفعل الوحيد: زرّ primary واحد في كل منطقة.
+ * الأحمر هو لون الفعل الوحيد: زرّ default واحد في كل منطقة.
+ * الأسماء كما في shadcn (default، destructive، outline، secondary، ghost، link) + ink وai لهوية حرف.
  */
 const buttonVariants = cva(
   [
@@ -20,18 +21,18 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        primary: 'bg-primary-fill text-primary-foreground hover:bg-harf-600',
+        default: 'bg-primary-fill text-primary-foreground hover:bg-harf-600',
         secondary: 'border-border bg-sunken text-foreground hover:bg-inset',
         outline: 'border-border bg-card text-foreground hover:border-strong',
         ghost: 'text-muted-foreground hover:bg-sunken hover:text-foreground',
-        danger: 'bg-tint-dgr text-dgr-text hover:bg-dgr-100 dark:hover:bg-tint-dgr/70',
+        destructive: 'bg-tint-dgr text-dgr-text hover:bg-dgr-100 dark:hover:bg-tint-dgr/70',
         ink: 'bg-ink text-ink-foreground shadow-soft hover:opacity-90',
         ai: 'bg-ai-500 text-white shadow-soft hover:opacity-90',
         link: 'h-auto! border-0 px-0! text-primary underline-offset-4 hover:underline',
       },
       size: {
         sm: 'h-8.5 rounded-xs px-4 text-caption',
-        md: 'h-10.5 rounded-sm px-5 text-control',
+        default: 'h-10.5 rounded-sm px-5 text-control',
         lg: 'h-12 rounded-sm px-6 text-lead',
         xl: 'h-14 rounded-md px-6 text-lead',
         'icon-sm': 'size-8 rounded-xs',
@@ -44,7 +45,7 @@ const buttonVariants = cva(
       },
       block: { true: 'w-full' },
     },
-    defaultVariants: { variant: 'primary', size: 'md', shape: 'default' },
+    defaultVariants: { variant: 'default', size: 'default', shape: 'default' },
   },
 );
 
@@ -71,7 +72,7 @@ function Button({
   return (
     <Comp
       data-slot="button"
-      data-variant={variant ?? 'primary'}
+      data-variant={variant ?? 'default'}
       aria-busy={loading || undefined}
       className={cn(buttonVariants({ variant, size, shape, block }), className)}
       {...props}

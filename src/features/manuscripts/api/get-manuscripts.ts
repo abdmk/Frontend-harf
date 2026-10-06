@@ -1,4 +1,4 @@
-import { MOCK_MANUSCRIPTS } from '@/mocks/manuscripts';
+import { MOCK_MANUSCRIPTS } from '@/testing/mocks/manuscripts';
 import {
   LEGACY_MANUSCRIPT_CATEGORY,
   MANUSCRIPT_CATEGORIES,

@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 
-import { cn } from '@/lib/cn';
+import { cn } from '@/lib/utils';
 
 /**
  * الحالة الفارغة (دليل التصميم 4.3): تقول لماذا هي فارغة، وتعطي خطوة تالية واحدة.

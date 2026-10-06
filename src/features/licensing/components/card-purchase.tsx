@@ -3,7 +3,7 @@ import { Link } from 'react-router';
 import { DownloadButton, QUIET_CTA } from '@/components/shared/download-button';
 import { PriceDisplay } from '@/components/shared/price-display';
 import { paths } from '@/config/paths';
-import { cn } from '@/lib/cn';
+import { cn } from '@/lib/utils';
 import { usd } from '@/types/domain/commerce';
 import type { Font } from '@/types/domain/font';
 

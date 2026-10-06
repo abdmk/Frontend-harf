@@ -10,7 +10,7 @@ import { PlusIcon, TrashIcon } from '@/components/ui/icons';
 import { Input, Textarea } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { toast } from '@/components/ui/toast';
-import { formatMoney } from '@/lib/format';
+import { formatMoney } from '@/utils/format';
 
 import {
   createRevenue,
@@ -28,10 +28,10 @@ const dateLabel = (d: string) =>
 /** نافذة «أضف إيراداً»: النوع، المبلغ، العميل، التاريخ، ملاحظة — تحقّق كامل قبل الحفظ */
 export function AddRevenueDialog({
   onAdd,
-  variant = 'primary',
+  variant = 'default',
 }: {
   onAdd: (e: ManualRevenue) => void;
-  variant?: 'primary' | 'outline';
+  variant?: 'default' | 'outline';
 }) {
   const [open, setOpen] = useState(false);
   const [category, setCategory] = useState<RevenueCategory>('font-design');

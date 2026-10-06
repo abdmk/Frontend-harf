@@ -8,7 +8,7 @@ import {
   getSubmission,
   updateSubmission,
   useSubmissions,
-} from '@/lib/manuscript-submissions';
+} from '@/stores/manuscript-submissions';
 
 import { logAdmin } from './audit';
 import { adminOrNull, type AdminResult, DENIED } from './guard';

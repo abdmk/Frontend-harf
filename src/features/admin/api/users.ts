@@ -1,8 +1,8 @@
 import { z } from 'zod';
 
-import { getAccountOverrides, saveAccountOverrides, useAccountOverrides } from '@/lib/account-overrides';
-import { MOCK_ADMIN_ANALYTICS } from '@/mocks/studio';
-import { MOCK_USERS } from '@/mocks/users';
+import { getAccountOverrides, saveAccountOverrides, useAccountOverrides } from '@/stores/account-overrides';
+import { MOCK_ADMIN_ANALYTICS } from '@/testing/mocks/studio';
+import { MOCK_USERS } from '@/testing/mocks/users';
 import { PLANS, type Plan } from '@/types/domain/user';
 
 import { logAdmin } from './audit';

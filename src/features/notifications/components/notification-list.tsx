@@ -1,7 +1,7 @@
 import { Link } from 'react-router';
 
 import { CheckIcon, DownloadIcon, MagicWandIcon, ReceiptIcon, UserIcon } from '@/components/ui/icons';
-import { cn } from '@/lib/cn';
+import { cn } from '@/lib/utils';
 import type { NotificationKind } from '@/types/domain/notification';
 
 import { safeHref } from '../hooks/use-notifications';

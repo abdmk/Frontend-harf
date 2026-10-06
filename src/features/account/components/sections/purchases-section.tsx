@@ -7,8 +7,8 @@ import { Button } from '@/components/ui/button';
 import { ReceiptIcon } from '@/components/ui/icons';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { paths } from '@/config/paths';
-import { formatDateAr, formatMoney } from '@/lib/format';
 import type { Purchase } from '@/types/domain/commerce';
+import { formatDateAr, formatMoney } from '@/utils/format';
 
 /** المشتريات: رقم الترخيص، الخط، الحزمة، التاريخ، المبلغ، والتحميل مجدداً */
 export function PurchasesSection({ purchases }: { purchases: Purchase[] }) {

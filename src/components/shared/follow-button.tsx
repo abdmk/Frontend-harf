@@ -2,7 +2,7 @@ import { useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { CheckIcon, PlusIcon } from '@/components/ui/icons';
-import { cn } from '@/lib/cn';
+import { cn } from '@/lib/utils';
 
 /** متابعة مصمّم/مسبك — حالة محلية للعرض؛ تُحفظ على الخادم مع الحساب لاحقاً */
 export function FollowButton({
@@ -18,7 +18,7 @@ export function FollowButton({
   return (
     <Button
       size="sm"
-      variant={on ? 'primary' : 'outline'}
+      variant={on ? 'default' : 'outline'}
       aria-pressed={on}
       aria-label={`${on ? 'إلغاء متابعة' : 'متابعة'} ${name}`}
       onClick={() => setOn((v) => !v)}

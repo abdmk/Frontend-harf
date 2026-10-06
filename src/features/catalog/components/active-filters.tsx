@@ -2,8 +2,8 @@ import { CrossSmallIcon } from '@/components/ui/icons';
 import type { CatalogQuery } from '@/features/catalog/types/catalog-query';
 import { DEFAULT_QUERY } from '@/features/catalog/types/catalog-query';
 import { DATE_LABEL, LICENSE_FILTER_LABEL } from '@/features/catalog/utils/labels';
-import { weightsLabel } from '@/lib/format';
-import { CATEGORY_LABEL, LANG_SHORT } from '@/lib/labels';
+import { weightsLabel } from '@/utils/format';
+import { CATEGORY_LABEL, LANG_SHORT } from '@/utils/labels';
 
 import { useCatalog } from './catalog-context';
 

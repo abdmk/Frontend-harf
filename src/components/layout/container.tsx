@@ -1,6 +1,6 @@
 import type { ComponentProps, ElementType } from 'react';
 
-import { cn } from '@/lib/cn';
+import { cn } from '@/lib/utils';
 
 type ContainerProps<T extends ElementType> = { as?: T } & Omit<ComponentProps<T>, 'as'>;
 

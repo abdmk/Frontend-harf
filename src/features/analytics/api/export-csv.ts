@@ -1,5 +1,5 @@
-import { toCsv } from '@/lib/csv';
 import type { Range } from '@/types/domain/analytics';
+import { toCsv } from '@/utils/csv';
 
 import { getAdminAnalytics } from './get-analytics';
 

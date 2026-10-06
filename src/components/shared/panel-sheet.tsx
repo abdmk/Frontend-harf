@@ -1,9 +1,9 @@
 import type { ComponentProps } from 'react';
 
 import { SheetContent } from '@/components/ui/sheet';
-import { below } from '@/design-system/tokens';
+import { below } from '@/config/design-tokens/tokens';
 import { useMediaQuery } from '@/hooks/use-media-query';
-import { cn } from '@/lib/cn';
+import { cn } from '@/lib/utils';
 
 /**
  * هيكل اللوحات (الترخيص، التصفية، خيارات «نسق»): نافذة وسطى بعرض واحد وارتفاع محدود على الكمبيوتر،

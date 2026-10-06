@@ -1,6 +1,6 @@
-import { formatMoney } from '@/lib/format';
-import { PUBLISHER_TERMS as T } from '@/lib/publisher-terms';
-import { AGREEMENT_VERSION, PLATFORM_SHARE_PCT } from '@/lib/studio-verification';
+import { PUBLISHER_TERMS as T } from '@/config/publisher-terms';
+import { AGREEMENT_VERSION, PLATFORM_SHARE_PCT } from '@/stores/studio-verification';
+import { formatMoney } from '@/utils/format';
 
 /**
  * اتفاقية الناشر — نصّ أوّلي للعرض.

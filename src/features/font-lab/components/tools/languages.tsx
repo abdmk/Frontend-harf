@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import { cn } from '@/lib/cn';
+import { cn } from '@/lib/utils';
 
 import { type LangKey, LANGUAGES } from '../../data/languages';
 import { useLab } from '../../hooks/lab-context';

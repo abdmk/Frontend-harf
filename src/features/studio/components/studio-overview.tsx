@@ -17,10 +17,10 @@ import {
 } from '@/components/ui/icons';
 import { SegmentedControl } from '@/components/ui/segmented-control';
 import { paths } from '@/config/paths';
-import { formatMoney } from '@/lib/format';
 import type { StudioAnalytics, StudioRange } from '@/types/domain/analytics';
 import { cents } from '@/types/domain/commerce';
 import type { StudioFont } from '@/types/domain/foundry';
+import { formatMoney } from '@/utils/format';
 
 import { RANGE_LABEL, StudioPageHeader } from './studio-page-header';
 import { getSales, useEarnings } from '../api/earnings';

@@ -1,4 +1,4 @@
-import { selectionSchema } from '@/lib/commerce/selection';
+import { selectionSchema } from '@/utils/commerce/selection';
 
 /** إجراء عرض للدليل: يتحقّق من الاختيار ولا يغيّر السلة */
 export function demoSubmit(input: unknown): { ok: true } | { ok: false; error: string } {

@@ -1,5 +1,5 @@
-import { cn } from '@/lib/cn';
-import { useIsVerified, useMyVerification } from '@/lib/studio-verification';
+import { cn } from '@/lib/utils';
+import { useIsVerified, useMyVerification } from '@/stores/studio-verification';
 
 /** علامة «موثّق» الزرقاء بجانب اسم مصمّم أو مسبك */
 export function VerifiedBadge({ className }: { className?: string }) {

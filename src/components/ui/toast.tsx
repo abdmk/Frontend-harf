@@ -1,7 +1,7 @@
 import { useEffect, useRef, useSyncExternalStore } from 'react';
 
-import { cn } from '@/lib/cn';
-import { useToastPosition } from '@/lib/toast-position';
+import { cn } from '@/lib/utils';
+import { useToastPosition } from '@/stores/toast-position';
 
 import { Alert, AlertAction, type AlertProps } from './alert';
 

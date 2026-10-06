@@ -1,5 +1,5 @@
-import { getPlanOffers, usePlanOffers } from '@/lib/plan-offers';
-import { mockInvoices, mockSubscription } from '@/mocks/plans';
+import { getPlanOffers, usePlanOffers } from '@/stores/plan-offers';
+import { mockInvoices, mockSubscription } from '@/testing/mocks/plans';
 import type { Plan } from '@/types/domain/user';
 
 /** الخطط والاشتراك والفواتير — اليوم من البيانات التجريبية، لاحقاً من Stripe Billing/قاعدة البيانات */

@@ -1,8 +1,8 @@
 import type { ReactNode } from 'react';
 
 import { BankIcon, LockIcon, MobileIcon } from '@/components/ui/icons';
-import { cn } from '@/lib/cn';
-import { type MaskedPayout, PAYOUT_METHOD_LABEL, payoutLabel } from '@/lib/payout';
+import { cn } from '@/lib/utils';
+import { type MaskedPayout, PAYOUT_METHOD_LABEL, payoutLabel } from '@/utils/payout';
 
 /** حساب الاستلام مقنّعاً: أيقونة الوسيلة، آخر 4 أرقام، واسم صاحبه — ثم أزرار التحديث والإزالة */
 export function PayoutCard({

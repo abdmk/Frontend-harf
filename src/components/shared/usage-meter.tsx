@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 
-import { cn } from '@/lib/cn';
+import { cn } from '@/lib/utils';
 import type { UsageMeter as Meter } from '@/types/domain/user';
 
 /** عدّاد استخدام بشريط: «4 / 5». بلا حدّ ← «غير محدود» */

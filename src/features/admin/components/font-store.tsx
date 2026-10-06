@@ -20,10 +20,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { toast } from '@/components/ui/toast';
 import { paths } from '@/config/paths';
-import { cn } from '@/lib/cn';
-import { faceStyle } from '@/lib/font-weight';
-import { CATEGORY_LABEL } from '@/lib/labels';
+import { cn } from '@/lib/utils';
 import type { Font } from '@/types/domain/font';
+import { faceStyle } from '@/utils/font-weight';
+import { CATEGORY_LABEL } from '@/utils/labels';
 
 import { AdminPageHeader } from './admin-nav';
 import { DeleteFontDialog, EditFontDialog } from './font-dialogs';

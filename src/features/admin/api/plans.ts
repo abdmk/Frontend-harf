@@ -1,4 +1,4 @@
-import { defaultPlan, savePlanEdit } from '@/lib/plan-offers';
+import { defaultPlan, savePlanEdit } from '@/stores/plan-offers';
 import { PLANS, type Plan } from '@/types/domain/user';
 
 import { logAdmin } from './audit';

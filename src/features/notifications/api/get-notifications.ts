@@ -1,4 +1,4 @@
-import { mockNotifications } from '@/mocks/notifications';
+import { mockNotifications } from '@/testing/mocks/notifications';
 import type { User } from '@/types/domain/user';
 
 import { toViews } from '../utils/group';

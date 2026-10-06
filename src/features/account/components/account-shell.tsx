@@ -6,7 +6,7 @@ import { paths } from '@/config/paths';
 import { navKeyFor, SECTION_TITLE } from '@/features/account/config/nav';
 import type { AccountSection, User } from '@/features/account/types';
 import { useMediaQuery } from '@/hooks/use-media-query';
-import { cn } from '@/lib/cn';
+import { cn } from '@/lib/utils';
 
 import { AccountPanel } from './account-panel';
 

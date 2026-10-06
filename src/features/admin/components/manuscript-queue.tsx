@@ -7,8 +7,8 @@ import { Button } from '@/components/ui/button';
 import { ExclamationIcon, PictureIcon } from '@/components/ui/icons';
 import { SegmentedControl } from '@/components/ui/segmented-control';
 import { paths } from '@/config/paths';
-import type { ManuscriptSubmission, SubmissionStatus } from '@/lib/manuscript-submissions';
 import { useManuscriptUrl } from '@/lib/media-store';
+import type { ManuscriptSubmission, SubmissionStatus } from '@/stores/manuscript-submissions';
 import { MANUSCRIPT_CATEGORY_LABEL } from '@/types/domain/manuscript';
 
 import { STATE } from './decision-panel';

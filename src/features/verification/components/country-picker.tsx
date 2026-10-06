@@ -3,7 +3,7 @@ import { useId, useMemo, useRef, useState } from 'react';
 import { CheckIcon, ChevronDownIcon, SearchIcon } from '@/components/ui/icons';
 import { fieldBox } from '@/components/ui/input';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { cn } from '@/lib/cn';
+import { cn } from '@/lib/utils';
 
 import { COUNTRIES, countryName } from '../config/countries';
 

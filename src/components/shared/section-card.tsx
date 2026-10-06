@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 
-import { cn } from '@/lib/cn';
+import { cn } from '@/lib/utils';
 
 /** بطاقة قسم في صفحة الحساب: عنوان + وصف + إجراء على الطرف الآخر */
 export function SectionCard({

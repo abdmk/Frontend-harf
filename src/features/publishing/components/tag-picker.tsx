@@ -1,7 +1,7 @@
 import { useId, useState } from 'react';
 
 import { CrossSmallIcon } from '@/components/ui/icons';
-import { cn } from '@/lib/cn';
+import { cn } from '@/lib/utils';
 
 import type { DirectoryEntry } from '../api/directory';
 

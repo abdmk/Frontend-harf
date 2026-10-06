@@ -5,7 +5,7 @@ import {
   getVerification,
   useAllVerifications,
   type VerificationRecord,
-} from '@/lib/studio-verification';
+} from '@/stores/studio-verification';
 
 import { logAdmin } from './audit';
 import { adminOrNull, type AdminResult, DENIED } from './guard';

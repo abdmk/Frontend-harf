@@ -2,7 +2,7 @@ import { Select as SelectPrimitive } from 'radix-ui';
 import type * as React from 'react';
 
 import { CheckIcon, ChevronDownIcon } from '@/components/ui/icons';
-import { cn } from '@/lib/cn';
+import { cn } from '@/lib/utils';
 
 import { fieldBox } from './input';
 

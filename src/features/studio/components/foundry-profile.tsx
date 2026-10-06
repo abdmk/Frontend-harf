@@ -1,8 +1,8 @@
 import { ProfileHeader } from '@/components/shared/profile-header';
-import { cn } from '@/lib/cn';
-import { LANG_LABEL } from '@/lib/labels';
-import { KIND_LABEL, type ProfileKind } from '@/lib/public-profile';
+import { cn } from '@/lib/utils';
+import { KIND_LABEL, type ProfileKind } from '@/stores/public-profile';
 import type { Foundry } from '@/types/domain/foundry';
+import { LANG_LABEL } from '@/utils/labels';
 
 /**
  * رأس صفحة الاستوديو — صاحبها يختار نوعها: مسبك (شعار مربّع) أو مصمّم مستقلّ (صورة دائرية).

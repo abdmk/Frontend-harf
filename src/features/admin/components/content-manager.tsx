@@ -11,8 +11,7 @@ import { Input, Textarea } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { toast } from '@/components/ui/toast';
-import { cn } from '@/lib/cn';
-import { prepareImage } from '@/lib/image-upload';
+import { cn } from '@/lib/utils';
 import {
   type Announcement,
   type Banner,
@@ -22,7 +21,8 @@ import {
   DEFAULT_CTA,
   LIMITS,
   useSiteContent,
-} from '@/lib/site-content';
+} from '@/stores/site-content';
+import { prepareImage } from '@/utils/image-upload';
 
 import { AdminPageHeader } from './admin-nav';
 import { BlogManager } from './blog-manager';

@@ -1,6 +1,6 @@
 import { CrossSmallIcon, RefreshIcon, SlidersIcon, TextIcon } from '@/components/ui/icons';
 import { SegmentedControl } from '@/components/ui/segmented-control';
-import { cn } from '@/lib/cn';
+import { cn } from '@/lib/utils';
 
 import { NasaqOptionsSheet } from './nasaq-options-sheet';
 import { type Brief, DEFAULT_BRIEF, type View } from '../data/brief';

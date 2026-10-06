@@ -1,5 +1,5 @@
 import * as Icons from '@/components/ui/icons';
-import { cn } from '@/lib/cn';
+import { cn } from '@/lib/utils';
 
 import { DsPanel, DsSection } from './ds-section';
 import { MotionDemo } from './motion-demo';
@@ -178,7 +178,7 @@ export function Foundations() {
         num="1.3"
         title="الأيقونات"
         en="Icons"
-        note={`${icons.length} أيقونة من طقم UIcons، تولَّد بـpnpm icons ويُستورد منها ما يُستعمل فقط. الخطّي هو الافتراضي، والمصمت للعنصر المختار: filled={on}، أو filled="auto" ليتبع حالة الزرّ الأب (مضغوط، مفتوح، حالي). قائمة المصمتات في scripts/generate-icons.mts.`}
+        note={`${icons.length} أيقونة من lucide-react (كما في shadcn)، ويُستورد منها ما يُستعمل فقط. الخطّي هو الافتراضي، وللعنصر المختار: filled={on}، أو filled="auto" ليتبع حالة الزرّ الأب (مضغوط، مفتوح، حالي) — الأشكال المغلقة تُملأ والبقية يثقل خطّها. القائمة في src/components/ui/icons/icons.ts.`}
       >
         <DsPanel>
           <ul className="grid grid-cols-4 gap-2 sm:grid-cols-8 lg:grid-cols-10">

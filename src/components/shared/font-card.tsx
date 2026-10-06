@@ -2,11 +2,11 @@ import type { ReactNode } from 'react';
 import { Link } from 'react-router';
 
 import { paths } from '@/config/paths';
-import { cn } from '@/lib/cn';
-import { faceStyle } from '@/lib/font-weight';
-import { weightsLabel } from '@/lib/format';
-import { USAGE_LABEL } from '@/lib/labels';
+import { cn } from '@/lib/utils';
 import type { Font } from '@/types/domain/font';
+import { faceStyle } from '@/utils/font-weight';
+import { weightsLabel } from '@/utils/format';
+import { USAGE_LABEL } from '@/utils/labels';
 
 import { DesignerAvatars } from './designer-avatars';
 import { DownloadButton } from './download-button';

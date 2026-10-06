@@ -2,7 +2,7 @@ import { cva, type VariantProps } from 'class-variance-authority';
 import type * as React from 'react';
 
 import { BanIcon, CheckIcon, CrossSmallIcon, ExclamationIcon, InfoIcon } from '@/components/ui/icons';
-import { cn } from '@/lib/cn';
+import { cn } from '@/lib/utils';
 
 /**
  * التنبيه (دليل التصميم 2.6): بطاقة بشريط لوني على البداية، وأيقونة في دائرة بلون الحالة،

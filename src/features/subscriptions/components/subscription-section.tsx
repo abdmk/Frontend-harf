@@ -17,9 +17,9 @@ import {
 } from '@/components/ui/icons';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { toast } from '@/components/ui/toast';
-import { formatDateAr, formatMoney } from '@/lib/format';
 import type { Invoice, PlanOffer, Subscription } from '@/types/domain/subscription';
 import type { User } from '@/types/domain/user';
+import { formatDateAr, formatMoney } from '@/utils/format';
 
 const STATUS: Record<Invoice['status'], ['success' | 'danger' | 'neutral', string]> = {
   paid: ['success', 'مدفوعة'],

@@ -2,9 +2,9 @@ import { useId, useRef, useState } from 'react';
 
 import { CloudUploadIcon, PencilIcon, PictureIcon, TrashIcon } from '@/components/ui/icons';
 import { Spinner } from '@/components/ui/spinner';
-import { cn } from '@/lib/cn';
-import { prepareImage } from '@/lib/image-upload';
 import { storeDoc, useDocUrl } from '@/lib/media-store';
+import { cn } from '@/lib/utils';
+import { prepareImage } from '@/utils/image-upload';
 
 /** رسم البطاقة الفارغ: وجه بصورة وأسطر، أو ظهر بأسطر فقط */
 function CardGlyph({ side }: { side: 'front' | 'back' | 'doc' }) {

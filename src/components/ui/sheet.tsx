@@ -2,7 +2,7 @@ import { Dialog as SheetPrimitive } from 'radix-ui';
 import * as React from 'react';
 
 import { CrossSmallIcon } from '@/components/ui/icons';
-import { cn } from '@/lib/cn';
+import { cn } from '@/lib/utils';
 
 function Sheet({ ...props }: React.ComponentProps<typeof SheetPrimitive.Root>) {
   return <SheetPrimitive.Root data-slot="sheet" {...props} />;

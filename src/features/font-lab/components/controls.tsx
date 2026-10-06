@@ -8,7 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Slider } from '@/components/ui/slider';
 import { Switch } from '@/components/ui/switch';
 import { toast } from '@/components/ui/toast';
-import { cn } from '@/lib/cn';
+import { cn } from '@/lib/utils';
 
 import { GlyphShape, Panel, RangeControl } from './bits';
 import {

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import { cn } from '@/lib/cn';
+import { cn } from '@/lib/utils';
 
 import { useLab } from '../../hooks/lab-context';
 import { hex } from '../../utils/coverage';

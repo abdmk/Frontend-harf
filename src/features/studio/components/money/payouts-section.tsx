@@ -12,12 +12,12 @@ import { CheckIcon, ClockIcon, CrossIcon, DollarIcon, PlusIcon, TrashIcon } from
 import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { toast } from '@/components/ui/toast';
+import { PUBLISHER_TERMS } from '@/config/publisher-terms';
 import { useCurrentUser } from '@/hooks/use-current-user';
-import { formatDateAr, formatMoney } from '@/lib/format';
-import type { MaskedPayout } from '@/lib/payout';
-import { PUBLISHER_TERMS } from '@/lib/publisher-terms';
-import { useMyVerification } from '@/lib/studio-verification';
+import { useMyVerification } from '@/stores/studio-verification';
 import { cents } from '@/types/domain/commerce';
+import { formatDateAr, formatMoney } from '@/utils/format';
+import type { MaskedPayout } from '@/utils/payout';
 
 import {
   type FormState,
@@ -134,7 +134,7 @@ function PayoutAccountPanel({ account, holdUntil }: { account: PayoutAccount | n
               <Button variant="secondary" size="lg" onClick={() => setEditing(true)}>
                 تحديث
               </Button>
-              <Button variant="danger" size="lg" onClick={() => setRemoving(true)}>
+              <Button variant="destructive" size="lg" onClick={() => setRemoving(true)}>
                 إزالة
               </Button>
             </>

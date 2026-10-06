@@ -7,12 +7,12 @@ import { Button } from '@/components/ui/button';
 import { CheckIcon, ClockIcon, ExclamationIcon, PictureIcon } from '@/components/ui/icons';
 import { SegmentedControl } from '@/components/ui/segmented-control';
 import { paths } from '@/config/paths';
-import { cn } from '@/lib/cn';
-import { formatBytesAr } from '@/lib/format';
-import type { ManuscriptSubmission } from '@/lib/manuscript-submissions';
 import { readManuscriptSvg, useManuscriptUrl } from '@/lib/media-store';
-import { checkSvgText, MAX_SVG_BYTES } from '@/lib/svg-check';
+import { cn } from '@/lib/utils';
+import type { ManuscriptSubmission } from '@/stores/manuscript-submissions';
 import { MANUSCRIPT_CATEGORY_LABEL } from '@/types/domain/manuscript';
+import { formatBytesAr } from '@/utils/format';
+import { checkSvgText, MAX_SVG_BYTES } from '@/utils/svg-check';
 
 import { AdminPageHeader } from './admin-nav';
 import { DecisionPanel } from './decision-panel';

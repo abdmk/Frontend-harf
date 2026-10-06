@@ -1,4 +1,4 @@
-import { type DirectoryEntry, FOUNDRIES, PEOPLE } from '@/mocks/directory';
+import { type DirectoryEntry, FOUNDRIES, PEOPLE } from '@/testing/mocks/directory';
 
 export type { DirectoryEntry };
 

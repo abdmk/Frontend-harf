@@ -4,9 +4,9 @@ import { PriceDisplay } from '@/components/shared/price-display';
 import { Button } from '@/components/ui/button';
 import { TrashIcon } from '@/components/ui/icons';
 import { toast } from '@/components/ui/toast';
-import { cn } from '@/lib/cn';
-import { faceStyle } from '@/lib/font-weight';
+import { cn } from '@/lib/utils';
 import type { CartItem } from '@/types/domain/commerce';
+import { faceStyle } from '@/utils/font-weight';
 
 import type { CartActionResult } from '../api/actions';
 

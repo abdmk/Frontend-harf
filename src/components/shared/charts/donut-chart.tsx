@@ -1,4 +1,4 @@
-import { chartSeries } from '@/design-system/tokens';
+import { chartSeries } from '@/config/design-tokens/tokens';
 
 /**
  * حلقة لتوزيع جزء من كلّ (حتى 4 شرائح): فجوة 2px بلون السطح بين الشرائح،

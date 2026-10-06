@@ -8,8 +8,8 @@ import {
   saveCatalogOverrides,
   TAG_MAX,
   useCatalogOverrides,
-} from '@/lib/catalog-overrides';
-import { MOCK_FONTS } from '@/mocks/fonts';
+} from '@/stores/catalog-overrides';
+import { MOCK_FONTS } from '@/testing/mocks/fonts';
 import { CATEGORIES, type Font } from '@/types/domain/font';
 
 import { logAdmin } from './audit';

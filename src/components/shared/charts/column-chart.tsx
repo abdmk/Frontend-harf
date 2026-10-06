@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import { chartSeries } from '@/design-system/tokens';
+import { chartSeries } from '@/config/design-tokens/tokens';
 
 import { ChartTooltip, DataTable, Legend, type Series } from './chart-frame';
 import { niceTicks } from './scale';

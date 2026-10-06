@@ -1,11 +1,11 @@
 import { z } from 'zod';
 
 import { getCurrentUser } from '@/lib/auth';
-import { publicFonts } from '@/lib/catalog-overrides';
-import { addSubmission, getSubmissions, MAX_PENDING_PER_USER, newReference } from '@/lib/manuscript-submissions';
 import { deleteManuscriptSvg, storeManuscriptSvg } from '@/lib/media-store';
-import { getVerification, statusOf } from '@/lib/studio-verification';
-import { MOCK_FONTS } from '@/mocks/fonts';
+import { publicFonts } from '@/stores/catalog-overrides';
+import { addSubmission, getSubmissions, MAX_PENDING_PER_USER, newReference } from '@/stores/manuscript-submissions';
+import { getVerification, statusOf } from '@/stores/studio-verification';
+import { MOCK_FONTS } from '@/testing/mocks/fonts';
 import { MANUSCRIPT_CATEGORIES } from '@/types/domain/manuscript';
 
 import type { DirectoryEntry } from './directory';

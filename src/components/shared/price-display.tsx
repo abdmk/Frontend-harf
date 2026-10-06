@@ -1,6 +1,6 @@
-import { cn } from '@/lib/cn';
-import { formatMoney } from '@/lib/format';
+import { cn } from '@/lib/utils';
 import type { Money } from '@/types/domain/commerce';
+import { formatMoney } from '@/utils/format';
 
 /**
  * عرض السعر: السعر الحالي، والسعر قبل الخصم مشطوباً إن وُجد، و«مجاني» حين يكون صفراً.
