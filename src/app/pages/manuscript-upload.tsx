@@ -4,6 +4,7 @@ import { PageIntro } from '@/components/layout/page-intro';
 import { PageMeta } from '@/components/shared/page-meta';
 import { paths } from '@/config/paths';
 import { ManuscriptUpload } from '@/features/publishing/components/manuscript-upload';
+import { MyManuscripts } from '@/features/publishing/components/my-manuscripts';
 import { VerificationGate } from '@/features/verification/components/verification-callout';
 import { requireStudio } from '@/lib/auth';
 import { useMyVerification } from '@/lib/studio-verification';
@@ -30,6 +31,7 @@ export function ManuscriptUploadPage() {
         className="mb-8"
       />
       <ManuscriptUpload />
+      <MyManuscripts userId={user.id} />
     </>
   );
 }

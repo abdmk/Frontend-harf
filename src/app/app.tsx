@@ -19,6 +19,7 @@ import {
   AdminRequestsPage,
   AdminReviewDetailPage,
   AdminStudioDetailPage,
+  AdminManuscriptPage,
   AdminUsersPage,
   BlogPage,
   BlogPostPage,
@@ -129,6 +130,8 @@ export function App() {
               <Route path="requests" element={<AdminRequestsPage />} />
               <Route path="review/:id" element={<AdminReviewDetailPage />} />
               <Route path="studios/:id" element={<AdminStudioDetailPage />} />
+              <Route path="manuscripts/:ref" element={<AdminManuscriptPage />} />
+              <Route path="manuscripts" element={<Navigate to="/admin/requests?type=manuscripts" replace />} />
               <Route path="fonts" element={<AdminFontsPage />} />
               <Route path="fonts/:id" element={<AdminFontDetailPage />} />
               <Route path="users" element={<AdminUsersPage />} />

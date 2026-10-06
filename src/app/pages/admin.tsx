@@ -5,6 +5,7 @@ import { AdminOverview } from '@/features/admin/components/admin-overview';
 import { ContentManager } from '@/features/admin/components/content-manager';
 import { FontDetail } from '@/features/admin/components/font-detail';
 import { FontStore } from '@/features/admin/components/font-store';
+import { ManuscriptReview } from '@/features/admin/components/manuscript-review';
 import { Requests } from '@/features/admin/components/requests';
 import { ReviewDetail } from '@/features/admin/components/review-detail';
 import { StudioRequestDetail } from '@/features/admin/components/studio-verifications';
@@ -101,6 +102,16 @@ export function AdminRequestsPage() {
     <>
       <PageMeta title="الطلبات" noindex />
       <Requests />
+    </>
+  );
+}
+
+export function AdminManuscriptPage() {
+  const { ref = '' } = useParams();
+  return (
+    <>
+      <PageMeta title="مراجعة مخطوطة" noindex />
+      <ManuscriptReview reference={ref} />
     </>
   );
 }

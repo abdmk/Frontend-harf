@@ -11,7 +11,8 @@ export type StudioSection =
   | 'verify';
 
 /** أقسام لوحة الإدارة */
-export type AdminSection = 'requests' | 'review' | 'studios' | 'fonts' | 'users' | 'plans' | 'content' | 'analytics';
+export type AdminSection =
+  'requests' | 'review' | 'studios' | 'manuscripts' | 'fonts' | 'users' | 'plans' | 'content' | 'analytics';
 
 /** كل روابط التطبيق في مكان واحد — لا روابط نصّية متفرّقة في المكوّنات */
 export const paths = {
@@ -40,6 +41,7 @@ export const paths = {
     review: { getHref: (id: string) => `/admin/review/${encodeURIComponent(id)}` },
     font: { getHref: (id: string) => `/admin/fonts/${encodeURIComponent(id)}` },
     studio: { getHref: (id: string) => `/admin/studios/${encodeURIComponent(id)}` },
+    manuscript: { getHref: (ref: string) => `/admin/manuscripts/${encodeURIComponent(ref)}` },
   },
   tools: {
     reverseText: { getHref: () => '/tools/reverse-text' },

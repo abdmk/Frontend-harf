@@ -39,6 +39,8 @@ export type Manuscript = {
   fonts: { id: string; name: string }[];
   /** الخطّاط/المصمّم صاحب العمل */
   designer: Designer;
+  /** false: صاحب العمل بلا صفحة عامّة بعد (استوديو رفع من حسابه) — يُعرض اسمه بلا رابط */
+  designerLinked?: boolean;
   downloads: number;
   createdAt: string;
   license: 'personal' | 'commercial';

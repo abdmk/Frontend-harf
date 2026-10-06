@@ -4,33 +4,16 @@ import { Link } from 'react-router';
 import { EmptyState } from '@/components/shared/empty-state';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import {
-  CheckIcon,
-  ClockIcon,
-  CrossIcon,
-  DocumentSignedIcon,
-  ExclamationIcon,
-  PencilIcon,
-  RefreshIcon,
-} from '@/components/ui/icons';
+import { DocumentSignedIcon, ExclamationIcon, RefreshIcon } from '@/components/ui/icons';
 import { SegmentedControl } from '@/components/ui/segmented-control';
 import { paths } from '@/config/paths';
 import { faceStyle } from '@/lib/font-weight';
 import { CATEGORY_LABEL } from '@/lib/labels';
 
 import { AdminPageHeader } from './admin-nav';
+import { STATE } from './decision-panel';
 import { type ReviewItem, type ReviewState, useReviewItems } from '../api/review';
 import { isOverdue, timeAgo } from '../utils';
-
-export const STATE: Record<
-  ReviewState,
-  { label: string; tone: 'info' | 'success' | 'warning' | 'danger'; Icon: typeof CheckIcon }
-> = {
-  pending: { label: 'بانتظار المراجعة', tone: 'info', Icon: ClockIcon },
-  approved: { label: 'مقبول', tone: 'success', Icon: CheckIcon },
-  changes: { label: 'طُلبت تعديلات', tone: 'warning', Icon: PencilIcon },
-  rejected: { label: 'مرفوض', tone: 'danger', Icon: CrossIcon },
-};
 
 export const failedChecks = (s: ReviewItem) => s.checks.filter((c) => !c.ok).length;
 

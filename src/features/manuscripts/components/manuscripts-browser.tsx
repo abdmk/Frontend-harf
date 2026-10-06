@@ -24,6 +24,7 @@ import {
   parseQuery,
   toParams,
 } from '../api/get-manuscripts';
+import { usePublishedManuscripts } from '../hooks/use-published';
 import { useSavedManuscripts } from '../hooks/use-saved';
 
 const ratio = (m: Manuscript) => (1 - CARD_PAD) * (m.height / m.width) + CARD_PAD;
@@ -46,9 +47,12 @@ export function ManuscriptsBrowser({ className }: { className?: string }) {
   const saved = useSavedManuscripts();
   const savedSet = useMemo(() => new Set(saved.ids), [saved.ids]);
 
-  const list = getManuscripts(query, savedSet);
+  const published = usePublishedManuscripts();
+  const list = getManuscripts(query, savedSet, published);
   const openId = params.get('m');
-  const open = openId ? (getManuscripts(DEFAULT_QUERY).find((m) => m.id === openId) ?? null) : null;
+  const open = openId
+    ? (getManuscripts(DEFAULT_QUERY, undefined, published).find((m) => m.id === openId) ?? null)
+    : null;
 
   const update = (patch: Partial<ManuscriptQuery> & { m?: string | null }, replace = true) =>
     setParams(
@@ -108,6 +112,7 @@ export function ManuscriptsBrowser({ className }: { className?: string }) {
         <ManuscriptFilterSheet
           query={query}
           savedIds={savedSet}
+          published={published}
           onApply={(d) => update(d)}
           trigger={
             <button
@@ -201,7 +206,7 @@ export function ManuscriptsBrowser({ className }: { className?: string }) {
       )}
 
       <ManuscriptViewer
-        list={list.length ? list : getManuscripts(DEFAULT_QUERY)}
+        list={list.length ? list : getManuscripts(DEFAULT_QUERY, undefined, published)}
         current={open}
         onChange={(m) => update({ m: m?.id ?? null })}
         saved={open ? saved.has(open.id) : false}

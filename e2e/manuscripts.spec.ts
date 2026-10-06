@@ -1,5 +1,7 @@
 import { readFileSync } from 'node:fs';
 
+import type { Page } from '@playwright/test';
+
 import { expect, seedVerifiedStudio, test } from './fixtures';
 
 test.describe('المخطوطات', () => {
@@ -141,5 +143,75 @@ test.describe('رفع مخطوطة', () => {
     await page.goto('/studio/manuscripts/new?as=studio');
     await expect(page.getByRole('button', { name: 'ارفع مخطوطة' })).toHaveCount(0);
     await expect(page.getByText(/وثّق/).first()).toBeVisible();
+  });
+});
+
+test.describe('مراجعة المخطوطات', () => {
+  /** يرفع الاستوديو الموثّق مخطوطة بعنوان محدّد */
+  async function upload(page: Page, title: string) {
+    await page.goto('/studio/manuscripts/new?as=studio');
+    await page
+      .locator('input[type=file]')
+      .first()
+      .setInputFiles({
+        name: 'eid.svg',
+        mimeType: 'image/svg+xml',
+        buffer: readFileSync('public/manuscripts/ahlan-ramadan.svg'),
+      });
+    await page.getByLabel('عنوان العمل').fill(title);
+    await page.getByRole('combobox', { name: 'التصنيف' }).click();
+    await page.getByRole('option', { name: 'العيد' }).click();
+    await page.getByRole('combobox', { name: 'الخطوط المستخدمة' }).fill('Cairo');
+    await page.getByRole('option', { name: /Cairo/ }).first().click();
+    await page.getByRole('checkbox').click();
+    await page.getByRole('button', { name: 'إرسال للمراجعة' }).click();
+    await expect(page.getByRole('heading', { name: 'أُرسلت المخطوطة للمراجعة' })).toBeVisible();
+  }
+
+  test('رفع ← رفض بسبب يراه صاحبه ← إعادة رفع ← قبول ← يظهر في المكتبة', async ({ page }) => {
+    await seedVerifiedStudio(page);
+    await upload(page, 'تهنئة العيد الأولى');
+    await page.getByRole('button', { name: 'ارفع مخطوطة أخرى' }).click();
+    const mine = page.getByRole('region', { name: 'طلباتك' });
+    await expect(mine.getByText('تهنئة العيد الأولى')).toBeVisible();
+    await expect(mine.getByText('بانتظار المراجعة')).toBeVisible();
+
+    // المشرف: الطلب في «الطلبات › مخطوطات» بعدّاده
+    await page.goto('/admin/requests?type=manuscripts&as=admin');
+    await expect(page.getByRole('tab', { name: /مخطوطات\s*1/ })).toBeVisible();
+    await page.getByRole('link', { name: 'راجِع' }).click();
+    await expect(page).toHaveURL(/\/admin\/manuscripts\/MS-\d+$/);
+    await expect(page.getByRole('img', { name: 'معاينة تهنئة العيد الأولى' })).toBeVisible();
+    await expect(page.getByText('نجح').first()).toBeAttached();
+
+    const reason = 'العمل مقصوص من الأطراف — صدّره بهامش أوسع.';
+    await page.getByRole('radio', { name: /رفض/ }).click();
+    await page.getByLabel('السبب').fill(reason);
+    await page.getByRole('button', { name: 'تأكيد: رفض' }).click();
+    await expect(page).toHaveURL(/\/admin\/requests\?type=manuscripts$/);
+
+    // صاحب العمل يرى القرار وسببه كما كُتب
+    await page.goto('/studio/manuscripts/new?as=studio');
+    await expect(mine.getByText('مرفوضة')).toBeVisible();
+    await expect(mine.getByText(reason)).toBeVisible();
+
+    await upload(page, 'تهنئة العيد المعدّلة');
+    await page.goto('/admin/requests?type=manuscripts&as=admin');
+    await page.getByRole('link', { name: 'تهنئة العيد المعدّلة' }).click();
+    await page.getByRole('radio', { name: /قبول ونشر/ }).click();
+    await page.getByRole('button', { name: 'تأكيد: قبول ونشر' }).click();
+
+    // المقبول في المكتبة — والمرفوض لا
+    await page.goto('/manuscripts?q=تهنئة العيد');
+    const cards = page.getByRole('list', { name: 'المخطوطات' }).locator('article');
+    await expect(cards).toHaveCount(1);
+    await expect(cards.first().getByText('تهنئة العيد المعدّلة')).toBeVisible();
+    await expect(cards.first().locator('img').first()).toHaveJSProperty('complete', true);
+  });
+
+  test('صفحة المراجعة للمشرف وحده', async ({ page }) => {
+    await page.goto('/admin/manuscripts/MS-1234?as=studio');
+    await expect(page.getByRole('heading', { name: 'الصفحة غير موجودة' })).toBeVisible();
+    await expect(page.getByRole('navigation', { name: 'أقسام الإدارة' })).toHaveCount(0);
   });
 });
