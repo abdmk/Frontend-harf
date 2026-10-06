@@ -40,7 +40,7 @@ import {
 import { inferFontMeta } from '../utils/infer-weight';
 
 /** صندوق شرح رمادي تحت الحقل (نمط مراجع Wayl): يشرح لماذا نطلب المعلومة وأين تظهر */
-export function Hint({ children, className }: { children: React.ReactNode; className?: string }) {
+function Hint({ children, className }: { children: React.ReactNode; className?: string }) {
   return (
     <p className={cn('rounded-md bg-sunken px-4 py-3 text-meta leading-relaxed text-muted-foreground', className)}>
       {children}

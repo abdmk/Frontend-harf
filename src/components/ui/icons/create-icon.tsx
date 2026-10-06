@@ -14,7 +14,7 @@ export type IconProps = Omit<React.SVGProps<SVGSVGElement>, 'children' | 'ref'> 
 };
 
 /** سُمك خطّ lucide في حرف — أنحف قليلاً من الافتراضي (2) ليتّسق مع خطّ الواجهة */
-export const ICON_STROKE = 1.75;
+const ICON_STROKE = 1.75;
 
 /**
  * أيقونة حرف من lucide بنفس الواجهة في كل الموقع: مقاس 1em ولون currentColor، وfilled للحالة المختارة.

@@ -63,6 +63,9 @@
 @utility moment {
   background: var(--grad-grain), var(--grad-sheen), var(--grad-dawn);
   border-color: var(--grad-dawn-edge);
+  & :is(.text-muted-foreground, .text-tertiary) {
+    color: var(--grad-ink-muted);
+  }
 }
 
 /* ══ الأساس ══ */

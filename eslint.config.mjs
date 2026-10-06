@@ -73,12 +73,7 @@ const eslintConfig = defineConfig([
       'react-hooks/rules-of-hooks': 'off',
     },
   },
-  globalIgnores([
-    'dist/**',
-    '.next/**',
-    'reference/**',
-    'tools/**',
-  ]),
+  globalIgnores(['dist/**', '.next/**', 'reference/**', 'tools/**']),
 ]);
 
 export default eslintConfig;

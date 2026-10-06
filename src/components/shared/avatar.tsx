@@ -15,7 +15,7 @@ const TONES = [
   'bg-n-600',
 ] as const;
 
-export function avatarTone(seed: string) {
+function avatarTone(seed: string) {
   let h = 0;
   for (const ch of seed) h = (h * 31 + ch.charCodeAt(0)) | 0;
   return TONES[Math.abs(h) % TONES.length]!;

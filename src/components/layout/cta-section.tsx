@@ -11,7 +11,7 @@ export function CtaSection() {
     <Reveal
       as="section"
       aria-labelledby="cta-title"
-      className="mt-30 flex flex-col items-center gap-4 rounded-xl border border-(--grad-dawn-edge) px-6 py-[clamp(48px,7vw,96px)] text-center [background:var(--grad-grain),var(--grad-streaks),var(--grad-dawn-wide)]"
+      className="mt-30 flex flex-col items-center gap-4 rounded-xl border border-(--grad-dawn-edge) px-6 py-[clamp(48px,7vw,96px)] text-center [background:var(--grad-grain),var(--grad-streaks),var(--grad-dawn-wide)] [&_.text-muted-foreground]:text-(--grad-ink-muted)"
     >
       <h2 id="cta-title" className="text-display font-semibold tracking-tight">
         {cta.title}

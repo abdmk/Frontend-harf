@@ -8,7 +8,7 @@ export const TOOLBAR_PILL =
   'inline-flex h-11 shrink-0 items-center gap-2 rounded-full border px-5 text-control leading-none whitespace-nowrap transition-[background-color,color,border-color,transform] duration-(--dur-fast) active:scale-[.97]';
 
 /** شريحة اختيار في الشريط: محدّدة بالأحمر، أو هادئة */
-export const toolbarChip = (on: boolean) =>
+const toolbarChip = (on: boolean) =>
   cn(
     TOOLBAR_PILL,
     on

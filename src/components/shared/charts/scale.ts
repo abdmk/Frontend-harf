@@ -7,6 +7,3 @@ export function niceTicks(max: number, count = 4): number[] {
   const top = Math.ceil(max / step) * step;
   return Array.from({ length: Math.round(top / step) + 1 }, (_, i) => +(i * step).toFixed(6));
 }
-
-export const compact = (n: number) =>
-  n >= 1e6 ? `${+(n / 1e6).toFixed(1)}M` : n >= 1e4 ? `${+(n / 1e3).toFixed(1)}K` : n.toLocaleString('en-US');

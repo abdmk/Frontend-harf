@@ -1,7 +1,6 @@
 import { useMemo } from 'react';
 import { z } from 'zod';
 
-
 import { asObject, createJsonStore } from '@/lib/json-store';
 import { isManuscriptFileId } from '@/lib/media-store';
 import { MANUSCRIPT_CATEGORIES } from '@/types/domain/manuscript';

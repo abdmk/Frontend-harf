@@ -25,7 +25,7 @@ export const searchLibraryFonts = (q: string, exclude: readonly string[] = []) =
 };
 export const libraryFontById = (id: string) => FONT_ENTRIES.find((e) => e.id === id);
 
-export const manuscriptSchema = z.object({
+const manuscriptSchema = z.object({
   title: z.string().trim().min(2, 'اكتب عنوان العمل.').max(60, 'العنوان أطول من 60 حرفاً.'),
   category: z.enum(MANUSCRIPT_CATEGORIES, { message: 'اختر التصنيف.' }),
   fonts: z

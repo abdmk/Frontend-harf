@@ -19,7 +19,7 @@ import { useLab } from '../hooks/lab-context';
 import { analyzeOpenType } from '../utils/opentype';
 
 /** الميزات التي غيّرها المستخدم عن افتراضي الخط */
-export function useChangedFeatures() {
+function useChangedFeatures() {
   const { active, settings } = useLab();
   if (!active) return [];
   return active.features

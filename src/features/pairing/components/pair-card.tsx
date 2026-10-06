@@ -15,7 +15,7 @@ import type { Combo, Slot } from '../utils/pairing';
 
 export const slotStyle = (s: Slot) => ({ fontFamily: `'${s.font.family}', var(--font-sans)`, fontWeight: s.weight });
 export const comboSlots = (c: Combo) => [c.heading, c.sub, c.body].filter((s): s is Slot => !!s);
-export const comboTitle = (c: Combo) => `تركيبة ${c.heading.font.nameAr} و${c.body.font.nameAr}`;
+const comboTitle = (c: Combo) => `تركيبة ${c.heading.font.nameAr} و${c.body.font.nameAr}`;
 
 type Role = 'heading' | 'body';
 const SHORT_ROLE = { العناوين: 'العناوين', 'العناوين الفرعية': 'الفرعي', النصوص: 'النصوص' } as const;

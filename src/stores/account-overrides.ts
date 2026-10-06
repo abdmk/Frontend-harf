@@ -1,7 +1,6 @@
 import { asObject, asStrings, createJsonStore } from '@/lib/json-store';
 import { PLANS, type Plan } from '@/types/domain/user';
 
-
 /**
  * قرارات الإدارة على الحسابات: تغيير الخطة أو منحها، الحظر، والحذف الناعم.
  * الجلسة التجريبية تقرأ من هنا (lib/auth)، فيظهر أثر القرار على الحساب نفسه.
@@ -14,7 +13,7 @@ export type AccountOverrides = {
   deleted: string[];
 };
 
-export const EMPTY_ACCOUNT_OVERRIDES: AccountOverrides = { plans: {}, banned: {}, deleted: [] };
+const EMPTY_ACCOUNT_OVERRIDES: AccountOverrides = { plans: {}, banned: {}, deleted: [] };
 const ID = /^u[-a-z0-9]{1,40}$/;
 
 const store = createJsonStore<AccountOverrides>(

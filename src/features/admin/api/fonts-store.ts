@@ -32,7 +32,7 @@ export type FontStats = {
 export type StoreFont = { font: Font; original: Font; visibility: Visibility; featured: boolean; stats: FontStats };
 
 /** أرقام تجريبية ثابتة لكل خط (مشتقّة من معرّفه وشعبيته) — في المنتج من جدول الإحصاءات */
-export function fontStats(f: Font): FontStats {
+function fontStats(f: Font): FontStats {
   let h = 0;
   for (const c of f.id) h = (h * 31 + c.charCodeAt(0)) >>> 0;
   // عشوائي ثابت بين 0 و1 لكل خط
@@ -109,7 +109,7 @@ export function restoreFont(id: string): AdminResult {
   return mutate(id, 'استرجاع خط', (o) => ({ ...o, deleted: without(o.deleted, id) }));
 }
 
-export const editSchema = z.object({
+const editSchema = z.object({
   name: z.string().trim().min(2, 'الاسم قصير جداً.').max(FONT_NAME_MAX, `${FONT_NAME_MAX} حرفاً على الأكثر.`),
   category: z.enum(CATEGORIES),
   price: z.coerce.number().min(0, 'سعر غير صالح.').max(10_000, 'سعر غير صالح.'),

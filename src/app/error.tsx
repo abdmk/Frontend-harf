@@ -28,7 +28,7 @@ function reloadOnceForNewVersion(): boolean {
 }
 
 /** واجهة الخطأ — بين ترويسة الموقع وتذييله، بإعادة محاولة وطريق للمكتبة */
-export function ErrorView({ onRetry }: { onRetry?: () => void }) {
+function ErrorView({ onRetry }: { onRetry?: () => void }) {
   return (
     <main id="main" className="grid min-h-[60dvh] place-items-center px-6 text-center">
       <PageMeta title="حدث خطأ غير متوقّع" noindex />

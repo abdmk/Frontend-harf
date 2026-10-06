@@ -21,7 +21,7 @@ export const PLATFORM_SHARE_PCT = 35;
 /** إصدار الاتفاقية الموقّعة — يُحفظ مع التوقيع؛ تغيير الشروط يتطلّب توقيعاً جديداً */
 export const AGREEMENT_VERSION = '2026.10';
 
-export const ENTITIES = ['individual', 'company'] as const;
+const ENTITIES = ['individual', 'company'] as const;
 export const DOC_TYPES = ['national_id', 'passport', 'residency'] as const;
 export const ENTITY_LABEL = { individual: 'فرد (مصمّم مستقلّ)', company: 'شركة أو مسبك مسجّل' } as const;
 export const DOC_TYPE_LABEL = {

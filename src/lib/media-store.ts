@@ -7,7 +7,7 @@ import { checkSvgText, MAX_SVG_BYTES } from '@/utils/svg-check';
  * وتُعرض عبر blob: محلّي. ⚠️ عرض: في المنتج تُرفع إلى تخزين الملفات بعد فحصها على الخادم
  * (ونوصي بإعادة ترميزها هناك)، ويُحفظ في المقال رابطها فقط.
  */
-export const VIDEO_MAX_BYTES = 50 * 1024 * 1024;
+const VIDEO_MAX_BYTES = 50 * 1024 * 1024;
 const DB = 'harf-media';
 const STORE = 'videos';
 /** وثائق التوثيق (صور الهوية والتوقيع) — مخزن منفصل كي لا تختلط بوسائط المقالات */
@@ -19,7 +19,7 @@ type StoreName = typeof STORE | typeof DOCS | typeof MANUSCRIPTS;
 export type VideoKind = 'mp4' | 'webm';
 
 /** MP4: «ftyp» عند البايت 4 — WebM/Matroska: 1A 45 DF A3 */
-export function sniffVideo(b: Uint8Array): VideoKind | null {
+function sniffVideo(b: Uint8Array): VideoKind | null {
   if (b.length >= 8 && b[4] === 0x66 && b[5] === 0x74 && b[6] === 0x79 && b[7] === 0x70) return 'mp4';
   if (b.length >= 4 && b[0] === 0x1a && b[1] === 0x45 && b[2] === 0xdf && b[3] === 0xa3) return 'webm';
   return null;

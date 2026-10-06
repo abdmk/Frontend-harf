@@ -4,7 +4,13 @@ import { z } from 'zod';
 import { netOf, PUBLISHER_TERMS } from '@/config/publisher-terms';
 import { requireStudio } from '@/lib/auth';
 import { createLocalStoreSignal } from '@/lib/local-store-signal';
-import { MOCK_PAYOUTS, MOCK_SALES, MOCK_STUDIO_ANALYTICS, type MockPayout, type MockSale } from '@/testing/mocks/studio';
+import {
+  MOCK_PAYOUTS,
+  MOCK_SALES,
+  MOCK_STUDIO_ANALYTICS,
+  type MockPayout,
+  type MockSale,
+} from '@/testing/mocks/studio';
 import { type MaskedPayout, maskedPayoutSchema } from '@/utils/payout';
 
 /*
