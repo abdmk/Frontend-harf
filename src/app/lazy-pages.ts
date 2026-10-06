@@ -9,7 +9,7 @@ import { loaders } from './preload';
 
 // صفحات الأدوات والمكتبة
 export const NasaqPage = lazy(() => loaders['/tools/nasaq']().then((m) => ({ default: m.NasaqPage })));
-export const NasaqPairPage = lazy(() => import('./pages/nasaq-pair').then((m) => ({ default: m.NasaqPairPage })));
+export const NasaqPairPage = lazy(() => import('./routes/nasaq-pair').then((m) => ({ default: m.NasaqPairPage })));
 export const FontLabPage = lazy(() => loaders['/tools/font-lab']().then((m) => ({ default: m.FontLabPage })));
 export const FontMatchingPage = lazy(() =>
   loaders['/tools/font-matching']().then((m) => ({ default: m.FontMatchingPage })),
@@ -18,13 +18,13 @@ export const ReverseTextPage = lazy(() =>
   loaders['/tools/reverse-text']().then((m) => ({ default: m.ReverseTextPage })),
 );
 export const ManuscriptsPage = lazy(() => loaders['/manuscripts']().then((m) => ({ default: m.ManuscriptsPage })));
-export const DesignerPage = lazy(() => import('./pages/designer').then((m) => ({ default: m.DesignerPage })));
-export const FoundryPage = lazy(() => import('./pages/foundry').then((m) => ({ default: m.FoundryPage })));
+export const DesignerPage = lazy(() => import('./routes/designer').then((m) => ({ default: m.DesignerPage })));
+export const FoundryPage = lazy(() => import('./routes/foundry').then((m) => ({ default: m.FoundryPage })));
 
 // المدوّنة والصفحات الثابتة
 export const BlogPage = lazy(() => loaders['/blog']().then((m) => ({ default: m.BlogPage })));
 export const BlogPostPage = lazy(() => loaders['/blog']().then((m) => ({ default: m.BlogPostPage })));
-const staticPages = () => import('./pages/static-pages');
+const staticPages = () => import('./routes/static-pages');
 export const AboutPage = lazy(() => staticPages().then((m) => ({ default: m.AboutPage })));
 export const ServicesPage = lazy(() => staticPages().then((m) => ({ default: m.ServicesPage })));
 export const HelpPage = lazy(() => staticPages().then((m) => ({ default: m.HelpPage })));
@@ -42,17 +42,17 @@ export const NotificationsPage = lazy(() =>
 export const LoginPage = lazy(() => loaders['/login']().then((m) => ({ default: m.LoginPage })));
 export const RegisterPage = lazy(() => loaders['/register']().then((m) => ({ default: m.RegisterPage })));
 export const AccountIndexPage = lazy(() =>
-  import('./pages/account-index').then((m) => ({ default: m.AccountIndexPage })),
+  import('./routes/account-index').then((m) => ({ default: m.AccountIndexPage })),
 );
 export const AccountSectionPage = lazy(() =>
-  import('./pages/account-section').then((m) => ({ default: m.AccountSectionPage })),
+  import('./routes/account-section').then((m) => ({ default: m.AccountSectionPage })),
 );
 export const StudioVerifyPage = lazy(() =>
-  import('./pages/studio-verify').then((m) => ({ default: m.StudioVerifyPage })),
+  import('./routes/studio-verify').then((m) => ({ default: m.StudioVerifyPage })),
 );
 
 // الاستوديو
-const studio = () => import('./pages/studio');
+const studio = () => import('./routes/studio');
 export const StudioLayout = lazy(() => import('./layouts/studio-layout').then((m) => ({ default: m.StudioLayout })));
 export const StudioOverviewPage = lazy(() => studio().then((m) => ({ default: m.StudioOverviewPage })));
 export const StudioFontsPage = lazy(() => studio().then((m) => ({ default: m.StudioFontsPage })));
@@ -60,13 +60,13 @@ export const StudioAnalyticsPage = lazy(() => studio().then((m) => ({ default: m
 export const StudioFinancePage = lazy(() => studio().then((m) => ({ default: m.StudioFinancePage })));
 export const StudioProfilePage = lazy(() => studio().then((m) => ({ default: m.StudioProfilePage })));
 export const ManuscriptUploadPage = lazy(() =>
-  import('./pages/manuscript-upload').then((m) => ({ default: m.ManuscriptUploadPage })),
+  import('./routes/manuscript-upload').then((m) => ({ default: m.ManuscriptUploadPage })),
 );
-export const PublishPage = lazy(() => import('./pages/publish').then((m) => ({ default: m.PublishPage })));
+export const PublishPage = lazy(() => import('./routes/publish').then((m) => ({ default: m.PublishPage })));
 
 // الإدارة — لا تصل إلى حزمة الزائر أبداً
 export const AdminLayout = lazy(() => import('./layouts/admin-layout').then((m) => ({ default: m.AdminLayout })));
-const admin = () => import('./pages/admin');
+const admin = () => import('./routes/admin');
 export const AdminHomePage = lazy(() => admin().then((m) => ({ default: m.AdminHomePage })));
 export const AdminRequestsPage = lazy(() => admin().then((m) => ({ default: m.AdminRequestsPage })));
 export const AdminReviewDetailPage = lazy(() => admin().then((m) => ({ default: m.AdminReviewDetailPage })));
@@ -80,5 +80,5 @@ export const AdminAnalyticsPage = lazy(() => admin().then((m) => ({ default: m.A
 
 // دليل التصميم
 export const DesignSystemPage = lazy(() =>
-  import('./pages/design-system').then((m) => ({ default: m.DesignSystemPage })),
+  import('./routes/design-system').then((m) => ({ default: m.DesignSystemPage })),
 );

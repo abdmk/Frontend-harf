@@ -3,17 +3,17 @@
  * الصفحات العامة فقط: الاستوديو والإدارة لا تُسبق (ولا تدخل في التخطيطات التي تستورد هذا الملف — بلا دوائر).
  */
 export const loaders = {
-  '/tools/nasaq': () => import('./pages/nasaq'),
-  '/tools/font-lab': () => import('./pages/font-lab'),
-  '/tools/font-matching': () => import('./pages/font-matching'),
-  '/tools/reverse-text': () => import('./pages/reverse-text'),
-  '/manuscripts': () => import('./pages/manuscripts'),
-  '/blog': () => import('./pages/blog'),
-  '/cart': () => import('./pages/cart'),
-  '/checkout': () => import('./pages/checkout'),
-  '/notifications': () => import('./pages/notifications'),
-  '/login': () => import('./pages/login'),
-  '/register': () => import('./pages/register'),
+  '/tools/nasaq': () => import('./routes/nasaq'),
+  '/tools/font-lab': () => import('./routes/font-lab'),
+  '/tools/font-matching': () => import('./routes/font-matching'),
+  '/tools/reverse-text': () => import('./routes/reverse-text'),
+  '/manuscripts': () => import('./routes/manuscripts'),
+  '/blog': () => import('./routes/blog'),
+  '/cart': () => import('./routes/cart'),
+  '/checkout': () => import('./routes/checkout'),
+  '/notifications': () => import('./routes/notifications'),
+  '/login': () => import('./routes/login'),
+  '/register': () => import('./routes/register'),
 } as const;
 
 const started = new Set<string>();

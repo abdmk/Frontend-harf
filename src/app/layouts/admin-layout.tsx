@@ -8,7 +8,7 @@ import { useCurrentUser } from '@/hooks/use-current-user';
 import { HeaderActions } from '../header-actions';
 import { preloadPage } from '../preload';
 import { PageTransition } from './page-transition';
-import { NotFoundPage } from '../pages/not-found';
+import { NotFoundPage } from '../routes/not-found';
 
 /**
  * لوحة الإدارة بتخطيط الاستوديو نفسه — ترويسة الموقع، عمود جانبي، ومحتوى على الخلفية البيضاء —

@@ -5,7 +5,7 @@ import { CookieConsent } from '@/components/shared/cookie-consent';
 import { Toaster } from '@/components/ui/toast';
 import { TooltipProvider } from '@/components/ui/tooltip';
 
-export function AppProviders({ children }: { children: ReactNode }) {
+export function AppProvider({ children }: { children: ReactNode }) {
   return (
     <Direction.Provider dir="rtl">
       <TooltipProvider delayDuration={300}>

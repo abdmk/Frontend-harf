@@ -2,7 +2,7 @@ import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { BrowserRouter } from 'react-router';
 
-import { App } from './app/app';
+import { AppRouter } from './app/router';
 import './app/globals.css';
 import { DEMO_MODE } from './config/demo';
 import { DEMO_ACCOUNTS, type DemoAccount, setDemoSession } from './lib/auth';
@@ -19,7 +19,7 @@ if (demoParam) {
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <BrowserRouter>
-      <App />
+      <AppRouter />
     </BrowserRouter>
   </StrictMode>,
 );

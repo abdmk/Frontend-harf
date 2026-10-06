@@ -52,15 +52,15 @@ import {
   TermsPage,
 } from './lazy-pages';
 // في الحزمة الأولى: أكثر ما يُدخل منه الموقع
-import { FontPage } from './pages/font';
-import { HomePage } from './pages/home';
-import { NotFoundPage } from './pages/not-found';
-import { AppProviders } from './providers';
+import { AppProvider } from './provider';
+import { FontPage } from './routes/font';
+import { HomePage } from './routes/home';
+import { NotFoundPage } from './routes/not-found';
 import { ScrollToTop } from './scroll-to-top';
 
-export function App() {
+export function AppRouter() {
   return (
-    <AppProviders>
+    <AppProvider>
       <ScrollToTop />
       {/* حاجز أخير لأخطاء التخطيطات وصفحات المصادقة؛ الصفحات داخل التخطيطات لها حاجزها في PageTransition */}
       <ErrorBoundary>
@@ -154,6 +154,6 @@ export function App() {
           </Routes>
         </Suspense>
       </ErrorBoundary>
-    </AppProviders>
+    </AppProvider>
   );
 }
