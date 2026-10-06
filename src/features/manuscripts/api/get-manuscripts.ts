@@ -86,19 +86,28 @@ const normalize = (s: string) =>
     .toLowerCase()
     .trim();
 
-/** اليوم من البيانات التجريبية، ولاحقاً من الـAPI بالواجهة نفسها. `savedIds` من التخزين المحلي */
-export function getManuscripts(q: ManuscriptQuery, savedIds: ReadonlySet<string> = new Set()): Manuscript[] {
+/**
+ * اليوم من البيانات التجريبية، ولاحقاً من الـAPI بالواجهة نفسها. `savedIds` من التخزين المحلي،
+ * و`published` ما رفعته الاستوديوهات وقُبل (usePublishedManuscripts).
+ */
+export function getManuscripts(
+  q: ManuscriptQuery,
+  savedIds: ReadonlySet<string> = new Set(),
+  published: readonly Manuscript[] = [],
+): Manuscript[] {
   const needle = normalize(q.q);
-  return MOCK_MANUSCRIPTS.filter(
-    (m) =>
-      (q.cat === 'all' || m.category === q.cat) &&
-      (!q.saved || savedIds.has(m.id)) &&
-      (q.license === 'all' || m.license === q.license) &&
-      (!q.fonts.length || m.fonts.some((f) => q.fonts.includes(f.id))) &&
-      (!q.designers.length || q.designers.includes(m.designer.id)) &&
-      (!needle ||
-        normalize(m.title).includes(needle) ||
-        normalize(m.designer.nameAr).includes(needle) ||
-        m.fonts.some((f) => normalize(f.name).includes(needle))),
-  ).sort((a, b) => (q.sort === 'popular' ? b.downloads - a.downloads : b.createdAt.localeCompare(a.createdAt)));
+  return [...published, ...MOCK_MANUSCRIPTS]
+    .filter(
+      (m) =>
+        (q.cat === 'all' || m.category === q.cat) &&
+        (!q.saved || savedIds.has(m.id)) &&
+        (q.license === 'all' || m.license === q.license) &&
+        (!q.fonts.length || m.fonts.some((f) => q.fonts.includes(f.id))) &&
+        (!q.designers.length || q.designers.includes(m.designer.id)) &&
+        (!needle ||
+          normalize(m.title).includes(needle) ||
+          normalize(m.designer.nameAr).includes(needle) ||
+          m.fonts.some((f) => normalize(f.name).includes(needle))),
+    )
+    .sort((a, b) => (q.sort === 'popular' ? b.downloads - a.downloads : b.createdAt.localeCompare(a.createdAt)));
 }

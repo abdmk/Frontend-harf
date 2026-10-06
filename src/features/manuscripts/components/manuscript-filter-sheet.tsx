@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Chip, ChipGroup } from '@/components/ui/chip-group';
 import { CrossIcon } from '@/components/ui/icons';
 import { Sheet, SheetClose, SheetDescription, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
+import type { Manuscript } from '@/types/domain/manuscript';
 
 import {
   activeFilterCount,
@@ -47,11 +48,13 @@ const segment =
 export function ManuscriptFilterSheet({
   query,
   savedIds,
+  published,
   onApply,
   trigger,
 }: {
   query: ManuscriptQuery;
   savedIds: ReadonlySet<string>;
+  published: readonly Manuscript[];
   onApply: (d: Draft) => void;
   trigger: ReactElement;
 }) {
@@ -59,8 +62,8 @@ export function ManuscriptFilterSheet({
   const [draft, setDraft] = useState<Draft>(() => pick(query));
   const patch = (p: Partial<Draft>) => setDraft((d) => ({ ...d, ...p }));
   const total = useMemo(
-    () => (open ? getManuscripts({ ...query, ...draft }, savedIds).length : 0),
-    [open, query, draft, savedIds],
+    () => (open ? getManuscripts({ ...query, ...draft }, savedIds, published).length : 0),
+    [open, query, draft, savedIds, published],
   );
   const dirty = activeFilterCount({ ...DEFAULT_QUERY, ...draft }) > 0;
 

@@ -90,13 +90,19 @@ export function ManuscriptCard({
 
         <div className="flex min-w-0 items-center gap-2 text-sm font-medium @max-[15rem]:text-meta">
           <Avatar initials={m.designer.initials} seed={m.designer.id} size="xs" className="ring-2 ring-card" />
-          <Link
-            to={paths.designer.getHref(m.designer.id)}
-            dir={latin ? 'ltr' : undefined}
-            className="relative z-10 truncate underline-offset-4 transition-colors hover:text-primary hover:underline"
-          >
-            {m.designer.nameAr}
-          </Link>
+          {m.designerLinked === false ? (
+            <span dir={latin ? 'ltr' : undefined} className="truncate">
+              {m.designer.nameAr}
+            </span>
+          ) : (
+            <Link
+              to={paths.designer.getHref(m.designer.id)}
+              dir={latin ? 'ltr' : undefined}
+              className="relative z-10 truncate underline-offset-4 transition-colors hover:text-primary hover:underline"
+            >
+              {m.designer.nameAr}
+            </Link>
+          )}
         </div>
 
         <div className="flex items-center justify-between gap-3 pt-1">

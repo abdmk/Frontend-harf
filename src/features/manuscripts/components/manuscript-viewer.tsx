@@ -220,12 +220,16 @@ export function ManuscriptViewer({
                     ['التصنيف', MANUSCRIPT_CATEGORY_LABEL[current.category]],
                     [
                       'المصمّم',
-                      <Link
-                        to={paths.designer.getHref(current.designer.id)}
-                        className="font-medium underline-offset-4 hover:text-primary hover:underline"
-                      >
-                        {current.designer.nameAr}
-                      </Link>,
+                      current.designerLinked === false ? (
+                        <span className="font-medium">{current.designer.nameAr}</span>
+                      ) : (
+                        <Link
+                          to={paths.designer.getHref(current.designer.id)}
+                          className="font-medium underline-offset-4 hover:text-primary hover:underline"
+                        >
+                          {current.designer.nameAr}
+                        </Link>
+                      ),
                     ],
                     [
                       'الأبعاد',
