@@ -134,7 +134,7 @@ export function savePublicProfile(p: PublicProfile): boolean {
   return true;
 }
 
-export function usePublicProfile(fallback: PublicProfile = EMPTY): PublicProfile {
+function usePublicProfile(fallback: PublicProfile = EMPTY): PublicProfile {
   return useSyncExternalStore(signal.subscribe, read, () => null) ?? fallback;
 }
 

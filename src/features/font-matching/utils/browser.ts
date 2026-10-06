@@ -5,7 +5,7 @@
 import { inkMask, type Mask, type Pixels, type Polarity, resample } from './image';
 
 export const ACCEPTED = ['image/png', 'image/jpeg', 'image/webp'] as const;
-export const MAX_BYTES = 10 * 1024 * 1024;
+const MAX_BYTES = 10 * 1024 * 1024;
 const MAX_SIDE = 1600;
 
 export type LoadedImage = { url: string; pixels: Pixels; width: number; height: number };

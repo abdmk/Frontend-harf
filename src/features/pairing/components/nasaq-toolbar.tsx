@@ -10,7 +10,7 @@ const pill =
   'inline-flex h-11 shrink-0 items-center gap-2 rounded-full border px-5 text-control leading-none whitespace-nowrap transition-[background-color,color,border-color,transform] duration-(--dur-fast) active:scale-[.97]';
 
 /** عدد الخيارات المغيّرة عن الافتراضي — يظهر على زرّ «الخيارات» */
-export const optionsCount = (b: Brief) =>
+const optionsCount = (b: Brief) =>
   Number(b.useCase !== DEFAULT_BRIEF.useCase) +
   Number(b.lang !== DEFAULT_BRIEF.lang) +
   Number(b.tier !== DEFAULT_BRIEF.tier) +

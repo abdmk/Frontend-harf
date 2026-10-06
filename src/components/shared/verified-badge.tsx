@@ -1,5 +1,5 @@
 import { cn } from '@/lib/utils';
-import { useIsVerified, useMyVerification } from '@/stores/studio-verification';
+import { useIsVerified } from '@/stores/studio-verification';
 
 /** علامة «موثّق» الزرقاء بجانب اسم مصمّم أو مسبك */
 export function VerifiedBadge({ className }: { className?: string }) {
@@ -26,9 +26,4 @@ export function VerifiedBadge({ className }: { className?: string }) {
 /** علامة التوثيق لحساب بعينه — تظهر فقط إن اعتمدت الإدارة توثيقه */
 export function UserVerifiedBadge({ userId, className }: { userId: string | undefined; className?: string }) {
   return useIsVerified(userId) ? <VerifiedBadge className={className} /> : null;
-}
-
-/** علامة التوثيق للحساب الحالي */
-export function MyVerifiedBadge({ className }: { className?: string }) {
-  return useMyVerification()?.status === 'approved' ? <VerifiedBadge className={className} /> : null;
 }

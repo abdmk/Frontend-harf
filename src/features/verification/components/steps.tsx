@@ -41,7 +41,7 @@ import { AGREEMENT_CLAUSES, AGREEMENT_HIGHLIGHTS, AGREEMENT_TITLE, AGREEMENT_VER
 import { countryName } from '../config/countries';
 
 /** صندوق شرح رمادي تحت الحقل — كما في مراجع التسجيل: لماذا نطلب هذا وأين يظهر */
-export function Explain({ children, className }: { children: ReactNode; className?: string }) {
+function Explain({ children, className }: { children: ReactNode; className?: string }) {
   return (
     <div className={cn('rounded-lg bg-sunken px-4 py-3 text-meta leading-relaxed text-muted-foreground', className)}>
       {children}

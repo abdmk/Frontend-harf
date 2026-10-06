@@ -1,6 +1,6 @@
 import type { LicensePricing, LicenseSelection, LicenseUse } from '@/types/domain/license';
 
-export const USE_LABEL: Record<LicenseUse, string> = {
+const USE_LABEL: Record<LicenseUse, string> = {
   desktop: 'سطح المكتب',
   web: 'موقع إلكتروني',
   app: 'تطبيق',

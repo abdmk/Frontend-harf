@@ -9,7 +9,7 @@ import { useLab } from '../hooks/lab-context';
  * نمط النص بإعدادات اللوحة كلها — الحجم يُمرَّر لأن لكل سياق سلّمه:
  * العنوان بالحجم المختار، والمتن بنسبة منه، فيبقى المنزلق ذا معنى في كل سياق.
  */
-export function useTextStyle() {
+function useTextStyle() {
   const { active, settings: s, specimen } = useLab();
   return (fontSize: number, extra?: CSSProperties) =>
     specimen(active, {
@@ -24,7 +24,7 @@ export function useTextStyle() {
 }
 
 /** حجم المتن من حجم العنوان — بين 14 و32 */
-export const bodySize = (size: number) => Math.round(Math.min(32, Math.max(14, size * 0.42)));
+const bodySize = (size: number) => Math.round(Math.min(32, Math.max(14, size * 0.42)));
 
 function useCodepoints() {
   const { active } = useLab();

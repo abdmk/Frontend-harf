@@ -15,7 +15,7 @@ import { formatDateAr, formatMoney } from '@/utils/format';
 
 import { StudioPageHeader } from './studio-page-header';
 
-export const STATUS: Record<
+const STATUS: Record<
   ReviewStatus,
   { tone: 'success' | 'info' | 'danger' | 'neutral'; label: string; Icon: typeof CheckIcon }
 > = {

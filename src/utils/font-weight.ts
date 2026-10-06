@@ -15,7 +15,7 @@ export function weightStyle(w: number): CSSProperties {
 }
 
 /** أقرب وزن موجود فعلاً في الخط */
-export function nearestWeight(face: LiveFace, w: number) {
+function nearestWeight(face: LiveFace, w: number) {
   return face.weights.reduce((best, x) => (Math.abs(x - w) < Math.abs(best - w) ? x : best), face.weights[0]!);
 }
 

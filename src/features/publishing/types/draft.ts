@@ -8,7 +8,7 @@ import { CATEGORIES, LANGS } from '@/types/domain/font';
  */
 export const FONT_FILE_EXTS = ['otf', 'ttf', 'woff2'] as const;
 export const IMAGE_TYPES = ['image/png', 'image/jpeg', 'image/webp'] as const;
-export const MAX_FONT_BYTES = 50 * 1024 * 1024;
+const MAX_FONT_BYTES = 50 * 1024 * 1024;
 export const MAX_IMAGE_BYTES = 5 * 1024 * 1024;
 export const MAX_DESCRIPTION = 400;
 

@@ -16,7 +16,7 @@ import { useManuscriptRequests } from '../api/manuscripts';
 import { isOverdue, timeAgo } from '../utils';
 
 /** صورة مصغّرة للرسم — من ملف الطلب نفسه، في <img> فقط */
-export function ManuscriptThumb({ fileId, className }: { fileId?: string; className?: string }) {
+function ManuscriptThumb({ fileId, className }: { fileId?: string; className?: string }) {
   const url = useManuscriptUrl(fileId);
   return (
     <span

@@ -14,7 +14,7 @@ export type PostStatus = (typeof POST_STATUSES)[number];
 export const POST_LIMITS = { title: 120, excerpt: 280, paragraph: 2000, blocks: 60, caption: 200 };
 
 /** معرّف فيديو مخزّن محلياً (lib/media-store) */
-export const VIDEO_ID = /^v-[a-z0-9]{6,40}$/;
+const VIDEO_ID = /^v-[a-z0-9]{6,40}$/;
 
 /** كتل نصّ المقال: فقرة، صورة (JPEG مُعاد ترميزه)، أو فيديو مرفوع — لا HTML إطلاقاً */
 export const blockSchema = z.discriminatedUnion('t', [

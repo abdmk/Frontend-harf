@@ -1,7 +1,6 @@
 import { asObject, asStrings, createJsonStore } from '@/lib/json-store';
 import { CATEGORIES, type Category, type Font } from '@/types/domain/font';
 
-
 /**
  * قرارات الإدارة على خطوط المكتبة (مخزن الخطوط): الإخفاء، الحذف، التمييز، والتعديلات.
  * المكتبة العامة وصفحة الخط تقرآن من هنا، فيظهر أثر قرار المشرف فوراً في الموقع.
@@ -16,7 +15,7 @@ export type CatalogOverrides = {
   edits: Record<string, FontEdit>;
 };
 
-export const EMPTY_OVERRIDES: CatalogOverrides = { hidden: [], deleted: [], featured: [], edits: {} };
+const EMPTY_OVERRIDES: CatalogOverrides = { hidden: [], deleted: [], featured: [], edits: {} };
 export const FONT_NAME_MAX = 60;
 export const TAG_MAX = 24;
 

@@ -7,7 +7,7 @@ import * as fontkit from 'fontkit';
 
 import type { Axis, LabFont } from '../types';
 
-export const FONT_EXTS = ['otf', 'ttf', 'ttc', 'woff', 'woff2'] as const;
+const FONT_EXTS = ['otf', 'ttf', 'ttc', 'woff', 'woff2'] as const;
 export const ACCEPT = [...FONT_EXTS, 'zip'].map((e) => `.${e}`).join(',');
 const MAX_FILE = 30 * 1024 * 1024;
 const MAX_ZIP = 80 * 1024 * 1024;

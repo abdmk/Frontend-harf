@@ -7,7 +7,6 @@ import { cents } from '@/types/domain/commerce';
 import type { PlanOffer } from '@/types/domain/subscription';
 import { PLANS, type Plan } from '@/types/domain/user';
 
-
 /**
  * تعريف الخطط كما تعدّله الإدارة: الاسم والوصف والسعرين والمزايا. نافذة الخطط وصفحة الاشتراك
  * تقرآن من هنا. الحفظ يمرّ على المخطّط نفسه عند الكتابة والقراءة — قيمة تالفة تعود للافتراضي.
@@ -68,7 +67,7 @@ export const toEdit = (p: PlanOffer): PlanEdit => ({
   features: p.features.map((f) => ({ ...f })),
 });
 
-export const fromEdit = (e: PlanEdit): PlanOffer => ({
+const fromEdit = (e: PlanEdit): PlanOffer => ({
   id: e.id,
   name: e.name,
   tagline: e.tagline,
@@ -80,7 +79,7 @@ export const fromEdit = (e: PlanEdit): PlanOffer => ({
   features: e.features,
 });
 
-export const DEFAULT_PLANS = MOCK_PLANS;
+const DEFAULT_PLANS = MOCK_PLANS;
 export const defaultPlan = (id: Plan) => DEFAULT_PLANS.find((p) => p.id === id)!;
 
 /** المحفوظ: تعريف كل خطة بصيغة التحرير؛ ما لم يُحفظ أو لم يمرّ على المخطّط يبقى على الافتراضي */

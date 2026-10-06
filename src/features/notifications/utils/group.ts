@@ -3,7 +3,7 @@ import type { Notification } from '@/types/domain/notification';
 export type NotificationGroup = 'today' | 'week' | 'earlier';
 export type NotificationView = Notification & { when: string; group: NotificationGroup };
 
-export const GROUP_LABEL: Record<NotificationGroup, string> = {
+const GROUP_LABEL: Record<NotificationGroup, string> = {
   today: 'اليوم',
   week: 'هذا الأسبوع',
   earlier: 'أقدم',

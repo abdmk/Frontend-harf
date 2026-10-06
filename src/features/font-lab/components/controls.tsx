@@ -127,7 +127,7 @@ export function TextControls() {
 }
 
 /** ما يُضبط في كل تجربة: النمط (أو محور الوزن)، الحجم، ارتفاع السطر، المحاذاة — التخطيط من المستدعي */
-export function PrimaryTextControls({ className }: { className?: string }) {
+function PrimaryTextControls({ className }: { className?: string }) {
   const { active, settings: s, set, setActive } = useLab();
   const family = useFamily();
   if (!active) return null;
@@ -203,7 +203,7 @@ export function PrimaryTextControls({ className }: { className?: string }) {
 }
 
 /** الإعدادات النادرة: التباعد، العرض، المحاور الأخرى، الألوان، لغة النص، وإعادة الإعدادات */
-export function AdvancedTextControls({ columns = 'sm:grid-cols-2 xl:grid-cols-3' }: { columns?: string }) {
+function AdvancedTextControls({ columns = 'sm:grid-cols-2 xl:grid-cols-3' }: { columns?: string }) {
   const { active, settings: s, set, resetSettings } = useLab();
   if (!active) return null;
   const otherAxes = active.axes.filter((a) => a.tag !== 'wght');

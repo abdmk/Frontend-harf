@@ -2,7 +2,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/lib/utils';
 
 /** هيكل بطاقة خط أثناء التحميل — بنفس أبعاد FontCard كي لا تقفز الصفحة */
-export function FontCardSkeleton() {
+function FontCardSkeleton() {
   return (
     <div className="overflow-hidden rounded-lg border bg-card">
       <Skeleton className="aspect-[4/3] rounded-none" />

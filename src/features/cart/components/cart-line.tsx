@@ -3,7 +3,7 @@ import { cn } from '@/lib/utils';
 import type { CartItem } from '@/types/domain/commerce';
 
 /** بلاطة الخط الصغيرة: أوّل حرفين على أرضية داكنة (بديل صورة المعاينة) */
-export function FontTile({ name, className }: { name: string; className?: string }) {
+function FontTile({ name, className }: { name: string; className?: string }) {
   return (
     <span
       aria-hidden

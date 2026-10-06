@@ -15,13 +15,13 @@ import { STATE } from './decision-panel';
 import { type ReviewItem, type ReviewState, useReviewItems } from '../api/review';
 import { isOverdue, timeAgo } from '../utils';
 
-export const failedChecks = (s: ReviewItem) => s.checks.filter((c) => !c.ok).length;
+const failedChecks = (s: ReviewItem) => s.checks.filter((c) => !c.ok).length;
 
 /**
  * صفّ طلب في قائمة واحدة (لا بطاقة لكل طلب): معاينة الخط، الاسم، سطر وصفي، وشارة فقط لما يستحق
  * الانتباه (فحص لم يمرّ، تأخّر، إعادة إرسال). الإجراء زرّ هادئ — لا أزرار حمراء متكرّرة.
  */
-export function ReviewCard({ s }: { s: ReviewItem; compact?: boolean }) {
+function ReviewCard({ s }: { s: ReviewItem; compact?: boolean }) {
   const st = STATE[s.state];
   const failed = failedChecks(s);
   const late = s.state === 'pending' && isOverdue(s.submittedAt);

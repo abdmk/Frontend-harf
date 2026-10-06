@@ -2,7 +2,12 @@ import { useSyncExternalStore } from 'react';
 
 import { DEMO_MODE } from '@/config/demo';
 import { type AccountOverrides, getAccountOverrides, subscribeAccountOverrides } from '@/stores/account-overrides';
-import { type AccountProfile, getAccountProfiles, initialsOf, subscribeAccountProfiles } from '@/stores/account-profile';
+import {
+  type AccountProfile,
+  getAccountProfiles,
+  initialsOf,
+  subscribeAccountProfiles,
+} from '@/stores/account-profile';
 import { MOCK_NEW_STUDIO, MOCK_USERS } from '@/testing/mocks/users';
 import type { User } from '@/types/domain/user';
 
@@ -106,11 +111,6 @@ export function getCurrentUser(): User | null {
   return value;
 }
 
-/** للصفحات المحمية: بلا جلسة ← إرجاع null (المكوّن يوجّه للدخول) */
-export function requireUser(): User | null {
-  return getCurrentUser();
-}
-
 /** الاستوديو والنشر: حساب الاستوديو وحده */
 export function requireStudio(): User | null {
   const user = getCurrentUser();
@@ -138,7 +138,7 @@ export function setDemoSession(account: DemoAccount) {
 /** ما يصل إليه الدخول التجريبي من النموذج — في الإنتاج لا يُقبل غيره ولو حُفظ في المتصفّح (كجلسة إدارة سابقة) */
 const PUBLIC_ACCOUNTS: readonly DemoAccount[] = ['free', 'studio', 'out'];
 
-export function getDemoSession(): DemoAccount | null {
+function getDemoSession(): DemoAccount | null {
   try {
     const v = localStorage.getItem(DEMO_STORAGE_KEY);
     const allowed: readonly string[] = DEMO_MODE ? DEMO_ACCOUNTS : PUBLIC_ACCOUNTS;

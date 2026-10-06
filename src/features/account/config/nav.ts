@@ -36,7 +36,7 @@ export type NavItem = {
   menuOnly?: boolean;
 };
 
-export const PLAN_LABEL = { free: 'المجانية', basic: 'الأساسية', studio: 'الاستوديو' } as const;
+const PLAN_LABEL = { free: 'المجانية', basic: 'الأساسية', studio: 'الاستوديو' } as const;
 export const PLAN_TITLE = { free: 'الخطة المجانية', basic: 'الخطة الأساسية', studio: 'خطة الاستوديو' } as const;
 
 const acc = (section: AccountSection) => paths.account.getHref(section);

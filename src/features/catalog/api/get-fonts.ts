@@ -13,7 +13,3 @@ export function getFonts(query: CatalogQuery): Font[] {
   // المخفي والمحذوف من «مخزن الخطوط» لا يظهر للزوّار
   return filterFonts(publicFonts(MOCK_FONTS), query);
 }
-
-export function getAllFontIds(): string[] {
-  return publicFonts(MOCK_FONTS).map((f) => f.id);
-}

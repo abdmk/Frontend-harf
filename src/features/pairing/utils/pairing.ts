@@ -12,7 +12,7 @@ import type { Features, PairFont, UseCase } from '../data/catalog';
 const THEME_KEYS = ['width', 'roundness', 'formality'] as const satisfies readonly (keyof Features)[];
 
 /** mulberry32 — مولّد صغير حتمي */
-export function rng(seed: number) {
+function rng(seed: number) {
   let t = seed >>> 0;
   return () => {
     t = (t + 0x6d2b79f5) >>> 0;
@@ -23,7 +23,7 @@ export function rng(seed: number) {
 }
 
 /** متوسّط الفرق في أبعاد الهيكل — 0 متطابقان */
-export function themeDistance(a: PairFont, b: PairFont) {
+function themeDistance(a: PairFont, b: PairFont) {
   return THEME_KEYS.reduce((sum, k) => sum + Math.abs(a.f[k] - b.f[k]), 0) / THEME_KEYS.length;
 }
 
@@ -39,7 +39,7 @@ export function bodyWeight(font: PairFont) {
 }
 
 /** مدى اختلاف وظيفتي الخطين — 0 نفس الوظيفة */
-export function roleContrast(a: PairFont, b: PairFont) {
+function roleContrast(a: PairFont, b: PairFont) {
   const display = Math.abs(a.f.displayFit - b.f.displayFit);
   const text = Math.abs(a.f.textFit - b.f.textFit);
   const stroke = Math.abs(a.f.contrast - b.f.contrast);
@@ -203,7 +203,7 @@ const STYLE_LABEL: Record<PairFont['style'], string> = {
 export const styleLabel = (s: PairFont['style']) => STYLE_LABEL[s] ?? s;
 
 /** تعليل بجملة واحدة صادقة يمكن للمصمّم التحقّق منها، لا مديح عام */
-export function explain(heading: PairFont, body: PairFont, useCase: UseCase) {
+function explain(heading: PairFont, body: PairFont, useCase: UseCase) {
   if (heading.style === body.style)
     return `الخطان من عائلة أسلوبية واحدة (${styleLabel(heading.style)})، فالانسجام مضمون والتمييز يأتي من الوزن والحجم.`;
   if (Math.abs(heading.f.contrast - body.f.contrast) > 0.35)

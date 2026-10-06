@@ -74,7 +74,7 @@ export const DEFAULT_CTA: Cta = {
   lead: 'احجز جلسة سريعة مع فريقنا، نساعدك تختار الخط الأنسب لمشروعك أو نخصص لك خط يعكس هويتك بشكل أوضح وأميز.',
   button: 'تحدث مع فريقنا',
 };
-export const DEFAULT_CONTENT: SiteContent = {
+const DEFAULT_CONTENT: SiteContent = {
   banners: [],
   announcement: { active: false, text: '', href: '' },
   cta: DEFAULT_CTA,
