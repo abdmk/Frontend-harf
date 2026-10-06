@@ -8,7 +8,7 @@ import { cn } from '@/lib/utils';
  *   عنوان كبير، ومقدّمة بعرض قراءة.
  * - compact: صفحات المهامّ (السلة، الدفع، الإشعارات) — عنوان وعدد، بلا مقدّمة طويلة.
  * الصفحات الوثائقية (عن حرف، المساعدة، الشروط) لها بدايتها الوسطية في ContentPage/LegalDocument.
- * section تحمل «اللحظة اللونية» المعتمدة (فجر) — لحظة واحدة في الصفحة.
+ * section تحمل «اللحظة اللونية» المعتمدة («حرف») — لحظة واحدة في الصفحة.
  */
 export function PageIntro({
   title,
@@ -38,7 +38,7 @@ export function PageIntro({
       data-moment={section ? 'intro' : undefined}
       className={cn(
         'flex flex-wrap items-end justify-between gap-4',
-        // «فجر»: لحظة الصفحة اللونية — شريط هادئ يسكن زاويته اللون
+        // لحظة الصفحة اللونية — شريط هادئ يسكن زاويته اللون
         section ? 'mb-8 rounded-2xl border moment px-6 py-8 sm:px-10 sm:py-12' : 'mb-8',
         className,
       )}

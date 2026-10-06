@@ -11,9 +11,9 @@ type Dir = { id: string; name: string; en: string; mood: string; use: string };
 const DIRS: Dir[] = [
   {
     id: 'dawn',
-    name: 'فجر',
-    en: 'Dawn',
-    mood: 'خوخي يذوب في وردي — دافئ ومرحّب، أقرب روحاً لحرف دون أن يكون أحمرها.',
+    name: 'حرف',
+    en: 'Harf',
+    mood: 'بنفسجي وماجنتا ومرجاني تذوب في الأبيض مع حبيبات خفيفة — من روح أحمر حرف، أجرأ وأدفأ.',
     use: 'مقدّمات الأدوات والمجموعات، صناديق التواصل، وبطاقة الرصيد في المالية — لحظة واحدة في الصفحة.',
   },
 ];
@@ -79,7 +79,7 @@ function Samples({ d, mode }: { d: Dir; mode: 'light' | 'dark' }) {
 }
 
 /**
- * «لحظات لونية» — الاتجاه المعتمد «فجر» بوضعيه جنباً إلى جنب
+ * «لحظات لونية» — الاتجاه المعتمد «حرف» بوضعيه جنباً إلى جنب
  * (جزيرة ‎.light‎ و‎.dark‎)، على عناصر حقيقية وبجانبها عنصر محايد لتظهر نسبة 80/20.
  */
 export function GradientsDemo() {
@@ -90,7 +90,7 @@ export function GradientsDemo() {
       title="لحظات لونية"
       en="Gradient Moments"
       status="live"
-      note="الاتجاه المعتمد «فجر» — يُستعمل بالصنف moment في الأماكن المذكورة فقط."
+      note="الاتجاه المعتمد «حرف» — يُستعمل بالصنف moment في الأماكن المذكورة فقط."
     >
       <div className="mb-8 grid gap-4 rounded-xl border bg-card p-5 text-meta leading-relaxed text-muted-foreground sm:grid-cols-3">
         <div>

@@ -14,7 +14,7 @@ export const BANNER_TONE_CLASS: Record<BannerTone, string> = {
 export const BANNER_FRAME = 'aspect-video rounded-lg sm:aspect-[1120/290]';
 
 export const BANNER_TONE_LABEL: Record<BannerTone, string> = {
-  dawn: 'فجر',
+  dawn: 'حرف',
   brand: 'حرف',
   gold: 'ذهبي',
   trial: 'سماوي',

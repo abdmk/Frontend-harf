@@ -31,7 +31,7 @@ export function OrderSummary({
   note?: ReactNode;
   /** بجانب «المجموع الفرعي» — عدد العناصر */
   subtotalHint?: string;
-  /** moment: لحظة «فجر» اللونية — حين يكون الملخّص بطل الصفحة (السلة) */
+  /** moment: اللحظة اللونية — حين يكون الملخّص بطل الصفحة (السلة) */
   tone?: 'card' | 'moment';
   className?: string;
 }) {
