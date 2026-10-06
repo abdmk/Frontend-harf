@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react';
 
+import { checkSvgText, MAX_SVG_BYTES } from './svg-check';
+
 /**
  * فيديوهات المقالات: تُفحص بايتاتها الأولى (MP4/WebM فقط) وتُخزَّن في IndexedDB بهذا المتصفّح،
  * وتُعرض عبر blob: محلّي. ⚠️ عرض: في المنتج تُرفع إلى تخزين الملفات بعد فحصها على الخادم
@@ -10,7 +12,9 @@ const DB = 'harf-media';
 const STORE = 'videos';
 /** وثائق التوثيق (صور الهوية والتوقيع) — مخزن منفصل كي لا تختلط بوسائط المقالات */
 const DOCS = 'docs';
-type StoreName = typeof STORE | typeof DOCS;
+/** ملفات المخطوطات المرفوعة (SVG) — أكبر من أن تتّسع لها localStorage */
+const MANUSCRIPTS = 'manuscripts';
+type StoreName = typeof STORE | typeof DOCS | typeof MANUSCRIPTS;
 
 export type VideoKind = 'mp4' | 'webm';
 
@@ -23,9 +27,9 @@ export function sniffVideo(b: Uint8Array): VideoKind | null {
 
 function open(): Promise<IDBDatabase> {
   return new Promise((resolve, reject) => {
-    const req = indexedDB.open(DB, 2);
+    const req = indexedDB.open(DB, 3);
     req.onupgradeneeded = () => {
-      for (const name of [STORE, DOCS])
+      for (const name of [STORE, DOCS, MANUSCRIPTS])
         if (!req.result.objectStoreNames.contains(name)) req.result.createObjectStore(name);
     };
     req.onsuccess = () => resolve(req.result);
@@ -124,4 +128,60 @@ export function deleteDoc(id: string) {
 
 export function useDocUrl(id: string | undefined): string | null {
   return useBlobUrl(isDocId(id) ? id : undefined, DOCS);
+}
+
+/* ── ملفات المخطوطات ───────────────────────────────────────────────────────
+ * يُعاد فحص النصّ هنا قبل الحفظ (لا يكفي فحص الواجهة)، ويُحفظ بنوع image/svg+xml ثابت لا من الملف.
+ * العرض دائماً عبر <img> — لا يُنفَّذ فيه سكربت ولا يُحمَّل منه رابط خارجي.
+ * ⚠️ عرض: في المنتج يُرفع إلى تخزين خاصّ ويُعاد فحصه وتعقيمه على الخادم، ولا يصير عامّاً قبل القبول.
+ */
+const MS_ID = /^m-[a-z0-9]{6,24}$/;
+export const isManuscriptFileId = (id: unknown): id is string => typeof id === 'string' && MS_ID.test(id);
+
+export async function storeManuscriptSvg(
+  text: string,
+): Promise<{ ok: true; id: string } | { ok: false; error: string }> {
+  if (new Blob([text]).size > MAX_SVG_BYTES) return { ok: false, error: 'الملف أكبر من 5 ميغابايت.' };
+  const check = checkSvgText(text);
+  if (!check.ok) return check;
+  const id = `m-${Date.now().toString(36)}${Math.random().toString(36).slice(2, 8)}`;
+  try {
+    await tx('readwrite', (s) => s.put(new Blob([text], { type: 'image/svg+xml' }), id), MANUSCRIPTS);
+  } catch {
+    return { ok: false, error: 'تعذّر حفظ الملف — قد تكون مساحة المتصفّح ممتلئة.' };
+  }
+  return { ok: true, id };
+}
+
+export function deleteManuscriptSvg(id: string) {
+  return tx('readwrite', (s) => s.delete(id), MANUSCRIPTS).catch(() => undefined);
+}
+
+/** نصّ الملف المحفوظ — لإعادة فحصه عند فتح المشرف له */
+export function readManuscriptSvg(id: string): Promise<string | null> {
+  if (!isManuscriptFileId(id)) return Promise.resolve(null);
+  return tx<Blob | undefined>('readonly', (s) => s.get(id) as IDBRequest<Blob | undefined>, MANUSCRIPTS)
+    .then((b) => (b ? b.text() : null))
+    .catch(() => null);
+}
+
+export function useManuscriptUrl(id: string | undefined): string | null {
+  return useBlobUrl(isManuscriptFileId(id) ? id : undefined, MANUSCRIPTS);
+}
+
+/**
+ * رابط blob: دائم طوال الجلسة لمخطوطة منشورة — المكتبة تعرض القائمة نفسها في البطاقة والعارض والتحميل،
+ * فلا يُحرَّر عند إغلاق مكوّن واحد. عدد المقبولة صغير، والروابط تزول مع الصفحة.
+ */
+const publishedUrls = new Map<string, Promise<string | null>>();
+export function publishedManuscriptUrl(id: string): Promise<string | null> {
+  if (!isManuscriptFileId(id)) return Promise.resolve(null);
+  let p = publishedUrls.get(id);
+  if (!p) {
+    p = tx<Blob | undefined>('readonly', (s) => s.get(id) as IDBRequest<Blob | undefined>, MANUSCRIPTS)
+      .then((b) => (b ? URL.createObjectURL(b) : null))
+      .catch(() => null);
+    publishedUrls.set(id, p);
+  }
+  return p;
 }

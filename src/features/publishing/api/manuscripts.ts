@@ -2,8 +2,9 @@ import { z } from 'zod';
 
 import { getCurrentUser } from '@/lib/auth';
 import { publicFonts } from '@/lib/catalog-overrides';
-import { asObject, createJsonStore } from '@/lib/json-store';
-import { statusOf } from '@/lib/studio-verification';
+import { addSubmission, getSubmissions, MAX_PENDING_PER_USER, newReference } from '@/lib/manuscript-submissions';
+import { deleteManuscriptSvg, storeManuscriptSvg } from '@/lib/media-store';
+import { getVerification, statusOf } from '@/lib/studio-verification';
 import { MOCK_FONTS } from '@/mocks/fonts';
 import { MANUSCRIPT_CATEGORIES } from '@/types/domain/manuscript';
 
@@ -44,41 +45,22 @@ export const manuscriptSchema = z.object({
 });
 export type ManuscriptInput = z.input<typeof manuscriptSchema>;
 
-/** ما يُحفظ من الطلب — بيانات فقط، لا محتوى الملف (يُرفع إلى التخزين في المنتج) */
-type Submission = { reference: string; title: string; category: string; createdAt: string; status: 'pending' };
-const store = createJsonStore<Submission[]>(
-  'harf_manuscript_submissions',
-  (raw) =>
-    (Array.isArray(raw) ? raw : [])
-      .map(asObject)
-      .filter((s) => typeof s.reference === 'string' && typeof s.title === 'string')
-      .map((s) => ({
-        reference: String(s.reference),
-        title: String(s.title).slice(0, 60),
-        category: String(s.category ?? ''),
-        createdAt: String(s.createdAt ?? ''),
-        status: 'pending' as const,
-      }))
-      .slice(0, 50),
-  [],
-);
-export const useManuscriptSubmissions = store.use;
-
 export type ManuscriptResult =
   { ok: true; reference: string } | { ok: false; errors: { path: string; message: string }[] };
 
+const fail = (path: string, message: string): ManuscriptResult => ({ ok: false, errors: [{ path, message }] });
+
 /**
  * إرسال المخطوطة للمراجعة — للاستوديو الموثّق (أو قيد التوثيق) كنشر الخطوط تماماً.
+ * صاحب الطلب من الجلسة لا من النموذج، والملف يُعاد فحصه قبل حفظه (storeManuscriptSvg).
  * ⚠️ عرض: يُحفظ الطلب في هذا المتصفّح؛ في المنتج يُرفع الملف ويُعاد فحصه على الخادم ويدخل طابور المراجعة.
  */
-export function submitManuscript(input: unknown): ManuscriptResult {
+export async function submitManuscript(input: unknown, svgText: string): Promise<ManuscriptResult> {
   const user = getCurrentUser();
-  if (!user || user.plan !== 'studio')
-    return { ok: false, errors: [{ path: 'auth', message: 'رفع المخطوطات لحساب الاستوديو.' }] };
+  if (!user || user.plan !== 'studio') return fail('auth', 'رفع المخطوطات لحساب الاستوديو.');
   if (user.role !== 'admin') {
     const status = statusOf(user.id);
-    if (status !== 'pending' && status !== 'approved')
-      return { ok: false, errors: [{ path: 'auth', message: 'وثّق حسابك أولاً لتنشر.' }] };
+    if (status !== 'pending' && status !== 'approved') return fail('auth', 'وثّق حسابك أولاً لتنشر.');
   }
   const parsed = manuscriptSchema.safeParse(input);
   if (!parsed.success)
@@ -86,17 +68,30 @@ export function submitManuscript(input: unknown): ManuscriptResult {
       ok: false,
       errors: parsed.error.issues.map((i) => ({ path: String(i.path[0] ?? ''), message: i.message })),
     };
-  const reference = `MS-${Math.floor(1000 + Math.random() * 8999)}`;
-  const saved = store.set([
-    {
-      reference,
-      title: parsed.data.title,
-      category: parsed.data.category,
-      createdAt: new Date().toISOString(),
-      status: 'pending',
-    },
-    ...store.get(),
-  ]);
-  if (!saved) return { ok: false, errors: [{ path: 'file', message: 'تعذّر الحفظ في هذا المتصفّح.' }] };
+  const pending = getSubmissions().filter((s) => s.userId === user.id && s.status === 'pending').length;
+  if (pending >= MAX_PENDING_PER_USER)
+    return fail('auth', `لديك ${MAX_PENDING_PER_USER} طلباً بانتظار المراجعة — انتظر القرار فيها أولاً.`);
+
+  const stored = await storeManuscriptSvg(svgText);
+  if (!stored.ok) return fail('file', stored.error);
+  const d = parsed.data;
+  const reference = newReference();
+  const saved = addSubmission({
+    reference,
+    userId: user.id,
+    studioName: getVerification(user.id).info.studioName ?? user.name,
+    title: d.title,
+    category: d.category,
+    fonts: d.fonts.map((id) => ({ id, name: libraryFontById(id)?.name ?? id })),
+    license: d.license,
+    note: d.note,
+    file: { ...d.file, id: stored.id },
+    status: 'pending',
+    createdAt: new Date().toISOString(),
+  });
+  if (!saved) {
+    void deleteManuscriptSvg(stored.id);
+    return fail('file', 'تعذّر الحفظ في هذا المتصفّح.');
+  }
   return { ok: true, reference };
 }

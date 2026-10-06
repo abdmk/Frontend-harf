@@ -11,13 +11,13 @@ import { Input, Textarea } from '@/components/ui/input';
 import { SegmentedControl } from '@/components/ui/segmented-control';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { cn } from '@/lib/cn';
+import { checkSvgFile } from '@/lib/svg-check';
 import { MANUSCRIPT_CATEGORIES, MANUSCRIPT_CATEGORY_LABEL, type ManuscriptCategory } from '@/types/domain/manuscript';
 
 import { TagPicker } from './tag-picker';
 import { libraryFontById, searchLibraryFonts, submitManuscript } from '../api/manuscripts';
-import { checkSvgFile } from '../utils/svg-check';
 
-type Picked = { file: File; url: string; width: number; height: number };
+type Picked = { file: File; text: string; url: string; width: number; height: number };
 type Errors = Record<string, string>;
 
 const kb = (n: number) => `${(n / 1024).toLocaleString('en-US', { maximumFractionDigits: 0 })} KB`;
@@ -39,6 +39,7 @@ export function ManuscriptUpload() {
   const [rights, setRights] = useState(false);
   const [errors, setErrors] = useState<Errors>({});
   const [done, setDone] = useState<string | null>(null);
+  const [sending, setSending] = useState(false);
 
   // رابط المعاينة يُحرَّر عند الاستبدال أو المغادرة
   useEffect(
@@ -52,13 +53,13 @@ export function ManuscriptUpload() {
     const file = files[0];
     if (!file) return;
     const check = await checkSvgFile(file);
-    if (!check.ok) {
-      setFileError(check.error);
+    if (!check.ok || !check.text) {
+      setFileError(check.ok ? 'تعذّر قراءة الملف.' : check.error);
       return;
     }
     setFileError('');
     setErrors((e) => ({ ...e, file: '' }));
-    setPicked({ file, url: URL.createObjectURL(file), width: check.width, height: check.height });
+    setPicked({ file, text: check.text, url: URL.createObjectURL(file), width: check.width, height: check.height });
     // العنوان من اسم الملف حين لم يُكتب بعد
     if (!title)
       setTitle(
@@ -69,20 +70,26 @@ export function ManuscriptUpload() {
       );
   }
 
-  function submit() {
+  async function submit() {
+    if (sending) return;
     if (!picked) {
       setErrors({ file: 'ارفع ملف المخطوطة أولاً.' });
       return;
     }
-    const res = submitManuscript({
-      title,
-      category: category || undefined,
-      fonts,
-      license,
-      note,
-      rights,
-      file: { name: picked.file.name, bytes: picked.file.size, width: picked.width, height: picked.height },
-    });
+    setSending(true);
+    const res = await submitManuscript(
+      {
+        title,
+        category: category || undefined,
+        fonts,
+        license,
+        note,
+        rights,
+        file: { name: picked.file.name, bytes: picked.file.size, width: picked.width, height: picked.height },
+      },
+      picked.text,
+    );
+    setSending(false);
     if (res.ok) {
       setDone(res.reference);
       return;
@@ -196,7 +203,7 @@ export function ManuscriptUpload() {
         className="flex flex-col gap-5 rounded-2xl border bg-card p-5 sm:p-6"
         onSubmit={(e) => {
           e.preventDefault();
-          submit();
+          void submit();
         }}
         noValidate
       >
@@ -286,8 +293,8 @@ export function ManuscriptUpload() {
         {err('rights') && <FieldError>{err('rights')}</FieldError>}
         {err('auth') && <Alert tone="danger" title={err('auth')!} />}
 
-        <Button type="submit" size="lg" block>
-          إرسال للمراجعة
+        <Button type="submit" size="lg" block disabled={sending}>
+          {sending ? 'جارٍ الإرسال…' : 'إرسال للمراجعة'}
         </Button>
       </form>
     </div>

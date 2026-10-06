@@ -57,11 +57,13 @@ export function checkSvgText(text: string): SvgCheck {
   return { ok: true, width: Math.round(width), height: Math.round(height), elements: all.length - 1 };
 }
 
-/** فحص الملف نفسه: الامتداد والنوع والحجم، ثم المحتوى */
-export async function checkSvgFile(file: File): Promise<SvgCheck> {
+/** فحص الملف نفسه: الامتداد والنوع والحجم، ثم المحتوى — ويعيد النصّ المفحوص ليُحفظ هو نفسه */
+export async function checkSvgFile(file: File): Promise<SvgCheck & { text?: string }> {
   if (!/\.svg$/i.test(file.name) || (file.type && file.type !== 'image/svg+xml'))
     return { ok: false, error: 'المخطوطات بصيغة SVG متجهة فقط.' };
   if (file.size > MAX_SVG_BYTES)
     return { ok: false, error: 'أكبر من 5 ميغابايت — بسّط المسارات أو احذف الطبقات المخفية.' };
-  return checkSvgText(await file.text());
+  const text = await file.text();
+  const check = checkSvgText(text);
+  return check.ok ? { ...check, text } : check;
 }
