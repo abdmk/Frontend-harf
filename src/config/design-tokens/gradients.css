@@ -1,22 +1,24 @@
 /*
- * لحظات لونية (Gradient Moments) — الاتجاه المعتمد: «فجر» (خوخي يذوب في وردي).
+ * لحظات لونية (Gradient Moments) — الاتجاه المعتمد: «حرف» — أحمر العلامة يذوب في الماجنتا والبنفسجي والمرجاني.
+ * (المرجع: Typeface duos — ألوان متعدّدة ناعمة من الزوايا تذوب في الأبيض، مع حبيبات خفيفة.)
  *
  * القاعدة: 80% من الواجهة هادئة ومحايدة، و20% لحظات لونية. لحظة واحدة في الشاشة على الأكثر:
  * مقدّمة الأدوات والمجموعات، صناديق التواصل، بطاقة الرصيد في المالية، دعوة «تبحث عن خط خاص؟»،
- * ومربّع السعر في بطاقات الخطط (لون كل خطة). لا على النصوص ولا الأزرار
- * ولا الجداول.
- *   الفاتح: لونان باستيليّان من زاوية البداية، يتلاشيان نحو الأبيض قبل منتصف العنصر.
- *   الداكن: لون عميق قليل التشبّع من الزاوية يذوب في سطح البطاقة، مع حدّ رفيع — بلا توهّج ولا نيون.
+ * ومربّع السعر في بطاقات الخطط (لون كل خطة). لا على النصوص ولا الأزرار ولا الجداول.
+ *   الفاتح: بنفسجي من زاوية البداية، ماجنتا بجانبه، ومرجاني من الزاوية المقابلة — تتلاشى نحو الأبيض.
+ *   الداكن: الألوان نفسها عميقة قليلة الشفافية تذوب في سطح البطاقة، مع حدّ رفيع — بلا توهّج ولا نيون.
  * «at 100% 0%» = أعلى اليمين = بداية السطر في RTL. الاستعمال عبر الصنف ‎moment‎ (globals.css).
+ * أسماء الرموز (dawn…) باقية كما هي حتى لا يتغيّر استعمالها في المكوّنات.
  */
 
 :root,
 .light {
   --grad-dawn:
-    radial-gradient(70% 110% at 100% 0%, #ffdcc8 0%, rgb(255 220 200 / 0) 62%),
-    radial-gradient(55% 90% at 62% 0%, #fcd6e6 0%, rgb(252 214 230 / 0) 64%), var(--card);
-  --grad-dawn-edge: rgb(245 170 140 / 0.35);
-  --grad-dawn-ink: #b8532c;
+    radial-gradient(45% 150% at 100% 0%, #b9a4ff 0%, rgb(185 164 255 / 0) 65%),
+    radial-gradient(40% 150% at 72% 0%, #ff9cc7 0%, rgb(255 156 199 / 0) 65%),
+    radial-gradient(35% 130% at 0% 100%, #ffb39a 0%, rgb(255 179 154 / 0) 65%), var(--card);
+  --grad-dawn-edge: rgb(214 120 170 / 0.35);
+  --grad-dawn-ink: #b0306f;
 
   /* لمعة قطرية خفيفة (كخطوط الضوء في مرجع Wayl) */
   --grad-sheen: linear-gradient(115deg, rgb(255 255 255 / 0) 30%, rgb(255 255 255 / 0.6) 40%, rgb(255 255 255 / 0) 52%);
@@ -26,27 +28,32 @@
     linear-gradient(115deg, rgb(255 255 255 / 0) 18%, rgb(255 255 255 / 0.55) 24%, rgb(255 255 255 / 0) 31%),
     linear-gradient(115deg, rgb(255 255 255 / 0) 46%, rgb(255 255 255 / 0.45) 53%, rgb(255 255 255 / 0) 60%),
     linear-gradient(115deg, rgb(255 255 255 / 0) 72%, rgb(255 255 255 / 0.4) 78%, rgb(255 255 255 / 0) 84%);
-  /* أرضية الدعوة: فجر من الزاويتين يذوب في الوسط */
+  /* أرضية الدعوة: اللحظة من الزاويتين يذوب في الوسط */
   --grad-dawn-wide:
-    radial-gradient(60% 120% at 100% 0%, #ffd9c4 0%, rgb(255 217 196 / 0) 70%),
-    radial-gradient(55% 110% at 0% 100%, #fbd3e5 0%, rgb(251 211 229 / 0) 70%), #fff7f3;
+    radial-gradient(55% 130% at 100% 0%, #b8a3ff 0%, rgb(184 163 255 / 0) 65%),
+    radial-gradient(55% 130% at 0% 100%, #ff8fa8 0%, rgb(255 143 168 / 0) 65%),
+    radial-gradient(40% 90% at 50% 100%, #ffc2a3 0%, rgb(255 194 163 / 0) 70%), #fff8fa;
 
   /* مربّع السعر في بطاقات الخطط — لون كل خطة يسكن زاويته */
   --grad-plan-free: radial-gradient(90% 140% at 100% 0%, #eceef3 0%, rgb(236 238 243 / 0) 70%), var(--sunken);
   --grad-plan-basic:
-    radial-gradient(90% 140% at 100% 0%, #ffe3a8 0%, rgb(255 227 168 / 0) 68%),
-    radial-gradient(60% 120% at 20% 0%, #ffeccf 0%, rgb(255 236 207 / 0) 70%), var(--sunken);
+    radial-gradient(90% 140% at 100% 0%, #ffc59a 0%, rgb(255 197 154 / 0) 65%),
+    radial-gradient(60% 120% at 15% 0%, #ffe3a3 0%, rgb(255 227 163 / 0) 70%), var(--sunken);
   --grad-plan-studio:
-    radial-gradient(90% 140% at 100% 0%, #cfe4ff 0%, rgb(207 228 255 / 0) 68%),
-    radial-gradient(60% 120% at 20% 0%, #e0dcff 0%, rgb(224 220 255 / 0) 70%), var(--sunken);
+    radial-gradient(90% 140% at 100% 0%, #ff9cbd 0%, rgb(255 156 189 / 0) 65%),
+    radial-gradient(60% 120% at 15% 0%, #bfa9ff 0%, rgb(191 169 255 / 0) 70%), var(--sunken);
+
+  /* حبيبات خفيفة فوق اللحظات اللونية (كالمرجع) — تكسر لمعة «البلاستيك» */
+  --grad-grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .06 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
 .dark {
   --grad-dawn:
-    radial-gradient(65% 100% at 100% 0%, rgb(122 64 44 / 0.5) 0%, rgb(122 64 44 / 0) 60%),
-    radial-gradient(45% 80% at 66% 0%, rgb(96 42 70 / 0.32) 0%, rgb(96 42 70 / 0) 62%), var(--card);
-  --grad-dawn-edge: rgb(214 130 98 / 0.4);
-  --grad-dawn-ink: #f0a07f;
+    radial-gradient(45% 150% at 100% 0%, rgb(110 70 210 / 0.6) 0%, rgb(110 70 210 / 0) 65%),
+    radial-gradient(40% 150% at 72% 0%, rgb(200 50 120 / 0.5) 0%, rgb(200 50 120 / 0) 65%),
+    radial-gradient(35% 130% at 0% 100%, rgb(200 80 50 / 0.45) 0%, rgb(200 80 50 / 0) 65%), var(--card);
+  --grad-dawn-edge: rgb(200 90 150 / 0.4);
+  --grad-dawn-ink: #ff8fc0;
 
   --grad-sheen: linear-gradient(
     115deg,
@@ -60,14 +67,16 @@
     linear-gradient(115deg, rgb(255 255 255 / 0) 46%, rgb(255 255 255 / 0.025) 53%, rgb(255 255 255 / 0) 60%),
     linear-gradient(115deg, rgb(255 255 255 / 0) 72%, rgb(255 255 255 / 0.02) 78%, rgb(255 255 255 / 0) 84%);
   --grad-dawn-wide:
-    radial-gradient(60% 120% at 100% 0%, rgb(122 64 44 / 0.55) 0%, rgb(122 64 44 / 0) 70%),
-    radial-gradient(55% 110% at 0% 100%, rgb(96 42 70 / 0.45) 0%, rgb(96 42 70 / 0) 70%), var(--callout);
+    radial-gradient(55% 130% at 100% 0%, rgb(110 70 210 / 0.55) 0%, rgb(110 70 210 / 0) 65%),
+    radial-gradient(55% 130% at 0% 100%, rgb(200 50 90 / 0.5) 0%, rgb(200 50 90 / 0) 65%), var(--callout);
 
   --grad-plan-free:
-    radial-gradient(90% 140% at 100% 0%, rgb(255 255 255 / 0.05) 0%, rgb(255 255 255 / 0) 70%), var(--sunken);
+    radial-gradient(90% 140% at 100% 0%, rgb(255 255 255 / 0.06) 0%, rgb(255 255 255 / 0) 70%), var(--sunken);
   --grad-plan-basic:
-    radial-gradient(90% 140% at 100% 0%, rgb(160 110 20 / 0.38) 0%, rgb(160 110 20 / 0) 68%), var(--sunken);
+    radial-gradient(90% 140% at 100% 0%, rgb(200 110 40 / 0.5) 0%, rgb(200 110 40 / 0) 65%), var(--sunken);
   --grad-plan-studio:
-    radial-gradient(90% 140% at 100% 0%, rgb(20 90 170 / 0.42) 0%, rgb(20 90 170 / 0) 68%),
-    radial-gradient(60% 120% at 20% 0%, rgb(70 50 150 / 0.25) 0%, rgb(70 50 150 / 0) 70%), var(--sunken);
+    radial-gradient(90% 140% at 100% 0%, rgb(200 50 110 / 0.5) 0%, rgb(200 50 110 / 0) 65%),
+    radial-gradient(60% 120% at 15% 0%, rgb(110 70 210 / 0.45) 0%, rgb(110 70 210 / 0) 70%), var(--sunken);
+
+  --grad-grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .035 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }

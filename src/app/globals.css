@@ -59,9 +59,9 @@
   }
 }
 
-/* لحظة لونية «فجر» — للأماكن المعتمدة فقط (انظر config/design-tokens/gradients.css) */
+/* لحظة لونية «حرف» — للأماكن المعتمدة فقط (انظر config/design-tokens/gradients.css) */
 @utility moment {
-  background: var(--grad-sheen), var(--grad-dawn);
+  background: var(--grad-grain), var(--grad-sheen), var(--grad-dawn);
   border-color: var(--grad-dawn-edge);
 }
 

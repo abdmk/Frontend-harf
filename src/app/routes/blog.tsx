@@ -11,7 +11,7 @@ import { formatDateAr } from '@/utils/format';
 
 import { ComingSoonPage } from './coming-soon';
 
-/** غلاف المقال، وبلا صورة أرضية «فجر» بأول حرف من العنوان — كي لا تبدو البطاقة فارغة */
+/** غلاف المقال، وبلا صورة أرضية اللحظة اللونية بأول حرف من العنوان — كي لا تبدو البطاقة فارغة */
 function Cover({ post, className }: { post: BlogPost; className?: string }) {
   return post.cover ? (
     <img src={post.cover} alt="" loading="lazy" decoding="async" className={cn('w-full object-cover', className)} />
