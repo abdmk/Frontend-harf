@@ -8,7 +8,7 @@ test.describe('المخطوطات', () => {
   test('التصنيف والبحث (بلا تشكيل) والترتيب تبقى في الرابط', async ({ page }) => {
     await page.goto('/manuscripts');
     const cards = page.getByRole('list', { name: 'المخطوطات' }).locator('article');
-    await expect(cards).toHaveCount(36);
+    await expect(cards).toHaveCount(42);
 
     // التصنيفات مطويّة خلف زرّ «التصنيف» كما في المكتبة
     await page.getByRole('button', { name: 'التصنيف', exact: true }).click();
@@ -19,6 +19,14 @@ test.describe('المخطوطات', () => {
     await expect(page).toHaveURL(/cat=ramadan/);
     await expect(cards).toHaveCount(4);
 
+    // «اليوم الوطني» ليس فارغاً: سبعة أعمال
+    await page
+      .getByRole('group', { name: 'التصنيفات' })
+      .getByRole('button', { name: /^اليوم الوطني/ })
+      .click();
+    await expect(page).toHaveURL(/cat=national/);
+    await expect(cards).toHaveCount(7);
+
     await page.getByRole('group', { name: 'التصنيفات' }).getByRole('button', { name: /^الكل/ }).click();
     await page.getByRole('searchbox').fill('رَمَضان');
     await expect(page).toHaveURL(/q=/);
@@ -27,7 +35,7 @@ test.describe('المخطوطات', () => {
     await page.getByRole('button', { name: 'مسح الكل' }).click();
     await page.getByRole('button', { name: 'الأكثر تحميلاً' }).click();
     await expect(page).toHaveURL(/sort=popular/);
-    await expect(cards).toHaveCount(36);
+    await expect(cards).toHaveCount(42);
   });
 
   test('التصنيفات المدموجة: خمسة، والروابط القديمة تفتح التصنيف الذي صارت فيه', async ({ page }) => {
@@ -48,7 +56,7 @@ test.describe('المخطوطات', () => {
     await expect(viewer).toHaveAccessibleName('محمد رسول الله');
     await expect(viewer).toBeVisible();
     await expect(page).toHaveURL(/m=muhammad/);
-    const counter = viewer.getByText(/\d+ \/ 36/);
+    const counter = viewer.getByText(/\d+ \/ 42/);
     const before = await counter.textContent();
 
     await page.keyboard.press('ArrowLeft');

@@ -11,6 +11,7 @@ import type { Font } from '@/types/domain/font';
 import { DesignerAvatars } from './designer-avatars';
 import { DownloadButton } from './download-button';
 import { FontTypeBadge } from './font-type-badge';
+import { NoPreview } from './no-preview';
 
 /** اسم المصمّم تحت اسم الخط — رابط لصفحته، فوق رابط البطاقة الممتدّ (z-10) */
 function Byline({ font }: { font: Font }) {
@@ -80,13 +81,15 @@ export function FontCard({
           specimenRatio === 'wide' ? 'aspect-[2/1]' : 'aspect-[7/5]',
         )}
       >
-        {font.face && (
+        {font.face ? (
           <span
             className="line-clamp-2 text-center text-5xl leading-snug text-foreground transition-transform duration-(--dur-xslow) ease-out-quint group-hover/card:scale-[1.04]"
             style={faceStyle(font.face, specimen?.weight ?? 700)}
           >
             {specimen?.text ?? font.face.nameAr}
           </span>
+        ) : (
+          <NoPreview />
         )}
       </div>
       <FontTypeBadge type={font.type} className="absolute end-4 top-4 z-10" />

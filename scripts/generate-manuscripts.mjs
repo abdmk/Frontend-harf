@@ -100,7 +100,7 @@ const WORKS = [
   ],
   ['eid-mubarak', 'عيد مبارك', 'eid', [['عيد مبارك', 'lalezar']]],
   [
-    'islamic',
+    'mawlid',
     'المولد النبوي الشريف',
     'islamic',
     [
@@ -109,7 +109,7 @@ const WORKS = [
     ],
   ],
   [
-    'islamic',
+    'jumua',
     'جمعة مباركة',
     'islamic',
     [
@@ -118,7 +118,7 @@ const WORKS = [
     ],
   ],
   [
-    'islamic',
+    'hijri',
     'عام هجري سعيد',
     'islamic',
     [
@@ -317,6 +317,28 @@ const WORKS = [
       ['فيك', 'amiri', 1.2],
     ],
   ],
+  ['aash-alwatan', 'عاش الوطن', 'national', [['عاش الوطن', 'kufi']]],
+  [
+    'kul-am-watan',
+    'كل عام والوطن بخير',
+    'national',
+    [
+      ['كل عام', 'messiri', 0.9],
+      ['والوطن بخير', 'messiri', 1.2],
+    ],
+  ],
+  ['watani', 'وطني', 'national', [['وطني', 'ruqaa', 1.6]]],
+  ['yawm-alwatan', 'يوم الوطن', 'national', [['يوم الوطن', 'lalezar']]],
+  [
+    'fakhoon',
+    'فخورون بك يا وطن',
+    'national',
+    [
+      ['فخورون بك', 'marhey', 1.1],
+      ['يا وطن', 'marhey', 1.3],
+    ],
+  ],
+  ['alwatan-awalan', 'الوطن أولاً', 'national', [['الوطن أولاً', 'changa']]],
 ];
 
 const manifest = [];

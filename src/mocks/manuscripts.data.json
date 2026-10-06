@@ -506,5 +506,89 @@
         "name": "أميري"
       }
     ]
+  },
+  {
+    "id": "aash-alwatan",
+    "title": "عاش الوطن",
+    "category": "national",
+    "width": 4564,
+    "height": 1493,
+    "bytes": 3714,
+    "fonts": [
+      {
+        "id": "reem-kufi",
+        "name": "ريم كوفي"
+      }
+    ]
+  },
+  {
+    "id": "kul-am-watan",
+    "title": "كل عام والوطن بخير",
+    "category": "national",
+    "width": 7016,
+    "height": 2868,
+    "bytes": 9353,
+    "fonts": [
+      {
+        "id": "el-messiri",
+        "name": "المسيري"
+      }
+    ]
+  },
+  {
+    "id": "watani",
+    "title": "وطني",
+    "category": "national",
+    "width": 3097,
+    "height": 2337,
+    "bytes": 3086,
+    "fonts": [
+      {
+        "id": "aref-ruqaa",
+        "name": "عارف رقعة"
+      }
+    ]
+  },
+  {
+    "id": "yawm-alwatan",
+    "title": "يوم الوطن",
+    "category": "national",
+    "width": 3930,
+    "height": 1276,
+    "bytes": 3676,
+    "fonts": [
+      {
+        "id": "lalezar",
+        "name": "لاله‌زار"
+      }
+    ]
+  },
+  {
+    "id": "fakhoon",
+    "title": "فخورون بك يا وطن",
+    "category": "national",
+    "width": 5937,
+    "height": 3597,
+    "bytes": 6717,
+    "fonts": [
+      {
+        "id": "marhey",
+        "name": "مرحي"
+      }
+    ]
+  },
+  {
+    "id": "alwatan-awalan",
+    "title": "الوطن أولاً",
+    "category": "national",
+    "width": 5176,
+    "height": 1758,
+    "bytes": 2966,
+    "fonts": [
+      {
+        "id": "changa",
+        "name": "شنقا"
+      }
+    ]
   }
 ]

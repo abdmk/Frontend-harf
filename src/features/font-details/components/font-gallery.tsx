@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 
 import { Carousel } from '@/components/shared/carousel';
+import { NoPreview } from '@/components/shared/no-preview';
 import { CrossIcon, ExpandIcon } from '@/components/ui/icons';
 import { cn } from '@/lib/cn';
 import { faceStyle } from '@/lib/font-weight';
@@ -43,23 +44,11 @@ function specimenSlides(face: LiveFace, latin: boolean) {
   ];
 }
 
-export function FontGallery({
-  count = 5,
-  fontName,
-  face,
-  latin = false,
-}: {
-  count?: number;
-  fontName: string;
-  face?: LiveFace;
-  latin?: boolean;
-}) {
+export function FontGallery({ fontName, face, latin = false }: { fontName: string; face?: LiveFace; latin?: boolean }) {
   const [i, setI] = useState(0);
   const [full, setFull] = useState(false);
   const fsBtn = useRef<HTMLButtonElement>(null);
-  const slides = face
-    ? specimenSlides(face, latin)
-    : Array.from({ length: count }, (_, k) => <div key={k} className="size-full bg-sunken" />);
+  const slides = face ? specimenSlides(face, latin) : [];
 
   useEffect(() => {
     if (!full) return;
@@ -72,6 +61,17 @@ export function FontGallery({
       window.removeEventListener('keydown', onKey);
     };
   }, [full]);
+
+  // بلا ملفات: لا شرائح ولا مصغّرات فارغة — إشارة واحدة صريحة بمقاس المعرض نفسه
+  if (!face)
+    return (
+      <section
+        aria-label={`صور ${fontName}`}
+        className="grid aspect-[4/3] w-full place-items-center rounded-lg bg-sunken px-6 sm:aspect-[1120/580] sm:max-h-[min(36rem,70dvh)]"
+      >
+        <NoPreview size="lg" />
+      </section>
+    );
 
   return (
     <section aria-label={`صور ${fontName}`}>
