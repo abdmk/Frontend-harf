@@ -7,13 +7,14 @@ import { useCurrentUser } from '@/hooks/use-current-user';
 import { cn } from '@/lib/cn';
 
 import { useAdminSection } from './admin-nav';
+import { usePendingManuscripts } from '../api/manuscripts';
 import { usePendingCount } from '../api/review';
 import { usePendingStudios } from '../api/studios';
 import { ADMIN_NAV, isAdminNavOn } from '../config/nav';
 
-/** كل ما ينتظر قراراً: خطوط بانتظار المراجعة + استوديوهات بانتظار التوثيق */
+/** كل ما ينتظر قراراً: خطوط ومخطوطات بانتظار المراجعة + استوديوهات بانتظار التوثيق */
 function usePendingRequests() {
-  return usePendingCount() + usePendingStudios();
+  return usePendingCount() + usePendingStudios() + usePendingManuscripts();
 }
 
 function CountBadge({ n }: { n: number }) {

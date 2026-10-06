@@ -71,6 +71,7 @@ export const AdminHomePage = lazy(() => admin().then((m) => ({ default: m.AdminH
 export const AdminRequestsPage = lazy(() => admin().then((m) => ({ default: m.AdminRequestsPage })));
 export const AdminReviewDetailPage = lazy(() => admin().then((m) => ({ default: m.AdminReviewDetailPage })));
 export const AdminStudioDetailPage = lazy(() => admin().then((m) => ({ default: m.AdminStudioDetailPage })));
+export const AdminManuscriptPage = lazy(() => admin().then((m) => ({ default: m.AdminManuscriptPage })));
 export const AdminFontsPage = lazy(() => admin().then((m) => ({ default: m.AdminFontsPage })));
 export const AdminFontDetailPage = lazy(() => admin().then((m) => ({ default: m.AdminFontDetailPage })));
 export const AdminUsersPage = lazy(() => admin().then((m) => ({ default: m.AdminUsersPage })));

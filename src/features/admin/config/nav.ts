@@ -12,12 +12,12 @@ export type AdminNavItem = {
 
 /**
  * ستّة أقسام بلا مجموعات، بترتيب العمل: ما ينتظر قراراً (الطلبات) ثم ما يُدار ثم ما يُقرأ.
- * الطلبات تجمع مراجعة الخطوط وتوثيق الاستوديوهات — كلاهما قرار قبول أو رفض.
+ * الطلبات تجمع مراجعة الخطوط والمخطوطات وتوثيق الاستوديوهات — كلها قرار قبول أو رفض.
  * والمحتوى يجمع ما يراه الزائر: الواجهة والمدونة والخطط وأسعارها.
  */
 export const ADMIN_NAV: AdminNavItem[] = [
   { section: null, label: 'الرئيسية', Icon: HomeIcon },
-  { section: 'requests', label: 'الطلبات', Icon: DocumentSignedIcon, also: ['review', 'studios'] },
+  { section: 'requests', label: 'الطلبات', Icon: DocumentSignedIcon, also: ['review', 'studios', 'manuscripts'] },
   { section: 'fonts', label: 'الخطوط', Icon: LayersIcon },
   { section: 'users', label: 'المستخدمون', Icon: UserIcon },
   { section: 'content', label: 'المحتوى', Icon: PictureIcon, also: ['plans'] },

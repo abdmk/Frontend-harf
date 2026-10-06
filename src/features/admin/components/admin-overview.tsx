@@ -22,6 +22,7 @@ import type { AdminAnalytics } from '@/types/domain/analytics';
 import { AdminPageHeader } from './admin-nav';
 import { useAuditLog } from '../api/audit';
 import { useStoreFonts } from '../api/fonts-store';
+import { useManuscriptRequests } from '../api/manuscripts';
 import { useReviewItems } from '../api/review';
 import { useStudioRequests } from '../api/studios';
 import { fmt, isOverdue, timeAgo } from '../utils';
@@ -69,6 +70,7 @@ function TaskRow({ t }: { t: Task }) {
 export function AdminOverview({ analytics: d, adminName }: { analytics: AdminAnalytics; adminName: string }) {
   const reviews = useReviewItems();
   const studios = useStudioRequests();
+  const manuscripts = useManuscriptRequests();
   const fonts = useStoreFonts();
   const content = useSiteContent();
   const log = useAuditLog();
@@ -78,6 +80,9 @@ export function AdminOverview({ analytics: d, adminName }: { analytics: AdminAna
     .sort((a, b) => a.submittedAt.localeCompare(b.submittedAt));
   const overdue = pendingFonts.filter((r) => isOverdue(r.submittedAt)).length;
   const pendingStudios = studios.filter((r) => r.status === 'pending');
+  const pendingManuscripts = manuscripts
+    .filter((m) => m.status === 'pending')
+    .sort((a, b) => a.createdAt.localeCompare(b.createdAt));
   const hidden = fonts.filter((f) => f.visibility === 'hidden').length;
   const activeBanners = content.banners.filter((b) => b.active).length;
 
@@ -102,6 +107,16 @@ export function AdminOverview({ analytics: d, adminName }: { analytics: AdminAna
       line: 'لا يستطيعون البيع قبل اعتمادك',
       to: `${paths.admin.getHref('requests')}?type=studios`,
       cta: 'راجِع',
+      urgent: true,
+    });
+  if (pendingManuscripts.length)
+    tasks.push({
+      key: 'manuscripts',
+      Icon: PictureIcon,
+      title: `${pendingManuscripts.length} مخطوطات بانتظار المراجعة`,
+      line: `أقدمها وصل ${timeAgo(pendingManuscripts[0]!.createdAt)}`,
+      to: paths.admin.manuscript.getHref(pendingManuscripts[0]!.reference),
+      cta: 'ابدأ بالأقدم',
       urgent: true,
     });
   if (hidden)
