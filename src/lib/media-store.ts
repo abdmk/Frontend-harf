@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-import { checkSvgText, MAX_SVG_BYTES } from '../utils/svg-check';
+import { checkSvgText, MAX_SVG_BYTES } from '@/utils/svg-check';
 
 /**
  * فيديوهات المقالات: تُفحص بايتاتها الأولى (MP4/WebM فقط) وتُخزَّن في IndexedDB بهذا المتصفّح،

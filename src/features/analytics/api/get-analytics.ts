@@ -1,4 +1,4 @@
-import { MOCK_ADMIN_ANALYTICS } from '@/mocks/studio';
+import { MOCK_ADMIN_ANALYTICS } from '@/testing/mocks/studio';
 import type { Range } from '@/types/domain/analytics';
 
 export const RANGES: Range[] = ['7', '30', '365'];

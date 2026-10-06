@@ -1,8 +1,9 @@
 import { describe, expect, it } from 'vitest';
 
-import { parseLegal } from '../parse';
-import privacy from '../privacy.txt?raw';
-import terms from '../terms.txt?raw';
+import privacy from '@/assets/legal/privacy.txt?raw';
+import terms from '@/assets/legal/terms.txt?raw';
+
+import { parseLegal } from '../legal';
 
 describe('parseLegal', () => {
   it('يفصل المقدّمة والبنود ويرقّمها، ويجمع عناصر القائمة المتتالية', () => {

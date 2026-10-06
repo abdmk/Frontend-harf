@@ -1,4 +1,4 @@
-import { MOCK_LIBRARY, MOCK_PURCHASES } from '@/mocks/purchases';
+import { MOCK_LIBRARY, MOCK_PURCHASES } from '@/testing/mocks/purchases';
 import type { User } from '@/types/domain/user';
 
 /** مشتريات المستخدم ومكتبته — تجريبية لكل الحسابات، لاحقاً من قاعدة البيانات حسب user.id */

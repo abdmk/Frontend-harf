@@ -1,10 +1,10 @@
 import { useMemo } from 'react';
 import { z } from 'zod';
 
-import { MANUSCRIPT_CATEGORIES } from '@/types/domain/manuscript';
 
-import { asObject, createJsonStore } from '../lib/json-store';
-import { isManuscriptFileId } from '../lib/media-store';
+import { asObject, createJsonStore } from '@/lib/json-store';
+import { isManuscriptFileId } from '@/lib/media-store';
+import { MANUSCRIPT_CATEGORIES } from '@/types/domain/manuscript';
 
 /**
  * طلبات المخطوطات: يرسلها الاستوديو من «رفع مخطوطة» وتقرّر فيها الإدارة من «الطلبات».

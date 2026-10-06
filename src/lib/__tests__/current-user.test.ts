@@ -1,7 +1,8 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 
-import { setAccountPlan } from '../../stores/account-overrides';
-import { updateAccountProfile } from '../../stores/account-profile';
+import { setAccountPlan } from '@/stores/account-overrides';
+import { updateAccountProfile } from '@/stores/account-profile';
+
 import { getCurrentUser, setDemoSession } from '../auth';
 
 describe('مصدر واحد لبيانات المستخدم', () => {

@@ -25,9 +25,9 @@ import { NotificationsPanel } from '@/features/notifications/components/notifica
 import { UploadDialog } from '@/features/publishing/components/upload-dialog';
 import { getPlans } from '@/features/subscriptions/api/get-subscription';
 import { PlansDialog } from '@/features/subscriptions/components/plans-dialog';
-import { MOCK_FONTS } from '@/mocks/fonts';
-import { MOCK_USERS } from '@/mocks/users';
 import { getPricing } from '@/stores/cart';
+import { MOCK_FONTS } from '@/testing/mocks/fonts';
+import { MOCK_USERS } from '@/testing/mocks/users';
 import { type Cart, cents, usd } from '@/types/domain/commerce';
 import { CATEGORIES } from '@/types/domain/font';
 import { CATEGORY_LABEL } from '@/utils/labels';

@@ -1,7 +1,7 @@
 @import 'tailwindcss';
 @import 'tw-animate-css';
-@import '../design-system/tokens.css';
-@import '../design-system/gradients.css';
+@import '../config/design-tokens/tokens.css';
+@import '../config/design-tokens/gradients.css';
 @import '../assets/fonts/library/library.css';
 
 /* ══ الخط ══ */
@@ -59,7 +59,7 @@
   }
 }
 
-/* لحظة لونية «فجر» — للأماكن المعتمدة فقط (انظر design-system/gradients.css) */
+/* لحظة لونية «فجر» — للأماكن المعتمدة فقط (انظر config/design-tokens/gradients.css) */
 @utility moment {
   background: var(--grad-sheen), var(--grad-dawn);
   border-color: var(--grad-dawn-edge);

@@ -2,7 +2,7 @@ import { readdirSync, readFileSync } from 'node:fs';
 
 import { describe, expect, it } from 'vitest';
 
-import data from '@/mocks/manuscripts.data.json';
+import data from '@/testing/mocks/manuscripts.data.json';
 
 import { checkSvgText } from '../svg-check';
 

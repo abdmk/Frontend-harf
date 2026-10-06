@@ -2,6 +2,8 @@ import { Collapsible as CollapsiblePrimitive } from 'radix-ui';
 import { type ReactNode, useState } from 'react';
 import { Link } from 'react-router';
 
+import privacyText from '@/assets/legal/privacy.txt?raw';
+import termsText from '@/assets/legal/terms.txt?raw';
 import { ContactBox, ContentPage, ContentSection } from '@/components/layout/content-page';
 import { LegalDocument } from '@/components/layout/legal-document';
 import { Button } from '@/components/ui/button';
@@ -23,13 +25,11 @@ import {
 import { Input } from '@/components/ui/input';
 import { CONTACT_EMAIL, FAQ, FAQ_TOPICS } from '@/config/faq';
 import { paths } from '@/config/paths';
-import { parseLegal } from '@/content/legal/parse';
-import privacyText from '@/content/legal/privacy.txt?raw';
-import termsText from '@/content/legal/terms.txt?raw';
 import { getFonts } from '@/features/catalog/api/get-fonts';
 import { DEFAULT_QUERY } from '@/features/catalog/types/catalog-query';
 import { openConsentSettings } from '@/stores/consent';
 import { LANGS } from '@/types/domain/font';
+import { parseLegal } from '@/utils/legal';
 
 function ContactButton({ label = CONTACT_EMAIL }: { label?: string }) {
   return (

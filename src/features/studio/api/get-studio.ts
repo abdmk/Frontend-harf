@@ -1,5 +1,5 @@
-import { MOCK_DESIGNERS } from '@/mocks/designers';
-import { MOCK_FOUNDRY, MOCK_STUDIO_ANALYTICS, MOCK_STUDIO_FONTS } from '@/mocks/studio';
+import { MOCK_DESIGNERS } from '@/testing/mocks/designers';
+import { MOCK_FOUNDRY, MOCK_STUDIO_ANALYTICS, MOCK_STUDIO_FONTS } from '@/testing/mocks/studio';
 import type { StudioAnalytics } from '@/types/domain/analytics';
 import type { Foundry, StudioFont } from '@/types/domain/foundry';
 import type { User } from '@/types/domain/user';

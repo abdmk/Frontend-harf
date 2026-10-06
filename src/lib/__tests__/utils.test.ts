@@ -23,7 +23,7 @@ describe('cn مع رموز حرف', () => {
 });
 
 describe('كل أحجام الخطّ في tokens.css معروفة لـcn', () => {
-  const css = readFileSync(join(__dirname, '../../design-system/tokens.css'), 'utf8');
+  const css = readFileSync(join(__dirname, '../../config/design-tokens/tokens.css'), 'utf8');
   const sizes = [...css.matchAll(/--text-([\w-]+?):/g)].map((m) => m[1]).filter((n) => !n.includes('--'));
   it.each(sizes)('text-%s', (size) => {
     expect(cn(`text-${size} text-white`)).toBe(`text-${size} text-white`);

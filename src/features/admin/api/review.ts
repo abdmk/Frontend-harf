@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
 import { asObject, createJsonStore } from '@/lib/json-store';
-import { REVIEW_QUEUE, type Submission } from '@/mocks/review-queue';
+import { REVIEW_QUEUE, type Submission } from '@/testing/mocks/review-queue';
 
 import { logAdmin } from './audit';
 import { adminOrNull, type AdminResult, DENIED } from './guard';

@@ -1,12 +1,12 @@
 import { useSyncExternalStore } from 'react';
 import { z } from 'zod';
 
-import { MOCK_PLANS } from '@/mocks/plans';
+import { asObject, createJsonStore } from '@/lib/json-store';
+import { MOCK_PLANS } from '@/testing/mocks/plans';
 import { cents } from '@/types/domain/commerce';
 import type { PlanOffer } from '@/types/domain/subscription';
 import { PLANS, type Plan } from '@/types/domain/user';
 
-import { asObject, createJsonStore } from '../lib/json-store';
 
 /**
  * تعريف الخطط كما تعدّله الإدارة: الاسم والوصف والسعرين والمزايا. نافذة الخطط وصفحة الاشتراك

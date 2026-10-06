@@ -348,5 +348,5 @@ for (const [id, title, category, lines] of WORKS) {
   const fonts = [...new Set(lines.map(([, k]) => k))].map((k) => ({ id: FONTS[k].id, name: FONTS[k].name }));
   manifest.push({ id, title, category, width, height, bytes: Buffer.byteLength(svg), fonts });
 }
-writeFileSync('src/mocks/manuscripts.data.json', JSON.stringify(manifest, null, 2) + '\n');
+writeFileSync('src/testing/mocks/manuscripts.data.json', JSON.stringify(manifest, null, 2) + '\n');
 console.log(`${manifest.length} works, ${(manifest.reduce((s, m) => s + m.bytes, 0) / 1024).toFixed(0)} KB`);

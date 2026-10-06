@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
-import { asObject, createJsonStore } from '../lib/json-store';
-import { isSafeImageUrl } from '../utils/image-upload';
+import { asObject, createJsonStore } from '@/lib/json-store';
+import { isSafeImageUrl } from '@/utils/image-upload';
 
 /**
  * محتوى الموقع الذي تديره الإدارة (صفحة «المحتوى»): بنرات الشريحة الرئيسية، شريط الإعلان،

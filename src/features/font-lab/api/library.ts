@@ -1,5 +1,5 @@
-import { MOCK_FONTS } from '@/mocks/fonts';
 import { publicFonts } from '@/stores/catalog-overrides';
+import { MOCK_FONTS } from '@/testing/mocks/fonts';
 
 /** ما يراه الزوّار فقط — المخفي والمحذوف من «مخزن الخطوط» خارج الأدوات أيضاً */
 const visible = () => publicFonts(MOCK_FONTS);

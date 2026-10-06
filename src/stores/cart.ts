@@ -1,11 +1,10 @@
 import { createLocalStoreSignal } from '@/lib/local-store-signal';
-import { MOCK_FONTS } from '@/mocks/fonts';
-import { mockPricing } from '@/mocks/pricing';
+import { MOCK_FONTS } from '@/testing/mocks/fonts';
+import { mockPricing } from '@/testing/mocks/pricing';
 import { type Cart, type CartItem, cents } from '@/types/domain/commerce';
 import type { LicensePricing } from '@/types/domain/license';
-
-import { quote } from '../utils/commerce/quote';
-import { type CartState, cartStateSchema } from '../utils/commerce/selection';
+import { quote } from '@/utils/commerce/quote';
+import { type CartState, cartStateSchema } from '@/utils/commerce/selection';
 
 const cartSignal = createLocalStoreSignal();
 /** يشترك عنصر دائم في التخطيط (كالترويسة) بتغيّر السلة — استخدمه عبر useCart */

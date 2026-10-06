@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 
-import { setDemoSession } from '../../lib/auth';
+import { setDemoSession } from '@/lib/auth';
 import {
   maskedPayoutSchema,
   maskPayout,
@@ -8,7 +8,8 @@ import {
   payoutInputSchema,
   payoutMethodsFor,
   verifyOtp,
-} from '../../utils/payout';
+} from '@/utils/payout';
+
 import {
   AGREEMENT_VERSION,
   canSell,
