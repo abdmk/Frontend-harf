@@ -75,6 +75,7 @@ const eslintConfig = defineConfig([
     'dist/**',
     '.next/**',
     'src/components/ui/icons/icons.generated.ts',
+    'src/components/ui/icons/generated/**',
     'reference/**',
     'tools/**',
   ]),

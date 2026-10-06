@@ -1,7 +1,7 @@
 // يولّد src/components/ui/icons/icons.generated.ts من طقم الأيقونات tools/icons/uicons.zip.
 // الاستعمال:  pnpm icons   (يحتاج أداة unzip في النظام)
 import { execFileSync } from 'node:child_process';
-import { existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
@@ -208,16 +208,25 @@ for (const [name, file] of Object.entries(MAP)) {
 for (const n of SOLID) if (!MAP[n]) throw new Error('unknown icon in SOLID: ' + n);
 
 const pascal = (n: string) => n.replace(/(^|-)([a-z])/g, (_, __, c: string) => c.toUpperCase()) + 'Icon';
-const lines = Object.entries(out).map(
-  ([name, { viewBox, nodes, solid }]) =>
-    `export const ${pascal(name)} = /*#__PURE__*/ createIcon('${name}', '${viewBox}', ${JSON.stringify(nodes)}${solid ? `, ${JSON.stringify(solid)}` : ''});`,
-);
-const ts = `// ⚠️ ملف مولَّد — لا تعدّله يدوياً. المصدر: tools/icons/uicons.zip، والمولّد: scripts/generate-icons.mts
-// كل أيقونة تصدير مستقلّ، فلا يدخل الحزمة إلا ما يُستعمل فعلاً.
-import { createIcon } from './create-icon';
+const HEADER = '// ⚠️ ملف مولَّد — لا تعدّله يدوياً. المصدر: tools/icons/uicons.zip، والمولّد: scripts/generate-icons.mts';
 
-${lines.join('\n')}
+// ملف لكل أيقونة: الحزمة تُقسَّم بالوحدات لا بالتصديرات، فلو جُمعت في ملف واحد لدخل كل ما يُستعمل
+// في أي صفحة (حتى لوحة الإدارة) حزمةَ الزائر الأولى. هكذا تُحمَّل الأيقونة مع الصفحة التي تحتاجها فقط.
+const DIR = new URL('../src/components/ui/icons/generated/', import.meta.url);
+rmSync(DIR, { recursive: true, force: true });
+mkdirSync(DIR, { recursive: true });
+for (const [name, { viewBox, nodes, solid }] of Object.entries(out))
+  writeFileSync(
+    new URL(`${name}.ts`, DIR),
+    `${HEADER}\nimport { createIcon } from '../create-icon';\n\nexport const ${pascal(name)} = /*#__PURE__*/ createIcon('${name}', '${viewBox}', ${JSON.stringify(nodes)}${solid ? `, ${JSON.stringify(solid)}` : ''});\n`,
+  );
+const barrel = `${HEADER}
+// فهرس فقط: كل أيقونة في ملفّها داخل generated/.
+
+${Object.keys(out)
+  .map((name) => `export { ${pascal(name)} } from './generated/${name}';`)
+  .join('\n')}
 `;
-writeFileSync(new URL('../src/components/ui/icons/icons.generated.ts', import.meta.url), ts);
+writeFileSync(new URL('../src/components/ui/icons/icons.generated.ts', import.meta.url), barrel);
 rmSync(work, { recursive: true, force: true });
 console.log('icons:', Object.keys(out).length);

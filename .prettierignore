@@ -1,6 +1,7 @@
 .next
 node_modules
 src/components/ui/icons/icons.generated.ts
+src/components/ui/icons/generated
 pnpm-lock.yaml
 reference
 tools
