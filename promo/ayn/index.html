@@ -9,11 +9,6 @@
       /* خط الواجهة — نفس ملفات الموقع (globals.css) */
       @font-face {
         font-family: 'Graphik Arabic';
-        src: url('/src/assets/fonts/graphik-arabic-250.woff2') format('woff2');
-        font-weight: 250;
-      }
-      @font-face {
-        font-family: 'Graphik Arabic';
         src: url('/src/assets/fonts/graphik-arabic-300.woff2') format('woff2');
         font-weight: 300;
       }
@@ -56,7 +51,6 @@
         --strong: #d3d3d9;
         --muted-foreground: #5c5c64;
         --tertiary: #6c6c75;
-        --ink: #1b1b1b;
         --ok-500: #3dce68;
         --ok-700: #1e8540;
         --ok-text: #1a7d3e;
@@ -67,7 +61,6 @@
         --dgr-text: #c81e24;
         --gold-500: #f5a524;
         --gold-foreground: #3b2500;
-        --lic: #1a7d3e;
         --shadow-soft: 0 1px 2px rgb(22 22 22 / 0.04), 0 4px 10px rgb(22 22 22 / 0.05);
         --shadow-float: 0 2px 6px rgb(22 22 22 / 0.05), 0 12px 28px rgb(22 22 22 / 0.08);
         --shadow-overlay: 0 4px 10px rgb(22 22 22 / 0.06), 0 24px 56px rgb(22 22 22 / 0.14);
@@ -106,93 +99,22 @@
         background: var(--grad-dawn-wide);
         opacity: 0;
       }
-      /* كل عنصر يُحرَّك موضوع بمركزه عند (0,0) ويُنقل بالـtransform فقط */
+      /* كل عنصر يُحرَّك موضوع بمركزه عند (0,0) ويُنقل بالـtransform فقط.
+         بلا will-change: تُعاد رسمة النص في كل إطار فيبقى حادّاً أثناء التكبير */
       .el {
         position: absolute;
         left: 0;
         top: 0;
-        will-change: transform, opacity, filter;
         transform-origin: 50% 50%;
       }
       .word {
         white-space: nowrap;
         line-height: 1.3;
         font-weight: 500;
-        letter-spacing: -0.005em;
       }
       .ltr {
         direction: ltr;
         unicode-bidi: isolate;
-      }
-
-      /* بطاقات وواجهات حرف */
-      .card {
-        background: var(--card);
-        border: 1px solid var(--border);
-        border-radius: 22px;
-        box-shadow: var(--shadow-float);
-        overflow: hidden;
-      }
-      .panel {
-        background: var(--card);
-        border: 1px solid var(--border);
-        border-radius: 28px;
-        box-shadow: var(--shadow-overlay);
-        overflow: hidden;
-      }
-      .chip {
-        display: inline-flex;
-        align-items: center;
-        height: 30px;
-        padding: 0 14px;
-        border-radius: 999px;
-        background: var(--card);
-        box-shadow: 0 0 0 1px var(--border);
-        font-size: 13px;
-        font-weight: 500;
-        color: var(--muted-foreground);
-      }
-      .btn {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        gap: 10px;
-        height: 64px;
-        padding: 0 34px;
-        border-radius: 16px;
-        font-size: 22px;
-        font-weight: 500;
-        white-space: nowrap;
-      }
-      .btn-primary {
-        background: var(--primary-fill);
-        color: #fff;
-      }
-      .btn-outline {
-        background: var(--card);
-        color: var(--foreground);
-        box-shadow: inset 0 0 0 1.5px var(--border);
-      }
-      .badge {
-        position: absolute;
-        top: 16px;
-        inset-inline-end: 16px;
-        display: inline-flex;
-        align-items: center;
-        gap: 5px;
-        height: 26px;
-        padding: 0 10px;
-        border-radius: 999px;
-        font-size: 13px;
-        font-weight: 500;
-      }
-      .badge-paid {
-        background: var(--gold-500);
-        color: var(--gold-foreground);
-      }
-      .badge-free {
-        background: var(--ok-700);
-        color: #fff;
       }
       .icon {
         width: 1em;
@@ -201,7 +123,139 @@
         flex: none;
       }
 
+      /* الصورة — بطلة الفيديو من البداية إلى بطاقة النتيجة */
+      .hero-img {
+        width: 1200px;
+        height: 600px;
+        border-radius: 28px;
+        overflow: hidden;
+        position: relative;
+        background: #141212;
+      }
+      .hero-img svg.art {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        display: block;
+      }
+      .hud {
+        position: absolute;
+        top: 28px;
+        inset-inline-end: 28px;
+        width: 330px;
+        padding: 18px 20px;
+        border-radius: 18px;
+        background: rgb(255 255 255 / 0.94);
+        box-shadow: var(--shadow-float);
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+      .hud .row {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 10px;
+      }
+      .hud .nm {
+        font-size: 24px;
+        font-weight: 600;
+        direction: ltr;
+      }
+      .hud .ar {
+        font-size: 16px;
+        color: var(--tertiary);
+      }
+      .hud .pc {
+        font-size: 30px;
+        font-weight: 600;
+        direction: ltr;
+      }
+      .meter {
+        height: 6px;
+        border-radius: 999px;
+        background: var(--inset);
+        overflow: hidden;
+      }
+      .meter i {
+        display: block;
+        height: 100%;
+        border-radius: 999px;
+        transform-origin: 100% 50%;
+      }
+
+      /* شريط المراحل — نفس شريط أداة «عين» في الموقع (حالي: أحمر، منجز: داكن، قادم: inset) */
+      .tracker {
+        width: 840px;
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 18px;
+      }
+      .tracker .st {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+      .tracker .lb {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 22px;
+        color: var(--tertiary);
+      }
+      .tracker .num {
+        width: 30px;
+        height: 30px;
+        border-radius: 999px;
+        display: grid;
+        place-items: center;
+        font-size: 15px;
+        font-weight: 600;
+        box-sizing: border-box;
+        box-shadow: inset 0 0 0 1.5px var(--strong);
+      }
+      .tracker .bar {
+        height: 5px;
+        border-radius: 999px;
+        background: var(--inset);
+        overflow: hidden;
+      }
+      .tracker .bar i {
+        display: block;
+        height: 100%;
+        border-radius: 999px;
+        transform-origin: 100% 50%;
+      }
+
+      /* واجهة الرفع — Dropzone الخاصة بـ«عين» */
+      .panel {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 32px;
+        box-shadow: var(--shadow-overlay);
+        overflow: hidden;
+      }
+      .chip {
+        display: inline-flex;
+        align-items: center;
+        height: 32px;
+        padding: 0 15px;
+        border-radius: 999px;
+        background: var(--card);
+        box-shadow: 0 0 0 1px var(--border);
+        font-size: 14px;
+        font-weight: 500;
+        color: var(--muted-foreground);
+      }
+
       /* بطاقة النتيجة — FontCard + ResultCard من الموقع */
+      .card {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 22px;
+        overflow: hidden;
+      }
       .rcard {
         width: 420px;
       }
@@ -214,12 +268,12 @@
         position: relative;
       }
       .rcard .spec .w {
-        font-size: 84px;
+        font-size: 80px;
         line-height: 1.2;
         color: var(--foreground);
       }
       .rcard .body {
-        padding: 20px 22px 18px;
+        padding: 20px 22px 20px;
         display: flex;
         flex-direction: column;
         gap: 12px;
@@ -251,90 +305,64 @@
         direction: ltr;
         text-align: right;
       }
-      .meter {
-        height: 6px;
-        border-radius: 999px;
-        background: var(--inset);
-        overflow: hidden;
-      }
-      .meter i {
-        display: block;
-        height: 100%;
-        border-radius: 999px;
-        transform-origin: 100% 50%;
-      }
       .rcard .foot {
         display: flex;
         align-items: center;
         justify-content: space-between;
+        margin-top: 2px;
       }
       .rcard .tone {
-        font-size: 14px;
-        font-weight: 500;
-      }
-      .rcard .cmp {
-        font-size: 14px;
-        color: var(--muted-foreground);
-        padding: 6px 12px;
-        border-radius: 10px;
-      }
-
-      /* ترويسة الموقع داخل إطار التطبيق */
-      .appframe {
-        width: 1500px;
-        padding-bottom: 34px;
-      }
-      .site-head {
-        height: 76px;
-        border-bottom: 1px solid var(--subtle);
-        display: flex;
-        align-items: center;
-        padding: 0 48px;
-        gap: 40px;
-      }
-      .site-head .logo {
-        color: var(--primary);
-        height: 36px;
-      }
-      .site-head nav {
-        flex: 1;
-        display: flex;
-        justify-content: center;
-        gap: 6px;
-      }
-      .site-head nav span {
-        position: relative;
-        padding: 0 12px;
         font-size: 15px;
-        color: var(--muted-foreground);
-        height: 76px;
-        display: flex;
-        align-items: center;
-      }
-      .site-head nav span.on {
-        color: var(--primary);
         font-weight: 500;
       }
-      .site-head nav span.on::after {
-        content: '';
-        position: absolute;
-        bottom: 0;
-        inset-inline: 12px;
-        height: 2px;
-        border-radius: 2px 2px 0 0;
-        background: var(--primary-fill);
-      }
-      .site-head .acts {
-        display: flex;
-        gap: 14px;
+      /* QUIET_CTA من الموقع: إطار وحرف بلون العلامة، ويمتلئ عند المرور */
+      .qbtn {
+        display: inline-flex;
         align-items: center;
+        gap: 7px;
+        height: 38px;
+        padding: 0 16px;
+        border-radius: 10px;
+        font-size: 15px;
+        font-weight: 500;
+        color: var(--primary);
+        box-shadow: inset 0 0 0 1px rgb(212 42 44 / 0.35);
+        background: var(--card);
       }
-      .site-head .acts i {
-        width: 34px;
-        height: 34px;
+      .badge {
+        position: absolute;
+        top: 16px;
+        inset-inline-end: 16px;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        height: 26px;
+        padding: 0 10px;
         border-radius: 999px;
-        background: var(--sunken);
-        display: block;
+        font-size: 13px;
+        font-weight: 500;
+      }
+      .badge-paid {
+        background: var(--gold-500);
+        color: var(--gold-foreground);
+      }
+      .badge-free {
+        background: var(--ok-700);
+        color: #fff;
+      }
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        height: 76px;
+        padding: 0 40px;
+        border-radius: 18px;
+        font-size: 26px;
+        font-weight: 500;
+        white-space: nowrap;
+        background: var(--primary-fill);
+        color: #fff;
       }
     </style>
   </head>

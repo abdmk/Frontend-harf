@@ -1,14 +1,14 @@
 /**
  * يلتقط فيديو «عين» إطاراً إطاراً من index.html ويرمّزه بـffmpeg.
  *
- *   node promo/ayn/render.mjs                       # الفيديو كاملاً 1080p30 → promo/ayn/out/ayn.mp4
- *   node promo/ayn/render.mjs --preview             # معاينة سريعة 960px / 15fps
+ *   node promo/ayn/render.mjs                       # الفيديو كاملاً 1080p60 → promo/ayn/out/ayn.mp4
+ *   node promo/ayn/render.mjs --preview             # معاينة سريعة 960px / 30fps
  *   node promo/ayn/render.mjs --from 9 --to 15      # مقطع فقط
  *   node promo/ayn/render.mjs --stills 3.2,10.5     # صور ثابتة PNG لأزمنة محدّدة
  *
- * يُلتقط بـ30 إطاراً مباشرة. ‎--blend يلتقط بـ60 ويدمج كل إطارين — لكنه يترك صوراً مزدوجة على
- * العناصر السريعة (العدّاد، البطاقات المنزلقة)، فلا يُستعمل افتراضياً؛ الضبابية مرسومة في المشاهد نفسها.
- * الخطوط والأيقونات والشعار تُقرأ من ملفات الموقع نفسها (لا نسخ مكرّرة).
+ * كل إطار يُلتقط مباشرة (60fps) — لا دمج إطارات: الدمج يترك صوراً مزدوجة على العناصر السريعة.
+ * الخطوط والأيقونات والشعار تُقرأ من ملفات الموقع نفسها (لا نسخ مكرّرة)، ومخطّطات الحروف
+ * تُستخرج من ملفات الخطوط نفسها بـfontkit (التشكيل العربي الحقيقي) لمشهد «قراءة الحروف».
  */
 import { spawn } from 'node:child_process';
 import { readFileSync, mkdirSync, existsSync, statSync, createReadStream } from 'node:fs';
@@ -16,6 +16,8 @@ import { createServer } from 'node:http';
 import { createRequire } from 'node:module';
 import { dirname, extname, join, normalize, resolve, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
+
+import * as fontkit from 'fontkit';
 
 const require = createRequire(import.meta.url);
 const { chromium } = require('playwright');
@@ -34,9 +36,7 @@ const flag = (name) => args.includes(`--${name}`);
 const preview = flag('preview');
 const stills = opt('stills', null);
 const width = Number(opt('width', preview ? 960 : 1920));
-const outFps = Number(opt('fps', preview ? 15 : 30));
-const blend = !preview && flag('blend');
-const captureFps = blend ? outFps * 2 : outFps;
+const outFps = Number(opt('fps', preview ? 30 : 60));
 
 /* ── الأيقونات والشعار من مصادر الموقع ── */
 function readIcons() {
@@ -58,6 +58,68 @@ function readLogo() {
     return `<svg viewBox="${vb}" fill="currentColor" xmlns="http://www.w3.org/2000/svg">${inner.trim()}</svg>`;
   };
   return { lockup: svgOf('HarfLockup'), mark: svgOf('HarfMark') };
+}
+
+/* ── مخطّطات «عصري» بكل خط مرشَّح: مسار SVG لكل محرف، الإطار، ونقاط المنحنيات ──
+   الإحداثيات بوحدات الخط، والمحور الرأسي للأسفل (كـSVG)، وخط الأساس عند y=0. */
+const WORD = 'عصري';
+const GLYPH_FONTS = {
+  ghroob: 'ghroob-arabic-500.woff2',
+  qomra: 'qomra-arabic-700.woff2',
+  cairo: 'cairo-arabic.woff2',
+  amiri: 'amiri-700-arabic.woff2',
+  reem: 'reem-kufi-arabic.woff2',
+  lalezar: 'lalezar-400-arabic.woff2',
+  messiri: 'el-messiri-arabic.woff2',
+  changa: 'changa-arabic.woff2',
+  ruqaa: 'aref-ruqaa-700-arabic.woff2',
+  kufi: 'noto-kufi-arabic-arabic.woff2',
+  markazi: 'markazi-text-arabic.woff2',
+};
+function readGlyphs() {
+  const out = {};
+  for (const [key, file] of Object.entries(GLYPH_FONTS)) {
+    const font = fontkit.openSync(join(ROOT, 'src/assets/fonts/library', file));
+    // الخطوط المتغيّرة بنسختها الافتراضية — نسخ fontkit المتغيّرة لملفات woff2 تفقد cmap والمحارف
+    const run = font.layout(WORD);
+    const paths = [];
+    const nodes = [];
+    let x = 0;
+    let x0 = Infinity;
+    let y0 = Infinity;
+    let x1 = -Infinity;
+    let y1 = -Infinity;
+    run.glyphs.forEach((g, i) => {
+      const pos = run.positions[i];
+      const ox = x + pos.xOffset;
+      const oy = pos.yOffset;
+      const P = (px, py) => [+(ox + px).toFixed(1), +(-(oy + py)).toFixed(1)];
+      let d = '';
+      for (const c of g.path.commands) {
+        const a = c.args;
+        if (c.command === 'closePath') {
+          d += 'Z';
+          continue;
+        }
+        const pts = [];
+        for (let k = 0; k < a.length; k += 2) pts.push(P(a[k], a[k + 1]));
+        const cmd = { moveTo: 'M', lineTo: 'L', quadraticCurveTo: 'Q', bezierCurveTo: 'C' }[c.command];
+        d += cmd + pts.map((p) => p.join(' ')).join(' ');
+        pts.forEach((p, k) => {
+          nodes.push([p[0], p[1], k === pts.length - 1 ? 1 : 0]);
+          x0 = Math.min(x0, p[0]);
+          x1 = Math.max(x1, p[0]);
+          y0 = Math.min(y0, p[1]);
+          y1 = Math.max(y1, p[1]);
+        });
+      }
+      if (d) paths.push(d);
+      x += pos.xAdvance;
+    });
+    if (!paths.length) throw new Error(`لا مخطّطات لـ${key}`);
+    out[key] = { paths, nodes, bbox: [x0, y0, x1, y1], upem: font.unitsPerEm };
+  }
+  return out;
 }
 
 /* ── خادم ثابت محلي محصور في جذر المستودع ── */
@@ -91,11 +153,12 @@ const errors = [];
 page.on('pageerror', (e) => errors.push(e.message));
 page.on('console', (m) => m.type() === 'error' && errors.push(m.text()));
 await page.addInitScript(
-  ([icons, logo]) => {
+  ([icons, logo, glyphs]) => {
     window.ICONS = icons;
     window.HARF_LOGO = logo;
+    window.GLYPHS = glyphs;
   },
-  [readIcons(), readLogo()],
+  [readIcons(), readLogo(), readGlyphs()],
 );
 await page.goto(`http://127.0.0.1:${port}/promo/ayn/index.html`, { waitUntil: 'networkidle' });
 
@@ -140,7 +203,7 @@ if (stills) {
     preview ? 'preview.mp4' : from === 0 && to === duration ? 'ayn.mp4' : `ayn-${from}-${to}.mp4`,
   );
   const file = join(OUT, name);
-  const vf = [blend ? `tmix=frames=2:weights='1 1',fps=${outFps}` : null, 'format=yuv420p'].filter(Boolean).join(',');
+  const vf = 'format=yuv420p';
   const ff = spawn(
     'ffmpeg',
     [
@@ -150,7 +213,7 @@ if (stills) {
       '-f',
       'image2pipe',
       '-framerate',
-      String(captureFps),
+      String(outFps),
       '-i',
       '-',
       '-vf',
@@ -169,12 +232,12 @@ if (stills) {
     ],
     { stdio: ['pipe', 'inherit', 'inherit'] },
   );
-  const frames = Math.round((to - from) * captureFps);
+  const frames = Math.round((to - from) * outFps);
   const started = Date.now();
   for (let i = 0; i < frames; i++) {
-    const buf = await shot(from + i / captureFps);
+    const buf = await shot(from + i / outFps);
     if (!ff.stdin.write(buf)) await new Promise((r) => ff.stdin.once('drain', r));
-    if (i % 120 === 0) console.log(`إطار ${i}/${frames} (${((Date.now() - started) / 1000).toFixed(0)}ث)`);
+    if (i % 240 === 0) console.log(`إطار ${i}/${frames} (${((Date.now() - started) / 1000).toFixed(0)}ث)`);
   }
   ff.stdin.end();
   await new Promise((r, j) => ff.on('close', (c) => (c === 0 ? r() : j(new Error(`ffmpeg ${c}`)))));
