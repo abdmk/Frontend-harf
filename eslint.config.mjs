@@ -77,6 +77,7 @@ const eslintConfig = defineConfig([
     'src/components/ui/icons/icons.generated.ts',
     'reference/**',
     'tools/**',
+    'promo/**',
   ]),
 ]);
 

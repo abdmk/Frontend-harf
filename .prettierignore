@@ -4,3 +4,4 @@ src/components/ui/icons/icons.generated.ts
 pnpm-lock.yaml
 reference
 tools
+promo/*/out
