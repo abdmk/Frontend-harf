@@ -16,10 +16,57 @@
 (() => {
   'use strict';
 
-  const CX = 960;
-  const CY = 540;
+  /* ── التنسيقان: عرضي 16:9 وطولي 9:16 (‎?format=vertical) — القصّة نفسها، والتكوين لكلٍّ منهما ── */
+  const VERTICAL = new URLSearchParams(location.search).get('format') === 'vertical';
+  const SW = VERTICAL ? 1080 : 1920;
+  const SH = VERTICAL ? 1920 : 1080;
+  const CX = SW / 2;
+  const CY = SH / 2;
   const DURATION = 27.0;
+  /** كل الأماكن والأحجام التي تختلف بين التنسيقين — لا أرقام مواضع متفرّقة في المشاهد.
+   *  الطولي: المحتوى بين ‎~300 و‎~1600 (خارج مناطق واجهة Reels/TikTok أعلى الشاشة وأسفلها). */
+  const L = VERTICAL
+    ? {
+        qaSize: 100,
+        qbSize: 70,
+        sumSize: 84,
+        qaUp: [600, 0.74],
+        qbY: 1300,
+        poster: [CY + 20, 0.66],
+        riseFrom: CY + 820,
+        aside: [CX - 230, CY + 610, 0.3],
+        dragCtrl: [CX - 360, CY + 120],
+        panel: [CY + 40, 0.8],
+        dropTo: [CX, CY + 64, 0.37],
+        analysis: [CX, CY - 70, 0.84],
+        statusY: CY - 70 + 252 + 78,
+        trackerY: 330,
+        grid: { cols: [CX + 205, CX - 205], perRow: 2, sc: 0.9, top: 560, headW: 900 },
+        starCtrl: [CX + 300, CY + 460],
+      }
+    : {
+        qaSize: 108,
+        qbSize: 72,
+        sumSize: 104,
+        qaUp: [170, 0.62],
+        qbY: 905,
+        poster: [CY + 10, 0.5],
+        riseFrom: CY + 640,
+        aside: [CX - 640, CY + 300, 0.28],
+        dragCtrl: [CX - 380, CY - 60],
+        panel: [CY + 55, 1],
+        dropTo: [CX, CY + 70, 0.46],
+        analysis: [CX, CY + 25, 1],
+        statusY: 902,
+        trackerY: 98,
+        grid: { cols: [CX + 460, CX, CX - 460], perRow: 3, sc: 0.82, top: 352, headW: 1340 },
+        starCtrl: [CX + 520, CY + 330],
+      };
+  document.body.style.width = `${SW}px`;
+  document.body.style.height = `${SH}px`;
   const stage = document.getElementById('stage');
+  stage.style.width = `${SW}px`;
+  stage.style.height = `${SH}px`;
   const bgDawn = document.getElementById('bg-dawn');
 
   /* ── المنحنيات ───────────────────────────────────────────────────────────── */
@@ -41,13 +88,16 @@
   }
   const E = {
     out: bezier(0.2, 0, 0, 1), // --ease-out-quint: كل دخول
-    glide: bezier(0.55, 0, 0.1, 1), // تنقّل الكاميرا والعناصر بين حالتين
+    glide: bezier(0.5, 0, 0.2, 1), // تنقّل الكاميرا والعناصر بين حالتين — ذروة سرعة معتدلة
+    move: bezier(0.42, 0, 0.32, 1), // حركة كبيرة (الصورة، الكاميرا): ذروة سرعة منخفضة — لا وميض
+    sine: bezier(0.37, 0, 0.63, 1), // إعادة توسيط السطر: تسارع وتباطؤ متماثلان بلا قفزة
     pop: bezier(0.34, 1.4, 0.64, 1), // --ease-pop: تأكيد فقط
     in: bezier(0.4, 0, 1, 1), // --ease-in-soft: كل خروج
     lin: (x) => x,
   };
   const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
   const mix = (a, b, k) => a + (b - a) * k;
+  const mixRGB = (a, b, k) => `rgb(${a.map((v, i) => Math.round(mix(v, b[i], clamp(k)))).join(' ')})`;
   const P = (t, a, b, e = E.out) => e(clamp((t - a) / (b - a)));
   /** ظهور ثم اختفاء */
   const span = (t, a, b, c, d) => Math.min(P(t, a, b), 1 - P(t, c, d, E.in));
@@ -142,10 +192,8 @@
       });
     }
     render(pres, { cx = CX, y = CY, op = 1, blur = 0, s = 1, dy = 0 } = {}) {
-      const xs = this.xs(
-        pres.map((p) => clamp(p * 1.6)),
-        cx,
-      );
+      // التوسيط يتبع منحنى مستقلاً ناعماً (lay) — لا يقفز السطر حين تدخل كلمة
+      const xs = this.xs(pres.lay ?? pres, cx);
       this.items.forEach((it, i) => {
         if (!it.el) return;
         const a = pres[i];
@@ -164,8 +212,12 @@
     }
   }
   /** دخول كلمات متتابعة: كل كلمة 0.5ث وبينها 0.18ث */
-  const stagger = (t, start, n, step = 0.18, dur = 0.5) =>
-    Array.from({ length: n }, (_, i) => P(t, start + i * step, start + i * step + dur));
+  const stagger = (t, start, n, step = 0.18, dur = 0.5) => {
+    const pres = Array.from({ length: n }, (_, i) => P(t, start + i * step, start + i * step + dur));
+    // المكان يُحجز قبل الظهور بقليل وعلى مدى أطول، بمنحنى متماثل
+    pres.lay = Array.from({ length: n }, (_, i) => P(t, start + i * step - 0.3, start + i * step + 0.15, E.sine));
+    return pres;
+  };
 
   /* ── بيانات الخطوط ───────────────────────────────────────────────────────── */
   const FONTS = {
@@ -406,7 +458,7 @@
 
     // المرشّحون: «عصري» بكل خط، بحجم مخطّط الصورة نفسه ليُقارن به
     const cands = svg.querySelector('.cands');
-    S.order = ['cairo', 'amiri', 'reem', 'markazi', 'lalezar', 'changa', 'messiri', 'kufi', 'ruqaa', 'qomra', 'ghroob'];
+    S.order = ['cairo', 'reem', 'lalezar', 'messiri', 'ruqaa', 'qomra', 'ghroob'];
     S.h.cands = {};
     for (const key of S.order) {
       if (key === 'ghroob') continue;
@@ -421,7 +473,7 @@
       S.h.cands[key] = grp;
     }
     // توقيت المقارنة: يبدأ سريعاً ويتباطأ حتى يستقرّ على «غروب»
-    S.slots = S.order.map((_, i) => 9.85 + 2.35 * Math.pow(i / (S.order.length - 1), 1.35));
+    S.slots = S.order.map((_, i) => 9.85 + 2.35 * Math.pow(i / (S.order.length - 1), 1.2));
   }
 
   function build() {
@@ -432,7 +484,7 @@
         { t: 'خطاً', c: RED },
         { t: 'أعجبك؟', c: INK },
       ],
-      108,
+      L.qaSize,
     );
     S.qb = new Line(
       [
@@ -440,7 +492,7 @@
         { t: 'تعرف', c: INK },
         { t: 'اسمه؟', c: RED },
       ],
-      72,
+      L.qbSize,
     );
 
     buildHero();
@@ -497,7 +549,8 @@
     });
 
     /* — 4. اكتشف: نتائج «عين» — */
-    S.heading = mk(`<div style="width:1340px;display:flex;align-items:flex-end;justify-content:space-between">
+    S.heading =
+      mk(`<div style="width:${L.grid.headW}px;display:flex;align-items:flex-end;justify-content:space-between">
         <div><div style="font-size:36px;font-weight:600">أقرب الخطوط</div><div style="font-size:19px;color:var(--muted-foreground);margin-top:6px">أقرب 6 خطوط في مكتبة حرف، مرتّبة حسب التشابه</div></div>
         <span style="display:inline-flex;align-items:center;gap:8px;height:48px;padding:0 20px;border-radius:12px;box-shadow:inset 0 0 0 1.5px var(--border);font-size:18px;font-weight:500">${icon('PictureIcon', { size: 18 })}صورة جديدة</span></div>`);
     S.cardKeys = ['ghroob', 'qomra', 'lalezar', 'messiri', 'reem', 'cairo'];
@@ -523,7 +576,10 @@
     /* — 5. الملخّص والشعار — */
     S.star = mk(sparkle(100));
     S.trail = [0, 1, 2, 3].map(() => mk(sparkle(100)));
-    S.sum = new Line([{ t: 'ارفع.', c: RED }, { t: 'حلّل.', c: RED2 }, { t: 'اكتشف.', c: INK }, { slotW: 64 }], 104);
+    S.sum = new Line(
+      [{ t: 'ارفع.', c: RED }, { t: 'حلّل.', c: RED2 }, { t: 'اكتشف.', c: INK }, { slotW: 64 }],
+      L.sumSize,
+    );
     S.mark = mk(
       `<div style="color:var(--primary);width:200px;height:200px">${LOGO.mark.replace('<svg', '<svg style="width:200px;height:200px;display:block"')}</div>`,
     );
@@ -551,10 +607,12 @@
   /* ════════════════════════════════════════════════════════════════════════
      هندسة النتائج: «عالم» الشبكة يُصغَّر حول نقطة — نحسب منه أماكن البطاقات على الشاشة
      ════════════════════════════════════════════════════════════════════════ */
-  const SC = 0.82;
-  const COLS = [CX + 460, CX, CX - 460];
-  const cardWorld = (i) => [COLS[i % 3], 300 + S.cardH / 2 + Math.floor(i / 3) * (S.cardH + 30)];
-  const GRID_TOP = 352; // أعلى البطاقات على الشاشة
+  const SC = L.grid.sc;
+  const cardWorld = (i) => [
+    L.grid.cols[i % L.grid.perRow],
+    300 + S.cardH / 2 + Math.floor(i / L.grid.perRow) * (S.cardH + 30),
+  ];
+  const GRID_TOP = L.grid.top; // أعلى البطاقات على الشاشة
   const toScreen = ([x, y]) => [CX + (x - CX) * SC, GRID_TOP + (y - 300) * SC];
   const LIFT = (t) => P(t, 15.55, 15.95) * (1 - P(t, 16.75, 17.1, E.in));
 
@@ -563,30 +621,33 @@
      ════════════════════════════════════════════════════════════════════════ */
   function heroState(t) {
     // 1) السؤال: تصعد من الأسفل إلى المنتصف
-    const rise = P(t, 1.55, 2.6, E.glide);
+    const rise = P(t, 1.45, 2.75, E.move);
     let x = CX;
-    let y = mix(CY + 820, CY + 10, rise);
-    let s = 0.5;
+    // طفو خفيف جداً وهي معلّقة — حياة بلا تشتيت
+    let y = mix(L.riseFrom, L.poster[0], rise) + Math.sin(t * 1.6) * 5 * rise;
+    let s = L.poster[1];
     let rz = mix(9, -1.5, rise);
     // 2) ارفع: تنزوي كملف على سطح المكتب، ثم يسحبها المؤشّر
-    const aside = P(t, 3.55, 4.25, E.glide);
-    x = mix(x, CX - 640, aside);
-    y = mix(y, CY + 300, aside);
-    s = mix(s, 0.28, aside);
+    const aside = P(t, 3.5, 4.3, E.move);
+    x = mix(x, L.aside[0], aside);
+    y = mix(y, L.aside[1], aside);
+    s = mix(s, L.aside[2], aside);
     rz = mix(rz, -6, aside);
     const drag = P(t, 4.95, 5.7, E.glide);
-    if (drag > 0) [x, y] = quad([CX - 640, CY + 300], [CX - 380, CY - 60], [CX, CY + 70], drag);
-    s = mix(s, 0.4, drag) * (1 - 0.05 * Math.sin(Math.PI * clamp((t - 4.85) / 0.3)));
+    if (drag > 0) [x, y] = quad(L.aside, L.dragCtrl, L.dropTo, drag);
+    s = mix(s, L.dropTo[2] * 0.87, drag) * (1 - 0.05 * Math.sin(Math.PI * clamp((t - 4.85) / 0.3)));
     // الميلان يتبع السحب: يتأرجح أثناءه ثم يستقيم
     rz = mix(rz, 0, drag) + Math.sin(Math.PI * drag) * 7;
-    s = mix(s, 0.46, P(t, 5.75, 6.15, E.pop));
+    s = mix(s, L.dropTo[2], P(t, 5.45, 6.2, E.sine));
     // 3) حلّل: الكاميرا تقترب حتى تملأ الصورة الشاشة
-    const push = P(t, 6.1, 6.95, E.glide);
-    x = mix(x, CX, push);
-    y = mix(y, CY + 25, push);
-    s = mix(s, 1, push);
+    const push = P(t, 6.05, 7.0, E.move);
+    // ثم اقتراب بطيء جداً أثناء التحليل (يمنح اللقطة الثابتة حياة)
+    const drift = 1 + P(t, 6.95, 13.3, E.sine) * 0.025;
+    x = mix(x, L.analysis[0], push);
+    y = mix(y, L.analysis[1], push);
+    s = mix(s, L.analysis[2] * drift, push);
     // 4) اكتشف: تنكمش إلى عيّنة البطاقة الأولى
-    const land = P(t, 13.35, 14.4, E.glide);
+    const land = P(t, 13.25, 14.5, E.move);
     const [wx, wy] = cardWorld(0);
     const lift = LIFT(t);
     const [sx, sy] = toScreen([wx, wy - S.cardH / 2 + 105 - lift * 12]);
@@ -594,7 +655,7 @@
     y = mix(y, sy, land);
     s = mix(s, ((420 * SC) / IMG_W) * (1 + lift * 0.035), land);
     const out = P(t, 16.75, 17.15, E.in);
-    return { x, y, s, rz, op: P(t, 1.55, 1.9) * (1 - out), blur: out * 10, land };
+    return { x, y, s, rz, op: P(t, 1.45, 1.85) * (1 - out), blur: out * 10, land };
   }
 
   /* ════════════════════════════════════════════════════════════════════════
@@ -611,25 +672,29 @@
     const up = P(t, 1.5, 2.45, E.glide);
     const out = P(t, 3.5, 3.85, E.in);
     S.qa.render(stagger(t, 0.2, 3), {
-      y: mix(CY, 170, up),
-      s: mix(1, 0.62, up),
+      y: mix(CY, L.qaUp[0], up),
+      s: mix(1, L.qaUp[1], up),
       op: 1 - out,
       blur: out * 12,
       dy: -out * 24,
     });
-    S.qb.render(stagger(t, 2.45, 3, 0.16), { y: 905, op: 1 - out, blur: out * 12, dy: out * 24 });
+    S.qb.render(stagger(t, 2.45, 3, 0.16), { y: L.qbY, op: 1 - out, blur: out * 12, dy: out * 24 });
   }
 
   /** الصورة البطلة + طبقات التحليل */
   function sceneHero(t) {
-    if (t < 1.5 || t > 17.3) return hide(S.hero);
+    if (t < 1.4 || t > 17.3) return hide(S.hero);
     const h = heroState(t);
+    // ضبابية حركة بقدر السرعة (كما تلتقطها كاميرا حقيقية): تُليّن اللقطات السريعة بلا صور مزدوجة
+    const prev = heroState(t - 1 / 60);
+    const speed = Math.hypot(h.x - prev.x, h.y - prev.y) + Math.abs(h.s - prev.s) * 600;
+    const mblur = clamp((speed - 6) / 30, 0, 1) * 2.2;
     // زوايا الصورة: 28 ← زوايا العيّنة العلوية (22 من البطاقة) وسفلية مربّعة
     const top = mix(28, (22 * SC) / h.s, h.land);
     const bot = mix(28, 0, h.land);
     S.hero.style.borderRadius = `${f2(top)}px ${f2(top)}px ${f2(bot)}px ${f2(bot)}px`;
     S.hero.style.boxShadow = `0 ${f2(mix(30, 0, h.land))}px ${f2(mix(70, 0, h.land))}px rgb(22 22 22 / ${f2(mix(0.22, 0, h.land))})`;
-    set(S.hero, { x: h.x, y: h.y, s: h.s, rz: h.rz, op: h.op, blur: h.blur });
+    set(S.hero, { x: h.x, y: h.y, s: h.s, rz: h.rz, op: h.op, blur: h.blur + mblur });
 
     // المسح من اليمين لليسار: ما خلف الخطّ صار حروفاً معزولة على أرضية فاتحة
     const scan = P(t, 7.0, 8.25, E.glide);
@@ -676,8 +741,9 @@
       if (key === 'ghroob') return;
       const a = S.slots[i];
       const b = S.slots[i + 1];
-      const vis =
-        t >= a - 0.04 && t < b + 0.04 ? Math.min(clamp((t - (a - 0.04)) / 0.08), clamp((b + 0.04 - t) / 0.08)) : 0;
+      // تبديل متداخل بمنحنى متماثل (0.18ث) — الخطّان يتقاطعان بدل القطع
+      const X = 0.09;
+      const vis = Math.min(P(t, a - X, a + X, E.sine), 1 - P(t, b - X, b + X, E.sine));
       S.h.cands[key].setAttribute('opacity', f2(vis * 0.82));
     });
     const hudIn = P(t, 9.7, 10.05);
@@ -688,7 +754,12 @@
       const f = FONTS[key];
       const a = S.slots[i];
       const b = i < S.slots.length - 1 ? S.slots[i + 1] : a + 0.8;
-      const score = Math.round(SCORE[key] * E.out(clamp((t - a) / Math.max(0.12, (b - a) * 0.7))));
+      // النسبة تنتقل من نسبة الخط السابق إلى نسبة هذا الخط — الشريط لا يعود إلى الصفر
+      const prev = i > 0 ? SCORE[S.order[i - 1]] : 0;
+      const score = Math.round(mix(prev, SCORE[key], P(t, a - 0.05, a + Math.max(0.25, (b - a) * 0.85), E.sine)));
+      // الاسم يتبدّل تحت خفوت قصير بدل القفز
+      const dip = Math.min(1, ...S.slots.slice(1).map((sl) => clamp(Math.abs(t - sl) / 0.1)));
+      S.h.hud.querySelectorAll('.row').forEach((row) => (row.style.opacity = f2(E.sine(dip))));
       S.h.hudName.textContent = f.name;
       S.h.hudAr.textContent = f.ar;
       S.h.hudPc.textContent = `${score}%`;
@@ -733,17 +804,19 @@
     S.dzi.style.background = over > 0.5 ? 'var(--card)' : 'var(--tint-brand)';
     S.dz.style.opacity = f2(1 - P(t, 5.8, 6.1, E.in));
     set(S.drop, {
-      y: CY + 55 + (1 - a) * 40,
-      s: mix(0.94, 1, a) * (1 + out * 0.05),
+      y: L.panel[0] + (1 - a) * 40,
+      s: L.panel[1] * mix(0.94, 1, a) * (1 + out * 0.05),
       op: a * (1 - out),
       blur: (1 - a) * 10 + out * 8,
     });
 
     // المؤشّر: يأتي إلى الصورة، يمسكها، يسحبها، يفلتها
     const reach = P(t, 4.3, 4.9, E.glide);
-    let pos = quad([CX - 300, CY + 600], [CX - 380, CY + 420], [CX - 610, CY + 315], reach);
+    const grab = (p) => [p[0] + 30, p[1] + 15]; // نقطة الإمساك على الصورة
+    const A = L.aside;
+    let pos = quad([A[0] + 340, A[1] + 300], [A[0] + 260, A[1] + 120], grab(A), reach);
     const drag = P(t, 4.95, 5.7, E.glide);
-    if (drag > 0) pos = quad([CX - 610, CY + 315], [CX - 350, CY - 45], [CX + 30, CY + 85], drag);
+    if (drag > 0) pos = quad(grab(A), grab(L.dragCtrl), grab(L.dropTo), drag);
     const leave = P(t, 5.95, 6.4, E.glide);
     pos = [pos[0] + leave * 120, pos[1] + leave * 260];
     drawCursor(S.cur1, t, {
@@ -762,20 +835,22 @@
   function sceneTracker(t) {
     const vis = P(t, 3.9, 4.45) * (1 - P(t, 16.7, 17.05, E.in));
     if (vis <= 0) return hide(S.tracker);
-    set(S.tracker, { y: 98 + (1 - vis) * -16, op: vis, blur: (1 - vis) * 6 });
-    // امتلاء كل مرحلة 0..1، ومتى تُنجَز
+    set(S.tracker, { y: L.trackerY + (1 - vis) * -16, op: vis, blur: (1 - vis) * 6 });
+    // امتلاء كل مرحلة 0..1، وانتقال لوني متدرّج حين تُنجَز (لا تبديل مفاجئ)
     const prog = [P(t, 4.2, 5.85, E.glide), P(t, 6.4, 12.25, E.lin), P(t, 13.4, 14.6, E.glide)];
-    const done = [t >= 5.9, t >= 12.3, t >= 14.65];
+    const doneK = [P(t, 5.85, 6.2, E.sine), P(t, 12.25, 12.6, E.sine), P(t, 14.6, 14.95, E.sine)];
     S.steps.forEach((st, i) => {
-      const current = prog[i] > 0 && !done[i];
+      const on = P(t, [4.0, 6.2, 13.2][i], [4.3, 6.5, 13.5][i], E.sine); // صارت المرحلة الحالية
+      const d = doneK[i];
       st.bar.style.transform = `scaleX(${f2(prog[i])})`;
-      st.bar.style.background = done[i] ? 'rgb(22 22 22 / .7)' : 'var(--primary-fill)';
-      st.tx.style.color = current || done[i] ? 'var(--foreground)' : 'var(--tertiary)';
-      st.tx.style.fontWeight = current ? '600' : '400';
-      st.num.innerHTML = done[i] ? icon('CheckIcon', { size: 16 }) : '١٢٣'[i];
-      st.num.style.background = done[i] ? 'var(--ok-700)' : current ? 'var(--primary-fill)' : 'transparent';
-      st.num.style.color = done[i] || current ? '#fff' : 'var(--tertiary)';
-      st.num.style.boxShadow = done[i] || current ? 'none' : 'inset 0 0 0 1.5px var(--strong)';
+      st.bar.style.background = mixRGB([223, 48, 51], [70, 70, 72], d);
+      st.tx.style.color = mixRGB([108, 108, 117], [22, 22, 22], Math.max(on, d));
+      st.tx.style.fontWeight = on > 0.5 && d < 0.5 ? '600' : '400';
+      st.num.innerHTML = d > 0.5 ? icon('CheckIcon', { size: 16 }) : '١٢٣'[i];
+      st.num.style.background = d > 0 ? mixRGB([223, 48, 51], [30, 133, 64], d) : `rgb(223 48 51 / ${f2(on)})`;
+      st.num.style.color = mixRGB([108, 108, 117], [255, 255, 255], Math.max(on, d));
+      st.num.style.boxShadow = `inset 0 0 0 1.5px rgb(211 211 217 / ${f2(1 - Math.max(on, d))})`;
+      st.num.style.transform = `scale(${f2(1 + 0.18 * Math.sin(Math.PI * d))})`;
     });
   }
 
@@ -792,7 +867,7 @@
       if (t < a || t > d) return hide(el);
       const k = P(t, a, b);
       const o = P(t, c, d, E.in);
-      set(el, { y: 902 + (1 - k) * 16 - o * 10, op: k * (1 - o), blur: (1 - k) * 8 + o * 8 });
+      set(el, { y: L.statusY + (1 - k) * 16 - o * 10, op: k * (1 - o), blur: (1 - k) * 8 + o * 8 });
     });
     const lockT = S.slots[S.slots.length - 1];
     S.burst.forEach((b) => {
@@ -800,9 +875,9 @@
       if (k <= 0 || k >= 1) return hide(b.el);
       const r = E.out(k) * b.d;
       set(b.el, {
-        x: CX + Math.cos(b.a) * r,
-        y: CY + 30 + Math.sin(b.a) * r * b.sy,
-        s: Math.sin(Math.PI * k),
+        x: L.analysis[0] + Math.cos(b.a) * r * L.analysis[2],
+        y: L.analysis[1] + 5 + Math.sin(b.a) * r * b.sy * L.analysis[2],
+        s: Math.sin(Math.PI * k) * L.analysis[2],
         rz: k * 120,
         op: 1 - k * k,
       });
@@ -818,7 +893,7 @@
     }
     const out = P(t, 16.75, 17.15, E.in);
     const hk = P(t, 13.8, 14.35);
-    set(S.heading, { y: GRID_TOP - 74 + (1 - hk) * 18, s: SC, op: hk * (1 - out), blur: (1 - hk) * 8 + out * 8 });
+    set(S.heading, { y: GRID_TOP - 90 * SC + (1 - hk) * 18, s: SC, op: hk * (1 - out), blur: (1 - hk) * 8 + out * 8 });
     const lift = LIFT(t);
     S.cards.forEach((c, i) => {
       const [wx, wy] = cardWorld(i);
@@ -826,7 +901,7 @@
       if (i === 0) {
         // إطار البطاقة يظهر حول الصورة وهي تستقرّ فيها، ويرتفع عند المرور
         c.firstElementChild.style.boxShadow = `0 ${f2(2 + lift * 16)}px ${f2(10 + lift * 30)}px rgb(22 22 22 / ${f2(0.05 + lift * 0.07)})`;
-        c.firstElementChild.style.borderColor = lift > 0.5 ? 'var(--strong)' : 'var(--border)';
+        c.firstElementChild.style.borderColor = mixRGB([230, 230, 234], [211, 211, 217], lift);
         c.querySelector('.meter i').style.transform = `scaleX(${f2(P(t, 14.3, 14.9))})`;
         set(c, { x, y, s: SC, op: P(t, 14.05, 14.4) * (1 - out), blur: out * 10 });
         return;
@@ -834,36 +909,45 @@
       const a = 13.85 + i * 0.075;
       const k = P(t, a, a + 0.6);
       c.querySelector('.meter i').style.transform = `scaleX(${f2(P(t, a + 0.3, a + 0.9))})`;
-      set(c, { x, y: y + (1 - k) * 44, s: SC, op: k * (1 - out) * (1 - lift * 0.25), blur: (1 - k) * 8 + out * 10 });
+      set(c, {
+        x,
+        y: y + (1 - k) * 44,
+        s: SC * mix(0.96, 1, k),
+        op: k * (1 - out) * (1 - lift * 0.25),
+        blur: (1 - k) * 8 + out * 10,
+      });
     });
 
     // المؤشّر: إلى البطاقة الأولى (ترتفع) ثم إلى «اختر الترخيص»
     const [wx, wy] = cardWorld(0);
     const [bx, by] = toScreen([wx + S.btnOff[0], wy + S.btnOff[1] - lift * 12]);
     const reach = P(t, 14.9, 15.6, E.glide);
-    let pos = quad([CX - 120, CY + 620], [CX + 180, CY + 360], [CX + 420, CY - 20], reach);
+    // نقطة المرور: على عيّنة البطاقة الأولى
+    const [hx, hy] = toScreen([wx + 40, wy - S.cardH / 2 + 120]);
+    const start = [CX - 160, SH + 80];
+    let pos = quad(start, [mix(start[0], hx, 0.4) + 160, mix(start[1], hy, 0.6) + 120], [hx, hy], reach);
     const toBtn = P(t, 15.85, 16.4, E.glide);
-    if (toBtn > 0) pos = quad([CX + 420, CY - 20], [CX + 420, by - 30], [bx + 8, by + 4], toBtn);
+    if (toBtn > 0) pos = quad([hx, hy], [hx + 10, by - 40], [bx + 8, by + 4], toBtn);
     drawCursor(S.cur2, t, { pos, vis: P(t, 14.85, 15.05) * (1 - P(t, 16.65, 16.85, E.in)), click: 16.48 });
     // QUIET_CTA: يمتلئ عند المرور
-    const hov = P(t, 16.25, 16.4) > 0.5;
-    S.qbtn.style.background = hov ? 'var(--primary-fill)' : 'var(--card)';
-    S.qbtn.style.color = hov ? '#fff' : 'var(--primary)';
-    S.qbtn.style.boxShadow = hov ? 'none' : 'inset 0 0 0 1px rgb(212 42 44 / .35)';
+    const hov = P(t, 16.22, 16.42, E.sine);
+    S.qbtn.style.background = mixRGB([255, 255, 255], [223, 48, 51], hov);
+    S.qbtn.style.color = mixRGB([212, 42, 44], [255, 255, 255], hov);
+    S.qbtn.style.boxShadow = `inset 0 0 0 1px rgb(212 42 44 / ${f2(0.35 * (1 - hov))})`;
     S.qbtn.style.visibility = t >= 16.56 ? 'hidden' : 'visible';
   }
 
   /** 5) الزرّ ← النجمة ← الملخّص ← الشعار */
   function starPath(t) {
     const k = P(t, 18.3, 19.0, E.glide);
-    return quad([CX, CY], [CX + 520, CY + 330], [S.sumEnd ?? CX - 420, CY], k);
+    return quad([CX, CY], L.starCtrl, [S.sumEnd ?? CX - 420, CY], k);
   }
   function sceneFinale(t) {
     // الزرّ يخرج من البطاقة إلى المنتصف ويكبر
     if (t >= 16.5 && t < 18.0) {
       const [wx, wy] = cardWorld(0);
       const [bx, by] = toScreen([wx + S.btnOff[0], wy + S.btnOff[1] - 12]);
-      const k = P(t, 16.55, 17.3, E.glide);
+      const k = P(t, 16.55, 17.35, E.move);
       const glow = P(t, 17.25, 17.65);
       const burst = P(t, 17.72, 17.9, E.in);
       const s0 = (S.btnW * SC) / S.ctaW;
@@ -879,9 +963,11 @@
     } else hide(S.cta);
 
     // النجمة: تنفجر من الزرّ، تطير، وتلحق بنهاية الملخّص
-    const sumPres = stagger(t, 18.8, 3, 0.32, 0.55).concat([1]);
+    const sumBase = stagger(t, 18.8, 3, 0.32, 0.6);
+    const sumPres = sumBase.concat([1]);
+    sumPres.lay = sumBase.lay.concat([1]);
     if (t >= 17.7 && t < 21.95) {
-      const xs = S.sum.xs(sumPres.map((p) => clamp(p * 1.6)));
+      const xs = S.sum.xs(sumPres.lay);
       S.sumEnd = xs[3];
       const big = P(t, 17.72, 18.05, E.pop);
       const shrink = P(t, 18.05, 18.45, E.glide);

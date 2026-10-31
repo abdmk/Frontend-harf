@@ -5,6 +5,8 @@
  *   node promo/ayn/render.mjs --preview             # معاينة سريعة 960px / 30fps
  *   node promo/ayn/render.mjs --from 9 --to 15      # مقطع فقط
  *   node promo/ayn/render.mjs --stills 3.2,10.5     # صور ثابتة PNG لأزمنة محدّدة
+ *   node promo/ayn/render.mjs --format vertical     # النسخة الطولية 9:16 (1080×1920)
+ *   node promo/ayn/render.mjs --scale 2             # 4K (3840×2160، أو 2160×3840 للطولي)
  *
  * كل إطار يُلتقط مباشرة (60fps) — لا دمج إطارات: الدمج يترك صوراً مزدوجة على العناصر السريعة.
  * الخطوط والأيقونات والشعار تُقرأ من ملفات الموقع نفسها (لا نسخ مكرّرة)، ومخطّطات الحروف
@@ -35,7 +37,11 @@ const opt = (name, def) => {
 const flag = (name) => args.includes(`--${name}`);
 const preview = flag('preview');
 const stills = opt('stills', null);
-const width = Number(opt('width', preview ? 960 : 1920));
+const vertical = opt('format', 'horizontal') === 'vertical';
+const [baseW, baseH] = vertical ? [1080, 1920] : [1920, 1080];
+// المقياس: 2 = 4K. التخطيط يبقى بالبكسلات الأساسية، والمتصفّح يرسم كل شيء (نصوص وSVG) بدقّة أعلى
+const scale = Number(opt('scale', preview ? 0.5 : 1));
+const tag = `${vertical ? '-vertical' : ''}${scale === 2 ? '-4k' : ''}`;
 const outFps = Number(opt('fps', preview ? 30 : 60));
 
 /* ── الأيقونات والشعار من مصادر الموقع ── */
@@ -148,7 +154,7 @@ function serve() {
 const server = await serve();
 const port = server.address().port;
 const browser = await chromium.launch();
-const page = await browser.newPage({ viewport: { width: 1920, height: 1080 }, deviceScaleFactor: width / 1920 });
+const page = await browser.newPage({ viewport: { width: baseW, height: baseH }, deviceScaleFactor: scale });
 const errors = [];
 page.on('pageerror', (e) => errors.push(e.message));
 page.on('console', (m) => m.type() === 'error' && errors.push(m.text()));
@@ -160,7 +166,9 @@ await page.addInitScript(
   },
   [readIcons(), readLogo(), readGlyphs()],
 );
-await page.goto(`http://127.0.0.1:${port}/promo/ayn/index.html`, { waitUntil: 'networkidle' });
+await page.goto(`http://127.0.0.1:${port}/promo/ayn/index.html${vertical ? '?format=vertical' : ''}`, {
+  waitUntil: 'networkidle',
+});
 
 // كل خط مطلوب يجب أن يُحمَّل فعلاً قبل الإطار الأول — لا إطار بخط بديل
 const missing = await page.evaluate(async () => {
@@ -190,7 +198,7 @@ const shot = (t) => page.evaluate((x) => window.render(x), t).then(() => page.sc
 if (stills) {
   for (const s of stills.split(',')) {
     const t = Number(s);
-    const file = join(OUT, `still-${t.toFixed(2)}.png`);
+    const file = join(OUT, `still${tag}-${t.toFixed(2)}.png`);
     await page.evaluate((x) => window.render(x), t);
     await page.screenshot({ path: file });
     console.log(file);
@@ -200,7 +208,7 @@ if (stills) {
   const to = Math.min(Number(opt('to', duration)), duration);
   const name = opt(
     'out',
-    preview ? 'preview.mp4' : from === 0 && to === duration ? 'ayn.mp4' : `ayn-${from}-${to}.mp4`,
+    preview ? `preview${tag}.mp4` : from === 0 && to === duration ? `ayn${tag}.mp4` : `ayn${tag}-${from}-${to}.mp4`,
   );
   const file = join(OUT, name);
   const vf = 'format=yuv420p';
