@@ -6,7 +6,8 @@
  *   node promo/ayn/render.mjs --from 9 --to 15      # مقطع فقط
  *   node promo/ayn/render.mjs --stills 3.2,10.5     # صور ثابتة PNG لأزمنة محدّدة
  *
- * يُلتقط بـ60 إطاراً في الثانية ثم يُدمج كل إطارين (tmix) إلى 30 — ضبابية حركة طبيعية.
+ * يُلتقط بـ30 إطاراً مباشرة. ‎--blend يلتقط بـ60 ويدمج كل إطارين — لكنه يترك صوراً مزدوجة على
+ * العناصر السريعة (العدّاد، البطاقات المنزلقة)، فلا يُستعمل افتراضياً؛ الضبابية مرسومة في المشاهد نفسها.
  * الخطوط والأيقونات والشعار تُقرأ من ملفات الموقع نفسها (لا نسخ مكرّرة).
  */
 import { spawn } from 'node:child_process';
@@ -34,7 +35,7 @@ const preview = flag('preview');
 const stills = opt('stills', null);
 const width = Number(opt('width', preview ? 960 : 1920));
 const outFps = Number(opt('fps', preview ? 15 : 30));
-const blend = !preview && !flag('no-blur');
+const blend = !preview && flag('blend');
 const captureFps = blend ? outFps * 2 : outFps;
 
 /* ── الأيقونات والشعار من مصادر الموقع ── */
