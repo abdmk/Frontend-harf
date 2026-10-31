@@ -1,12 +1,15 @@
 /**
- * يلتقط فيديو «عين» إطاراً إطاراً من index.html ويرمّزه بـffmpeg.
+ * يلتقط فيديوهات العرض إطاراً إطاراً من promo/<comp>/index.html ويرمّزها بـffmpeg.
  *
- *   node promo/ayn/render.mjs                       # الفيديو كاملاً 1080p60 → promo/ayn/out/ayn.mp4
- *   node promo/ayn/render.mjs --preview             # معاينة سريعة 960px / 30fps
- *   node promo/ayn/render.mjs --from 9 --to 15      # مقطع فقط
- *   node promo/ayn/render.mjs --stills 3.2,10.5     # صور ثابتة PNG لأزمنة محدّدة
- *   node promo/ayn/render.mjs --format vertical     # النسخة الطولية 9:16 (1080×1920)
- *   node promo/ayn/render.mjs --scale 2             # 4K (3840×2160، أو 2160×3840 للطولي)
+ *   node promo/render.mjs --comp ayn                   # «عين» v2 — 1080p60 → promo/ayn/out/ayn.mp4
+ *   node promo/render.mjs --comp ayn-iris              # «عين» — نسخة القزحية
+ *   node promo/render.mjs --comp ayn --preview         # معاينة سريعة 960px / 30fps
+ *   node promo/render.mjs --comp ayn --from 9 --to 15  # مقطع فقط
+ *   node promo/render.mjs --comp ayn --stills 3.2,10.5 # صور ثابتة PNG لأزمنة محدّدة
+ *   node promo/render.mjs --comp ayn --format vertical # النسخة الطولية 9:16 (1080×1920)
+ *   node promo/render.mjs --comp ayn --scale 2         # 4K (3840×2160، أو 2160×3840 للطولي)
+ *
+ * كل تكوين يصف الكلمات والخطوط التي يحتاج مخطّطاتها في promo/<comp>/glyphs.json.
  *
  * كل إطار يُلتقط مباشرة (60fps) — لا دمج إطارات: الدمج يترك صوراً مزدوجة على العناصر السريعة.
  * الخطوط والأيقونات والشعار تُقرأ من ملفات الموقع نفسها (لا نسخ مكرّرة)، ومخطّطات الحروف
@@ -24,9 +27,8 @@ import * as fontkit from 'fontkit';
 const require = createRequire(import.meta.url);
 const { chromium } = require('playwright');
 
-const HERE = dirname(fileURLToPath(import.meta.url));
-const ROOT = resolve(HERE, '../..');
-const OUT = join(HERE, 'out');
+const PROMO = dirname(fileURLToPath(import.meta.url));
+const ROOT = resolve(PROMO, '..');
 
 /* ── الخيارات ── */
 const args = process.argv.slice(2);
@@ -35,6 +37,13 @@ const opt = (name, def) => {
   return i < 0 ? def : args[i + 1];
 };
 const flag = (name) => args.includes(`--${name}`);
+const comp = opt('comp', 'ayn');
+if (!/^[a-z0-9-]+$/.test(comp) || !existsSync(join(PROMO, comp, 'index.html'))) {
+  console.error(`لا يوجد تكوين باسم «${comp}» في promo/`);
+  process.exit(1);
+}
+const HERE = join(PROMO, comp);
+const OUT = join(HERE, 'out');
 const preview = flag('preview');
 const stills = opt('stills', null);
 const vertical = opt('format', 'horizontal') === 'vertical';
@@ -66,66 +75,64 @@ function readLogo() {
   return { lockup: svgOf('HarfLockup'), mark: svgOf('HarfMark') };
 }
 
-/* ── مخطّطات «عصري» بكل خط مرشَّح: مسار SVG لكل محرف، الإطار، ونقاط المنحنيات ──
-   الإحداثيات بوحدات الخط، والمحور الرأسي للأسفل (كـSVG)، وخط الأساس عند y=0. */
-const WORD = 'عصري';
-const GLYPH_FONTS = {
-  ghroob: 'ghroob-arabic-500.woff2',
-  qomra: 'qomra-arabic-700.woff2',
-  cairo: 'cairo-arabic.woff2',
-  amiri: 'amiri-700-arabic.woff2',
-  reem: 'reem-kufi-arabic.woff2',
-  lalezar: 'lalezar-400-arabic.woff2',
-  messiri: 'el-messiri-arabic.woff2',
-  changa: 'changa-arabic.woff2',
-  ruqaa: 'aref-ruqaa-700-arabic.woff2',
-  kufi: 'noto-kufi-arabic-arabic.woff2',
-  markazi: 'markazi-text-arabic.woff2',
-};
-function readGlyphs() {
-  const out = {};
-  for (const [key, file] of Object.entries(GLYPH_FONTS)) {
-    const font = fontkit.openSync(join(ROOT, 'src/assets/fonts/library', file));
-    // الخطوط المتغيّرة بنسختها الافتراضية — نسخ fontkit المتغيّرة لملفات woff2 تفقد cmap والمحارف
-    const run = font.layout(WORD);
-    const paths = [];
-    const nodes = [];
-    let x = 0;
-    let x0 = Infinity;
-    let y0 = Infinity;
-    let x1 = -Infinity;
-    let y1 = -Infinity;
-    run.glyphs.forEach((g, i) => {
-      const pos = run.positions[i];
-      const ox = x + pos.xOffset;
-      const oy = pos.yOffset;
-      const P = (px, py) => [+(ox + px).toFixed(1), +(-(oy + py)).toFixed(1)];
-      let d = '';
-      for (const c of g.path.commands) {
-        const a = c.args;
-        if (c.command === 'closePath') {
-          d += 'Z';
-          continue;
-        }
-        const pts = [];
-        for (let k = 0; k < a.length; k += 2) pts.push(P(a[k], a[k + 1]));
-        const cmd = { moveTo: 'M', lineTo: 'L', quadraticCurveTo: 'Q', bezierCurveTo: 'C' }[c.command];
-        d += cmd + pts.map((p) => p.join(' ')).join(' ');
-        pts.forEach((p, k) => {
-          nodes.push([p[0], p[1], k === pts.length - 1 ? 1 : 0]);
-          x0 = Math.min(x0, p[0]);
-          x1 = Math.max(x1, p[0]);
-          y0 = Math.min(y0, p[1]);
-          y1 = Math.max(y1, p[1]);
-        });
+/* ── مخطّطات الكلمات: مسار SVG لكل محرف، الإطار، ونقاط المنحنيات ──
+   الإحداثيات بوحدات الخط، والمحور الرأسي للأسفل (كـSVG)، وخط الأساس عند y=0.
+   glyphs.json: إمّا { word, fonts } ← GLYPHS[font]، أو { words: { key: { text, fonts } } } ← GLYPHS[key][font] */
+function outline(file, text) {
+  // الخطوط المتغيّرة بنسختها الافتراضية — نسخ fontkit المتغيّرة لملفات woff2 تفقد cmap والمحارف
+  const font = fontkit.openSync(join(ROOT, 'src/assets/fonts/library', file));
+  const run = font.layout(text);
+  const paths = [];
+  const nodes = [];
+  const glyphs = [];
+  const box = [Infinity, Infinity, -Infinity, -Infinity];
+  const grow = (b, p) => {
+    b[0] = Math.min(b[0], p[0]);
+    b[1] = Math.min(b[1], p[1]);
+    b[2] = Math.max(b[2], p[0]);
+    b[3] = Math.max(b[3], p[1]);
+  };
+  let x = 0;
+  run.glyphs.forEach((g, i) => {
+    const pos = run.positions[i];
+    const ox = x + pos.xOffset;
+    const oy = pos.yOffset;
+    const P = (px, py) => [+(ox + px).toFixed(1), +(-(oy + py)).toFixed(1)];
+    const gb = [Infinity, Infinity, -Infinity, -Infinity];
+    const gn = [];
+    let d = '';
+    for (const c of g.path.commands) {
+      const a = c.args;
+      if (c.command === 'closePath') {
+        d += 'Z';
+        continue;
       }
-      if (d) paths.push(d);
-      x += pos.xAdvance;
-    });
-    if (!paths.length) throw new Error(`لا مخطّطات لـ${key}`);
-    out[key] = { paths, nodes, bbox: [x0, y0, x1, y1], upem: font.unitsPerEm };
-  }
-  return out;
+      const pts = [];
+      for (let k = 0; k < a.length; k += 2) pts.push(P(a[k], a[k + 1]));
+      const cmd = { moveTo: 'M', lineTo: 'L', quadraticCurveTo: 'Q', bezierCurveTo: 'C' }[c.command];
+      d += cmd + pts.map((p) => p.join(' ')).join(' ');
+      pts.forEach((p, k) => {
+        const n = [p[0], p[1], k === pts.length - 1 ? 1 : 0];
+        nodes.push(n);
+        gn.push(n);
+        grow(box, p);
+        grow(gb, p);
+      });
+    }
+    if (d) {
+      paths.push(d);
+      glyphs.push({ d, bbox: gb, nodes: gn });
+    }
+    x += pos.xAdvance;
+  });
+  if (!paths.length) throw new Error(`لا مخطّطات لـ«${text}» في ${file}`);
+  return { paths, nodes, glyphs, bbox: box, upem: font.unitsPerEm };
+}
+function readGlyphs() {
+  const spec = JSON.parse(readFileSync(join(HERE, 'glyphs.json'), 'utf8'));
+  const set = ({ text, fonts }) => Object.fromEntries(Object.entries(fonts).map(([k, f]) => [k, outline(f, text)]));
+  if (spec.word) return set({ text: spec.word, fonts: spec.fonts });
+  return Object.fromEntries(Object.entries(spec.words).map(([k, w]) => [k, set(w)]));
 }
 
 /* ── خادم ثابت محلي محصور في جذر المستودع ── */
@@ -166,7 +173,7 @@ await page.addInitScript(
   },
   [readIcons(), readLogo(), readGlyphs()],
 );
-await page.goto(`http://127.0.0.1:${port}/promo/ayn/index.html${vertical ? '?format=vertical' : ''}`, {
+await page.goto(`http://127.0.0.1:${port}/promo/${comp}/index.html${vertical ? '?format=vertical' : ''}`, {
   waitUntil: 'networkidle',
 });
 
@@ -208,7 +215,11 @@ if (stills) {
   const to = Math.min(Number(opt('to', duration)), duration);
   const name = opt(
     'out',
-    preview ? `preview${tag}.mp4` : from === 0 && to === duration ? `ayn${tag}.mp4` : `ayn${tag}-${from}-${to}.mp4`,
+    preview
+      ? `preview${tag}.mp4`
+      : from === 0 && to === duration
+        ? `${comp}${tag}.mp4`
+        : `${comp}${tag}-${from}-${to}.mp4`,
   );
   const file = join(OUT, name);
   const vf = 'format=yuv420p';

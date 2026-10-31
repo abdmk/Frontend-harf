@@ -1,0 +1,16 @@
+{
+  "word": "عصري",
+  "fonts": {
+    "ghroob": "ghroob-arabic-500.woff2",
+    "qomra": "qomra-arabic-700.woff2",
+    "cairo": "cairo-arabic.woff2",
+    "amiri": "amiri-700-arabic.woff2",
+    "reem": "reem-kufi-arabic.woff2",
+    "lalezar": "lalezar-400-arabic.woff2",
+    "messiri": "el-messiri-arabic.woff2",
+    "changa": "changa-arabic.woff2",
+    "ruqaa": "aref-ruqaa-700-arabic.woff2",
+    "kufi": "noto-kufi-arabic-arabic.woff2",
+    "markazi": "markazi-text-arabic.woff2"
+  }
+}

@@ -41,19 +41,19 @@
 ## التوليد
 
 ```bash
-node promo/ayn/render.mjs                    # النهائي 1080p60 → promo/ayn/out/ayn.mp4
-node promo/ayn/render.mjs --preview          # معاينة سريعة (960px، 30fps)
-node promo/ayn/render.mjs --from 9 --to 15   # مقطع
-node promo/ayn/render.mjs --stills 3.2,13.5  # صور ثابتة PNG
+node promo/render.mjs --comp ayn                    # النهائي 1080p60 → promo/ayn/out/ayn.mp4
+node promo/render.mjs --comp ayn --preview          # معاينة سريعة (960px، 30fps)
+node promo/render.mjs --comp ayn --from 9 --to 15   # مقطع
+node promo/render.mjs --comp ayn --stills 3.2,13.5  # صور ثابتة PNG
 ```
 
 يحتاج إلى Playwright (Chromium) وffmpeg مع libx264. يتوقّف التوليد إن لم يُحمَّل أي خط مطلوب.
 
-| الملف         | الدور                                                                       |
-| ------------- | --------------------------------------------------------------------------- |
-| `index.html`  | المسرح، ورموز التصميم، وأنماط مكوّنات الموقع                                |
-| `timeline.js` | `render(t)`: كل إطار دالة نقية في الزمن، وحالة الصورة البطلة في `heroState` |
-| `render.mjs`  | خادم محلي، واستخراج مخطّطات الحروف، والتحقّق من الخطوط، والالتقاط والترميز  |
+| الملف           | الدور                                                                              |
+| --------------- | ---------------------------------------------------------------------------------- |
+| `index.html`    | المسرح، ورموز التصميم، وأنماط مكوّنات الموقع                                       |
+| `timeline.js`   | `render(t)`: كل إطار دالة نقية في الزمن، وحالة الصورة البطلة في `heroState`        |
+| `../render.mjs` | (مشترك) خادم محلي، واستخراج مخطّطات الحروف، والتحقّق من الخطوط، والالتقاط والترميز |
 
 ## جدول الإيقاع للموسيقى
 
